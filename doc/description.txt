@@ -1,0 +1,1 @@
+Solução completa para gestão de agendamentos odontológicos. Agenda inteligente, prontuário digital, agendamento online para pacientes e relatórios gerenciais. Tecnologia: Spring Boot + PostgreSQL.
