@@ -14,23 +14,23 @@ hs_err_pid*
 replay_pid*
 
 # ===== MAVEN =====
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
+src/target/
+src/pom.xml.tag
+src/pom.xml.releaseBackup
+src/pom.xml.versionsBackup
+src/pom.xml.next
+src/release.properties
+src/dependency-reduced-pom.xml
+src/buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # ===== SPRING BOOT =====
 # Application properties com dados sensíveis
-application-local.properties
-application-dev.properties
-application-prod.properties
-application-secrets.properties
+src/main/resources/application-local.properties
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
+src/main/resources/application-secrets.properties
 
 # Logs do Spring Boot
 logs/
@@ -40,9 +40,9 @@ log/
 spring.log
 
 # Arquivos de configuração sensíveis
-bootstrap-local.yml
-bootstrap-dev.yml
-bootstrap-prod.yml
+src/main/resources/bootstrap-local.yml
+src/main/resources/bootstrap-dev.yml
+src/main/resources/bootstrap-prod.yml
 
 # ===== BANCO DE DADOS =====
 # PostgreSQL
@@ -56,8 +56,8 @@ bootstrap-prod.yml
 *.trace.db
 
 # Flyway
-flyway.conf
-flyway-local.conf
+src/main/resources/flyway.conf
+src/main/resources/flyway-local.conf
 
 # ===== IDEs =====
 # IntelliJ IDEA
@@ -90,7 +90,7 @@ local.properties
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
+src/build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -191,10 +191,10 @@ keys/
 
 # ===== TESTES =====
 # Relatórios de teste
-test-results/
-junit-reports/
-coverage/
-jacoco.exec
+src/test-results/
+src/junit-reports/
+src/coverage/
+src/jacoco.exec
 *.exec
 
 # TestContainers
@@ -223,8 +223,8 @@ docker-compose.local.yml
 # ===== DOCUMENTAÇÃO =====
 # Documentação gerada
 docs/generated/
-api-docs/
-javadoc/
+src/api-docs/
+src/javadoc/
 
 # ===== MONITORAMENTO =====
 # Métricas e monitoring

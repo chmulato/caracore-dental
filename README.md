@@ -26,6 +26,7 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 ### **Tecnologias Utilizadas**
 
 **Backend:**
+
 - Java 17 (OpenJDK LTS)
 - Spring Boot 3.2.6
 - Spring Security 6
@@ -35,6 +36,7 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 - Maven 3.8+
 
 **Frontend:**
+
 - Thymeleaf 3.1+
 - Bootstrap 5.3.0
 - jQuery 3.7.0
@@ -43,6 +45,7 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 - Chart.js
 
 **Deploy:**
+
 - Tomcat Embedded
 - Docker (opcional)
 - Java JAR executável
@@ -59,12 +62,14 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 ### **Instalação**
 
 1. **Clone o repositório:**
+
 ```bash
 git clone https://github.com/caracore/cca.git
 cd cca
 ```
 
 2. **Configure o banco de dados:**
+
 ```sql
 -- Conecte no PostgreSQL como superuser
 CREATE DATABASE cca_db;
@@ -73,6 +78,7 @@ GRANT ALL PRIVILEGES ON DATABASE cca_db TO cca_user;
 ```
 
 3. **Configure as variáveis de ambiente:**
+
 ```bash
 # Linux/Mac
 export DB_HOST=localhost
@@ -92,6 +98,7 @@ set SPRING_PROFILES_ACTIVE=dev
 ```
 
 4. **Execute o projeto:**
+
 ```bash
 # Compilar e executar
 mvn clean spring-boot:run
@@ -102,9 +109,10 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 ```
 
 5. **Acesse a aplicação:**
+
 - **Sistema:** http://localhost:8080
 - **Agendamento Online:** http://localhost:8080/agendar
-- **Login padrão:** admin@caracore.com / admin123
+- **Login padrão:** suporte@caracore.com.br / admin123
 
 ## **Configuração**
 
@@ -176,6 +184,7 @@ src/main/
 ## **Comandos Úteis**
 
 ### **Desenvolvimento**
+
 ```bash
 # Executar em modo desenvolvimento
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
@@ -191,6 +200,7 @@ mvn verify
 ```
 
 ### **Banco de Dados**
+
 ```bash
 # Executar migrations
 mvn flyway:migrate
@@ -206,6 +216,7 @@ mvn flyway:validate
 ```
 
 ### **Build e Deploy**
+
 ```bash
 # Gerar JAR para produção
 mvn clean package -Pprod
@@ -258,7 +269,7 @@ As APIs protegidas requerem autenticação via session ou JWT:
 POST /api/auth/login
 Content-Type: application/json
 {
-  "username": "user@exemplo.com",
+  "username": "suporte@caracore.com.br",
   "password": "senha123"
 }
 
@@ -336,6 +347,7 @@ nohup java -jar /opt/cca/cca-0.0.1-SNAPSHOT.jar > /opt/cca/logs/app.log 2>&1 &
 ```
 
 2. **Reverse Proxy (Nginx):**
+
 ```nginx
 server {
     listen 80;
@@ -423,6 +435,7 @@ GET /actuator/loggers
 ## **Roadmap**
 
 ### **Versão 1.0 (MVP) - Q3 2025**
+
 - [x] Sistema de agendamento básico
 - [x] Gestão de pacientes e profissionais
 - [x] Agendamento online
@@ -430,12 +443,14 @@ GET /actuator/loggers
 - [ ] Relatórios básicos
 
 ### **Versão 1.1 - Q4 2025**
+
 - [ ] Sistema de notificações completo
 - [ ] Integração com WhatsApp
 - [ ] Dashboard avançado
 - [ ] Backup automático
 
 ### **Versão 2.0 - Q1 2026**
+
 - [ ] Aplicativo mobile
 - [ ] Integração com pagamentos (PIX)
 - [ ] Teleconsulta
@@ -446,14 +461,16 @@ GET /actuator/loggers
 ### **Problemas Comuns**
 
 **P: Erro de conexão com banco de dados**
-```
+
+```markdown
 R: Verifique se PostgreSQL está rodando e as credenciais estão corretas:
    - Service: sudo systemctl status postgresql
    - Conexão: psql -h localhost -U cca_user -d cca_db
 ```
 
 **P: Porta 8080 já está em uso**
-```
+
+```markdown
 R: Altere a porta no application.yml ou mate o processo:
    - Verificar: netstat -tlnp | grep 8080
    - Matar: kill -9 <PID>
@@ -461,7 +478,8 @@ R: Altere a porta no application.yml ou mate o processo:
 ```
 
 **P: Erro de memória (OutOfMemoryError)**
-```
+
+```markdown
 R: Aumente a heap da JVM:
    - export JAVA_OPTS="-Xmx2g -Xms1g"
    - Ou: java -Xmx2g -jar app.jar
@@ -475,14 +493,15 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 - **Documentação:** [Wiki do Projeto](https://github.com/caracore/cca/wiki)
 - **Issues:** [GitHub Issues](https://github.com/caracore/cca/issues)
-- **Email:** suporte@caracore.com
-- **Website:** [www.caracore.com](https://www.caracore.com)
+- **Email:** [suporte@caracore.com.br](mailto:suporte@caracore.com.br)
+- **Website:** [www.caracore.com.br](https://www.caracore.com.br)
 
 ---
 
 ## **Equipe**
 
 **Desenvolvedores:**
+
 - **Christian V. Mulato** - Tech Lead & Backend Developer
 - **Guilherme Mulato** - Frontend Developer & UI/UX
 
