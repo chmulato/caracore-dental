@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Novo Agendamento</title>
+</head>
+<body>
+<h1>Novo Agendamento</h1>
+<form action="/agendar" method="post" th:object="${agendamentoForm}">
+    <label>Paciente: <input type="text" th:field="*{paciente}"/></label><br>
+    <label>Dentista: <input type="text" th:field="*{dentista}"/></label><br>
+    <label>Data e Hora: <input type="datetime-local" th:field="*{dataHora}"/></label><br>
+    <button type="submit">Agendar</button>
+</form>
+<a href="/">Voltar</a>
+</body>
+</html>

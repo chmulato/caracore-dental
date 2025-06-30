@@ -8,6 +8,63 @@ Sistema de agendamento para dentistas e consultórios odontológicos desenvolvid
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.0-purple.svg)](https://getbootstrap.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## **MVP em Andamento (Q3 2025)**
+
+O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta com as seguintes funcionalidades principais:
+
+- [x] Cadastro e autenticação de usuários (Admin, Dentista, Recepcionista)
+- [x] Cadastro de pacientes
+- [x] Cadastro de profissionais
+- [x] Agendamento de consultas (com interface web)
+- [x] Visualização de agenda por dia/semana/mês
+- [x] Edição e cancelamento de agendamentos
+- [x] Upload de imagens odontológicas no prontuário
+- [x] Relatórios básicos de agendamentos
+- [x] Notificações por email (básico)
+- [x] Interface pública para agendamento online
+- [x] Controle de acesso por perfil
+- [x] LGPD: consentimento e política de privacidade
+
+Funcionalidades previstas para o MVP:
+
+- [ ] Prontuário digital completo
+- [ ] Relatórios financeiros
+- [ ] Dashboard de produtividade
+- [ ] Integração com WhatsApp (notificações)
+- [ ] Backup automático
+
+---
+
+## **Como Executar o MVP**
+
+1. Suba o banco de dados PostgreSQL com Docker:
+
+```bash
+docker-compose up -d
+```
+
+2. Compile e execute a aplicação:
+
+```bash
+mvn clean spring-boot:run
+```
+
+3. Acesse o sistema em: http://localhost:8080
+
+---
+
+## **Roadmap Resumido do MVP**
+
+- [x] Sistema de agendamento básico
+- [x] Gestão de pacientes e profissionais
+- [x] Agendamento online
+- [ ] Prontuário digital
+- [ ] Relatórios básicos
+
+---
+
+Para detalhes completos, consulte as seções abaixo ou a [Wiki do Projeto](https://github.com/caracore/cca/wiki).
+
 ## **Sobre o Projeto**
 
 O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agendamentos em consultórios odontológicos, desenvolvida pela **Cara Core Informática**. O sistema oferece uma interface moderna e intuitiva para profissionais de saúde, pacientes e administradores.

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agenda de Consultório</title>
+</head>
+<body>
+<h1>Consultas Agendadas</h1>
+<table>
+    <tr><th>Paciente</th><th>Dentista</th><th>Data/Hora</th></tr>
+    <tr th:each="ag : ${agendamentos}">
+        <td th:text="${ag.paciente}"></td>
+        <td th:text="${ag.dentista}"></td>
+        <td th:text="${#temporals.format(ag.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+    </tr>
+</table>
+<a href="/novo">Novo Agendamento</a>
+</body>
+</html>

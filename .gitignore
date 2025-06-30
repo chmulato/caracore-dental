@@ -9,21 +9,10 @@
 *.jar
 *.war
 *.ear
-*.nar
-hs_err_pid*
-replay_pid*
 
 # ===== MAVEN =====
-src/target/
-src/pom.xml.tag
-src/pom.xml.releaseBackup
-src/pom.xml.versionsBackup
-src/pom.xml.next
-src/release.properties
-src/dependency-reduced-pom.xml
-src/buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+/target/
+!.mvn/wrapper/maven-wrapper.jar
 
 # ===== SPRING BOOT =====
 # Application properties com dados sensíveis
