@@ -16,5 +16,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  security:
+    debug: true
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.caracore.cca: DEBUG
+    org.hibernate.SQL: DEBUG
 spring.sql.init.mode: never
 # Para evitar execução dupla de scripts em ambiente de teste, descomente a linha acima se necessário.
