@@ -53,6 +53,45 @@ mvn clean spring-boot:run
 
 ---
 
+## **Como Subir a Aplicação (Desenvolvimento e Produção)**
+
+### **1. Subir o banco de dados PostgreSQL com Docker**
+
+```bash
+docker-compose up -d
+```
+
+### **2. Compilar e executar a aplicação em modo desenvolvimento**
+
+```bash
+mvn clean spring-boot:run
+```
+
+Ou, para rodar com um profile específico (ex: dev):
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### **3. Gerar o JAR e executar em produção**
+
+```bash
+mvn clean package -Pprod
+java -jar target/cca-0.0.1-SNAPSHOT.jar
+```
+
+### **4. Acessar a aplicação**
+
+- **Sistema:** http://localhost:8080
+- **Agendamento Online:** http://localhost:8080/agendar
+- **Login padrão:** suporte@caracore.com.br / admin123
+
+> **Dica:**
+> - Para rodar os testes: `mvn test`
+> - Para rodar com Docker: veja a seção "Deploy com Docker" abaixo.
+
+---
+
 ## **Roadmap Resumido do MVP**
 
 - [x] Sistema de agendamento básico

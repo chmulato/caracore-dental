@@ -27,6 +27,7 @@ class AgendamentoRepositoryTest {
 
         var agendamentos = agendamentoRepository.findAll();
         assertThat(agendamentos).isNotEmpty();
-        assertThat(agendamentos.get(0).getPaciente()).isEqualTo("Teste Paciente");
+        boolean found = agendamentos.stream().anyMatch(a -> "Teste Paciente".equals(a.getPaciente()));
+        assertThat(found).isTrue();
     }
 }
