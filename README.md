@@ -498,10 +498,33 @@ GET /actuator/loggers
 ### **Autenticação e Autorização**
 
 - **Spring Security** com formulário de login
-- **BCrypt** para hash de senhas
+- **BCrypt** para hash de senhas (fator de custo 10)
+- **UserDetailsService** personalizado para autenticação contra banco de dados
 - **Session-based** authentication
 - **CSRF** protection habilitado
 - **Roles:** ADMIN, DENTIST, RECEPTIONIST, PATIENT
+- **Armazenamento seguro de senha:** Hash BCrypt com salt único por usuário
+- **Utilitários:** BCryptUtil e VerificarHash para gerenciamento de senhas
+- **Migrations:** Criação automatizada de tabela de usuários via Flyway
+
+### **Ferramentas de Segurança**
+
+- **BCryptUtil:** Ferramenta Java para geração de hashes seguros
+
+```bash
+# Gerar um hash BCrypt para uma senha
+mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.BCryptUtil" -Dexec.args="minhasenha"
+```
+
+- **VerificarHash:** Utilitário para validação de hashes
+
+```bash
+# Verificar se uma senha corresponde a um hash
+mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.VerificarHash" -Dexec.args="minhasenha hash_bcrypt"
+```
+
+- **Teste Unitário:** Verificação automática da geração e validação de hashes BCrypt
+- **Prefixos BCrypt:** Suporte a formatos `$2a$`, `$2b$` e `$2y$`
 
 ### **LGPD Compliance**
 
@@ -606,4 +629,4 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ---
 
-**Última atualização:** 29 de junho de 2025
+**Última atualização:** 30 de junho de 2025
