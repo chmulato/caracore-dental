@@ -104,10 +104,11 @@
             <version>3.7.0</version>
         </dependency>
         
+        <!-- Bootstrap Icons via WebJar npm -->
         <dependency>
-            <groupId>org.webjars</groupId>
+            <groupId>org.webjars.npm</groupId>
             <artifactId>bootstrap-icons</artifactId>
-            <version>1.10.5</version>
+            <version>1.13.1</version>
         </dependency>
         
         <dependency>
