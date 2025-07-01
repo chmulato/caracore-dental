@@ -785,7 +785,10 @@ mvn spring-boot:run
 ```
 
 Acesse a aplicação em [http://localhost:8080](http://localhost:8080)  
-Login padrão: `suporte@caracore.com.br` / `admin123`
+Login padrão: 
+- Email: `suporte@caracore.com.br`
+- Senha: `admin123`
+- Perfil: Administrador
 
 Para verificar os logs e confirmar que a aplicação está rodando corretamente:
 ```bash
@@ -803,4 +806,94 @@ Get-Content -Path .\logs\user-activity.log -Wait
 - **25/06/2025**: Implementação de funcionalidades de agendamento e autenticação
 - **20/06/2025**: Configuração inicial do projeto e estrutura de banco de dados
 
----
+## **Inicialização e Dados Padrão**
+
+### **Usuário Administrador Inicial**
+
+O sistema cria automaticamente um usuário administrador no primeiro acesso:
+
+```markdown
+Email: suporte@caracore.com.br
+Senha: admin123
+Perfil: ADMIN
+```
+
+Este usuário é criado de duas formas redundantes para garantir sua existência:
+
+1. **Migrations Flyway**: No script `V3__criar_tabela_usuario.sql` através de um INSERT com ON CONFLICT para evitar duplicidade
+2. **InitService**: Um serviço Java que verifica na inicialização se o usuário existe e o cria se necessário
+
+### **Validação da Senha Criptografada**
+
+A senha padrão "admin123" é armazenada como hash BCrypt:
+
+```text
+$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy
+```
+
+Para validar que o hash corresponde corretamente à senha, você pode:
+
+1. **Executar o utilitário VerificarHash**:
+
+   ```bash
+   mvn test -Dtest=VerificarHashTest
+   ```
+
+   O teste verifica se a senha "admin123" corresponde ao hash armazenado.
+
+2. **Verificar manualmente via consulta SQL** (após a aplicação em execução):
+
+   ```sql
+   SELECT email, senha FROM usuario WHERE email='suporte@caracore.com.br';
+   ```
+
+   O hash retornado deve ser: `$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy`
+
+3. **Validar com o BCryptPasswordEncoder**:
+
+   ```java
+   BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+   boolean corresponde = encoder.matches("admin123", "$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy");
+   // Deve retornar true
+   ```
+
+### **Como modificar o usuário padrão**
+
+Para alterar as credenciais padrão, você precisará editar:
+
+```bash
+# 1. O arquivo de migração Flyway
+src/main/resources/db/migration/V3__criar_tabela_usuario.sql
+
+# 2. A classe InitService 
+src/main/java/com/caracore/cca/service/InitService.java
+```
+
+Para gerar um novo hash BCrypt para a senha:
+
+```bash
+# Usando a ferramenta BCryptUtil do projeto
+mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.BCryptUtil" -Dexec.args="minhaNovasenha"
+
+# Ou no console do Spring Boot
+BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+encoder.encode("minhaNovasenha");
+```
+
+> **Importante:** Por segurança, é altamente recomendado mudar a senha do usuário administrador após o primeiro acesso em produção.
+
+### **Verificação da Integridade da Senha**
+
+Para verificar se a integridade da senha está mantida após a criação do usuário inicial, os testes unitários na classe `VerificarHashTest` garantem que o hash BCrypt `$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy` corresponde corretamente à senha `admin123`.
+
+Os testes verificam:
+
+1. A correspondência entre a senha e o hash (teste `deveVerificarHashComSenhaCorrespondente`)
+2. A rejeição de senhas incorretas (teste `deveVerificarHashComSenhaIncorreta`)
+3. O uso dos valores padrão para verificação (teste `deveUsarValoresPadraoQuandoArgumentosNaoFornecidos`)
+
+Estes testes são executados automaticamente durante o ciclo de build e podem ser executados manualmente com:
+
+```bash
+mvn test -Dtest=VerificarHashTest
+```
