@@ -45,6 +45,11 @@
                             <i class="bi bi-gear me-1"></i> Administração
                         </a>
                     </li>
+                    <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a class="nav-link" th:classappend="${activeLink == 'usuarios'} ? 'active' : ''" href="/usuarios">
+                            <i class="bi bi-person-gear me-1"></i> Usuários
+                        </a>
+                    </li>
                 </ul>
                 <div class="navbar-nav align-items-center">
                     <span class="nav-link text-light me-3" sec:authorize="isAuthenticated()">

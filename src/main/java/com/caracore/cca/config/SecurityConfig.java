@@ -57,6 +57,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/agendar", "/api/public/**").permitAll()
                 // Páginas administrativas
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Gerenciamento de usuários
+                .requestMatchers("/usuarios/**").hasRole("ADMIN")
                 // Páginas do dentista
                 .requestMatchers("/dentista/**").hasAnyRole("ADMIN", "DENTIST")
                 // Páginas da recepção

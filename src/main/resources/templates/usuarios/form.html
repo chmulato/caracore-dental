@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${usuario.id == null ? 'Novo Usuário' : 'Editar Usuário'} + ' - Cara Core Agendamento'"></title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link active" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h4 class="mb-0" th:text="${usuario.id == null ? 'Novo Usuário' : 'Editar Usuário'}"></h4>
+            </div>
+            <div class="card-body">
+                <!-- Mensagens de validação -->
+                <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}" role="alert">
+                    <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i> Há erros no formulário:</h5>
+                    <ul>
+                        <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                    </ul>
+                </div>
+                
+                <!-- Formulário -->
+                <form th:action="${usuario.id == null ? @{/usuarios/salvar} : @{/usuarios/{id}/atualizar(id=${usuario.id})}}" 
+                      th:object="${usuario}" method="post">
+                    
+                    <input type="hidden" th:field="*{id}" th:if="${usuario.id != null}">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nome" class="form-label">Nome completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nome" th:field="*{nome}" required
+                                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" required
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="senha" class="form-label">
+                                Senha <span th:if="${usuario.id == null}" class="text-danger">*</span>
+                                <small class="text-muted" th:if="${usuario.id != null}">(Deixe em branco para manter a senha atual)</small>
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="senha" name="senha" 
+                                       th:required="${usuario.id == null}"
+                                       th:classappend="${#fields.hasErrors('senha')} ? 'is-invalid' : ''">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar/ocultar senha">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></div>
+                            </div>
+                            <div class="form-text">A senha deve ter no mínimo 6 caracteres.</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="role" class="form-label">Perfil de acesso <span class="text-danger">*</span></label>
+                            <select class="form-select" id="role" th:field="*{role}" required
+                                    th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">
+                                <option value="">Selecione um perfil</option>
+                                <option value="ROLE_ADMIN">Administrador</option>
+                                <option value="ROLE_DENTIST">Dentista</option>
+                                <option value="ROLE_RECEPTIONIST">Recepcionista</option>
+                                <option value="ROLE_PATIENT">Paciente</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" th:if="${usuario.id != null}">
+                        <div class="col-12 mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="resetarSenha" name="resetarSenha">
+                                <label class="form-check-label" for="resetarSenha">
+                                    Redefinir senha para o padrão do perfil
+                                </label>
+                                <div class="form-text">Ao marcar esta opção, a senha será redefinida para "admin123" (administrador) ou "senha123" (outros perfis).</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Salvar Usuário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        // Script para mostrar/ocultar senha
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const senhaInput = document.getElementById('senha');
+            const icon = this.querySelector('i');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    </script>
+</body>
+</html>

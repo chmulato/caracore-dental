@@ -1,6 +1,7 @@
 package com.caracore.cca.controller;
 
 import com.caracore.cca.config.TestConfig;
+import com.caracore.cca.config.SecurityTestConfig;
 import com.caracore.cca.util.UserActivityLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +21,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,9 +46,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Testes de integração para o controlador de acesso negado.
  * Foca em testar a integração com o UserActivityLogger para diferentes
  * perfis de usuário e em diferentes cenários de acesso negado.
+ * 
+ * Níveis de acesso testados:
+ * - ADMIN: deve gerar log quando tenta acessar recursos não autorizados
+ * - DENTIST: deve gerar log quando tenta acessar recursos não autorizados
+ * - RECEPTIONIST: deve gerar log quando tenta acessar recursos não autorizados
+ * - PATIENT: deve gerar log quando tenta acessar recursos não autorizados
  */
 @WebMvcTest(AcessoNegadoController.class)
-@Import(TestConfig.class)
+@Import({TestConfig.class, SecurityTestConfig.class})
 public class AcessoNegadoControllerIntegracaoTest {
 
     @Autowired
@@ -72,6 +80,8 @@ public class AcessoNegadoControllerIntegracaoTest {
      * Teste parametrizado para verificar o comportamento do AcessoNegadoController
      * com diferentes perfis de usuário
      */
+    // --- TESTES DE LOG DE AUDITORIA PARA DIFERENTES PERFIS ---
+    
     @ParameterizedTest
     @ValueSource(strings = {"ROLE_ADMIN", "ROLE_DENTIST", "ROLE_RECEPTIONIST", "ROLE_PATIENT"})
     @DisplayName("Deve registrar log de auditoria para diferentes perfis de usuário")
@@ -88,17 +98,9 @@ public class AcessoNegadoControllerIntegracaoTest {
                             role.equals("ROLE_RECEPTIONIST") ? "/dentista/prontuarios" :
                             "/admin/usuarios";
         
+        // Usamos WithMockUser para simular autenticação nos testes
         mockMvc.perform(get("/acesso-negado")
-                .with(request -> {
-                    request.setUserPrincipal(
-                            new UsernamePasswordAuthenticationToken(
-                                username, 
-                                "password", 
-                                Collections.singletonList(new SimpleGrantedAuthority(role))
-                            )
-                    );
-                    return request;
-                })
+                .with(SecurityMockMvcRequestPostProcessors.user(username).roles(role.substring(5)))
                 .requestAttr(RequestDispatcher.ERROR_REQUEST_URI, urlRestrita)
                 .requestAttr(RequestDispatcher.ERROR_STATUS_CODE, 403))
                 .andExpect(status().isOk())
@@ -112,6 +114,8 @@ public class AcessoNegadoControllerIntegracaoTest {
             eq("Acesso negado")
         );
     }
+    
+    // --- TESTES DE MÚLTIPLAS TENTATIVAS DE ACESSO ---
     
     @Test
     @DisplayName("Deve testar cenário onde existem múltiplas tentativas de acesso para o mesmo usuário")
@@ -153,6 +157,8 @@ public class AcessoNegadoControllerIntegracaoTest {
                     "O log deveria conter a URL: " + url);
         }
     }
+    
+    // --- TESTES DIRETOS COM SECURITY CONTEXT MANUAL ---
     
     @Test
     @DisplayName("Deve testar acesso direto ao AcessoNegadoController com SecurityContext manual")

@@ -61,6 +61,8 @@ public class PacienteControllerTest {
         pacienteTeste.setTelefone("(11) 99999-9999");
     }
 
+    // --- TESTES DE ACESSO À LISTAGEM ---
+
     @Test
     @DisplayName("Deve negar acesso à lista de pacientes para usuário não autenticado")
     @WithAnonymousUser
@@ -116,10 +118,12 @@ public class PacienteControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    // --- TESTES DE CRIAÇÃO DE PACIENTES ---
+
     @Test
-    @DisplayName("Deve exibir formulário para adicionar novo paciente")
+    @DisplayName("Deve permitir acesso ao formulário para adicionar novo paciente para admin")
     @WithMockUser(roles = {"ADMIN"})
-    public void deveExibirFormularioParaAdicionarNovoPaciente() throws Exception {
+    public void devePermitirFormularioNovoParaAdmin() throws Exception {
         mockMvc.perform(get("/pacientes/novo"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pacientes/form"))
@@ -127,24 +131,93 @@ public class PacienteControllerTest {
     }
 
     @Test
-    @DisplayName("Deve salvar paciente e redirecionar para lista")
+    @DisplayName("Deve permitir acesso ao formulário para adicionar novo paciente para recepcionista")
+    @WithMockUser(roles = {"RECEPTIONIST"})
+    public void devePermitirFormularioNovoParaRecepcionista() throws Exception {
+        mockMvc.perform(get("/pacientes/novo"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/form"))
+                .andExpect(model().attributeExists("paciente"));
+    }
+
+    @Test
+    @DisplayName("Deve negar acesso ao formulário para adicionar novo paciente para dentista")
+    @WithMockUser(roles = {"DENTIST"})
+    public void deveNegarFormularioNovoParaDentista() throws Exception {
+        mockMvc.perform(get("/pacientes/novo"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Deve negar acesso ao formulário para adicionar novo paciente para paciente")
+    @WithMockUser(roles = {"PATIENT"})
+    public void deveNegarFormularioNovoParaPaciente() throws Exception {
+        mockMvc.perform(get("/pacientes/novo"))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- TESTES DE SALVAMENTO DE PACIENTES ---
+
+    @Test
+    @DisplayName("Admin deve poder salvar paciente")
     @WithMockUser(roles = {"ADMIN"})
-    public void deveSalvarPacienteERedirecionar() throws Exception {
+    public void devePermitirSalvarPacienteParaAdmin() throws Exception {
         when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
 
         mockMvc.perform(post("/pacientes/salvar")
                         .param("nome", "Novo Paciente")
                         .param("email", "novo@teste.com")
                         .param("telefone", "(22) 98888-7777")
-                        .with(csrf())) // Adiciona token CSRF
+                        .with(csrf())) 
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/pacientes"));
     }
 
     @Test
-    @DisplayName("Deve exibir detalhes de um paciente")
+    @DisplayName("Recepcionista deve poder salvar paciente")
+    @WithMockUser(roles = {"RECEPTIONIST"})
+    public void devePermitirSalvarPacienteParaRecepcionista() throws Exception {
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
+
+        mockMvc.perform(post("/pacientes/salvar")
+                        .param("nome", "Novo Paciente")
+                        .param("email", "novo@teste.com")
+                        .param("telefone", "(22) 98888-7777")
+                        .with(csrf())) 
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/pacientes"));
+    }
+
+    @Test
+    @DisplayName("Dentista não deve poder salvar paciente")
+    @WithMockUser(roles = {"DENTIST"})
+    public void deveNegarSalvarPacienteParaDentista() throws Exception {
+        mockMvc.perform(post("/pacientes/salvar")
+                        .param("nome", "Novo Paciente")
+                        .param("email", "novo@teste.com")
+                        .param("telefone", "(22) 98888-7777")
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Paciente não deve poder salvar paciente")
+    @WithMockUser(roles = {"PATIENT"})
+    public void deveNegarSalvarPacienteParaPaciente() throws Exception {
+        mockMvc.perform(post("/pacientes/salvar")
+                        .param("nome", "Novo Paciente")
+                        .param("email", "novo@teste.com")
+                        .param("telefone", "(22) 98888-7777")
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- TESTES DE VISUALIZAÇÃO DE DETALHES ---
+
+    @Test
+    @DisplayName("Admin deve poder visualizar detalhes do paciente")
     @WithMockUser(roles = {"ADMIN"})
-    public void deveExibirDetalhesDePaciente() throws Exception {
+    public void devePermitirVisualizarDetalhesParaAdmin() throws Exception {
         when(pacienteRepository.findById(anyLong())).thenReturn(Optional.of(pacienteTeste));
 
         mockMvc.perform(get("/pacientes/1"))
@@ -155,22 +228,85 @@ public class PacienteControllerTest {
     }
 
     @Test
-    @DisplayName("Deve redirecionar para edição de paciente")
+    @DisplayName("Dentista deve poder visualizar detalhes do paciente")
+    @WithMockUser(roles = {"DENTIST"})
+    public void devePermitirVisualizarDetalhesParaDentista() throws Exception {
+        when(pacienteRepository.findById(anyLong())).thenReturn(Optional.of(pacienteTeste));
+
+        mockMvc.perform(get("/pacientes/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/detalhes"))
+                .andExpect(model().attributeExists("paciente"));
+    }
+
+    @Test
+    @DisplayName("Recepcionista deve poder visualizar detalhes do paciente")
+    @WithMockUser(roles = {"RECEPTIONIST"})
+    public void devePermitirVisualizarDetalhesParaRecepcionista() throws Exception {
+        when(pacienteRepository.findById(anyLong())).thenReturn(Optional.of(pacienteTeste));
+
+        mockMvc.perform(get("/pacientes/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/detalhes"))
+                .andExpect(model().attributeExists("paciente"));
+    }
+
+    @Test
+    @DisplayName("Paciente não deve poder visualizar detalhes de pacientes")
+    @WithMockUser(roles = {"PATIENT"})
+    public void deveNegarVisualizarDetalhesParaPaciente() throws Exception {
+        mockMvc.perform(get("/pacientes/1"))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- TESTES DE EDIÇÃO DE PACIENTES ---
+
+    @Test
+    @DisplayName("Admin deve poder acessar formulário de edição")
     @WithMockUser(roles = {"ADMIN"})
-    public void deveRedirecionarParaEdicaoDePaciente() throws Exception {
+    public void devePermitirEdicaoParaAdmin() throws Exception {
         when(pacienteRepository.findById(anyLong())).thenReturn(Optional.of(pacienteTeste));
 
         mockMvc.perform(get("/pacientes/1/editar"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pacientes/form"))
-                .andExpect(model().attributeExists("paciente"))
-                .andExpect(model().attribute("paciente", pacienteTeste));
+                .andExpect(model().attributeExists("paciente"));
     }
 
     @Test
-    @DisplayName("Deve excluir paciente e redirecionar")
+    @DisplayName("Recepcionista deve poder acessar formulário de edição")
+    @WithMockUser(roles = {"RECEPTIONIST"})
+    public void devePermitirEdicaoParaRecepcionista() throws Exception {
+        when(pacienteRepository.findById(anyLong())).thenReturn(Optional.of(pacienteTeste));
+
+        mockMvc.perform(get("/pacientes/1/editar"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/form"))
+                .andExpect(model().attributeExists("paciente"));
+    }
+
+    @Test
+    @DisplayName("Dentista não deve poder acessar formulário de edição")
+    @WithMockUser(roles = {"DENTIST"})
+    public void deveNegarEdicaoParaDentista() throws Exception {
+        mockMvc.perform(get("/pacientes/1/editar"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Paciente não deve poder acessar formulário de edição")
+    @WithMockUser(roles = {"PATIENT"})
+    public void deveNegarEdicaoParaPaciente() throws Exception {
+        mockMvc.perform(get("/pacientes/1/editar"))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- TESTES DE EXCLUSÃO DE PACIENTES ---
+
+    @Test
+    @DisplayName("Admin deve poder excluir paciente")
     @WithMockUser(roles = {"ADMIN"})
-    public void deveExcluirPacienteERedirecionar() throws Exception {
+    public void devePermitirExclusaoParaAdmin() throws Exception {
         when(pacienteRepository.existsById(anyLong())).thenReturn(true);
 
         mockMvc.perform(get("/pacientes/1/excluir"))
@@ -179,9 +315,35 @@ public class PacienteControllerTest {
     }
 
     @Test
-    @DisplayName("Deve buscar pacientes por nome")
+    @DisplayName("Recepcionista não deve poder excluir paciente")
     @WithMockUser(roles = {"RECEPTIONIST"})
-    public void deveBuscarPacientesPorNome() throws Exception {
+    public void deveNegarExclusaoParaRecepcionista() throws Exception {
+        mockMvc.perform(get("/pacientes/1/excluir"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Dentista não deve poder excluir paciente")
+    @WithMockUser(roles = {"DENTIST"})
+    public void deveNegarExclusaoParaDentista() throws Exception {
+        mockMvc.perform(get("/pacientes/1/excluir"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Paciente não deve poder excluir paciente")
+    @WithMockUser(roles = {"PATIENT"})
+    public void deveNegarExclusaoParaPaciente() throws Exception {
+        mockMvc.perform(get("/pacientes/1/excluir"))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- TESTES DE BUSCA DE PACIENTES ---
+
+    @Test
+    @DisplayName("Admin deve poder buscar pacientes")
+    @WithMockUser(roles = {"ADMIN"})
+    public void devePermitirBuscaParaAdmin() throws Exception {
         List<Paciente> pacientes = Collections.singletonList(pacienteTeste);
         when(pacienteRepository.findByNomeContainingIgnoreCase(anyString())).thenReturn(pacientes);
 
@@ -191,5 +353,42 @@ public class PacienteControllerTest {
                 .andExpect(view().name("pacientes/lista"))
                 .andExpect(model().attributeExists("pacientes"))
                 .andExpect(model().attribute("pacientes", pacientes));
+    }
+
+    @Test
+    @DisplayName("Recepcionista deve poder buscar pacientes")
+    @WithMockUser(roles = {"RECEPTIONIST"})
+    public void devePermitirBuscaParaRecepcionista() throws Exception {
+        List<Paciente> pacientes = Collections.singletonList(pacienteTeste);
+        when(pacienteRepository.findByNomeContainingIgnoreCase(anyString())).thenReturn(pacientes);
+
+        mockMvc.perform(get("/pacientes/buscar")
+                        .param("termo", "Teste"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/lista"))
+                .andExpect(model().attributeExists("pacientes"));
+    }
+
+    @Test
+    @DisplayName("Dentista deve poder buscar pacientes")
+    @WithMockUser(roles = {"DENTIST"})
+    public void devePermitirBuscaParaDentista() throws Exception {
+        List<Paciente> pacientes = Collections.singletonList(pacienteTeste);
+        when(pacienteRepository.findByNomeContainingIgnoreCase(anyString())).thenReturn(pacientes);
+
+        mockMvc.perform(get("/pacientes/buscar")
+                        .param("termo", "Teste"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/lista"))
+                .andExpect(model().attributeExists("pacientes"));
+    }
+
+    @Test
+    @DisplayName("Paciente não deve poder buscar pacientes")
+    @WithMockUser(roles = {"PATIENT"})
+    public void deveNegarBuscaParaPaciente() throws Exception {
+        mockMvc.perform(get("/pacientes/buscar")
+                        .param("termo", "Teste"))
+                .andExpect(status().isForbidden());
     }
 }

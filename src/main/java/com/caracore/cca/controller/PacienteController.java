@@ -14,6 +14,11 @@ import java.util.Optional;
 
 /**
  * Controlador responsável pelas operações relacionadas a pacientes.
+ * 
+ * Níveis de acesso:
+ * - ADMIN: acesso completo (visualizar, criar, editar e excluir pacientes)
+ * - RECEPTIONIST: pode visualizar, criar e editar pacientes, mas não excluir
+ * - DENTIST: acesso somente leitura (visualizar lista e detalhes de pacientes)
  */
 @Controller
 @RequestMapping("/pacientes")
@@ -42,7 +47,8 @@ public class PacienteController {
 
     /**
      * Exibe o formulário para adicionar um novo paciente.
-     * Acessível para administradores, dentistas e recepcionistas.
+     * Acessível apenas para administradores e recepcionistas.
+     * Dentistas não têm permissão para criar novos pacientes no sistema.
      */
     @GetMapping("/novo")
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
@@ -53,8 +59,9 @@ public class PacienteController {
     }
 
     /**
-     * Salva um novo paciente no banco de dados.
-     * Acessível para administradores, dentistas e recepcionistas.
+     * Salva um novo paciente no banco de dados ou atualiza um existente.
+     * Acessível apenas para administradores e recepcionistas.
+     * Dentistas não têm permissão para criar ou modificar dados de pacientes.
      */
     @PostMapping("/salvar")
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
@@ -66,7 +73,9 @@ public class PacienteController {
 
     /**
      * Exibe os detalhes de um paciente específico.
-     * Acessível para administradores, dentistas e recepcionistas.
+     * Acessível para todos os perfis (administradores, dentistas e recepcionistas).
+     * Esta é uma operação de leitura que permite que todos os usuários autenticados 
+     * visualizem informações detalhadas dos pacientes.
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DENTIST', 'RECEPTIONIST')")
@@ -85,7 +94,8 @@ public class PacienteController {
 
     /**
      * Exibe o formulário para edição de um paciente existente.
-     * Acessível para administradores, dentistas e recepcionistas.
+     * Acessível apenas para administradores e recepcionistas.
+     * Dentistas podem visualizar os detalhes do paciente, mas não podem editar suas informações.
      */
     @GetMapping("/{id}/editar")
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
@@ -104,7 +114,8 @@ public class PacienteController {
 
     /**
      * Exclui um paciente do sistema.
-     * Acessível apenas para administradores.
+     * Operação crítica acessível APENAS para administradores.
+     * Receptionistas e dentistas não têm permissão para excluir pacientes.
      */
     @GetMapping("/{id}/excluir")
     @PreAuthorize("hasRole('ADMIN')")

@@ -16,8 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Controlador administrativo para gerenciar usuários padrões do sistema
- * Estes endpoints devem ser acessados apenas por administradores
+ * Controlador administrativo para gerenciar usuários padrões do sistema.
+ * Todos os endpoints deste controlador são restritos apenas a administradores.
+ * 
+ * Níveis de acesso:
+ * - ADMIN: acesso completo a todas as funcionalidades administrativas do sistema
+ * - Outros perfis (DENTIST, RECEPTIONIST, PATIENT): sem acesso a nenhuma funcionalidade administrativa
+ * 
+ * A anotação @PreAuthorize no nível da classe restringe automaticamente todos os endpoints
+ * para permitir acesso apenas por usuários com o papel ADMIN.
  */
 @RestController
 @RequestMapping("/admin/sistema")

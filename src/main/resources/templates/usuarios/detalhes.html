@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Usuário - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link active" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Detalhes do Usuário</h4>
+                <div>
+                    <a th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" 
+                       class="btn btn-sm btn-primary me-1">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#resetSenhaModal">
+                        <i class="bi bi-key"></i> Redefinir Senha
+                    </button>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Informações Básicas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <div class="avatar-circle mx-auto" style="width: 100px; height: 100px; font-size: 2rem;">
+                                        <span th:text="${#strings.substring(usuario.nome,0,1).toUpperCase()}"></span>
+                                    </div>
+                                    <h4 class="mt-3" th:text="${usuario.nome}">Nome do Usuário</h4>
+                                    <span class="badge" th:classappend="${
+                                        usuario.role == 'ROLE_ADMIN' ? 'bg-danger' : 
+                                        usuario.role == 'ROLE_DENTIST' ? 'bg-primary' : 
+                                        usuario.role == 'ROLE_RECEPTIONIST' ? 'bg-success' : 
+                                        'bg-secondary'
+                                    }" th:text="${
+                                        usuario.role == 'ROLE_ADMIN' ? 'Administrador' : 
+                                        usuario.role == 'ROLE_DENTIST' ? 'Dentista' : 
+                                        usuario.role == 'ROLE_RECEPTIONIST' ? 'Recepcionista' : 
+                                        usuario.role == 'ROLE_PATIENT' ? 'Paciente' : 
+                                        'Outro'
+                                    }">
+                                        Perfil
+                                    </span>
+                                </div>
+                                
+                                <dl class="row">
+                                    <dt class="col-sm-3">ID:</dt>
+                                    <dd class="col-sm-9" th:text="${usuario.id}"></dd>
+                                    
+                                    <dt class="col-sm-3">Email:</dt>
+                                    <dd class="col-sm-9">
+                                        <a th:href="'mailto:' + ${usuario.email}" th:text="${usuario.email}"></a>
+                                    </dd>
+                                </dl>
+                                
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <span th:if="${usuarioPadrao}">
+                                        Este é um usuário padrão do sistema. Sua senha pode ser redefinida para o valor padrão a qualquer momento.
+                                    </span>
+                                    <span th:unless="${usuarioPadrao}">
+                                        Este é um usuário personalizado. A redefinição de senha enviará instruções para o email cadastrado.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Atividades Recentes</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">O histórico de atividades deste usuário será exibido aqui em uma versão futura.</p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item text-muted">Nenhuma atividade registrada.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Permissões</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-3">De acordo com o perfil, este usuário pode:</p>
+                                
+                                <div th:if="${usuario.role == 'ROLE_ADMIN'}">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Gerenciar todos os usuários</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Acessar todas as funcionalidades</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Configurar o sistema</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Ver relatórios e estatísticas</li>
+                                    </ul>
+                                </div>
+                                <div th:if="${usuario.role == 'ROLE_DENTIST'}">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Ver seus agendamentos</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Gerenciar prontuários</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Visualizar pacientes</li>
+                                        <li><i class="bi bi-x-circle-fill text-danger me-2"></i> Gerenciar usuários</li>
+                                    </ul>
+                                </div>
+                                <div th:if="${usuario.role == 'ROLE_RECEPTIONIST'}">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Gerenciar agendamentos</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Cadastrar pacientes</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Ver agenda dos dentistas</li>
+                                        <li><i class="bi bi-x-circle-fill text-danger me-2"></i> Gerenciar usuários</li>
+                                    </ul>
+                                </div>
+                                <div th:if="${usuario.role == 'ROLE_PATIENT'}">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Ver seus agendamentos</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Atualizar suas informações</li>
+                                        <li><i class="bi bi-x-circle-fill text-danger me-2"></i> Ver informações de outros pacientes</li>
+                                        <li><i class="bi bi-x-circle-fill text-danger me-2"></i> Acessar áreas administrativas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-start mt-3">
+                    <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmação para Reset de Senha -->
+    <div class="modal fade" id="resetSenhaModal" tabindex="-1" aria-labelledby="resetSenhaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetSenhaModalLabel">Confirmar Redefinição de Senha</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você está prestes a redefinir a senha do usuário <strong th:text="${usuario.nome}"></strong>.</p>
+                    <p>Tem certeza que deseja continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="@{/admin/sistema/resetar-senha/{email}(email=${usuario.email})}" method="post">
+                        <button type="submit" class="btn btn-warning">Redefinir Senha</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmação para Exclusão -->
+    <div class="modal fade" id="excluirModal" tabindex="-1" aria-labelledby="excluirModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excluirModalLabel">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você está prestes a excluir o usuário <strong th:text="${usuario.nome}"></strong>.</p>
+                    <p>Esta ação não pode ser desfeita. Tem certeza que deseja continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="@{/usuarios/{id}/excluir(id=${usuario.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Excluir Permanentemente</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

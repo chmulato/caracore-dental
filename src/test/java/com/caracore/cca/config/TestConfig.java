@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -35,5 +36,14 @@ public class TestConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
     
-    // Removed HandlerMappingIntrospector bean to avoid conflicts with Spring Boot auto-configuration
+    /**
+     * Fornece uma implementação de AccessDeniedHandler para testes
+     * Em vez de usar um mock, utilizamos a implementação real
+     * para garantir que o comportamento de redirecionamento funcione corretamente
+     */
+    @Bean
+    @Primary
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
 }

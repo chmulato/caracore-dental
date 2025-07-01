@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Usuários - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link active" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Gerenciamento de Usuários</h4>
+                <div>
+                    <!-- Formulário de busca -->
+                    <form th:action="@{/usuarios/buscar}" method="get" class="d-inline-flex me-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="termo" placeholder="Buscar usuário..." 
+                                   th:value="${termoBusca}">
+                            <button class="btn btn-outline-primary" type="submit" title="Buscar usuários">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                                <span class="visually-hidden">Buscar</span>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Botão para adicionar novo usuário (apenas admin) -->
+                    <a th:href="@{/usuarios/novo}" class="btn btn-primary" 
+                       sec:authorize="hasRole('ADMIN')">
+                        <i class="bi bi-person-plus"></i> Novo Usuário
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Mensagens -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.sucesso}">
+                    <i class="bi bi-check-circle me-2"></i> Operação realizada com sucesso!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${param.erro}">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Ocorreu um erro: 
+                    <span th:text="${param.erro == 'usuario-nao-encontrado' ? 'Usuário não encontrado.' : 'Erro desconhecido.'}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <!-- Tabela de usuários -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Perfil</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${usuarios.empty}">
+                                <td colspan="5" class="text-center">Nenhum usuário encontrado</td>
+                            </tr>
+                            <tr th:each="usuario : ${usuarios}">
+                                <td th:text="${usuario.id}"></td>
+                                <td th:text="${usuario.nome}"></td>
+                                <td th:text="${usuario.email}"></td>
+                                <td>
+                                    <span class="badge" th:classappend="${
+                                        usuario.role == 'ROLE_ADMIN' ? 'bg-danger' : 
+                                        usuario.role == 'ROLE_DENTIST' ? 'bg-primary' : 
+                                        usuario.role == 'ROLE_RECEPTIONIST' ? 'bg-success' : 
+                                        'bg-secondary'
+                                    }" th:text="${
+                                        usuario.role == 'ROLE_ADMIN' ? 'Administrador' : 
+                                        usuario.role == 'ROLE_DENTIST' ? 'Dentista' : 
+                                        usuario.role == 'ROLE_RECEPTIONIST' ? 'Recepcionista' : 
+                                        usuario.role == 'ROLE_PATIENT' ? 'Paciente' : 
+                                        'Outro'
+                                    }">
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{/usuarios/{id}(id=${usuario.id})}" class="btn btn-outline-info" title="Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-outline-warning" title="Redefinir senha"
+                                                data-bs-toggle="modal" th:data-bs-target="'#resetSenhaModal' + ${usuario.id}">
+                                            <i class="bi bi-key"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Excluir"
+                                                data-bs-toggle="modal" th:data-bs-target="'#excluirModal' + ${usuario.id}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Modal de Confirmação para Reset de Senha -->
+                                    <div class="modal fade" th:id="'resetSenhaModal' + ${usuario.id}" tabindex="-1" aria-labelledby="resetSenhaModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="resetSenhaModalLabel">Confirmar Redefinição de Senha</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Você está prestes a redefinir a senha do usuário <strong th:text="${usuario.nome}"></strong>.</p>
+                                                    <p>Tem certeza que deseja continuar?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <form th:action="@{/admin/sistema/resetar-senha/{email}(email=${usuario.email})}" method="post">
+                                                        <button type="submit" class="btn btn-warning">Redefinir Senha</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Modal de Confirmação para Exclusão -->
+                                    <div class="modal fade" th:id="'excluirModal' + ${usuario.id}" tabindex="-1" aria-labelledby="excluirModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="excluirModalLabel">Confirmar Exclusão</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Você está prestes a excluir o usuário <strong th:text="${usuario.nome}"></strong>.</p>
+                                                    <p>Esta ação não pode ser desfeita. Tem certeza que deseja continuar?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <form th:action="@{/usuarios/{id}/excluir(id=${usuario.id})}" method="post">
+                                                        <button type="submit" class="btn btn-danger">Excluir Permanentemente</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card de Ações Administrativas -->
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Ações Administrativas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-md-2 g-3">
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-shield-check me-2"></i>
+                                    Verificar Usuários Padrão
+                                </h5>
+                                <p class="card-text">Verifica se todos os usuários padrão do sistema existem e cria os que estão faltando.</p>
+                                <form th:action="@{/admin/sistema/verificar-usuarios}" method="post">
+                                    <button type="submit" class="btn btn-primary">Executar Verificação</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-key me-2"></i>
+                                    Redefinir Todas as Senhas Padrão
+                                </h5>
+                                <p class="card-text">Redefine as senhas de todos os usuários padrão para seus valores iniciais.</p>
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#resetAllModal">
+                                    Redefinir Todas as Senhas
+                                </button>
+                                
+                                <!-- Modal de Confirmação para Reset de Todas as Senhas -->
+                                <div class="modal fade" id="resetAllModal" tabindex="-1" aria-labelledby="resetAllModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="resetAllModalLabel">Confirmar Redefinição de Todas as Senhas</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="alert alert-warning">
+                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                    <strong>Atenção!</strong> Esta ação irá redefinir as senhas de todos os usuários padrão para seus valores iniciais.
+                                                </div>
+                                                <p>Tem certeza que deseja continuar?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <form th:action="@{/admin/sistema/redefinir-todas-senhas-padrao}" method="post">
+                                                    <button type="submit" class="btn btn-danger">Redefinir Todas as Senhas</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
