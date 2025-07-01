@@ -1,15 +1,18 @@
 package com.caracore.cca.config;
 
 import com.caracore.cca.util.UserActivityLogger;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Configuração para testes que fornece beans simulados necessários
  */
 @TestConfiguration
-public class TestConfig {
+public class TestConfig implements WebMvcConfigurer {
     
     /**
      * Cria uma instância de UserActivityLogger para uso em testes
@@ -21,4 +24,15 @@ public class TestConfig {
     public UserActivityLogger userActivityLogger() {
         return new UserActivityLogger();
     }
+    
+    /**
+     * Fornece um encoder BCrypt para testes
+     */
+    @Bean
+    @Primary
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    
+    // Removed HandlerMappingIntrospector bean to avoid conflicts with Spring Boot auto-configuration
 }

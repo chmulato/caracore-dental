@@ -52,7 +52,7 @@ public class UserActivityInterceptorTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         
-        // Substituir pelo field activityLogger (injeção de teste)
+        // Injetar o logger de atividade usando ReflectionTestUtils (forma segura)
         ReflectionTestUtils.setField(interceptor, "activityLogger", activityLogger);
     }
     

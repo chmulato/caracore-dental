@@ -27,12 +27,8 @@ public class UpdatePasswordHashTest {
         
         try {
             // Se tentarmos executar o main, ele vai tentar se conectar ao banco
-            // O que provavelmente falhará, então pegamos a exceção esperada
-            try {
-                UpdatePasswordHash.main(new String[0]);
-            } catch (Exception e) {
-                // Qualquer exceção é esperada e ignorada
-            }
+            // O que provavelmente falhará, mas o método main já trata as exceções internamente
+            UpdatePasswordHash.main(new String[0]);
         } finally {
             // Restaurar saída padrão
             System.setOut(originalOut);
