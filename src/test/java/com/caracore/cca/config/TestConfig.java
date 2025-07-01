@@ -30,7 +30,8 @@ public class TestConfig implements WebMvcConfigurer {
      */
     @Bean
     @Primary
-    public BCryptPasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder testPasswordEncoder() {
+        // Nome alterado para evitar conflito com o bean em SecurityConfig
         return new BCryptPasswordEncoder();
     }
     

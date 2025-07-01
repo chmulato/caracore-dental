@@ -10,26 +10,24 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
- * Configuração específica para testes de segurança
- * Esta configuração é utilizada nos testes de controladores que dependem de autenticação
+ * Configuração específica para testes do DashboardController
+ * Esta configuração permite testar o controller sem depender de toda a infraestrutura
  */
 @TestConfiguration
 @EnableWebMvc
-public class SecurityTestConfig {
+public class DashboardTestConfig {
     
     /**
-     * Cria uma instância de BCryptPasswordEncoder para testes de segurança
-     * Este bean tem prioridade mais alta que o da SecurityConfig
+     * Fornece um encoder BCrypt para testes
      */
     @Bean
     @Primary
-    public BCryptPasswordEncoder testPasswordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
     /**
      * Fornece o bean mvcHandlerMappingIntrospector necessário para Spring Security 6+
-     * Este bean é necessário quando usamos requestMatchers() em configurações de segurança
      */
     @Bean
     @Primary
@@ -38,8 +36,8 @@ public class SecurityTestConfig {
     }
     
     /**
-     * Configuração de segurança específica para testes
-     * Esta configuração simplificada permite o teste de controladores com autenticação
+     * Configuração de segurança específica para testes do dashboard
+     * Esta configuração simplificada exige autenticação apenas para o endpoint /dashboard
      */
     @Bean
     @Primary
@@ -48,13 +46,16 @@ public class SecurityTestConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
                 .requestMatchers("/dashboard").authenticated()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .permitAll()
             );
             
+        // Desabilita CSRF para testes
+        http.csrf(csrf -> csrf.disable());
+        
         return http.build();
     }
 }

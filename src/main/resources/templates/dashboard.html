@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons via WebJar NPM -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            color: white;
+        }
+        
+        .sidebar-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+        }
+        
+        .stat-card {
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4 p-3">
+                        <img th:src="@{/img/logo.png}" alt="Cara Core Logo" width="70" height="70" class="mb-3">
+                        <h5>Cara Core</h5>
+                        <p class="small mb-0">Sistema de Agendamento</p>
+                    </div>
+                    
+                    <ul class="nav flex-column px-2">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard}" class="sidebar-link active">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        
+                        <!-- Menu Admin -->
+                        <li class="nav-item" th:if="${isAdmin}">
+                            <a th:href="@{/admin/usuarios}" class="sidebar-link">
+                                <i class="bi bi-people me-2"></i> Usuários
+                            </a>
+                        </li>
+                        
+                        <!-- Menu comum a vários perfis -->
+                        <li class="nav-item">
+                            <a th:href="@{/agendamentos}" class="sidebar-link">
+                                <i class="bi bi-calendar-check me-2"></i> Agendamentos
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a th:href="@{/pacientes}" class="sidebar-link">
+                                <i class="bi bi-person me-2"></i> Pacientes
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item" th:if="${isAdmin or isDentist}">
+                            <a th:href="@{/dentistas}" class="sidebar-link">
+                                <i class="bi bi-person-badge me-2"></i> Dentistas
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item" th:if="${isAdmin}">
+                            <a th:href="@{/relatorios}" class="sidebar-link">
+                                <i class="bi bi-graph-up me-2"></i> Relatórios
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item" th:if="${isAdmin}">
+                            <a th:href="@{/configuracoes}" class="sidebar-link">
+                                <i class="bi bi-gear me-2"></i> Configurações
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <hr class="mx-3">
+                    
+                    <div class="px-3">
+                        <a th:href="@{/logout}" class="sidebar-link">
+                            <i class="bi bi-box-arrow-right me-2"></i> Sair
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Top bar -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span th:text="${username}">usuário</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-2"></i> Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Welcome Card -->
+                <div class="card welcome-card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title">Bem-vindo(a), <span th:text="${username}">Usuário</span>!</h4>
+                        <p class="card-text">
+                            Este é seu painel de controle. Aqui você pode visualizar e gerenciar todas as 
+                            informações relevantes de acordo com seu perfil de acesso.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card stat-card h-100 border-left-primary shadow">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Agendamentos Hoje</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-calendar3 text-primary fs-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card stat-card h-100 border-left-success shadow">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Pacientes Ativos</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">342</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-person text-success fs-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card stat-card h-100 border-left-info shadow">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Próxima Semana</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">48</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-calendar-week text-info fs-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card stat-card h-100 border-left-warning shadow">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pendentes de Confirmação</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-exclamation-triangle text-warning fs-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Appointments Table -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold">Próximos Agendamentos</h6>
+                        <a th:href="@{/agendamentos}" class="btn btn-sm btn-primary">Ver Todos</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Hora</th>
+                                        <th>Paciente</th>
+                                        <th>Dentista</th>
+                                        <th>Procedimento</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>01/07/2025</td>
+                                        <td>14:00</td>
+                                        <td>Maria Silva</td>
+                                        <td>Dr. João Santos</td>
+                                        <td>Limpeza</td>
+                                        <td><span class="badge bg-success">Confirmado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>01/07/2025</td>
+                                        <td>15:30</td>
+                                        <td>Carlos Oliveira</td>
+                                        <td>Dra. Ana Costa</td>
+                                        <td>Extração</td>
+                                        <td><span class="badge bg-warning">Pendente</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>02/07/2025</td>
+                                        <td>09:00</td>
+                                        <td>Pedro Souza</td>
+                                        <td>Dr. João Santos</td>
+                                        <td>Consulta</td>
+                                        <td><span class="badge bg-success">Confirmado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>02/07/2025</td>
+                                        <td>11:00</td>
+                                        <td>Julia Lima</td>
+                                        <td>Dra. Ana Costa</td>
+                                        <td>Obturação</td>
+                                        <td><span class="badge bg-success">Confirmado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>03/07/2025</td>
+                                        <td>10:30</td>
+                                        <td>Ana Ferreira</td>
+                                        <td>Dr. João Santos</td>
+                                        <td>Avaliação</td>
+                                        <td><span class="badge bg-warning">Pendente</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                    <div class="row">
+                        <div class="col-12 col-md text-center">
+                            <small class="d-block mb-3 text-muted">&copy; 2025 Cara Core Informática</small>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
