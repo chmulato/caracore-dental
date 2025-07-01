@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
@@ -26,7 +28,8 @@ public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // Usando cost factor 10 conforme especificado no README
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
@@ -43,20 +46,46 @@ public class SecurityConfig {
         
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
+                // Recursos públicos
+                .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
+                // Páginas públicas
+                .requestMatchers("/", "/login", "/agendar", "/api/public/**").permitAll()
+                // Páginas administrativas
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Páginas do dentista
+                .requestMatchers("/dentista/**").hasAnyRole("ADMIN", "DENTIST")
+                // Páginas da recepção
+                .requestMatchers("/recepcao/**").hasAnyRole("ADMIN", "RECEPTIONIST")
+                // Páginas do paciente
+                .requestMatchers("/paciente/**").hasAnyRole("ADMIN", "PATIENT")
+                // Todas as outras páginas requerem autenticação
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .loginProcessingUrl("/authenticate")
+                .defaultSuccessUrl("/dashboard", true)
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login?logout")
+                .logoutSuccessUrl("/login?logout=true")
+                .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .permitAll()
+            )
+            .rememberMe(remember -> remember
+                .key("caraCoreCcaSecureKey")
+                .tokenValiditySeconds(86400) // 1 dia
+                .rememberMeParameter("remember-me")
+            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**") // Opcional: desativa para endpoints de API se necessário
+            )
+            .exceptionHandling(handling -> handling
+                .accessDeniedPage("/acesso-negado")
             )
             .authenticationProvider(authenticationProvider());
 
