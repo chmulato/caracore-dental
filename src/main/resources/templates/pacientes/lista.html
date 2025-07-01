@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pacientes - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" height="30" class="d-inline-block align-text-top me-2">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Lista de Pacientes</h4>
+                <div>
+                    <!-- Formulário de busca -->
+                    <form th:action="@{/pacientes/buscar}" method="get" class="d-inline-flex me-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="termo" placeholder="Buscar paciente..." 
+                                   th:value="${termoBusca}">
+                            <button class="btn btn-outline-primary" type="submit" title="Buscar pacientes">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                                <span class="visually-hidden">Buscar</span>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Botão para adicionar novo paciente (apenas admin e recepcionista) -->
+                    <a th:href="@{/pacientes/novo}" class="btn btn-primary" 
+                       sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                        <i class="bi bi-person-plus"></i> Novo Paciente
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Mensagens -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.sucesso}">
+                    <i class="bi bi-check-circle me-2"></i> Operação realizada com sucesso!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${param.erro}">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Ocorreu um erro: 
+                    <span th:text="${param.erro == 'paciente-nao-encontrado' ? 'Paciente não encontrado.' : 'Erro desconhecido.'}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <!-- Tabela de pacientes -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${pacientes.empty}">
+                                <td colspan="5" class="text-center">Nenhum paciente encontrado</td>
+                            </tr>
+                            <tr th:each="paciente : ${pacientes}">
+                                <td th:text="${paciente.id}"></td>
+                                <td th:text="${paciente.nome}"></td>
+                                <td th:text="${paciente.email ?: '-'}"></td>
+                                <td th:text="${paciente.telefone ?: '-'}"></td>
+                                <td>
+                                    <a th:href="@{/pacientes/{id}(id=${paciente.id})}" class="btn btn-sm btn-outline-info me-1">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/pacientes/{id}/editar(id=${paciente.id})}" 
+                                       class="btn btn-sm btn-outline-primary me-1"
+                                       sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a th:href="@{/pacientes/{id}/excluir(id=${paciente.id})}" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Tem certeza que deseja excluir este paciente?');"
+                                       sec:authorize="hasRole('ADMIN')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

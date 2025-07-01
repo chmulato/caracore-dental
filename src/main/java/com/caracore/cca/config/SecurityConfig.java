@@ -3,6 +3,7 @@ package com.caracore.cca.config;
 import com.caracore.cca.service.UsuarioDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -21,6 +23,9 @@ public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
     private final UsuarioDetailsService usuarioDetailsService;
+    
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     public SecurityConfig(UsuarioDetailsService usuarioDetailsService) {
         this.usuarioDetailsService = usuarioDetailsService;
@@ -85,7 +90,7 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/api/**") // Opcional: desativa para endpoints de API se necessário
             )
             .exceptionHandling(handling -> handling
-                .accessDeniedPage("/acesso-negado")
+                .accessDeniedHandler(accessDeniedHandler)
             )
             .authenticationProvider(authenticationProvider());
 

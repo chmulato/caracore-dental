@@ -15,14 +15,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class TestConfig implements WebMvcConfigurer {
     
     /**
-     * Cria uma instância de UserActivityLogger para uso em testes
+     * Cria uma instância mockada de UserActivityLogger para uso em testes
      * Esta é necessária porque vários controladores e interceptadores
      * dependem do UserActivityLogger
      */
     @Bean
     @Primary
     public UserActivityLogger userActivityLogger() {
-        return new UserActivityLogger();
+        return Mockito.mock(UserActivityLogger.class);
     }
     
     /**

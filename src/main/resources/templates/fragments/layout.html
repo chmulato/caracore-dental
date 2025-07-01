@@ -82,10 +82,6 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Bootstrap JS bundle with Popper -->
-        <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
-        <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
     </footer>
 
     <!-- Loading Overlay -->
@@ -97,5 +93,12 @@
         </div>
     </div>
     
+    <!-- Scripts fragment -->
+    <th:block th:fragment="scripts">
+        <!-- Bootstrap JS bundle with Popper -->
+        <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+        <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+        <!-- Outros scripts da aplicação podem ser adicionados aqui -->
+    </th:block>
 </body>
 </html>
