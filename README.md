@@ -898,9 +898,13 @@ SELECT id, email, nome, role FROM usuario WHERE email='suporte@caracore.com.br';
 
 Resultado:
 
-| id | email | nome | role |
-|----|-------|------|------|
-| 1 | suporte@caracore.com.br | Administrador | ADMIN |
+```markdown
+|----|-------------------------|---------------|-------|
+| id | email                   | nome          | role  |
+|----|-------------------------|---------------|-------|
+| 1  | suporte@caracore.com.br | Administrador | ADMIN |
+|----|-------------------------|---------------|-------|
+```
 
 O sistema valida automaticamente que o hash BCrypt armazenado corresponde à senha esperada através dos testes unitários.
 
