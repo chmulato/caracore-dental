@@ -77,6 +77,10 @@ public class SecurityTestConfig {
             // Configure access denied handler
             .exceptionHandling(handling -> handling
                 .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint((request, response, authException) -> {
+                    // Para testes, redirecionar usuários não autenticados para página de login
+                    response.sendRedirect("/login");
+                })
             )
             // Desabilita CSRF para facilitar testes de POST
             .csrf(csrf -> csrf.disable());
