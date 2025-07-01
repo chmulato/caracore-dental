@@ -1,6 +1,14 @@
 # Cara Core Agendamento (CCA)
 
-Sistema de agendamento### **Como Subir a Aplicação (Desenvolvimento e Produção)**
+Sistema de agendamento para consultórios odontológicos desenvolvido com Spring Boot, Java 17 e PostgreSQL.
+
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/projects/jdk/17/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.0-purple.svg)](https://getbootstrap.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## **Como Subir a Aplicação (Desenvolvimento e Produção)**
 
 ### **1. Subir o banco de dados PostgreSQL com Docker**
 
@@ -21,7 +29,8 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 > **Nota:**
-> A aplicação utiliza WebJars para Bootstrap (5.3.0), ### **Segurança**
+> A aplicação utiliza WebJars para Bootstrap (5.3.0), jQuery (3.7.0) e Bootstrap Icons (1.13.1), 
+> o que elimina a necessidade de CDNs externas e garante que a aplicação funcione offline.
 
 ### **Autenticação e Autorização**
 
@@ -34,14 +43,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 - **Armazenamento seguro de senha:** Hash BCrypt com salt único por usuário
 - **Utilitários:** BCryptUtil e VerificarHash para gerenciamento de senhas
 - **Migrations:** Criação automatizada de tabela de usuários via Flyway
-- **Login Seguro:** Formulário protegido com Bootstrap e validação client/server-sidens (1.13.1) e jQuery (3.7.0), 
-> o que elimina a necessidade de CDNs externas e garante que a aplicação funcione offline.onsultórios odontológicos desenvolvido com Spring Boot, Java 17 e PostgreSQL.
-
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/projects/jdk/17/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.0-purple.svg)](https://getbootstrap.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+- **Login Seguro:** Formulário protegido com Bootstrap e validação client/server-side
 
 ## **MVP em Andamento (Q3 2025)**
 
@@ -129,9 +131,9 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 
 ## **Roadmap Resumido do MVP**
 
-- [x] Sistema de agendamento básico
-- [x] Gestão de pacientes e profissionais
-- [x] Agendamento online
+- [ ] Sistema de agendamento básico
+- [ ] Gestão de pacientes e profissionais
+- [ ] Agendamento online
 - [ ] Prontuário digital
 - [ ] Relatórios básicos
 
@@ -347,6 +349,12 @@ Nos templates Thymeleaf, os recursos são referenciados da seguinte forma:
 <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 ```
 
+### **Configuração de WebJars**
+
+O projeto utiliza [webjars-locator-core](https://www.webjars.org/documentation#webjars-locator-core) que automaticamente resolve as dependências de WebJars sem necessidade de configuração manual. Embora exista um arquivo `WebjarConfig.java` na estrutura do projeto, ele permanece vazio pois o Spring Boot já fornece uma configuração padrão eficiente para os WebJars.
+
+A resolução de caminhos para arquivos WebJar é feita automaticamente, permitindo o uso simplificado nos templates Thymeleaf conforme mostrado na seção "Utilização nos Templates" abaixo.
+
 ## **Estrutura do Projeto**
 
 ```markdown
@@ -372,6 +380,41 @@ src/main/
 │   ├── db/migration/       # Scripts Flyway
 │   └── application.yml     # Configurações
 └── test/                   # Testes unitários e integração
+```
+
+## **Estrutura dos Testes**
+
+O projeto inclui testes abrangentes para todos os componentes principais:
+
+```
+src/test/
+├── java/com/caracore/cca/
+│   ├── config/                     # Configurações de teste
+│   │   ├── TestConfig.java         # Configuração geral para testes
+│   │   ├── TestDatabaseConfig.java # Configuração de banco de dados para testes
+│   │   ├── SecurityTestConfig.java # Configuração de segurança para testes
+│   │   └── LoginTestConfig.java    # Configuração específica para testes de login
+│   ├── controller/                 # Testes de controllers
+│   ├── service/                    # Testes de serviços
+│   ├── repository/                 # Testes de repositórios
+│   └── util/                       # Testes de utilitários
+└── resources/
+    ├── application-test.properties # Configurações para ambiente de teste
+    ├── data.sql                    # Dados iniciais para testes
+    └── schema-test.sql             # Schema para testes
+```
+
+### **Execução de Testes Específicos**
+
+```bash
+# Executar todos os testes
+mvn test
+
+# Executar um teste específico
+mvn test -Dtest=LoginControllerTest
+
+# Executar testes de um pacote
+mvn test -Dtest="com.caracore.cca.controller.*Test"
 ```
 
 ## **Comandos Úteis**
@@ -726,5 +769,38 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ---
 
-**Última atualização:** 30 de junho de 2025  
+**Última atualização:** 01 de julho de 2025  
 **Versão dos WebJars:** Bootstrap 5.3.0, Bootstrap Icons 1.13.1, jQuery 3.7.0
+
+## **Como Executar Rapidamente**
+
+Para iniciar a aplicação de forma rápida, execute:
+
+```bash
+# Subir o banco de dados PostgreSQL (necessário apenas na primeira vez)
+docker-compose up -d
+
+# Iniciar a aplicação Spring Boot
+mvn spring-boot:run
+```
+
+Acesse a aplicação em [http://localhost:8080](http://localhost:8080)  
+Login padrão: `suporte@caracore.com.br` / `admin123`
+
+Para verificar os logs e confirmar que a aplicação está rodando corretamente:
+```bash
+# Ver logs da aplicação
+tail -f logs/user-activity.log
+
+# No Windows PowerShell
+Get-Content -Path .\logs\user-activity.log -Wait
+```
+
+## **Atualizações Recentes**
+
+- **01/07/2025**: Correção de erros nos testes unitários e de integração, melhorias na configuração dos ambientes de teste
+- **30/06/2025**: Atualização da documentação e ajustes no README
+- **25/06/2025**: Implementação de funcionalidades de agendamento e autenticação
+- **20/06/2025**: Configuração inicial do projeto e estrutura de banco de dados
+
+---
