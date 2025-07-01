@@ -1,6 +1,41 @@
 # Cara Core Agendamento (CCA)
 
-Sistema de agendamento para dentistas e consultórios odontológicos desenvolvido com Spring Boot, Java 17 e PostgreSQL.
+Sistema de agendamento### **Como Subir a Aplicação (Desenvolvimento e Produção)**
+
+### **1. Subir o banco de dados PostgreSQL com Docker**
+
+```bash
+docker-compose up -d
+```
+
+### **2. Compilar e executar a aplicação em modo desenvolvimento**
+
+```bash
+mvn clean spring-boot:run
+```
+
+Ou, para rodar com um profile específico (ex: dev):
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+> **Nota:**
+> A aplicação utiliza WebJars para Bootstrap (5.3.0), ### **Segurança**
+
+### **Autenticação e Autorização**
+
+- **Spring Security** com formulário de login
+- **BCrypt** para hash de senhas (fator de custo 10)
+- **UserDetailsService** personalizado para autenticação contra banco de dados
+- **Session-based** authentication
+- **CSRF** protection habilitado
+- **Roles:** ADMIN, DENTIST, RECEPTIONIST, PATIENT
+- **Armazenamento seguro de senha:** Hash BCrypt com salt único por usuário
+- **Utilitários:** BCryptUtil e VerificarHash para gerenciamento de senhas
+- **Migrations:** Criação automatizada de tabela de usuários via Flyway
+- **Login Seguro:** Formulário protegido com Bootstrap e validação client/server-sidens (1.13.1) e jQuery (3.7.0), 
+> o que elimina a necessidade de CDNs externas e garante que a aplicação funcione offline.onsultórios odontológicos desenvolvido com Spring Boot, Java 17 e PostgreSQL.
 
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
@@ -135,6 +170,7 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 
 - Thymeleaf 3.1+
 - Bootstrap 5.3.0
+- Bootstrap Icons 1.13.1
 - jQuery 3.7.0
 - FullCalendar.js
 - DataTables
@@ -256,6 +292,57 @@ spring:
 | `SERVER_PORT` | Porta da aplicação | 8080 |
 | `SPRING_PROFILES_ACTIVE` | Profile ativo | dev |
 
+## **Dependências WebJar**
+
+O projeto utiliza WebJars para gerenciar bibliotecas front-end através do Maven:
+
+```xml
+<!-- Bootstrap 5.3.0 -->
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>bootstrap</artifactId>
+    <version>5.3.0</version>
+</dependency>
+
+<!-- jQuery 3.7.0 -->
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>jquery</artifactId>
+    <version>3.7.0</version>
+</dependency>
+
+<!-- Bootstrap Icons 1.13.1 -->
+<dependency>
+    <groupId>org.webjars.npm</groupId>
+    <artifactId>bootstrap-icons</artifactId>
+    <version>1.13.1</version>
+</dependency>
+
+<!-- WebJars Locator (facilita o acesso aos recursos) -->
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>webjars-locator-core</artifactId>
+</dependency>
+```
+
+### **Utilização nos Templates**
+
+Nos templates Thymeleaf, os recursos são referenciados da seguinte forma:
+
+```html
+<!-- CSS do Bootstrap -->
+<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+
+<!-- CSS do Bootstrap Icons -->
+<link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+
+<!-- jQuery -->
+<script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+
+<!-- Bootstrap JS -->
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+```
+
 ## **Estrutura do Projeto**
 
 ```
@@ -271,7 +358,13 @@ src/main/
 │   └── CcaApplication.java # Classe principal
 ├── resources/
 │   ├── templates/          # Templates Thymeleaf
-│   ├── static/            # CSS, JS, imagens
+│   │   ├── fragments/     # Fragmentos reutilizáveis (layout, navbar)
+│   │   ├── index.html     # Página inicial
+│   │   └── login.html     # Página de login
+│   ├── static/            # Recursos estáticos
+│   │   ├── css/          # Estilos customizados
+│   │   ├── js/           # JavaScript customizado
+│   │   └── img/          # Imagens (logo, favicon)
 │   ├── db/migration/      # Scripts Flyway
 │   └── application.yml    # Configurações
 └── test/                  # Testes unitários e integração
@@ -629,4 +722,5 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ---
 
-**Última atualização:** 30 de junho de 2025
+**Última atualização:** 30 de junho de 2025  
+**Versão dos WebJars:** Bootstrap 5.3.0, Bootstrap Icons 1.13.1, jQuery 3.7.0
