@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!-- Configuração local do Maven -->
+    <localRepository>${user.home}/.m2/repository</localRepository>
+    
+    <!-- Configuração de conexão -->
+    <interactiveMode>true</interactiveMode>
+    <offline>false</offline>
+    
+    <!-- Configuração de proxy (descomente se necessário) -->
+    <!--
+    <proxies>
+        <proxy>
+            <id>proxy</id>
+            <active>true</active>
+            <protocol>http</protocol>
+            <host>proxy.empresa.com</host>
+            <port>8080</port>
+            <username>usuario</username>
+            <password>senha</password>
+            <nonProxyHosts>localhost|127.0.0.1|*.empresa.com</nonProxyHosts>
+        </proxy>
+    </proxies>
+    -->
+    
+    <!-- Repositórios Maven Públicos -->
+    <profiles>
+        <profile>
+            <id>maven-public</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            
+            <repositories>
+                <!-- Maven Central Repository -->
+                <repository>
+                    <id>central</id>
+                    <name>Maven Central Repository</name>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+                
+                <!-- Spring Releases -->
+                <repository>
+                    <id>spring-releases</id>
+                    <name>Spring Releases</name>
+                    <url>https://repo.spring.io/release</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+                
+                <!-- Spring Milestones -->
+                <repository>
+                    <id>spring-milestones</id>
+                    <name>Spring Milestones</name>
+                    <url>https://repo.spring.io/milestone</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+                
+                <!-- JCenter (Bintray) - Backup -->
+                <repository>
+                    <id>jcenter</id>
+                    <name>JCenter Repository</name>
+                    <url>https://jcenter.bintray.com</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+                
+                <!-- Sonatype Nexus Snapshots -->
+                <repository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <name>Sonatype Nexus Snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+            
+            <pluginRepositories>
+                <!-- Maven Central Plugin Repository -->
+                <pluginRepository>
+                    <id>central</id>
+                    <name>Maven Central Plugin Repository</name>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </pluginRepository>
+                
+                <!-- Spring Plugin Releases -->
+                <pluginRepository>
+                    <id>spring-releases</id>
+                    <name>Spring Plugin Releases</name>
+                    <url>https://repo.spring.io/release</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+                
+                <!-- Spring Plugin Milestones -->
+                <pluginRepository>
+                    <id>spring-milestones</id>
+                    <name>Spring Plugin Milestones</name>
+                    <url>https://repo.spring.io/milestone</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    
+    <!-- Perfis ativos -->
+    <activeProfiles>
+        <activeProfile>maven-public</activeProfile>
+    </activeProfiles>
+    
+    <!-- Configurações de servidor (se necessário autenticação) -->
+    <!--
+    <servers>
+        <server>
+            <id>repositorio-privado</id>
+            <username>seu-usuario</username>
+            <password>sua-senha</password>
+        </server>
+    </servers>
+    -->
+    
+    <!-- Mirrors para otimização (opcional) -->
+    <mirrors>
+        <!-- Mirror para Maven Central usando HTTPS -->
+        <mirror>
+            <id>central-https</id>
+            <mirrorOf>central</mirrorOf>
+            <name>Maven Central HTTPS</name>
+            <url>https://repo1.maven.org/maven2</url>
+        </mirror>
+    </mirrors>
+    
+</settings>
