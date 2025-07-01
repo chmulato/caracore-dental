@@ -23,5 +23,16 @@ logging:
     org.springframework.security: DEBUG
     com.caracore.cca: DEBUG
     org.hibernate.SQL: DEBUG
+    USER_ACTIVITY: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ./logs/user-activity.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: ./logs/archived/user-activity-%d{yyyy-MM-dd}.%i.log
+      max-file-size: 10MB
+      max-history: 30
 spring.sql.init.mode: never
 # Para evitar execução dupla de scripts em ambiente de teste, descomente a linha acima se necessário.

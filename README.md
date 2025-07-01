@@ -137,7 +137,7 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 
 ---
 
-Para detalhes completos, consulte as seções abaixo ou a [Wiki do Projeto](https://github.com/caracore/cca/wiki).
+Para detalhes completos, consulte as seções abaixo ou a [Wiki do Projeto](https://github.com/chmulato/cara-core_cca/wiki).
 
 ## **Sobre o Projeto**
 
@@ -196,7 +196,7 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/caracore/cca.git
+git clone https://github.com/chmulato/cara-core_cca.git
 cd cca
 ```
 
@@ -707,7 +707,7 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ## **Suporte**
 
-- **Documentação:** [Wiki do Projeto](https://github.com/chmulato/cca/wiki)
+- **Documentação:** [Wiki do Projeto](https://github.com/chmulato/cara-core_cca/wiki)
 - **Issues:** [GitHub Issues](https://github.com/chmulato/cara-core_cca/issues)
 - **Email:** [suporte@caracore.com.br](mailto:suporte@caracore.com.br)
 - **Website:** [www.caracore.com.br](https://www.caracore.com.br)
