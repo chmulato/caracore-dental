@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./img/sistema_cca.png" alt="Cara Core Agendamento (CCA)" width="100%">
+</div>
+
 # Cara Core Agendamento (CCA)
 
 Sistema de agendamento para consultórios odontológicos desenvolvido com Spring Boot, Java 17 e PostgreSQL.
