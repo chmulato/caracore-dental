@@ -282,15 +282,19 @@ spring:
 
 ### **Variáveis de Ambiente**
 
-| Variável | Descrição | Padrão |
-|----------|-----------|--------|
-| `DB_HOST` | Host do PostgreSQL | localhost |
-| `DB_PORT` | Porta do PostgreSQL | 5432 |
-| `DB_NAME` | Nome do banco | cca_db |
-| `DB_USERNAME` | Usuário do banco | cca_user |
-| `DB_PASSWORD` | Senha do banco | - |
-| `SERVER_PORT` | Porta da aplicação | 8080 |
-| `SPRING_PROFILES_ACTIVE` | Profile ativo | dev |
+```markdown
+|--------------------------|---------------------|-----------|
+| Variável                 | Descrição           | Padrão    |
+|--------------------------|---------------------|-----------|
+| `DB_HOST`                | Host do PostgreSQL  | localhost |
+| `DB_PORT`                | Porta do PostgreSQL | 5432      |
+| `DB_NAME`                | Nome do banco       | cca_db    |
+| `DB_USERNAME`            | Usuário do banco    | cca_user  |
+| `DB_PASSWORD`            | Senha do banco      | -         |
+| `SERVER_PORT`            | Porta da aplicação  | 8080      |
+| `SPRING_PROFILES_ACTIVE` | Profile ativo       | dev       |
+|--------------------------|---------------------|-----------|
+```
 
 ## **Dependências WebJar**
 
@@ -345,11 +349,11 @@ Nos templates Thymeleaf, os recursos são referenciados da seguinte forma:
 
 ## **Estrutura do Projeto**
 
-```
+```markdown
 src/main/
 ├── java/com/caracore/cca/
-│   ├── config/              # Configurações Spring
-│   ├── controller/          # Controllers MVC e REST
+│   ├── config/             # Configurações Spring
+│   ├── controller/         # Controllers MVC e REST
 │   ├── dto/                # Data Transfer Objects
 │   ├── entity/             # Entidades JPA
 │   ├── repository/         # Repositories
@@ -358,16 +362,16 @@ src/main/
 │   └── CcaApplication.java # Classe principal
 ├── resources/
 │   ├── templates/          # Templates Thymeleaf
-│   │   ├── fragments/     # Fragmentos reutilizáveis (layout, navbar)
-│   │   ├── index.html     # Página inicial
-│   │   └── login.html     # Página de login
-│   ├── static/            # Recursos estáticos
-│   │   ├── css/          # Estilos customizados
-│   │   ├── js/           # JavaScript customizado
-│   │   └── img/          # Imagens (logo, favicon)
-│   ├── db/migration/      # Scripts Flyway
-│   └── application.yml    # Configurações
-└── test/                  # Testes unitários e integração
+│   │   ├── fragments/      # Fragmentos reutilizáveis (layout, navbar)
+│   │   ├── index.html      # Página inicial
+│   │   └── login.html      # Página de login
+│   ├── static/             # Recursos estáticos
+│   │   ├── css/            # Estilos customizados
+│   │   ├── js/             # JavaScript customizado
+│   │   └── img/            # Imagens (logo, favicon)
+│   ├── db/migration/       # Scripts Flyway
+│   └── application.yml     # Configurações
+└── test/                   # Testes unitários e integração
 ```
 
 ## **Comandos Úteis**
@@ -703,8 +707,8 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ## **Suporte**
 
-- **Documentação:** [Wiki do Projeto](https://github.com/caracore/cca/wiki)
-- **Issues:** [GitHub Issues](https://github.com/caracore/cca/issues)
+- **Documentação:** [Wiki do Projeto](https://github.com/chmulato/cca/wiki)
+- **Issues:** [GitHub Issues](https://github.com/chmulato/cara-core_cca/issues)
 - **Email:** [suporte@caracore.com.br](mailto:suporte@caracore.com.br)
 - **Website:** [www.caracore.com.br](https://www.caracore.com.br)
 
