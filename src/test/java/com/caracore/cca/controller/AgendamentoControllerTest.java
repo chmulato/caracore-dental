@@ -19,6 +19,7 @@ import java.util.Collections;
 
 @WebMvcTest(AgendamentoController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@org.springframework.context.annotation.Import(com.caracore.cca.config.TestConfig.class)
 class AgendamentoControllerTest {
 
     @Autowired

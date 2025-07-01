@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS usuario (
 );
 
 -- Usuário inicial com a senha "admin123" (BCrypt)
-INSERT INTO usuario (email, nome, senha, role)
-VALUES ('suporte@caracore.com.br', 'Administrador', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_ADMIN')
-ON CONFLICT (email) DO NOTHING;
+-- Usando MERGE em vez de ON CONFLICT para compatibilidade com H2
+MERGE INTO usuario (email, nome, senha, role)
+KEY (email)
+VALUES ('suporte@caracore.com.br', 'Administrador', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_ADMIN');
