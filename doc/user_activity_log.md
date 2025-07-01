@@ -8,7 +8,7 @@ Este documento registra as atividades dos usuários no sistema, permitindo audit
 
 Cada entrada do log segue o formato:
 
-```
+```markdown
 ## [TIMESTAMP] USERNAME - ACTION
 - **IP:** Endereço IP do usuário
 - **Dispositivo:** Navegador e sistema operacional
@@ -24,12 +24,14 @@ Cada entrada do log segue o formato:
 ### admin@caracore.com.br (Administrador do Sistema)
 
 #### [2025-06-30 10:15:23] admin@caracore.com.br - LOGIN
+
 - **IP:** 192.168.1.100
 - **Dispositivo:** Chrome 125.0.0.0 / Windows 11
 - **Detalhes:** Login bem-sucedido
 - **Observações:** Primeiro acesso do dia
 
 #### [2025-06-30 10:22:45] admin@caracore.com.br - CREATE_USER
+
 - **IP:** 192.168.1.100
 - **Dispositivo:** Chrome 125.0.0.0 / Windows 11
 - **Detalhes:** Criação de novo usuário (dentista)
@@ -37,6 +39,7 @@ Cada entrada do log segue o formato:
 - **Observações:** Usuário criado com permissões padrão de dentista
 
 #### [2025-06-30 11:43:12] admin@caracore.com.br - LOGOUT
+
 - **IP:** 192.168.1.100
 - **Dispositivo:** Chrome 125.0.0.0 / Windows 11
 - **Detalhes:** Logout normal
@@ -45,12 +48,14 @@ Cada entrada do log segue o formato:
 ### maria.silva@exemplo.com.br (Dentista)
 
 #### [2025-06-30 13:05:37] maria.silva@exemplo.com.br - LOGIN
+
 - **IP:** 187.122.45.67
 - **Dispositivo:** Safari 17.5.1 / macOS 15.1
 - **Detalhes:** Login bem-sucedido (primeiro acesso)
 - **Observações:** Usuário completou troca de senha inicial
 
 #### [2025-06-30 13:15:22] maria.silva@exemplo.com.br - VIEW_CALENDAR
+
 - **IP:** 187.122.45.67
 - **Dispositivo:** Safari 17.5.1 / macOS 15.1
 - **Detalhes:** Visualizou agenda da semana
@@ -58,6 +63,7 @@ Cada entrada do log segue o formato:
 - **Observações:** Interagiu com visualização semanal por 12 minutos
 
 #### [2025-06-30 13:28:45] maria.silva@exemplo.com.br - CREATE_APPOINTMENT
+
 - **IP:** 187.122.45.67
 - **Dispositivo:** Safari 17.5.1 / macOS 15.1
 - **Detalhes:** Criou novo agendamento
@@ -67,12 +73,14 @@ Cada entrada do log segue o formato:
 ### recepcionista@exemplo.com.br (Recepcionista)
 
 #### [2025-06-30 08:30:15] recepcionista@exemplo.com.br - LOGIN
+
 - **IP:** 192.168.1.105
 - **Dispositivo:** Edge 125.0.0.0 / Windows 11
 - **Detalhes:** Login bem-sucedido
 - **Observações:** Login automático na inicialização do sistema
 
 #### [2025-06-30 08:45:33] recepcionista@exemplo.com.br - CREATE_PATIENT
+
 - **IP:** 192.168.1.105
 - **Dispositivo:** Edge 125.0.0.0 / Windows 11
 - **Detalhes:** Criou novo registro de paciente
@@ -80,6 +88,7 @@ Cada entrada do log segue o formato:
 - **Observações:** Paciente encaminhado pela Dra. Maria Silva
 
 #### [2025-06-30 09:12:57] recepcionista@exemplo.com.br - MODIFY_APPOINTMENT
+
 - **IP:** 192.168.1.105
 - **Dispositivo:** Edge 125.0.0.0 / Windows 11
 - **Detalhes:** Remarcação de consulta
