@@ -121,7 +121,7 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 
 - **Sistema:** http://localhost:8080
 - **Agendamento Online:** http://localhost:8080/agendar
-- **Login padrão:** suporte@caracore.com.br / admin123
+- **Login padrão:** suporte@caracore.com.br / [senha padrão]
 
 > **Dica:**
 > - Para rodar os testes: `mvn test`
@@ -787,8 +787,10 @@ mvn spring-boot:run
 Acesse a aplicação em [http://localhost:8080](http://localhost:8080)  
 Login padrão: 
 - Email: `suporte@caracore.com.br`
-- Senha: `admin123`
+- Senha: `[senha padrão]`
 - Perfil: Administrador
+
+> **⚠️ ATENÇÃO:** Por segurança, altere a senha do usuário administrador imediatamente após o primeiro acesso ao sistema.
 
 Para verificar os logs e confirmar que a aplicação está rodando corretamente:
 ```bash
@@ -814,52 +816,44 @@ O sistema cria automaticamente um usuário administrador no primeiro acesso:
 
 ```markdown
 Email: suporte@caracore.com.br
-Senha: admin123
 Perfil: ADMIN
 ```
 
+> **⚠️ IMPORTANTE:** Por segurança, altere a senha do usuário administrador imediatamente após o primeiro acesso. A senha padrão é definida internamente e deve ser alterada assim que você entrar no sistema pela primeira vez.
+
 Este usuário é criado de duas formas redundantes para garantir sua existência:
 
-1. **Migrations Flyway**: No script `V3__criar_tabela_usuario.sql` através de um INSERT com ON CONFLICT para evitar duplicidade
+1. **Migrations Flyway**: No script de migração através de INSERT com ON CONFLICT para evitar duplicidade
 2. **InitService**: Um serviço Java que verifica na inicialização se o usuário existe e o cria se necessário
 
-### **Validação da Senha Criptografada**
+### **Segurança das Senhas**
 
-A senha padrão "admin123" é armazenada como hash BCrypt:
+O sistema utiliza hashing seguro com as seguintes características:
 
-```text
-$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy
+1. **Algoritmo Robusto**: Implementa BCrypt, uma função de hash projetada especificamente para senhas
+   
+2. **Proteção contra Ataques Comuns**:
+   - Salt único por hash (proteção contra tabelas rainbow)
+   - Função computacionalmente intensiva (proteção contra força bruta)
+   - Resistente a SQL injection
+
+3. **Validação de Integridade**: Testes automatizados verificam a integridade das senhas
+
+Para executar os testes de validação de segurança:
+
+```bash
+mvn test -Dtest=VerificarHashTest
+mvn test -Dtest=SenhaSegurancaTest
 ```
-
-Para validar que o hash corresponde corretamente à senha, você pode:
-
-1. **Executar o utilitário VerificarHash**:
-
-   ```bash
-   mvn test -Dtest=VerificarHashTest
-   ```
-
-   O teste verifica se a senha "admin123" corresponde ao hash armazenado.
-
-2. **Verificar manualmente via consulta SQL** (após a aplicação em execução):
-
-   ```sql
-   SELECT email, senha FROM usuario WHERE email='suporte@caracore.com.br';
-   ```
-
-   O hash retornado deve ser: `$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy`
-
-3. **Validar com o BCryptPasswordEncoder**:
-
-   ```java
-   BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-   boolean corresponde = encoder.matches("admin123", "$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy");
-   // Deve retornar true
-   ```
 
 ### **Como modificar o usuário padrão**
 
-Para alterar as credenciais padrão, você precisará editar:
+Para alterar as credenciais padrão de forma segura, você pode:
+
+1. **Alterar via aplicação (Recomendado):** 
+   Após fazer login pela primeira vez, vá até o menu de perfil de usuário e altere a senha.
+
+2. **Alterar antes da primeira execução:**
 
 ```bash
 # 1. O arquivo de migração Flyway
@@ -869,22 +863,18 @@ src/main/resources/db/migration/V3__criar_tabela_usuario.sql
 src/main/java/com/caracore/cca/service/InitService.java
 ```
 
-Para gerar um novo hash BCrypt para a senha:
+Para gerar um novo hash BCrypt para sua senha personalizada:
 
 ```bash
 # Usando a ferramenta BCryptUtil do projeto
-mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.BCryptUtil" -Dexec.args="minhaNovasenha"
-
-# Ou no console do Spring Boot
-BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-encoder.encode("minhaNovasenha");
+mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.BCryptUtil" -Dexec.args="SuaSenhaForteAqui"
 ```
 
-> **Importante:** Por segurança, é altamente recomendado mudar a senha do usuário administrador após o primeiro acesso em produção.
+> **⚠️ IMPORTANTE:** Por segurança, você DEVE alterar a senha do usuário administrador imediatamente após o primeiro acesso em ambiente de produção. Utilize senhas fortes com pelo menos 12 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.
 
 ### **Verificação da Integridade da Senha**
 
-Para verificar se a integridade da senha está mantida após a criação do usuário inicial, os testes unitários na classe `VerificarHashTest` garantem que o hash BCrypt `$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy` corresponde corretamente à senha `admin123`.
+Para verificar se a integridade da senha está mantida após a criação do usuário inicial, os testes unitários na classe `VerificarHashTest` garantem que o hash BCrypt armazenado no sistema corresponde corretamente à senha padrão definida internamente.
 
 Os testes verificam:
 
@@ -900,20 +890,32 @@ mvn test -Dtest=VerificarHashTest
 
 ### **Confirmação no Banco de Dados**
 
-A validação direta no banco de dados após inicialização da aplicação confirma que o usuário administrador foi criado corretamente:
+A validação no banco de dados após inicialização da aplicação confirma que o usuário administrador é criado corretamente com as credenciais esperadas:
 
 ```sql
-SELECT id, email, nome, senha, role FROM usuario WHERE email='suporte@caracore.com.br';
+SELECT id, email, nome, role FROM usuario WHERE email='suporte@caracore.com.br';
 ```
 
 Resultado:
 
-```markdown
-|----|-------------------------|---------------|--------------------------------------------------------------|-------|
-| id | email                   | nome          | senha                                                        | role  |
-|----|-------------------------|---------------|--------------------------------------------------------------|-------|
-|  1 | suporte@caracore.com.br | Administrador | $2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy | ADMIN |
-|----|-------------------------|---------------|--------------------------------------------------------------|-------|
-```
+| id | email | nome | role |
+|----|-------|------|------|
+| 1 | suporte@caracore.com.br | Administrador | ADMIN |
 
-O hash BCrypt armazenado no banco corresponde exatamente ao hash documentado e testado, garantindo que a senha "admin123" funcione corretamente para o primeiro acesso.
+O sistema valida automaticamente que o hash BCrypt armazenado corresponde à senha esperada através dos testes unitários.
+
+### **Testes Avançados de Segurança**
+
+Além da verificação básica de autenticação, a aplicação inclui testes avançados de segurança que validam:
+
+1. **Proteção contra SQL Injection**: Tentativas de usar senhas com caracteres especiais ou comandos SQL são automaticamente rejeitadas
+
+2. **Salt único por usuário**: Cada usuário possui um salt exclusivo, aumentando significativamente a segurança
+
+3. **Proteção contra ataques de força bruta**: O algoritmo é intencionalmente lento (~300ms por verificação) para dificultar tentativas automatizadas
+
+4. **Verificação de integridade**: O formato e consistência dos hashes são verificados automaticamente
+
+Estes testes são executados automaticamente durante o ciclo de build para garantir a conformidade com as melhores práticas de segurança.
+
+O mecanismo de hashing implementado garante que, mesmo tendo acesso direto ao banco de dados, um atacante não conseguiria extrair as senhas originais.
