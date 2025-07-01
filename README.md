@@ -897,3 +897,23 @@ Estes testes são executados automaticamente durante o ciclo de build e podem se
 ```bash
 mvn test -Dtest=VerificarHashTest
 ```
+
+### **Confirmação no Banco de Dados**
+
+A validação direta no banco de dados após inicialização da aplicação confirma que o usuário administrador foi criado corretamente:
+
+```sql
+SELECT id, email, nome, senha, role FROM usuario WHERE email='suporte@caracore.com.br';
+```
+
+Resultado:
+
+```markdown
+|----|-------------------------|---------------|--------------------------------------------------------------|-------|
+| id | email                   | nome          | senha                                                        | role  |
+|----|-------------------------|---------------|--------------------------------------------------------------|-------|
+|  1 | suporte@caracore.com.br | Administrador | $2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy | ADMIN |
+|----|-------------------------|---------------|--------------------------------------------------------------|-------|
+```
+
+O hash BCrypt armazenado no banco corresponde exatamente ao hash documentado e testado, garantindo que a senha "admin123" funcione corretamente para o primeiro acesso.
