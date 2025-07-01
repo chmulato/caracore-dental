@@ -1,30 +1,79 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .brand-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .form-floating {
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5" style="max-width: 400px;">
-    <h2 class="mb-4">Login</h2>
-    <form th:action="@{/login}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Usuário</label>
-            <input type="text" class="form-control" id="username" name="username" required autofocus>
+    <div class="container">
+        <div class="login-card mx-auto">
+            <div class="login-header">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="mb-3 login-logo">
+                <h2 class="mb-0">Cara Core</h2>
+                <p class="mb-0">Sistema de Agendamento</p>
+            </div>
+            <div class="login-body">
+                <form th:action="@{/login}" method="post">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="username" name="username" placeholder="nome@exemplo.com" required autofocus>
+                        <label for="username"><i class="bi bi-envelope me-2"></i>Email</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+                        <label for="password"><i class="bi bi-lock me-2"></i>Senha</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                    </button>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" name="remember-me">
+                        <label class="form-check-label" for="rememberMe">
+                            Lembrar acesso
+                        </label>
+                    </div>
+                    
+                    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Usuário ou senha inválidos.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>Logout realizado com sucesso.
+                    </div>
+                </form>
+            </div>
+            <div class="login-footer">
+                <p>© 2025 Cara Core Informática</p>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Entrar</button>
-        <div th:if="${param.error}" class="alert alert-danger mt-3">
-            Usuário ou senha inválidos.
-        </div>
-        <div th:if="${param.logout}" class="alert alert-success mt-3">
-            Logout realizado com sucesso.
-        </div>
-    </form>
-</div>
-<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    </div>
+    
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

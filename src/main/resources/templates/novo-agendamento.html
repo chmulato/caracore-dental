@@ -1,16 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Novo Agendamento</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{fragments/layout :: head('Novo Agendamento')}"></head>
 <body>
-<h1>Novo Agendamento</h1>
-<form action="/agendar" method="post" th:object="${agendamentoForm}">
-    <label>Paciente: <input type="text" th:field="*{paciente}"/></label><br>
-    <label>Dentista: <input type="text" th:field="*{dentista}"/></label><br>
-    <label>Data e Hora: <input type="datetime-local" th:field="*{dataHora}"/></label><br>
-    <button type="submit">Agendar</button>
-</form>
-<a href="/">Voltar</a>
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar('novo')}"></nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div th:replace="~{fragments/layout :: page-header('Novo Agendamento', null, null)}"></div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/agendar" method="post" th:object="${agendamentoForm}" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="paciente" class="form-label">
+                                    <i class="bi bi-person me-1"></i> Paciente:
+                                </label>
+                                <input type="text" class="form-control" id="paciente" th:field="*{paciente}" required>
+                                <div class="invalid-feedback">
+                                    Por favor, informe o nome do paciente.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="dentista" class="form-label">
+                                    <i class="bi bi-person-badge me-1"></i> Dentista:
+                                </label>
+                                <input type="text" class="form-control" id="dentista" th:field="*{dentista}" required>
+                                <div class="invalid-feedback">
+                                    Por favor, informe o nome do dentista.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="dataHora" class="form-label">
+                                    <i class="bi bi-calendar-event me-1"></i> Data e Hora:
+                                </label>
+                                <input type="datetime-local" class="form-control" id="dataHora" th:field="*{dataHora}" required>
+                                <div class="invalid-feedback">
+                                    Por favor, selecione uma data e hora válida.
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-2"></i>Agendar Consulta
+                                </button>
+                                <a href="/" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Voltar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div th:replace="~{fragments/layout :: loading-overlay}"></div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    
+    <!-- Form validation script -->
+    <script>
+    (function () {
+        'use strict'
+        
+        // Fetch all forms we want to apply validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+        
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                
+                form.classList.add('was-validated')
+                
+                // Show loading overlay if form is valid
+                if (form.checkValidity()) {
+                    $('#loading-overlay').fadeIn(200);
+                }
+            }, false)
+        })
+    })()
+    </script>
 </body>
 </html>

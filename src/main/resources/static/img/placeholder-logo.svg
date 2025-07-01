@@ -1,0 +1,19 @@
+/* Este arquivo é um placeholder SVG para o logotipo do sistema.
+   Substitua-o pelo seu logotipo real quando disponível. */
+
+<svg width="154" height="200" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text { font-family: Arial, sans-serif; font-weight: bold; }
+    .large { font-size: 24px; }
+    .small { font-size: 16px; }
+    .primary { fill: #3498db; }
+    .secondary { fill: #2c3e50; }
+  </style>
+  <rect width="154" height="200" fill="#ffffff" rx="10" ry="10" stroke="#3498db" stroke-width="4"/>
+  <circle cx="77" cy="80" r="50" fill="#3498db" opacity="0.8"/>
+  <text x="77" y="90" class="text large" text-anchor="middle" fill="#ffffff">CARA</text>
+  <text x="77" y="115" class="text small" text-anchor="middle" fill="#ffffff">CORE</text>
+  <text x="77" y="150" class="text small" text-anchor="middle" fill="#2c3e50">Agendamento</text>
+  <rect x="35" y="165" width="84" height="20" fill="#2c3e50" rx="5" ry="5"/>
+  <text x="77" y="180" class="text small" text-anchor="middle" fill="#ffffff">2025</text>
+</svg>
