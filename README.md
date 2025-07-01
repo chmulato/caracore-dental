@@ -121,11 +121,27 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 
 - **Sistema:** http://localhost:8080
 - **Agendamento Online:** http://localhost:8080/agendar
-- **Login padrão:** suporte@caracore.com.br / [senha padrão]
 
-> **Dica:**
-> - Para rodar os testes: `mvn test`
-> - Para rodar com Docker: veja a seção "Deploy com Docker" abaixo.
+### **5. Usuários e Senhas Padrões**
+
+O sistema é inicializado com os seguintes usuários padrões para teste e demonstração:
+
+| **Perfil**     | **Email**                   | **Senha**  | **Observações**                   |
+|----------------|----------------------------|------------|----------------------------------|
+| Administrador  | suporte@caracore.com.br   | admin123   | Acesso total ao sistema          |
+| Dentista       | dentista@teste.com        | senha123   | Gerencia agenda e prontuários    |
+| Recepcionista  | recepcao@teste.com        | senha123   | Gerencia agenda e pacientes      |
+| Paciente       | paciente@teste.com        | senha123   | Acesso ao portal do paciente     |
+
+> **Importante:** Altere as senhas padrões ao implantar em ambiente de produção!
+> 
+> **Nota:** Os usuários padrão são criados automaticamente na inicialização do sistema **apenas se não existirem**. Usuários existentes **nunca são sobrescritos** durante a inicialização do sistema, preservando quaisquer alterações feitas nos dados dos usuários ou nas senhas.
+>
+> Para gerenciar usuários padrão, administradores podem:
+> - Verificar e recriar usuários padrão faltantes: `/admin/sistema/verificar-usuarios`
+> - Redefinir senha de usuário específico: `/admin/sistema/resetar-senha/{email}`
+> - Redefinir todas as senhas padrão: `/admin/sistema/redefinir-todas-senhas-padrao`
+> - Verificar status dos usuários padrão: `/admin/sistema/status-usuarios-padrao`
 
 ---
 
@@ -513,6 +529,33 @@ Content-Type: application/json
 POST /api/auth/logout
 ```
 
+### **Endpoints REST Administrativos**
+
+O sistema possui endpoints REST para administração do sistema, acessíveis apenas por usuários com perfil ADMIN:
+
+#### Gerenciamento de Usuários Padrão
+
+O sistema segue a política de **não sobrescrever usuários existentes** durante a inicialização. Entretanto, os administradores podem forçar a atualização ou recriação dos usuários padrão através dos seguintes endpoints:
+
+| **Método** | **Endpoint**                                | **Descrição**                                     |
+|------------|------------------------------------------|--------------------------------------------------|
+| POST       | /admin/sistema/verificar-usuarios          | Verifica e recria usuários padrão faltantes      |
+| POST       | /admin/sistema/resetar-senha/{email}       | Redefine a senha de um usuário para valor padrão |
+| POST       | /admin/sistema/redefinir-todas-senhas-padrao | Redefine todas as senhas de usuários padrão    |
+| POST       | /admin/sistema/status-usuarios-padrao      | Obtém status de todos os usuários padrão        |
+
+**Exemplos de uso:**
+
+```bash
+# Verificar usuários padrão (requer autenticação como ADMIN)
+curl -X POST http://localhost:8080/admin/sistema/verificar-usuarios -H "Cookie: JSESSIONID=sua_session_id"
+
+# Redefinir senha de usuário específico (requer autenticação como ADMIN)
+curl -X POST http://localhost:8080/admin/sistema/resetar-senha/dentista@teste.com -H "Cookie: JSESSIONID=sua_session_id"
+```
+
+---
+
 ## **Testes**
 
 ### **Executar Testes**
@@ -846,80 +889,28 @@ mvn test -Dtest=VerificarHashTest
 mvn test -Dtest=SenhaSegurancaTest
 ```
 
-### **Como modificar o usuário padrão**
+### **Migrações de Banco de Dados e Usuários Padrão**
 
-Para alterar as credenciais padrão de forma segura, você pode:
+O sistema utiliza Flyway para migrações de banco de dados. Os usuários padrão são criados tanto na inicialização do Spring Boot (pelo `InitService`) quanto nas migrações SQL (pelo script `V7__adicionar_usuarios_padrao_todos_perfis.sql`)
 
-1. **Alterar via aplicação (Recomendado):** 
-   Após fazer login pela primeira vez, vá até o menu de perfil de usuário e altere a senha.
+Em ambos os casos, o sistema segue a política de não sobrescrever usuários existentes:
 
-2. **Alterar antes da primeira execução:**
+1. No código Java, o método `criarUsuarioSeNaoExistir()` do `InitService` verifica a existência do usuário antes de criar:
+   ```java
+   if (usuarioRepository.findByEmail(email).isEmpty()) {
+       // Criar usuário
+   } else {
+       logger.info("Usuário {} já existe", email);
+   }
+   ```
 
-```bash
-# 1. O arquivo de migração Flyway
-src/main/resources/db/migration/V3__criar_tabela_usuario.sql
+2. Nos scripts SQL, a cláusula `ON CONFLICT (email) DO NOTHING` garante que registros existentes não sejam modificados:
+   ```sql
+   INSERT INTO usuario (email, nome, senha, role)
+   VALUES ('suporte@caracore.com.br', 'Administrador', '...hash...', 'ROLE_ADMIN')
+   ON CONFLICT (email) DO NOTHING;
+   ```
 
-# 2. A classe InitService 
-src/main/java/com/caracore/cca/service/InitService.java
-```
+Esse comportamento preserva quaisquer modificações feitas nos usuários padrão, como alterações de senha, nome ou outros detalhes.
 
-Para gerar um novo hash BCrypt para sua senha personalizada:
-
-```bash
-# Usando a ferramenta BCryptUtil do projeto
-mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.BCryptUtil" -Dexec.args="SuaSenhaForteAqui"
-```
-
-> **⚠️ IMPORTANTE:** Por segurança, você DEVE alterar a senha do usuário administrador imediatamente após o primeiro acesso em ambiente de produção. Utilize senhas fortes com pelo menos 12 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.
-
-### **Verificação da Integridade da Senha**
-
-Para verificar se a integridade da senha está mantida após a criação do usuário inicial, os testes unitários na classe `VerificarHashTest` garantem que o hash BCrypt armazenado no sistema corresponde corretamente à senha padrão definida internamente.
-
-Os testes verificam:
-
-1. A correspondência entre a senha e o hash (teste `deveVerificarHashComSenhaCorrespondente`)
-2. A rejeição de senhas incorretas (teste `deveVerificarHashComSenhaIncorreta`)
-3. O uso dos valores padrão para verificação (teste `deveUsarValoresPadraoQuandoArgumentosNaoFornecidos`)
-
-Estes testes são executados automaticamente durante o ciclo de build e podem ser executados manualmente com:
-
-```bash
-mvn test -Dtest=VerificarHashTest
-```
-
-### **Confirmação no Banco de Dados**
-
-A validação no banco de dados após inicialização da aplicação confirma que o usuário administrador é criado corretamente com as credenciais esperadas:
-
-```sql
-SELECT id, email, nome, role FROM usuario WHERE email='suporte@caracore.com.br';
-```
-
-Resultado:
-
-```markdown
-|----|-------------------------|---------------|-------|
-| id | email                   | nome          | role  |
-|----|-------------------------|---------------|-------|
-| 1  | suporte@caracore.com.br | Administrador | ADMIN |
-|----|-------------------------|---------------|-------|
-```
-
-O sistema valida automaticamente que o hash BCrypt armazenado corresponde à senha esperada através dos testes unitários.
-
-### **Testes Avançados de Segurança**
-
-Além da verificação básica de autenticação, a aplicação inclui testes avançados de segurança que validam:
-
-1. **Proteção contra SQL Injection**: Tentativas de usar senhas com caracteres especiais ou comandos SQL são automaticamente rejeitadas
-
-2. **Salt único por usuário**: Cada usuário possui um salt exclusivo, aumentando significativamente a segurança
-
-3. **Proteção contra ataques de força bruta**: O algoritmo é intencionalmente lento (~300ms por verificação) para dificultar tentativas automatizadas
-
-4. **Verificação de integridade**: O formato e consistência dos hashes são verificados automaticamente
-
-Estes testes são executados automaticamente durante o ciclo de build para garantir a conformidade com as melhores práticas de segurança.
-
-O mecanismo de hashing implementado garante que, mesmo tendo acesso direto ao banco de dados, um atacante não conseguiria extrair as senhas originais.
+---

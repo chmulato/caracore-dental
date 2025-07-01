@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class InitService {
@@ -23,23 +26,80 @@ public class InitService {
 
     @PostConstruct
     public void init() {
-        if (usuarioRepository.findByEmail("suporte@caracore.com.br").isEmpty()) {
-            logger.info("Criando usuário administrador inicial");
+        criarUsuarioSeNaoExistir("suporte@caracore.com.br", "Administrador", "admin123", "ROLE_ADMIN");
+        criarUsuarioSeNaoExistir("dentista@teste.com", "Dr. Carlos Silva", "senha123", "ROLE_DENTIST");
+        criarUsuarioSeNaoExistir("recepcao@teste.com", "Ana Recepção", "senha123", "ROLE_RECEPTIONIST");
+        criarUsuarioSeNaoExistir("paciente@teste.com", "João Paciente", "senha123", "ROLE_PATIENT");
+    }
+    
+    /**
+     * Cria um usuário se ele ainda não existir no banco de dados
+     * 
+     * @param email Email do usuário (identificador único)
+     * @param nome Nome do usuário
+     * @param senha Senha em texto plano (será codificada)
+     * @param role Perfil do usuário (ROLE_ADMIN, ROLE_DENTIST, ROLE_RECEPTIONIST, ROLE_PATIENT)
+     */
+    private void criarUsuarioSeNaoExistir(String email, String nome, String senha, String role) {
+        if (usuarioRepository.findByEmail(email).isEmpty()) {
+            logger.info("Criando usuário {} ({})", nome, role);
             
-            // Hash BCrypt gerado para "admin123"
-            String senhaEncriptada = "$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy";
+            String senhaEncriptada = passwordEncoder.encode(senha);
             
-            Usuario admin = new Usuario(
-                    "suporte@caracore.com.br",
-                    "Administrador",
+            Usuario usuario = new Usuario(
+                    email,
+                    nome,
                     senhaEncriptada,
-                    "ROLE_ADMIN"
+                    role
             );
             
-            usuarioRepository.save(admin);
-            logger.info("Usuário administrador criado com sucesso. Email: suporte@caracore.com.br, Senha: admin123");
+            usuarioRepository.save(usuario);
+            logger.info("Usuário criado com sucesso. Email: {}, Senha: {}", email, senha);
         } else {
-            logger.info("Usuário administrador já existe");
+            logger.info("Usuário {} já existe", email);
+        }
+    }
+    
+    /**
+     * Verifica se todos os usuários padrões estão presentes no sistema.
+     * Caso algum esteja ausente, cria novamente.
+     * Este método pode ser chamado via endpoint administrativo se necessário.
+     */
+    @Transactional
+    public void verificarEAtualizarUsuariosPadrao() {
+        logger.info("Verificando usuários padrões do sistema");
+        
+        criarUsuarioSeNaoExistir("suporte@caracore.com.br", "Administrador", "admin123", "ROLE_ADMIN");
+        criarUsuarioSeNaoExistir("dentista@teste.com", "Dr. Carlos Silva", "senha123", "ROLE_DENTIST");
+        criarUsuarioSeNaoExistir("recepcao@teste.com", "Ana Recepção", "senha123", "ROLE_RECEPTIONIST");
+        criarUsuarioSeNaoExistir("paciente@teste.com", "João Paciente", "senha123", "ROLE_PATIENT");
+        
+        logger.info("Verificação de usuários padrões concluída");
+    }
+    
+    /**
+     * Redefine a senha de um usuário para o valor padrão
+     * @param email Email do usuário
+     * @return true se o usuário foi encontrado e a senha redefinida, false caso contrário
+     */
+    @Transactional
+    public boolean redefinirSenhaUsuarioPadrao(String email) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(email);
+        
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            String novaSenha = "senha123";
+            if (email.equals("suporte@caracore.com.br")) {
+                novaSenha = "admin123";
+            }
+            
+            usuario.setSenha(passwordEncoder.encode(novaSenha));
+            usuarioRepository.save(usuario);
+            logger.info("Senha do usuário {} redefinida para o valor padrão", email);
+            return true;
+        } else {
+            logger.warn("Usuário {} não encontrado para redefinir senha", email);
+            return false;
         }
     }
 }
