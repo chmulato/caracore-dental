@@ -47,18 +47,18 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta com as seguintes funcionalidades principais:
 
-- [x] Cadastro e autenticação de usuários (Admin, Dentista, Recepcionista)
-- [x] Cadastro de pacientes
-- [x] Cadastro de profissionais
-- [x] Agendamento de consultas (com interface web)
-- [x] Visualização de agenda por dia/semana/mês
-- [x] Edição e cancelamento de agendamentos
-- [x] Upload de imagens odontológicas no prontuário
-- [x] Relatórios básicos de agendamentos
-- [x] Notificações por email (básico)
-- [x] Interface pública para agendamento online
-- [x] Controle de acesso por perfil
-- [x] LGPD: consentimento e política de privacidade
+- [ ] Cadastro e autenticação de usuários (Admin, Dentista, Recepcionista)
+- [ ] Cadastro de pacientes
+- [ ] Cadastro de profissionais
+- [ ] Agendamento de consultas (com interface web)
+- [ ] Visualização de agenda por dia/semana/mês
+- [ ] Edição e cancelamento de agendamentos
+- [ ] Upload de imagens odontológicas no prontuário
+- [ ] Relatórios básicos de agendamentos
+- [ ] Notificações por email (básico)
+- [ ] Interface pública para agendamento online
+- [ ] Controle de acesso por perfil
+- [ ] LGPD: consentimento e política de privacidade
 
 Funcionalidades previstas para o MVP:
 
