@@ -144,6 +144,13 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: contain;
 }
 
+/* Sidebar logo */
+.sidebar-logo {
+    max-width: 70px;
+    height: auto;
+    object-fit: contain;
+}
+
 .login-body {
     padding: 2rem;
 }
