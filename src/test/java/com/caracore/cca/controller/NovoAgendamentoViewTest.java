@@ -35,7 +35,7 @@ class NovoAgendamentoViewTest {
     void deveExibirFormularioNovoAgendamento() throws Exception {
         mockMvc.perform(get("/novo-agendamento"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("<h1>Novo Agendamento</h1>")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<h2>Novo Agendamento</h2>")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"paciente\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"dentista\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"dataHora\"")));
