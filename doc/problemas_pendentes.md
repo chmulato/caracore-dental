@@ -28,10 +28,11 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Funcionalidades
 
-- [ ] **FUNC-001** - Implementar notificações por WhatsApp
+- [x] **FUNC-001** - Implementar integração básica com WhatsApp
 - [ ] **FUNC-002** - Adicionar opção de cancelamento pelo paciente
 - [ ] **FUNC-003** - Completar implementação do prontuário digital
 - [ ] **FUNC-004** - Adicionar filtros avançados nos relatórios
+- [ ] **FUNC-005** - Implementar notificações automáticas por WhatsApp
 
 ### Performance
 
@@ -68,6 +69,8 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 - [x] **FIXED-002** - Corrigida integração de Bootstrap Icons via WebJars
 - [x] **FIXED-003** - Resolvido problema de porta 8080 já em uso durante inicialização
 - [x] **FIXED-004** - Corrigido erro na tela de login em navegadores Safari
+- [x] **FIXED-005** - Implementada obrigatoriedade do telefone WhatsApp no agendamento
+- [x] **FIXED-006** - Adicionada integração direta com WhatsApp Web na tela de agendamento
 
 ---
 
@@ -86,6 +89,6 @@ Para reportar novos problemas, por favor inclua:
 
 ---
 
-**Última atualização:** 30 de junho de 2025  
+**Última atualização:** 2 de julho de 2025  
 **Responsável pela documentação:** Christian V. Mulato  
 **Repositório oficial:** [https://github.com/chmulato/cara-core_cca/](https://github.com/chmulato/cara-core_cca/)

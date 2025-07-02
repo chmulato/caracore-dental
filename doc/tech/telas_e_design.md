@@ -423,6 +423,31 @@
   - [ ] Teste de envio
 - **Arquivos:** `message-templates.html`, `message-templates.css`, `message-templates.js`
 
+### 9.3 ✅ Integração WhatsApp (Implementado)
+
+- [x] **Status:** ✅ Concluído
+- [x] **Prioridade:** 🔴 Alta
+- **Componentes:**
+  - [x] Campo de telefone WhatsApp obrigatório
+  - [x] Validação formato brasileiro (99) 99999-9999
+  - [x] Formatação automática durante digitação
+  - [x] Botão de integração com WhatsApp Web
+  - [x] Atualização automática do cadastro do paciente
+- **Arquivos:** `novo-agendamento.html` (Integrado no formulário existente)
+- **Scripts:**
+  ```javascript
+  // Formatação de telefone
+  function formatarTelefone(input) {...}
+  
+  // Integração com WhatsApp
+  function atualizarLinkWhatsApp() {...}
+  ```
+- **Design:**
+  - Uso de ícone Bootstrap Icons bi-whatsapp em verde
+  - Botão verde padrão WhatsApp
+  - Campo com máscara e validação visual
+  - Feedback imediato ao usuário
+
 ---
 
 ## 🎨 **10. COMPONENTES GLOBAIS**

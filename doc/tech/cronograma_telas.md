@@ -166,13 +166,21 @@ src/main/
 
 #### **5.3 Novo Agendamento**
 
-- **Controller:** `AppointmentController.java`
-- **Template:** `templates/appointments/form.html`
-- **CSS:** `static/css/appointments.css`
-- **JS:** `static/js/appointments.js`
-- **Método:** `@GetMapping("/appointments/new")` → `showNewAppointmentForm()`
-- **Método:** `@PostMapping("/appointments")` → `saveAppointment()`
-- **Método:** `@GetMapping("/api/appointments/available-times")` → `getAvailableTimes()`
+- **Controller:** `AgendamentoController.java`
+- **Template:** `templates/novo-agendamento.html`
+- **CSS:** Bootstrap 5.3.0 + Bootstrap Icons
+- **JS:** JS Integrado no template
+- **Método:** `@GetMapping("/novo-agendamento")` → `novoAgendamentoView()`
+- **Método:** `@PostMapping("/agendar")` → `agendar()`
+- **Método:** `@GetMapping("/api/verificar-horario")` → `verificarHorario()`
+- **Método:** `@GetMapping("/api/buscar-paciente")` → `buscarPacientePorNome()` ✅
+- **Método:** `@GetMapping("/api/gerar-link-whatsapp")` → `gerarLinkWhatsAppEndpoint()` ✅
+
+✅ **Funcionalidades de WhatsApp Implementadas**:
+- Formulário com campo obrigatório para telefone WhatsApp
+- Formatação automática do número enquanto o usuário digita
+- Integração direta com WhatsApp Web através de botão
+- Busca e atualização automática de dados do paciente
 
 #### **5.4 Detalhes do Agendamento**
 

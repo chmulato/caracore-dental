@@ -65,13 +65,14 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - [ ] Interface pública para agendamento online
 - [ ] Controle de acesso por perfil
 - [ ] LGPD: consentimento e política de privacidade
+- [x] Integração com WhatsApp para comunicação com pacientes
 
 Funcionalidades previstas para o MVP:
 
 - [ ] Prontuário digital completo
 - [ ] Relatórios financeiros
 - [ ] Dashboard de produtividade
-- [ ] Integração com WhatsApp (notificações)
+- [ ] Notificações automáticas via WhatsApp
 - [ ] Backup automático
 
 ---
@@ -175,7 +176,7 @@ O **Cara Core Agendamento (CCA)** é uma solução completa para gestão de agen
 - **Agendamento Online**: Interface pública para pacientes agendarem consultas
 - **Prontuário Digital**: Upload e organização de imagens odontológicas
 - **Relatórios Gerenciais**: Métricas de produtividade e análises financeiras
-- **Sistema de Notificações**: Lembretes automáticos por email e SMS
+- **Sistema de Notificações**: Lembretes automáticos por email, SMS e integração direta com WhatsApp
 - **Multi-usuário**: Controle de acesso baseado em roles (Admin, Dentista, Recepcionista)
 - **LGPD Compliant**: Conformidade com a Lei Geral de Proteção de Dados
 
@@ -921,3 +922,33 @@ Em ambos os casos, o sistema segue a política de não sobrescrever usuários ex
 Esse comportamento preserva quaisquer modificações feitas nos usuários padrão, como alterações de senha, nome ou outros detalhes.
 
 ---
+
+## **Integração com WhatsApp**
+
+### **Comunicação Eficiente com Pacientes**
+
+O sistema Cara Core Agendamento (CCA) agora inclui integração direta com WhatsApp para melhorar a comunicação com pacientes. Esta funcionalidade foi implementada para:
+
+1. **Confirmação obrigatória do telefone WhatsApp**: Durante o agendamento, o sistema exige a confirmação e/ou atualização do telefone WhatsApp do paciente, garantindo dados de contato sempre atualizados.
+
+2. **Integração direta com o WhatsApp Web**: Um botão WhatsApp permite que a recepção inicie conversas diretamente pelo navegador, sem necessidade de digitar manualmente o número no celular.
+
+3. **Atualização automática do cadastro**: O telefone WhatsApp informado durante o agendamento é automaticamente atualizado no cadastro do paciente.
+
+### **Benefícios da Integração WhatsApp**
+
+- **Redução de faltas**: Lembretes de consultas via WhatsApp diminuem significativamente o número de faltas em consultórios odontológicos.
+  
+- **Comunicação instantânea**: Permite envio rápido de instruções pré e pós-procedimento, receitas e orientações importantes.
+  
+- **Relacionamento aprimorado**: Facilita o acompanhamento dos pacientes, contribuindo para melhor experiência e fidelização.
+  
+- **Confirmações eficientes**: Permite confirmação de consultas com antecedência, possibilitando reagendamentos quando necessário.
+
+### **Como utilizar**
+
+1. Durante o agendamento, verifique e atualize o telefone WhatsApp do paciente (campo obrigatório).
+2. Clique no ícone do WhatsApp ao lado do número para abrir uma conversa no WhatsApp Web.
+3. O sistema formatará automaticamente o número e adicionará o código do país (+55) ao link.
+
+> **Nota:** Para garantir uma experiência completa, recomendamos que o WhatsApp Web já esteja autenticado no navegador do recepcionista ou dentista.

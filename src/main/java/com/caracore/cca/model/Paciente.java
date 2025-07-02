@@ -19,7 +19,8 @@ public class Paciente {
 
     private String email;
 
-    private String telefone;
+    @Column(name = "telefone", nullable = true, length = 20)
+    private String telefone; // Armazena o número de WhatsApp do paciente
 
     public Paciente() {
     }

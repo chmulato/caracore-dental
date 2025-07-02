@@ -24,6 +24,7 @@
 ### 👩 Módulo Pacientes
 
 - Cadastro com dados pessoais e observações
+- ✅ Telefone WhatsApp obrigatório e integrado
 - Histórico de agendamentos
 - Consentimento para comunicação (LGPD)
 
@@ -33,12 +34,14 @@
 - Escolha de profissional, serviço e horário
 - Notificações por e-mail/SMS/WhatsApp
 - Reagendamento via link
+- ✅ Integração com WhatsApp Web para comunicação direta com pacientes
 
 ### 💬 Notificações e Alertas
 
 - Lembrete 24h antes
 - Confirmação por link
 - Alertas de conflitos de horário
+- ✅ Confirmação e atualização obrigatória de telefone WhatsApp
 
 ### 📊 Relatórios
 
@@ -405,3 +408,17 @@
 1. Login → Dashboard
 2. Dashboard → Relatórios/Configurações
 3. Gestão de dados → Volta ao Dashboard
+
+---
+
+## ✅ Funcionalidades Implementadas
+
+### 📱 Integração com WhatsApp
+
+- ✅ Campo obrigatório de telefone WhatsApp no formulário de agendamento
+- ✅ Atualização automática do telefone no cadastro do paciente
+- ✅ Formatação e validação de número de telefone brasileiro
+- ✅ Botão de integração com WhatsApp Web para envio de mensagens
+- ✅ Busca automática de dados do paciente ao selecionar nome
+
+Para detalhes técnicos completos, consulte [whatsapp_integracao.md](whatsapp_integracao.md)

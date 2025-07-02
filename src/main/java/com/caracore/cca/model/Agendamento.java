@@ -15,6 +15,12 @@ public class Agendamento {
     private String dentista;
 
     private LocalDateTime dataHora;
+    
+    @Column(length = 500)
+    private String observacao;
+    
+    // Status do agendamento (confirmado, cancelado, realizado)
+    private String status = "AGENDADO";
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -25,4 +31,8 @@ public class Agendamento {
     public void setDentista(String dentista) { this.dentista = dentista; }
     public LocalDateTime getDataHora() { return dataHora; }
     public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
+    public String getObservacao() { return observacao; }
+    public void setObservacao(String observacao) { this.observacao = observacao; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

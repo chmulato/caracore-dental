@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-<head th:replace="~{fragments/layout :: head('Novo Agendamento')}"></head>
+<head th:replace="~{fragments/layout :: head('Novo Agendamento')}">
+    <title>Novo Agendamento</title>
+</head>
 <body>
     <!-- Navbar -->
     <nav th:replace="~{fragments/layout :: navbar('novo')}"></nav>
@@ -8,48 +10,135 @@
     <!-- Main Content -->
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div th:replace="~{fragments/layout :: page-header('Novo Agendamento', null, null)}"></div>
+            <div class="col-12 col-lg-8">
+                <div th:replace="~{fragments/layout :: page-header('Novo Agendamento', 'Cadastro de nova consulta', 'bi-calendar-plus')}"></div>
                 
-                <div class="card">
+                <!-- Mensagens de erro e sucesso -->
+                <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${erro}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <form action="/agendar" method="post" th:object="${agendamentoForm}" class="needs-validation" novalidate>
-                            <div class="mb-3">
-                                <label for="paciente" class="form-label">
-                                    <i class="bi bi-person me-1"></i> Paciente:
+                            <!-- Paciente -->
+                            <div class="mb-4">
+                                <label for="paciente" class="form-label fw-bold">
+                                    <i class="bi bi-person-fill me-1"></i> Paciente:
                                 </label>
-                                <input type="text" class="form-control" id="paciente" th:field="*{paciente}" required>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control form-control-lg" id="paciente" 
+                                        th:field="*{paciente}" placeholder="Digite o nome do paciente" required
+                                        list="pacientesList">
+                                    <datalist id="pacientesList">
+                                        <option value="Maria Oliveira"></option>
+                                        <option value="João Silva"></option>
+                                        <option value="Ana Souza"></option>
+                                        <option value="Carlos Pereira"></option>
+                                        <option value="Juliana Costa"></option>
+                                    </datalist>
+                                    <div class="invalid-feedback">
+                                        Por favor, informe o nome do paciente.
+                                    </div>
+                                </div>
+                                <small class="text-muted">Digite ou selecione um paciente da lista</small>
+                            </div>
+                            
+                            <!-- Telefone WhatsApp -->
+                            <div class="mb-4">
+                                <label for="telefoneWhatsapp" class="form-label fw-bold">
+                                    <i class="bi bi-whatsapp me-1 text-success"></i> WhatsApp:
+                                </label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-phone"></i>
+                                    </span>
+                                    <input type="tel" class="form-control form-control-lg" id="telefoneWhatsapp" 
+                                        th:field="*{telefoneWhatsapp}" placeholder="(99) 99999-9999" required
+                                        pattern="^\(?[1-9]{2}\)? ?(?:9[1-9]|[2-9])[0-9]{3}\-?[0-9]{4}$">
+                                    <a href="#" class="btn btn-success" id="whatsappLink" title="Enviar mensagem pelo WhatsApp" target="_blank">
+                                        <i class="bi bi-whatsapp"></i>
+                                    </a>
+                                    <div class="invalid-feedback">
+                                        Por favor, informe um número WhatsApp válido no formato (99) 99999-9999.
+                                    </div>
+                                </div>
+                                <small class="text-muted">Confirme ou atualize o telefone WhatsApp do paciente</small>
+                            </div>
+                            
+                            <!-- Dentista -->
+                            <div class="mb-4">
+                                <label for="dentista" class="form-label fw-bold">
+                                    <i class="bi bi-person-badge-fill me-1"></i> Dentista:
+                                </label>
+                                <select class="form-select form-select-lg" id="dentista" th:field="*{dentista}" required>
+                                    <option value="" selected disabled>Selecione um dentista</option>
+                                    <option th:each="dentista : ${dentistas}" th:value="${dentista}" th:text="${dentista}"></option>
+                                </select>
                                 <div class="invalid-feedback">
-                                    Por favor, informe o nome do paciente.
+                                    Por favor, selecione o dentista.
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="dentista" class="form-label">
-                                    <i class="bi bi-person-badge me-1"></i> Dentista:
+                            <!-- Data e Hora -->
+                            <div class="mb-4">
+                                <label for="dataHora" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event-fill me-1"></i> Data e Hora:
                                 </label>
-                                <input type="text" class="form-control" id="dentista" th:field="*{dentista}" required>
-                                <div class="invalid-feedback">
-                                    Por favor, informe o nome do dentista.
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-clock"></i>
+                                    </span>
+                                    <input type="datetime-local" class="form-control form-control-lg" id="dataHora" 
+                                        th:field="*{dataHora}" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecione uma data e hora válida.
+                                    </div>
+                                </div>
+                                <small class="text-muted">Horários disponíveis: 08:00 às 18:00 (segunda a sexta)</small>
+                                <div id="horarioFeedback" class="alert mt-2" style="display:none;"></div>
+                            </div>
+                            
+                            <!-- Duração -->
+                            <div class="mb-4">
+                                <label for="duracaoMinutos" class="form-label fw-bold">
+                                    <i class="bi bi-hourglass-split me-1"></i> Duração:
+                                </label>
+                                <div class="input-group">
+                                    <select class="form-select" id="duracaoMinutos" th:field="*{duracaoMinutos}">
+                                        <option value="15">15 minutos</option>
+                                        <option value="30" selected>30 minutos</option>
+                                        <option value="45">45 minutos</option>
+                                        <option value="60">1 hora</option>
+                                        <option value="90">1 hora e 30 minutos</option>
+                                        <option value="120">2 horas</option>
+                                    </select>
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="dataHora" class="form-label">
-                                    <i class="bi bi-calendar-event me-1"></i> Data e Hora:
+                            <!-- Observações -->
+                            <div class="mb-4">
+                                <label for="observacao" class="form-label fw-bold">
+                                    <i class="bi bi-journal-text me-1"></i> Observações/Procedimento:
                                 </label>
-                                <input type="datetime-local" class="form-control" id="dataHora" th:field="*{dataHora}" required>
-                                <div class="invalid-feedback">
-                                    Por favor, selecione uma data e hora válida.
-                                </div>
+                                <textarea class="form-control" id="observacao" th:field="*{observacao}" 
+                                    rows="3" placeholder="Descreva o motivo da consulta ou procedimento a ser realizado"
+                                    maxlength="500"></textarea>
+                                <div class="form-text" id="contadorCaracteres">Opcional - 500 caracteres restantes</div>
                             </div>
                             
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-save me-2"></i>Agendar Consulta
+                            <!-- Botões de ação -->
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg flex-grow-1" id="btnConfirmar">
+                                    <i class="bi bi-calendar-check me-2"></i>Confirmar Agendamento
                                 </button>
-                                <a href="/" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left me-2"></i>Voltar
+                                <a href="/" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left"></i> Voltar
                                 </a>
                             </div>
                         </form>
@@ -70,10 +159,9 @@
     (function () {
         'use strict'
         
-        // Fetch all forms we want to apply validation styles to
+        // Validação do formulário
         const forms = document.querySelectorAll('.needs-validation')
         
-        // Loop over them and prevent submission
         Array.prototype.slice.call(forms).forEach(function (form) {
             form.addEventListener('submit', function (event) {
                 if (!form.checkValidity()) {
@@ -83,12 +171,176 @@
                 
                 form.classList.add('was-validated')
                 
-                // Show loading overlay if form is valid
+                // Mostrar loading overlay se o formulário for válido
                 if (form.checkValidity()) {
-                    $('#loading-overlay').fadeIn(200);
+                    document.getElementById('loading-overlay').style.display = 'flex';
                 }
             }, false)
         })
+        
+        // Função para atualizar o link do WhatsApp
+        function atualizarLinkWhatsApp() {
+            const telefoneInput = document.getElementById('telefoneWhatsapp');
+            const whatsappLink = document.getElementById('whatsappLink');
+            
+            if (telefoneInput.value) {
+                // Remove caracteres não numéricos
+                const numeroLimpo = telefoneInput.value.replace(/\D/g, '');
+                
+                // Verifica se o número tem pelo menos 10 dígitos (DDD + número)
+                if (numeroLimpo.length >= 10) {
+                    // Formata o número para o WhatsApp (com código do Brasil +55)
+                    const linkWhatsApp = `https://wa.me/55${numeroLimpo}`;
+                    whatsappLink.href = linkWhatsApp;
+                    whatsappLink.classList.remove('disabled');
+                    whatsappLink.setAttribute('title', 'Enviar mensagem pelo WhatsApp');
+                } else {
+                    whatsappLink.removeAttribute('href');
+                    whatsappLink.classList.add('disabled');
+                    whatsappLink.setAttribute('title', 'Número incompleto');
+                }
+            } else {
+                whatsappLink.removeAttribute('href');
+                whatsappLink.classList.add('disabled');
+                whatsappLink.setAttribute('title', 'Digite um número de WhatsApp');
+            }
+        }
+        
+        // Função para formatar o telefone no padrão (99) 99999-9999
+        function formatarTelefone(input) {
+            let value = input.value.replace(/\D/g, '');
+            
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            if (value.length > 7) {
+                input.value = `(${value.substring(0, 2)}) ${value.substring(2, 7)}-${value.substring(7)}`;
+            } else if (value.length > 2) {
+                input.value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+            } else if (value.length > 0) {
+                input.value = `(${value}`;
+            }
+        }
+        
+        // Adiciona eventos para atualizar o link do WhatsApp e formatar o telefone
+        const telefoneInput = document.getElementById('telefoneWhatsapp');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function() {
+                formatarTelefone(this);
+                atualizarLinkWhatsApp();
+            });
+            
+            // Executa a função na carga da página para configurar o link inicial
+            formatarTelefone(telefoneInput);
+            atualizarLinkWhatsApp();
+        }
+        
+        // Busca dados do paciente quando selecionar um paciente existente
+        const pacienteInput = document.getElementById('paciente');
+        if (pacienteInput) {
+            pacienteInput.addEventListener('change', function() {
+                const nomePaciente = this.value.trim();
+                
+                if (nomePaciente.length > 2) {
+                    // Faz uma chamada AJAX para buscar os dados do paciente
+                    fetch(`/api/buscar-paciente?nome=${encodeURIComponent(nomePaciente)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.encontrado && data.telefone) {
+                                // Preenche o campo de telefone com o valor do banco de dados
+                                telefoneInput.value = data.telefone;
+                                // Formata o telefone e atualiza o link do WhatsApp
+                                formatarTelefone(telefoneInput);
+                                atualizarLinkWhatsApp();
+                            }
+                        })
+                        .catch(error => console.error('Erro ao buscar dados do paciente:', error));
+                }
+            });
+        }
+        
+        // Contador de caracteres para o campo de observação
+        const obsTextarea = document.getElementById('observacao');
+        const contadorCaracteres = document.getElementById('contadorCaracteres');
+        const maxLength = 500;
+        
+        // Inicializar o contador
+        atualizarContador();
+        
+        obsTextarea.addEventListener('input', atualizarContador);
+        
+        function atualizarContador() {
+            const caracteresRestantes = maxLength - obsTextarea.value.length;
+            contadorCaracteres.textContent = `Opcional - ${caracteresRestantes} caracteres restantes`;
+            
+            if (caracteresRestantes < 50) {
+                contadorCaracteres.classList.add('text-danger');
+            } else {
+                contadorCaracteres.classList.remove('text-danger');
+            }
+        }
+        
+        // Validação de data e hora
+        const dataHoraInput = document.getElementById('dataHora');
+        const horarioFeedback = document.getElementById('horarioFeedback');
+        
+        dataHoraInput.addEventListener('change', validarDataHora);
+        
+        function validarDataHora() {
+            if (!dataHoraInput.value) {
+                horarioFeedback.style.display = 'none';
+                return;
+            }
+            
+            const dataHora = new Date(dataHoraInput.value);
+            const hora = dataHora.getHours();
+            const diaSemana = dataHora.getDay(); // 0 = domingo, 6 = sábado
+            
+            // Validar dia útil
+            if (diaSemana === 0 || diaSemana === 6) {
+                mostrarErro('Atendimento indisponível nos finais de semana. Por favor, selecione um dia útil (segunda a sexta).');
+                dataHoraInput.setCustomValidity('invalid');
+                return;
+            }
+            
+            // Validar horário comercial
+            if (hora < 8 || hora >= 18) {
+                mostrarErro('Horário fora do expediente. Por favor, selecione um horário entre 8h e 18h.');
+                dataHoraInput.setCustomValidity('invalid');
+                return;
+            }
+            
+            // Data e hora válidas
+            mostrarSucesso('Horário disponível para agendamento.');
+            dataHoraInput.setCustomValidity('');
+            
+            // Esconder feedback após 3 segundos
+            setTimeout(() => {
+                horarioFeedback.style.display = 'none';
+            }, 3000);
+        }
+        
+        function mostrarErro(mensagem) {
+            horarioFeedback.className = 'alert alert-danger mt-2';
+            horarioFeedback.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${mensagem}`;
+            horarioFeedback.style.display = 'block';
+        }
+        
+        function mostrarSucesso(mensagem) {
+            horarioFeedback.className = 'alert alert-success mt-2';
+            horarioFeedback.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i>${mensagem}`;
+            horarioFeedback.style.display = 'block';
+        }
+        
+        // Verificação básica de conflitos ao selecionar dentista e data
+        const dentistaSelect = document.getElementById('dentista');
+        
+        dentistaSelect.addEventListener('change', function() {
+            if (dataHoraInput.value) {
+                validarDataHora();
+            }
+        });
     })()
     </script>
 </body>
