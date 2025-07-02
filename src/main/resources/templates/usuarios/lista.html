@@ -72,6 +72,13 @@
                         <div class="input-group">
                             <input type="text" class="form-control" name="termo" placeholder="Buscar usuário..." 
                                    th:value="${termoBusca}">
+                            <select class="form-select perfil-select" name="perfil" aria-label="Filtrar por perfil" title="Filtrar por perfil">
+                                <option value="">Todos os Perfis</option>
+                                <option value="ROLE_ADMIN" th:selected="${perfil == 'ROLE_ADMIN'}">Administradores</option>
+                                <option value="ROLE_DENTIST" th:selected="${perfil == 'ROLE_DENTIST'}">Dentistas</option>
+                                <option value="ROLE_RECEPTIONIST" th:selected="${perfil == 'ROLE_RECEPTIONIST'}">Recepcionistas</option>
+                                <option value="ROLE_PATIENT" th:selected="${perfil == 'ROLE_PATIENT'}">Pacientes</option>
+                            </select>
                             <button class="btn btn-outline-primary" type="submit" title="Buscar usuários">
                                 <i class="bi bi-search" aria-hidden="true"></i>
                                 <span class="visually-hidden">Buscar</span>
@@ -96,6 +103,65 @@
                     <i class="bi bi-exclamation-triangle me-2"></i> Ocorreu um erro: 
                     <span th:text="${param.erro == 'usuario-nao-encontrado' ? 'Usuário não encontrado.' : 'Erro desconhecido.'}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <!-- Cards de perfis -->
+                <div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+                    <!-- Card Administradores -->
+                    <div class="col">
+                        <div class="card h-100 border-danger">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-danger">
+                                    <i class="bi bi-shield-lock-fill"></i>
+                                </h5>
+                                <h6 class="card-subtitle mb-2">Administradores</h6>
+                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_ADMIN').count()}">0</p>
+                                <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_ADMIN')}" class="btn btn-sm btn-outline-danger">Ver todos</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Dentistas -->
+                    <div class="col">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">
+                                    <i class="bi bi-person-workspace"></i>
+                                </h5>
+                                <h6 class="card-subtitle mb-2">Dentistas</h6>
+                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_DENTIST').count()}">0</p>
+                                <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_DENTIST')}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Recepcionistas -->
+                    <div class="col">
+                        <div class="card h-100 border-success">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-success">
+                                    <i class="bi bi-person-badge"></i>
+                                </h5>
+                                <h6 class="card-subtitle mb-2">Recepcionistas</h6>
+                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_RECEPTIONIST').count()}">0</p>
+                                <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_RECEPTIONIST')}" class="btn btn-sm btn-outline-success">Ver todos</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Pacientes -->
+                    <div class="col">
+                        <div class="card h-100 border-secondary">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-secondary">
+                                    <i class="bi bi-person"></i>
+                                </h5>
+                                <h6 class="card-subtitle mb-2">Pacientes</h6>
+                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_PATIENT').count()}">0</p>
+                                <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_PATIENT')}" class="btn btn-sm btn-outline-secondary">Ver todos</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Tabela de usuários -->

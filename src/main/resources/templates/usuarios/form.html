@@ -127,6 +127,7 @@
                                 <option value="ROLE_PATIENT">Paciente</option>
                             </select>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                            <div class="form-text mt-2" id="roleDescription">Selecione um perfil para ver sua descrição</div>
                         </div>
                     </div>
                     
@@ -137,11 +138,59 @@
                                 <label class="form-check-label" for="resetarSenha">
                                     Redefinir senha para o padrão do perfil
                                 </label>
-                                <div class="form-text">Ao marcar esta opção, a senha será redefinida para "admin123" (administrador) ou "senha123" (outros perfis).</div>
+                                <div class="form-text">Ao marcar esta opção, a senha será redefinida para "admin123" para todos os perfis.</div>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Card de informações sobre perfis -->
+                    <div class="card mb-4 mt-3 border-primary">
+                        <div class="card-header bg-primary bg-opacity-10">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Informações sobre Perfis
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-danger"><i class="bi bi-shield-lock me-2"></i>Administrador</h6>
+                                    <ul class="small">
+                                        <li>Acesso completo ao sistema</li>
+                                        <li>Gerenciamento de usuários</li>
+                                        <li>Configurações do sistema</li>
+                                        <li>Exclusão de registros</li>
+                                        <li>Acesso a todos os relatórios</li>
+                                    </ul>
+                                    
+                                    <h6 class="fw-bold text-success mt-3"><i class="bi bi-person-badge me-2"></i>Recepcionista</h6>
+                                    <ul class="small">
+                                        <li>Gerenciamento de agendamentos</li>
+                                        <li>Cadastro e edição de pacientes</li>
+                                        <li>Não pode excluir registros</li>
+                                        <li>Acesso a relatórios básicos</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-person-workspace me-2"></i>Dentista</h6>
+                                    <ul class="small">
+                                        <li>Visualização de agendamentos</li>
+                                        <li>Visualização de dados de pacientes</li>
+                                        <li>Registro de procedimentos</li>
+                                        <li>Acesso aos históricos médicos</li>
+                                    </ul>
+                                    
+                                    <h6 class="fw-bold text-secondary mt-3"><i class="bi bi-person me-2"></i>Paciente</h6>
+                                    <ul class="small">
+                                        <li>Acesso apenas aos seus dados</li>
+                                        <li>Visualização de seus agendamentos</li>
+                                        <li>Solicitação de agendamentos</li>
+                                        <li>Visualização de seu histórico</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-between">
                         <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i> Voltar
@@ -178,6 +227,42 @@
                 senhaInput.type = 'password';
                 icon.classList.remove('bi-eye-slash');
                 icon.classList.add('bi-eye');
+            }
+        });
+        
+        // Script para atualizar a descrição do perfil
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const roleDescription = document.getElementById('roleDescription');
+            
+            // Descrições de cada perfil
+            const roleDescriptions = {
+                'ROLE_ADMIN': 'Acesso completo ao sistema. Pode gerenciar usuários, pacientes, agendamentos e configurações do sistema.',
+                'ROLE_DENTIST': 'Acesso ao calendário de agendamentos, histórico de pacientes e registro de procedimentos realizados.',
+                'ROLE_RECEPTIONIST': 'Acesso para gerenciar agendamentos e pacientes. Não pode alterar configurações do sistema ou excluir registros.',
+                'ROLE_PATIENT': 'Acesso restrito apenas à sua própria agenda e dados pessoais.',
+                '': 'Selecione um perfil para ver sua descrição'
+            };
+            
+            // Atualiza a descrição quando o perfil é alterado
+            roleSelect.addEventListener('change', function() {
+                const selectedRole = this.value;
+                roleDescription.textContent = roleDescriptions[selectedRole] || roleDescriptions[''];
+                
+                // Aplica classe para destacar a descrição
+                roleDescription.className = 'form-text mt-2';
+                if (selectedRole) {
+                    roleDescription.classList.add('text-primary', 'fw-bold');
+                } else {
+                    roleDescription.classList.remove('text-primary', 'fw-bold');
+                }
+            });
+            
+            // Atualiza a descrição na carga inicial da página
+            const initialRole = roleSelect.value;
+            if (initialRole) {
+                roleDescription.textContent = roleDescriptions[initialRole] || roleDescriptions[''];
+                roleDescription.classList.add('text-primary', 'fw-bold');
             }
         });
     </script>

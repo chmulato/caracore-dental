@@ -41,9 +41,9 @@ class InitServiceTest {
     void deveCriarAdminSeNaoExistir() {
         // Arrange
         when(usuarioRepository.findByEmail("suporte@caracore.com.br")).thenReturn(Optional.empty());
-        when(usuarioRepository.findByEmail("dentista@teste.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.findByEmail("recepcao@teste.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("dentista@caracore.com.br")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("recepcao@caracore.com.br")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("paciente@caracore.com.br")).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("senhaCodificada");
         
         // Act
@@ -68,9 +68,9 @@ class InitServiceTest {
         adminExistente.setRole("ROLE_ADMIN");
         
         when(usuarioRepository.findByEmail("suporte@caracore.com.br")).thenReturn(Optional.of(adminExistente));
-        when(usuarioRepository.findByEmail("dentista@teste.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.findByEmail("recepcao@teste.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("dentista@caracore.com.br")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("recepcao@caracore.com.br")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("paciente@caracore.com.br")).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("senhaCodificada");
         
         // Act
@@ -83,17 +83,17 @@ class InitServiceTest {
         
         // Verificar que os outros usuários foram criados
         verify(usuarioRepository).save(argThat(usuario -> 
-            usuario.getEmail().equals("dentista@teste.com") &&
+            usuario.getEmail().equals("dentista@caracore.com.br") &&
             usuario.getRole().equals("ROLE_DENTIST")
         ));
         
         verify(usuarioRepository).save(argThat(usuario -> 
-            usuario.getEmail().equals("recepcao@teste.com") &&
+            usuario.getEmail().equals("recepcao@caracore.com.br") &&
             usuario.getRole().equals("ROLE_RECEPTIONIST")
         ));
         
         verify(usuarioRepository).save(argThat(usuario -> 
-            usuario.getEmail().equals("paciente@teste.com") &&
+            usuario.getEmail().equals("paciente@caracore.com.br") &&
             usuario.getRole().equals("ROLE_PATIENT")
         ));
     }
@@ -140,13 +140,13 @@ class InitServiceTest {
     void deveRedefinirSenhaDoUsuario() {
         // Configurar mock
         Usuario usuario = new Usuario();
-        usuario.setEmail("dentista@teste.com");
+        usuario.setEmail("dentista@caracore.com.br");
         
-        when(usuarioRepository.findByEmail("dentista@teste.com")).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.encode("senha123")).thenReturn("senhaCodificada");
+        when(usuarioRepository.findByEmail("dentista@caracore.com.br")).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.encode("admin123")).thenReturn("senhaCodificada");
         
         // Executar
-        boolean resultado = initService.redefinirSenhaUsuarioPadrao("dentista@teste.com");
+        boolean resultado = initService.redefinirSenhaUsuarioPadrao("dentista@caracore.com.br");
         
         // Verificar
         assertTrue(resultado);
@@ -158,10 +158,10 @@ class InitServiceTest {
     @DisplayName("Deve retornar falso ao tentar redefinir senha de usuário inexistente")
     void deveRetornarFalsoAoRedefinirSenhaDeUsuarioInexistente() {
         // Configurar mock
-        when(usuarioRepository.findByEmail("naoexiste@teste.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmail("naoexiste@caracore.com.br")).thenReturn(Optional.empty());
         
         // Executar
-        boolean resultado = initService.redefinirSenhaUsuarioPadrao("naoexiste@teste.com");
+        boolean resultado = initService.redefinirSenhaUsuarioPadrao("naoexiste@caracore.com.br");
         
         // Verificar
         assertFalse(resultado);

@@ -27,9 +27,9 @@ public class InitService {
     @PostConstruct
     public void init() {
         criarUsuarioSeNaoExistir("suporte@caracore.com.br", "Administrador", "admin123", "ROLE_ADMIN");
-        criarUsuarioSeNaoExistir("dentista@teste.com", "Dr. Carlos Silva", "senha123", "ROLE_DENTIST");
-        criarUsuarioSeNaoExistir("recepcao@teste.com", "Ana Recepção", "senha123", "ROLE_RECEPTIONIST");
-        criarUsuarioSeNaoExistir("paciente@teste.com", "João Paciente", "senha123", "ROLE_PATIENT");
+        criarUsuarioSeNaoExistir("dentista@caracore.com.br", "Dr. Carlos Silva", "admin123", "ROLE_DENTIST");
+        criarUsuarioSeNaoExistir("recepcao@caracore.com.br", "Ana Recepção", "admin123", "ROLE_RECEPTIONIST");
+        criarUsuarioSeNaoExistir("paciente@caracore.com.br", "João Paciente", "admin123", "ROLE_PATIENT");
     }
     
     /**
@@ -70,9 +70,9 @@ public class InitService {
         logger.info("Verificando usuários padrões do sistema");
         
         criarUsuarioSeNaoExistir("suporte@caracore.com.br", "Administrador", "admin123", "ROLE_ADMIN");
-        criarUsuarioSeNaoExistir("dentista@teste.com", "Dr. Carlos Silva", "senha123", "ROLE_DENTIST");
-        criarUsuarioSeNaoExistir("recepcao@teste.com", "Ana Recepção", "senha123", "ROLE_RECEPTIONIST");
-        criarUsuarioSeNaoExistir("paciente@teste.com", "João Paciente", "senha123", "ROLE_PATIENT");
+        criarUsuarioSeNaoExistir("dentista@caracore.com.br", "Dr. Carlos Silva", "admin123", "ROLE_DENTIST");
+        criarUsuarioSeNaoExistir("recepcao@caracore.com.br", "Ana Recepção", "admin123", "ROLE_RECEPTIONIST");
+        criarUsuarioSeNaoExistir("paciente@caracore.com.br", "João Paciente", "admin123", "ROLE_PATIENT");
         
         logger.info("Verificação de usuários padrões concluída");
     }
@@ -88,10 +88,7 @@ public class InitService {
         
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            String novaSenha = "senha123";
-            if (email.equals("suporte@caracore.com.br")) {
-                novaSenha = "admin123";
-            }
+            String novaSenha = "admin123";
             
             usuario.setSenha(passwordEncoder.encode(novaSenha));
             usuarioRepository.save(usuario);

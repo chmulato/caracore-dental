@@ -34,9 +34,9 @@ public class UsuarioController {
     
     private static final List<String> EMAIL_USUARIOS_PADRAO = Arrays.asList(
         "suporte@caracore.com.br", 
-        "dentista@teste.com", 
-        "recepcao@teste.com", 
-        "paciente@teste.com"
+        "dentista@caracore.com.br", 
+        "recepcao@caracore.com.br", 
+        "paciente@caracore.com.br"
     );
 
     @Autowired
@@ -99,6 +99,42 @@ public class UsuarioController {
         );
         
         return "usuarios/detalhes";
+    }
+    
+    /**
+     * Busca usuários por nome/email e opcionalmente filtra por perfil
+     */
+    @GetMapping("/buscar")
+    public String buscarUsuarios(
+            @RequestParam String termo, 
+            @RequestParam(required = false) String perfil,
+            Model model) {
+        
+        List<Usuario> usuarios;
+        
+        // Busca usuários por termo e filtra por perfil se especificado
+        if (perfil != null && !perfil.isEmpty()) {
+            usuarios = usuarioRepository.findByEmailContainingIgnoreCaseOrNomeContainingIgnoreCase(termo, termo)
+                    .stream()
+                    .filter(u -> u.getRole().equals(perfil))
+                    .toList();
+        } else {
+            usuarios = usuarioRepository.findByEmailContainingIgnoreCaseOrNomeContainingIgnoreCase(termo, termo);
+        }
+        
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("termoBusca", termo);
+        model.addAttribute("perfil", perfil);
+        
+        // Registrar atividade
+        userActivityLogger.logActivity(
+            "BUSCAR_USUARIOS", 
+            "Busca de usuários realizada", 
+            "Termo: " + termo + (perfil != null && !perfil.isEmpty() ? ", Perfil: " + perfil : ""), 
+            "Administrador realizou busca de usuários"
+        );
+        
+        return "usuarios/lista";
     }
     
     /**
