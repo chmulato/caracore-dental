@@ -99,7 +99,16 @@
                                     <dd class="col-sm-9" th:text="${paciente.email ?: 'Não informado'}"></dd>
                                     
                                     <dt class="col-sm-3">Telefone:</dt>
-                                    <dd class="col-sm-9" th:text="${paciente.telefone ?: 'Não informado'}"></dd>
+                                    <dd class="col-sm-9">
+                                        <span th:if="${paciente.telefone}" th:text="${paciente.telefone}"></span>
+                                        <span th:if="${paciente.telefone}" class="ms-2">
+                                            <a th:href="@{/api/whatsapp(telefone=${paciente.telefone})}" 
+                                               target="_blank" class="text-success" title="Abrir WhatsApp">
+                                                <i class="bi bi-whatsapp"></i> Abrir WhatsApp
+                                            </a>
+                                        </span>
+                                        <span th:unless="${paciente.telefone}">Não informado</span>
+                                    </dd>
                                 </dl>
                             </div>
                         </div>

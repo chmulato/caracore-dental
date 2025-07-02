@@ -276,4 +276,10 @@ public class AgendamentoController {
         
         return response;
     }
+    
+    @GetMapping("/api/whatsapp")
+    public String redirecionarWhatsapp(@RequestParam String telefone) {
+        String link = gerarLinkWhatsApp(telefone);
+        return "redirect:" + link;
+    }
 }
