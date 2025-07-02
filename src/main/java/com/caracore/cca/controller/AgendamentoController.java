@@ -43,6 +43,11 @@ public class AgendamentoController {
     public AgendamentoController(AgendamentoRepository repository) {
         this.repository = repository;
     }
+    
+    // Setter para facilitar testes unitários
+    public void setPacienteService(PacienteService pacienteService) {
+        this.pacienteService = pacienteService;
+    }
 
     @GetMapping("/")
     public String index(Model model) {
@@ -187,9 +192,12 @@ public class AgendamentoController {
             logger.info("Novo agendamento criado: {} (WhatsApp: {}) com {} em {}", 
                     form.getPaciente(), form.getTelefoneWhatsapp(), form.getDentista(), dataFormatada);
             
-            redirectAttributes.addFlashAttribute("sucesso", 
-                "Agendamento criado com sucesso para " + agendamento.getPaciente() + 
-                " (WhatsApp: " + telefoneWhatsapp + ") com " + agendamento.getDentista() + " em " + dataFormatada);
+            // Em testes, redirectAttributes pode ser null
+            if (redirectAttributes != null) {
+                redirectAttributes.addFlashAttribute("sucesso", 
+                    "Agendamento criado com sucesso para " + agendamento.getPaciente() + 
+                    " (WhatsApp: " + telefoneWhatsapp + ") com " + agendamento.getDentista() + " em " + dataFormatada);
+            }
                 
             return "redirect:/";
         } catch (Exception e) {
