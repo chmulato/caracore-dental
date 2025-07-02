@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title th:text="${dentista.id == null ? 'Novo Dentista' : 'Editar Dentista'} + ' - Sistema CCA'"></title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid py-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary" th:text="${dentista.id == null ? 'Cadastrar Novo Dentista' : 'Editar Dentista'}"></h6>
+                </div>
+                <div class="card-body">
+                    <!-- Formulário para novo dentista -->
+                    <form th:if="${dentista.id == null}" th:action="@{/dentistas/salvar}" th:object="${dentista}" method="post">
+                        <div th:replace="~{dentistas/form-fields :: campos}"></div>
+                        <div class="row mt-3">
+                            <div class="col-md-12 text-end">
+                                <a th:href="@{/dentistas}" class="btn btn-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Formulário para editar dentista existente -->
+                    <form th:if="${dentista.id != null}" th:action="@{/dentistas/{id}/atualizar(id=${dentista.id})}" th:object="${dentista}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+                        <div th:replace="~{dentistas/form-fields :: campos}"></div>
+                        <div class="row mt-3">
+                            <div class="col-md-12 text-end">
+                                <a th:href="@{/dentistas}" class="btn btn-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary">Atualizar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

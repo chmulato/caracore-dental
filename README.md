@@ -796,160 +796,35 @@ R: Aumente a heap da JVM:
    - Ou: java -Xmx2g -jar app.jar
 ```
 
+---
+
 ## **Licença**
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+O Sistema Cara Core Agendamento (CCA) é licenciado sob a Licença MIT.
 
-## **Suporte**
+A Licença MIT é uma licença de software permissiva que é curta e objetiva. Ela permite que as pessoas façam qualquer coisa com o código-fonte, como:
 
-- **Documentação:** [Wiki do Projeto](https://github.com/chmulato/cara-core_cca/wiki)
-- **Issues:** [GitHub Issues](https://github.com/chmulato/cara-core_cca/issues)
-- **Email:** [suporte@caracore.com.br](mailto:suporte@caracore.com.br)
-- **Website:** [www.caracore.com.br](https://www.caracore.com.br)
+- **Usar o código comercialmente**
+- **Modificar o código**
+- **Distribuir o código**
+- **Sublicenciar o código**
+- **Usar o código privadamente**
+
+A única condição é que o aviso de copyright e a permissão sejam incluídos em todas as cópias ou partes substanciais do software.
+
+Isso significa que você pode usar este sistema livremente em projetos comerciais e proprietários. No entanto, não há garantias ou responsabilidade por parte dos autores.
+
+Veja o arquivo [LICENSE](LICENSE) para o texto completo da licença.
+
+```
+MIT License
+
+Copyright (c) 2025 Cara Core Informática
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files...
+```
 
 ---
 
-## **Equipe**
-
-**Desenvolvedores:**
-
-- **Christian V. Mulato** - Tech Lead & Backend Developer
-- **Guilherme Mulato** - Frontend Developer & UI/UX
-
-**Cara Core Informática**  
-*Soluções tecnológicas para área da saúde*
-
----
-
-**Última atualização:** 01 de julho de 2025  
-**Versão dos WebJars:** Bootstrap 5.3.0, Bootstrap Icons 1.13.1, jQuery 3.7.0
-
-## **Como Executar Rapidamente**
-
-Para iniciar a aplicação de forma rápida, execute:
-
-```bash
-# Subir o banco de dados PostgreSQL (necessário apenas na primeira vez)
-docker-compose up -d
-
-# Iniciar a aplicação Spring Boot
-mvn spring-boot:run
-```
-
-Acesse a aplicação em [http://localhost:8080](http://localhost:8080)  
-Login padrão: 
-- Email: `suporte@caracore.com.br`
-- Senha: `[senha padrão]`
-- Perfil: Administrador
-
-> **⚠️ ATENÇÃO:** Por segurança, altere a senha do usuário administrador imediatamente após o primeiro acesso ao sistema.
-
-Para verificar os logs e confirmar que a aplicação está rodando corretamente:
-```bash
-# Ver logs da aplicação
-tail -f logs/user-activity.log
-
-# No Windows PowerShell
-Get-Content -Path .\logs\user-activity.log -Wait
-```
-
-## **Atualizações Recentes**
-
-- **01/07/2025**: Correção de erros nos testes unitários e de integração, melhorias na configuração dos ambientes de teste
-- **30/06/2025**: Atualização da documentação e ajustes no README
-- **25/06/2025**: Implementação de funcionalidades de agendamento e autenticação
-- **20/06/2025**: Configuração inicial do projeto e estrutura de banco de dados
-
-## **Inicialização e Dados Padrão**
-
-### **Usuário Administrador Inicial**
-
-O sistema cria automaticamente um usuário administrador no primeiro acesso:
-
-```markdown
-Email: suporte@caracore.com.br
-Perfil: ADMIN
-```
-
-> **⚠️ IMPORTANTE:** Por segurança, altere a senha do usuário administrador imediatamente após o primeiro acesso. A senha padrão é definida internamente e deve ser alterada assim que você entrar no sistema pela primeira vez.
-
-Este usuário é criado de duas formas redundantes para garantir sua existência:
-
-1. **Migrations Flyway**: No script de migração através de INSERT com ON CONFLICT para evitar duplicidade
-2. **InitService**: Um serviço Java que verifica na inicialização se o usuário existe e o cria se necessário
-
-### **Segurança das Senhas**
-
-O sistema utiliza hashing seguro com as seguintes características:
-
-1. **Algoritmo Robusto**: Implementa BCrypt, uma função de hash projetada especificamente para senhas
-   
-2. **Proteção contra Ataques Comuns**:
-   - Salt único por hash (proteção contra tabelas rainbow)
-   - Função computacionalmente intensiva (proteção contra força bruta)
-   - Resistente a SQL injection
-
-3. **Validação de Integridade**: Testes automatizados verificam a integridade das senhas
-
-Para executar os testes de validação de segurança:
-
-```bash
-mvn test -Dtest=VerificarHashTest
-mvn test -Dtest=SenhaSegurancaTest
-```
-
-### **Migrações de Banco de Dados e Usuários Padrão**
-
-O sistema utiliza Flyway para migrações de banco de dados. Os usuários padrão são criados tanto na inicialização do Spring Boot (pelo `InitService`) quanto nas migrações SQL (pelo script `V7__adicionar_usuarios_padrao_todos_perfis.sql`)
-
-Em ambos os casos, o sistema segue a política de não sobrescrever usuários existentes:
-
-1. No código Java, o método `criarUsuarioSeNaoExistir()` do `InitService` verifica a existência do usuário antes de criar:
-   ```java
-   if (usuarioRepository.findByEmail(email).isEmpty()) {
-       // Criar usuário
-   } else {
-       logger.info("Usuário {} já existe", email);
-   }
-   ```
-
-2. Nos scripts SQL, a cláusula `ON CONFLICT (email) DO NOTHING` garante que registros existentes não sejam modificados:
-   ```sql
-   INSERT INTO usuario (email, nome, senha, role)
-   VALUES ('suporte@caracore.com.br', 'Administrador', '...hash...', 'ROLE_ADMIN')
-   ON CONFLICT (email) DO NOTHING;
-   ```
-
-Esse comportamento preserva quaisquer modificações feitas nos usuários padrão, como alterações de senha, nome ou outros detalhes.
-
----
-
-## **Integração com WhatsApp**
-
-### **Comunicação Eficiente com Pacientes**
-
-O sistema Cara Core Agendamento (CCA) agora inclui integração direta com WhatsApp para melhorar a comunicação com pacientes. Esta funcionalidade foi implementada para:
-
-1. **Confirmação obrigatória do telefone WhatsApp**: Durante o agendamento, o sistema exige a confirmação e/ou atualização do telefone WhatsApp do paciente, garantindo dados de contato sempre atualizados.
-
-2. **Integração direta com o WhatsApp Web**: Um botão WhatsApp permite que a recepção inicie conversas diretamente pelo navegador, sem necessidade de digitar manualmente o número no celular.
-
-3. **Atualização automática do cadastro**: O telefone WhatsApp informado durante o agendamento é automaticamente atualizado no cadastro do paciente.
-
-### **Benefícios da Integração WhatsApp**
-
-- **Redução de faltas**: Lembretes de consultas via WhatsApp diminuem significativamente o número de faltas em consultórios odontológicos.
-  
-- **Comunicação instantânea**: Permite envio rápido de instruções pré e pós-procedimento, receitas e orientações importantes.
-  
-- **Relacionamento aprimorado**: Facilita o acompanhamento dos pacientes, contribuindo para melhor experiência e fidelização.
-  
-- **Confirmações eficientes**: Permite confirmação de consultas com antecedência, possibilitando reagendamentos quando necessário.
-
-### **Como utilizar**
-
-1. Durante o agendamento, verifique e atualize o telefone WhatsApp do paciente (campo obrigatório).
-2. Clique no ícone do WhatsApp ao lado do número para abrir uma conversa no WhatsApp Web.
-3. O sistema formatará automaticamente o número e adicionará o código do país (+55) ao link.
-
-> **Nota:** Para garantir uma experiência completa, recomendamos que o WhatsApp Web já esteja autenticado no navegador do recepcionista ou dentista.
+© 2025 Cara Core Informática. Todos os direitos reservados.

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="campos">
+        <div class="row g-3">
+            <div class="col-md-6 mb-3">
+                <label for="nome" class="form-label">Nome *</label>
+                <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="especialidade" class="form-label">Especialidade</label>
+                <input type="text" class="form-control" id="especialidade" th:field="*{especialidade}">
+            </div>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="tel" class="form-control telefone-mask" id="telefone" th:field="*{telefone}">
+            </div>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-md-6 mb-3">
+                <label for="cro" class="form-label">CRO</label>
+                <input type="text" class="form-control" id="cro" th:field="*{cro}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="ativo" class="form-label">Status</label>
+                <select class="form-select" id="ativo" th:field="*{ativo}">
+                    <option th:value="true">Ativo</option>
+                    <option th:value="false">Inativo</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-md-6 mb-3">
+                <label for="horarioInicio" class="form-label">Horário de Início</label>
+                <input type="time" class="form-control" id="horarioInicio" th:field="*{horarioInicio}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="horarioFim" class="form-label">Horário de Término</label>
+                <input type="time" class="form-control" id="horarioFim" th:field="*{horarioFim}">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

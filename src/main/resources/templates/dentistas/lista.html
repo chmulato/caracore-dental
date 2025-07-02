@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Gerenciamento de Dentistas - Sistema CCA</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Gerenciamento de Dentistas</h1>
+                <div sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/dentistas/novo}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Novo Dentista
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mensagens de alerta -->
+            <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${sucesso}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+            <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${erro}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+
+            <!-- Formulário de busca -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Buscar Dentistas</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/dentistas/buscar}" method="get" class="row g-3">
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" name="termo" id="termo" 
+                                   placeholder="Digite um termo para busca (nome, especialidade, email...)" 
+                                   th:value="${termoBusca}">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabela de Dentistas -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lista de Dentistas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Especialidade</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>CRO</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="dentista : ${dentistas}" th:class="${!dentista.ativo ? 'table-secondary' : ''}">
+                                    <td th:text="${dentista.nome}"></td>
+                                    <td th:text="${dentista.especialidade != null ? dentista.especialidade : '-'}"></td>
+                                    <td th:text="${dentista.email != null ? dentista.email : '-'}"></td>
+                                    <td th:text="${dentista.telefone != null ? dentista.telefone : '-'}"></td>
+                                    <td th:text="${dentista.cro != null ? dentista.cro : '-'}"></td>
+                                    <td>
+                                        <span th:if="${dentista.ativo}" class="badge bg-success">Ativo</span>
+                                        <span th:unless="${dentista.ativo}" class="badge bg-secondary">Inativo</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/dentistas/{id}(id=${dentista.id})}" class="btn btn-info btn-sm" title="Detalhes">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/dentistas/{id}/editar(id=${dentista.id})}" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button sec:authorize="hasRole('ADMIN')" 
+                                                    type="button" 
+                                                    class="btn btn-danger btn-sm" 
+                                                    title="Excluir" 
+                                                    th:data-id="${dentista.id}" 
+                                                    th:data-nome="${dentista.nome}"
+                                                    th:data-ativo="${dentista.ativo}"
+                                                    th:onclick="preparaExclusao(this.getAttribute('data-id'), this.getAttribute('data-nome'), this.getAttribute('data-ativo'))">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(dentistas)}">
+                                    <td colspan="7" class="text-center">Nenhum dentista encontrado.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmação de Exclusão -->
+        <div class="modal fade" id="confirmarExclusaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmarExclusaoModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmarExclusaoModalLabel">Confirmar Exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Deseja realmente excluir o dentista <strong id="nomeDentista"></strong>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="formExclusao" method="post">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            function preparaExclusao(id, nome, ativo) {
+                document.getElementById('nomeDentista').textContent = nome;
+                document.getElementById('formExclusao').action = '/dentistas/' + id + '/excluir';
+                
+                var myModal = new bootstrap.Modal(document.getElementById('confirmarExclusaoModal'), {});
+                myModal.show();
+            }
+            
+            $(document).ready(function() {
+                $('#dataTable').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"
+                    }
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>
