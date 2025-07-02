@@ -200,6 +200,7 @@ R: Na tela de agendamento, ao selecionar um paciente existente, o sistema buscar
 
 **P: O WhatsApp Web não abre quando clico no botão. O que fazer?**  
 R: Verifique se:
+
 1. O navegador não está bloqueando popups
 2. O número de telefone está no formato correto (com DDD)
 3. O WhatsApp Web já está autenticado no navegador
@@ -209,11 +210,15 @@ R: A versão atual suporta apenas a abertura da conversa. O envio automático es
 
 ### Problemas Comuns
 
-| Problema | Solução |
-|----------|---------|
+```markdown
+|--------------------------------|--------------------------------------------------------------------|
+| Problema                       | Solução                                                            |
+|--------------------------------|--------------------------------------------------------------------|
 | Erro de formatação do telefone | Verifique se o número inclui DDD e segue o formato (99) 99999-9999 |
-| Botão do WhatsApp desabilitado | O número precisa ter pelo menos 10 dígitos válidos |
-| Mensagens não chegam | Confirme se o número está correto e se o paciente utiliza WhatsApp |
+| Botão do WhatsApp desabilitado | O número precisa ter pelo menos 10 dígitos válidos                 |
+| Mensagens não chegam           | Confirme se o número está correto e se o paciente utiliza WhatsApp |
+|--------------------------------|--------------------------------------------------------------------|
+```
 
 ---
 
