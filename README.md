@@ -132,7 +132,8 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 O sistema é inicializado com os seguintes usuários padrões para teste e demonstração:
 
 ```markdown
-|----------------|----------------------------|------------|----------------------------------|| **Perfil**       | **Email**                  | **Senha**  | **Observações**                  |
+|----------------|----------------------------|------------|----------------------------------|
+| **Perfil**     | **Email**                  | **Senha**  | **Observações**                  |
 |----------------|----------------------------|------------|----------------------------------|
 | Administrador  | suporte@caracore.com.br    | admin123   | Acesso total ao sistema          |
 | Dentista       | dentista@caracore.com.br   | admin123   | Gerencia agenda e prontuários    |
