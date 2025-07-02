@@ -60,6 +60,17 @@ public class UsuarioController {
         List<Usuario> usuarios = usuarioRepository.findAll();
         model.addAttribute("usuarios", usuarios);
         
+        // Pre-calcular contagens por perfil para a view
+        long countAdmin = usuarios.stream().filter(u -> u.getRole().equals("ROLE_ADMIN")).count();
+        long countDentist = usuarios.stream().filter(u -> u.getRole().equals("ROLE_DENTIST")).count();
+        long countReceptionist = usuarios.stream().filter(u -> u.getRole().equals("ROLE_RECEPTIONIST")).count();
+        long countPatient = usuarios.stream().filter(u -> u.getRole().equals("ROLE_PATIENT")).count();
+        
+        model.addAttribute("countAdmin", countAdmin);
+        model.addAttribute("countDentist", countDentist);
+        model.addAttribute("countReceptionist", countReceptionist);
+        model.addAttribute("countPatient", countPatient);
+        
         // Registrar atividade
         userActivityLogger.logActivity(
             "LISTAR_USUARIOS", 
@@ -126,6 +137,17 @@ public class UsuarioController {
         model.addAttribute("termoBusca", termo);
         model.addAttribute("perfil", perfil);
         
+        // Pre-calcular contagens por perfil para a view
+        long countAdmin = usuarios.stream().filter(u -> u.getRole().equals("ROLE_ADMIN")).count();
+        long countDentist = usuarios.stream().filter(u -> u.getRole().equals("ROLE_DENTIST")).count();
+        long countReceptionist = usuarios.stream().filter(u -> u.getRole().equals("ROLE_RECEPTIONIST")).count();
+        long countPatient = usuarios.stream().filter(u -> u.getRole().equals("ROLE_PATIENT")).count();
+        
+        model.addAttribute("countAdmin", countAdmin);
+        model.addAttribute("countDentist", countDentist);
+        model.addAttribute("countReceptionist", countReceptionist);
+        model.addAttribute("countPatient", countPatient);
+        
         // Registrar atividade
         userActivityLogger.logActivity(
             "BUSCAR_USUARIOS", 
@@ -142,7 +164,9 @@ public class UsuarioController {
      */
     @GetMapping("/novo")
     public String formNovoUsuario(Model model) {
-        model.addAttribute("usuario", new Usuario());
+        if (!model.containsAttribute("usuario")) {
+            model.addAttribute("usuario", new Usuario());
+        }
         
         // Registrar atividade
         userActivityLogger.logActivity(
@@ -159,7 +183,7 @@ public class UsuarioController {
      * Salva um novo usuário
      */
     @PostMapping("/salvar")
-    public String salvarUsuario(@Valid Usuario usuario, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String salvarUsuario(@Valid Usuario usuario, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         // Validação manual para a senha
         if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
             result.rejectValue("senha", "error.usuario", "A senha é obrigatória para novos usuários");
@@ -168,6 +192,7 @@ public class UsuarioController {
         }
         
         if (result.hasErrors()) {
+            model.addAttribute("usuario", usuario);
             return "usuarios/form";
         }
         
@@ -175,6 +200,7 @@ public class UsuarioController {
         Optional<Usuario> existente = usuarioRepository.findByEmail(usuario.getEmail());
         if (existente.isPresent()) {
             result.rejectValue("email", "error.usuario", "Este email já está cadastrado");
+            model.addAttribute("usuario", usuario);
             return "usuarios/form";
         }
         
@@ -208,7 +234,9 @@ public class UsuarioController {
             return "redirect:/usuarios";
         }
         
-        model.addAttribute("usuario", usuarioOpt.get());
+        if (!model.containsAttribute("usuario")) {
+            model.addAttribute("usuario", usuarioOpt.get());
+        }
         
         // Registrar atividade
         userActivityLogger.logActivity(
@@ -230,6 +258,7 @@ public class UsuarioController {
             @Valid Usuario usuario, 
             BindingResult result, 
             @RequestParam(required = false) boolean resetarSenha,
+            Model model,
             RedirectAttributes redirectAttributes) {
         
         // Verificar se o usuário existe
@@ -246,11 +275,13 @@ public class UsuarioController {
             Optional<Usuario> emailExistente = usuarioRepository.findByEmail(usuario.getEmail());
             if (emailExistente.isPresent() && !emailExistente.get().getId().equals(id)) {
                 result.rejectValue("email", "error.usuario", "Este email já está cadastrado para outro usuário");
+                model.addAttribute("usuario", usuario);
                 return "usuarios/form";
             }
         }
         
         if (result.hasErrors()) {
+            model.addAttribute("usuario", usuario);
             return "usuarios/form";
         }
         
@@ -270,6 +301,7 @@ public class UsuarioController {
             // Se uma nova senha foi fornecida, validar e criptografar
             if (usuario.getSenha().length() < 6) {
                 result.rejectValue("senha", "error.usuario", "A senha deve ter no mínimo 6 caracteres");
+                model.addAttribute("usuario", usuario);
                 return "usuarios/form";
             }
             usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));

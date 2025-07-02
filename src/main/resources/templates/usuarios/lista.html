@@ -115,7 +115,7 @@
                                     <i class="bi bi-shield-lock-fill"></i>
                                 </h5>
                                 <h6 class="card-subtitle mb-2">Administradores</h6>
-                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_ADMIN').count()}">0</p>
+                                <p class="card-text fs-3 fw-bold" th:text="${countAdmin}">0</p>
                                 <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_ADMIN')}" class="btn btn-sm btn-outline-danger">Ver todos</a>
                             </div>
                         </div>
@@ -129,7 +129,7 @@
                                     <i class="bi bi-person-workspace"></i>
                                 </h5>
                                 <h6 class="card-subtitle mb-2">Dentistas</h6>
-                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_DENTIST').count()}">0</p>
+                                <p class="card-text fs-3 fw-bold" th:text="${countDentist}">0</p>
                                 <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_DENTIST')}" class="btn btn-sm btn-outline-primary">Ver todos</a>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                                     <i class="bi bi-person-badge"></i>
                                 </h5>
                                 <h6 class="card-subtitle mb-2">Recepcionistas</h6>
-                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_RECEPTIONIST').count()}">0</p>
+                                <p class="card-text fs-3 fw-bold" th:text="${countReceptionist}">0</p>
                                 <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_RECEPTIONIST')}" class="btn btn-sm btn-outline-success">Ver todos</a>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                                     <i class="bi bi-person"></i>
                                 </h5>
                                 <h6 class="card-subtitle mb-2">Pacientes</h6>
-                                <p class="card-text fs-3 fw-bold" th:text="${usuarios.stream().filter(u -> u.getRole() == 'ROLE_PATIENT').count()}">0</p>
+                                <p class="card-text fs-3 fw-bold" th:text="${countPatient}">0</p>
                                 <a th:href="@{/usuarios/buscar(termo='', perfil='ROLE_PATIENT')}" class="btn btn-sm btn-outline-secondary">Ver todos</a>
                             </div>
                         </div>

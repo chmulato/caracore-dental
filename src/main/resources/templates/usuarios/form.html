@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -68,50 +68,55 @@
                 <h4 class="mb-0" th:text="${usuario.id == null ? 'Novo Usuário' : 'Editar Usuário'}"></h4>
             </div>
             <div class="card-body">
-                <!-- Mensagens de validação -->
-                <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}" role="alert">
-                    <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i> Há erros no formulário:</h5>
-                    <ul>
-                        <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
-                    </ul>
+                <!-- Mensagens de validação quando são originadas de um binding -->
+                <div th:if="${#vars['org.springframework.validation.BindingResult.usuario']}" th:remove="tag">
+                    <div class="alert alert-danger" th:if="${#vars['org.springframework.validation.BindingResult.usuario'].hasErrors()}" role="alert">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i> Há erros no formulário:</h5>
+                        <ul>
+                            <li th:each="err : ${#vars['org.springframework.validation.BindingResult.usuario'].allErrors}" th:text="${err.defaultMessage}"></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Mensagens genéricas de erro (flash attributes e params) -->
+                <div class="alert alert-danger" th:if="${erro != null or param.erro != null}" role="alert">
+                    <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i> Erro:</h5>
+                    <p th:text="${erro != null ? erro : (param.erro == 'usuario-nao-encontrado' ? 'Usuário não encontrado.' : 'Erro desconhecido.')}">Ocorreu um erro inesperado.</p>
                 </div>
                 
                 <!-- Formulário -->
-                <form th:action="${usuario.id == null ? @{/usuarios/salvar} : @{/usuarios/{id}/atualizar(id=${usuario.id})}}" 
+                <!-- Formulário para novo usuário -->
+                <form th:action="@{/usuarios/salvar}" th:unless="${usuario != null && usuario.id != null}" 
                       th:object="${usuario}" method="post">
-                    
-                    <input type="hidden" th:field="*{id}" th:if="${usuario.id != null}">
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="nome" class="form-label">Nome completo <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nome" th:field="*{nome}" required
-                                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                                   th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('nome')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('nome')}" th:errors="*{nome}"></div>
                         </div>
                         
                         <div class="col-md-6">
                             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" th:field="*{email}" required
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                   th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('email')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('email')}" th:errors="*{email}"></div>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="senha" class="form-label">
-                                Senha <span th:if="${usuario.id == null}" class="text-danger">*</span>
-                                <small class="text-muted" th:if="${usuario.id != null}">(Deixe em branco para manter a senha atual)</small>
+                                Senha <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="senha" name="senha" 
-                                       th:required="${usuario.id == null}"
-                                       th:classappend="${#fields.hasErrors('senha')} ? 'is-invalid' : ''">
+                                <input type="password" class="form-control" id="senha" name="senha" required
+                                       th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('senha')} ? 'is-invalid' : ''">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar/ocultar senha">
                                     <i class="bi bi-eye"></i>
                                 </button>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></div>
+                                <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('senha')}" th:errors="*{senha}"></div>
                             </div>
                             <div class="form-text">A senha deve ter no mínimo 6 caracteres.</div>
                         </div>
@@ -119,19 +124,131 @@
                         <div class="col-md-6">
                             <label for="role" class="form-label">Perfil de acesso <span class="text-danger">*</span></label>
                             <select class="form-select" id="role" th:field="*{role}" required
-                                    th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">
+                                    th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('role')} ? 'is-invalid' : ''">
                                 <option value="">Selecione um perfil</option>
                                 <option value="ROLE_ADMIN">Administrador</option>
                                 <option value="ROLE_DENTIST">Dentista</option>
                                 <option value="ROLE_RECEPTIONIST">Recepcionista</option>
                                 <option value="ROLE_PATIENT">Paciente</option>
                             </select>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                            <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('role')}" th:errors="*{role}"></div>
                             <div class="form-text mt-2" id="roleDescription">Selecione um perfil para ver sua descrição</div>
                         </div>
                     </div>
                     
-                    <div class="row" th:if="${usuario.id != null}">
+                    <!-- Card de informações sobre perfis -->
+                    <div class="card mb-4 mt-3 border-primary">
+                        <div class="card-header bg-primary bg-opacity-10">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Informações sobre Perfis
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-danger"><i class="bi bi-shield-lock me-2"></i>Administrador</h6>
+                                    <ul class="small">
+                                        <li>Acesso completo ao sistema</li>
+                                        <li>Gerenciamento de usuários</li>
+                                        <li>Configurações do sistema</li>
+                                        <li>Exclusão de registros</li>
+                                        <li>Acesso a todos os relatórios</li>
+                                    </ul>
+                                    
+                                    <h6 class="fw-bold text-success mt-3"><i class="bi bi-person-badge me-2"></i>Recepcionista</h6>
+                                    <ul class="small">
+                                        <li>Gerenciamento de agendamentos</li>
+                                        <li>Cadastro e edição de pacientes</li>
+                                        <li>Não pode excluir registros</li>
+                                        <li>Acesso a relatórios básicos</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-person-workspace me-2"></i>Dentista</h6>
+                                    <ul class="small">
+                                        <li>Visualização de agendamentos</li>
+                                        <li>Visualização de dados de pacientes</li>
+                                        <li>Registro de procedimentos</li>
+                                        <li>Acesso aos históricos médicos</li>
+                                    </ul>
+                                    
+                                    <h6 class="fw-bold text-secondary mt-3"><i class="bi bi-person me-2"></i>Paciente</h6>
+                                    <ul class="small">
+                                        <li>Acesso apenas aos seus dados</li>
+                                        <li>Visualização de seus agendamentos</li>
+                                        <li>Solicitação de agendamentos</li>
+                                        <li>Visualização de seu histórico</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Salvar Usuário
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Formulário para edição de usuário -->
+                <form th:action="@{/usuarios/{id}/atualizar(id=${usuario.id})}" th:if="${usuario != null && usuario.id != null}" 
+                      th:object="${usuario}" method="post">
+                    
+                    <input type="hidden" th:field="*{id}">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nomeEdit" class="form-label">Nome completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nomeEdit" th:field="*{nome}" required
+                                   th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('nome')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('nome')}" th:errors="*{nome}"></div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="emailEdit" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="emailEdit" th:field="*{email}" required
+                                   th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('email')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="senhaEdit" class="form-label">
+                                Senha
+                                <small class="text-muted">(Deixe em branco para manter a senha atual)</small>
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="senhaEdit" name="senha" 
+                                       th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('senha')} ? 'is-invalid' : ''">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePasswordEdit" title="Mostrar/ocultar senha">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('senha')}" th:errors="*{senha}"></div>
+                            </div>
+                            <div class="form-text">A senha deve ter no mínimo 6 caracteres.</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="roleEdit" class="form-label">Perfil de acesso <span class="text-danger">*</span></label>
+                            <select class="form-select" id="roleEdit" th:field="*{role}" required
+                                    th:classappend="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('role')} ? 'is-invalid' : ''">
+                                <option value="">Selecione um perfil</option>
+                                <option value="ROLE_ADMIN">Administrador</option>
+                                <option value="ROLE_DENTIST">Dentista</option>
+                                <option value="ROLE_RECEPTIONIST">Recepcionista</option>
+                                <option value="ROLE_PATIENT">Paciente</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#vars['org.springframework.validation.BindingResult.usuario'] != null && #vars['org.springframework.validation.BindingResult.usuario'].hasFieldErrors('role')}" th:errors="*{role}"></div>
+                            <div class="form-text mt-2" id="roleDescriptionEdit">Selecione um perfil para ver sua descrição</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
                         <div class="col-12 mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="resetarSenha" name="resetarSenha">
@@ -196,7 +313,7 @@
                             <i class="bi bi-arrow-left me-1"></i> Voltar
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle me-1"></i> Salvar Usuário
+                            <i class="bi bi-check-circle me-1"></i> Atualizar Usuário
                         </button>
                     </div>
                 </form>
@@ -215,8 +332,24 @@
     <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
     <script>
         // Script para mostrar/ocultar senha
-        document.getElementById('togglePassword').addEventListener('click', function() {
+        document.getElementById('togglePassword')?.addEventListener('click', function() {
             const senhaInput = document.getElementById('senha');
+            const icon = this.querySelector('i');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+        
+        // Script para mostrar/ocultar senha no formulário de edição
+        document.getElementById('togglePasswordEdit')?.addEventListener('click', function() {
+            const senhaInput = document.getElementById('senhaEdit');
             const icon = this.querySelector('i');
             
             if (senhaInput.type === 'password') {
@@ -232,8 +365,10 @@
         
         // Script para atualizar a descrição do perfil
         document.addEventListener('DOMContentLoaded', function() {
-            const roleSelect = document.getElementById('role');
-            const roleDescription = document.getElementById('roleDescription');
+            const roleSelect = document.getElementById('role') || document.getElementById('roleEdit');
+            const roleDescription = document.getElementById('roleDescription') || document.getElementById('roleDescriptionEdit');
+            
+            if (!roleSelect || !roleDescription) return;
             
             // Descrições de cada perfil
             const roleDescriptions = {
