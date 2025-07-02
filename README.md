@@ -130,12 +130,15 @@ java -jar target/cca-0.0.1-SNAPSHOT.jar
 
 O sistema é inicializado com os seguintes usuários padrões para teste e demonstração:
 
-| **Perfil**     | **Email**                   | **Senha**  | **Observações**                   |
+```markdown
+|----------------|----------------------------|------------|----------------------------------|| **Perfil**       | **Email**                  | **Senha**  | **Observações**                  |
 |----------------|----------------------------|------------|----------------------------------|
-| Administrador  | suporte@caracore.com.br   | admin123   | Acesso total ao sistema          |
-| Dentista       | dentista@teste.com        | senha123   | Gerencia agenda e prontuários    |
-| Recepcionista  | recepcao@teste.com        | senha123   | Gerencia agenda e pacientes      |
-| Paciente       | paciente@teste.com        | senha123   | Acesso ao portal do paciente     |
+| Administrador  | suporte@caracore.com.br    | admin123   | Acesso total ao sistema          |
+| Dentista       | dentista@caracore.com.br   | admin123   | Gerencia agenda e prontuários    |
+| Recepcionista  | recepcao@caracore.com.br   | admin123   | Gerencia agenda e pacientes      |
+| Paciente       | paciente@caracore.com.br   | admin123   | Acesso ao portal do paciente     |
+|----------------|----------------------------|------------|----------------------------------|
+```
 
 > **Importante:** Altere as senhas padrões ao implantar em ambiente de produção!
 > 
