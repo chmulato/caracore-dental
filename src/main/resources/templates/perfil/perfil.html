@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DENTIST', 'RECEPTIONIST')">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Coluna lateral com menu de perfil -->
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Menu do Perfil</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="#informacoes" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                            <i class="bi bi-person me-2"></i> Informações Pessoais
+                        </a>
+                        <a href="#alterar-senha" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="bi bi-key me-2"></i> Alterar Senha
+                        </a>
+                        <a href="#preferencias" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="bi bi-sliders me-2"></i> Preferências
+                        </a>
+                        <a href="#atividade" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            <i class="bi bi-clock-history me-2"></i> Histórico de Atividades
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Conteúdo principal do perfil -->
+            <div class="col-md-9">
+                <!-- Mensagens de feedback -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${sucesso}" id="successMessage">
+                    <i class="bi bi-check-circle me-2"></i> <span th:text="${sucesso}">Operação realizada com sucesso!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${erro}">
+                    <i class="bi bi-exclamation-triangle me-2"></i> <span th:text="${erro}">Ocorreu um erro!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <!-- Conteúdo das abas -->
+                <div class="tab-content">
+                    <!-- Informações Pessoais -->
+                    <div class="tab-pane fade show active" id="informacoes">
+                        <div class="card shadow">
+                            <div class="card-header bg-white">
+                                <h4 class="mb-0">Minhas Informações</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col text-center">
+                                        <div class="avatar-lg mx-auto mb-3">
+                                            <i class="bi bi-person-circle display-1 text-primary"></i>
+                                        </div>
+                                        <h4 th:text="${usuario.nome}">Nome do Usuário</h4>
+                                        <p class="badge" th:classappend="${
+                                            usuario.role == 'ROLE_ADMIN' ? 'bg-danger' : 
+                                            usuario.role == 'ROLE_DENTIST' ? 'bg-primary' : 
+                                            usuario.role == 'ROLE_RECEPTIONIST' ? 'bg-success' : 
+                                            usuario.role == 'ROLE_PATIENT' ? 'bg-info' : 
+                                            'bg-secondary'
+                                        }" th:text="${
+                                            usuario.role == 'ROLE_ADMIN' ? 'Administrador' : 
+                                            usuario.role == 'ROLE_DENTIST' ? 'Dentista' : 
+                                            usuario.role == 'ROLE_RECEPTIONIST' ? 'Recepcionista' : 
+                                            usuario.role == 'ROLE_PATIENT' ? 'Paciente' : 
+                                            'Outro'
+                                        }">Perfil</p>
+                                    </div>
+                                </div>
+                                
+                                <hr>
+                                
+                                <dl class="row">
+                                    <dt class="col-sm-3">Email:</dt>
+                                    <dd class="col-sm-9">
+                                        <a th:href="'mailto:' + ${usuario.email}" th:text="${usuario.email}">usuario@exemplo.com</a>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-3">Último acesso:</dt>
+                                    <dd class="col-sm-9">Hoje, 10:30</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alterar Senha -->
+                    <div class="tab-pane fade" id="alterar-senha">
+                        <div class="card shadow">
+                            <div class="card-header bg-white">
+                                <h4 class="mb-0">Alterar Senha</h4>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/perfil/alterar-senha}" method="post">
+                                    <div class="mb-3">
+                                        <label for="senhaAtual" class="form-label">Senha Atual</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="senhaAtual" name="senhaAtual" required>                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="senhaAtual" title="Mostrar/ocultar senha atual">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="novaSenha" class="form-label">Nova Senha</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="novaSenha" name="novaSenha" 
+                                                   required minlength="6">                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="novaSenha" title="Mostrar/ocultar nova senha">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                                        </div>
+                                        <div class="form-text">A senha deve ter pelo menos 6 caracteres.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmacaoSenha" class="form-label">Confirmar Nova Senha</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="confirmacaoSenha" name="confirmacaoSenha" 
+                                                   required minlength="6">                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirmacaoSenha" title="Mostrar/ocultar confirmação de senha">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle me-1"></i> Salvar Nova Senha
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferências -->
+                    <div class="tab-pane fade" id="preferencias">
+                        <div class="card shadow">
+                            <div class="card-header bg-white">
+                                <h4 class="mb-0">Preferências</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">As preferências estarão disponíveis em versões futuras do sistema.</p>
+                                
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Em breve você poderá personalizar notificações, tema e outras configurações.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Histórico de Atividades -->
+                    <div class="tab-pane fade" id="atividade">
+                        <div class="card shadow">
+                            <div class="card-header bg-white">
+                                <h4 class="mb-0">Histórico de Atividades</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Últimas atividades realizadas no sistema:</p>
+                                
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge bg-primary me-2">Login</span>
+                                                <span>Acesso ao sistema</span>
+                                            </div>
+                                            <small class="text-muted">Hoje, 09:45</small>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge bg-success me-2">Perfil</span>
+                                                <span>Visualização de perfil</span>
+                                            </div>
+                                            <small class="text-muted">Hoje, 09:50</small>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item text-center text-muted">
+                                        Histórico completo estará disponível em versões futuras.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <!-- Script personalizado para mostrar/ocultar senhas -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configura os botões para mostrar/ocultar senha
+            document.querySelectorAll('.toggle-password').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const passwordInput = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('bi-eye');
+                        icon.classList.add('bi-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('bi-eye-slash');
+                        icon.classList.add('bi-eye');
+                    }
+                });
+            });
+            
+            // Auto-ocultar mensagens de sucesso após 5 segundos
+            setTimeout(function() {
+                const successMessage = document.getElementById('successMessage');
+                if (successMessage) {
+                    const bsAlert = new bootstrap.Alert(successMessage);
+                    bsAlert.close();
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
