@@ -1,9 +1,9 @@
 -- V2__dados_iniciais.sql: Inserção de dados iniciais para o MVP
 
 INSERT INTO usuario (nome, email, senha, role) VALUES
-  ('Administrador', 'suporte@caracore.com.br', '$2a$10$EXEMPLOSENHACRIPTOGRAFADA', 'ADMIN'),
-  ('Dentista Exemplo', 'dentista@caracore.com.br', '$2a$10$EXEMPLOSENHACRIPTOGRAFADA', 'DENTIST'),
-  ('Recepcionista Exemplo', 'recepcao@caracore.com.br', '$2a$10$EXEMPLOSENHACRIPTOGRAFADA', 'RECEPTIONIST');
+  ('Administrador', 'suporte@caracore.com.br', '$2a$10$EXEMPLOSENHACRIPTOGRAFADA', 'ROLE_ADMIN'),
+  ('Dentista Exemplo', 'dentista@caracore.com.br', '$2a$10$EXEMPLOSENHACRIPTOGRAFADA', 'ROLE_DENTIST'),
+  ('Recepcionista Exemplo', 'recepcao@caracore.com.br', '$2a$10$EXEMPLOSENHACRIPTOGRAFADA', 'ROLE_RECEPTIONIST');
 
 INSERT INTO paciente (nome, email, telefone) VALUES
   ('Paciente Teste', 'paciente@exemplo.com', '(11) 99999-0000');
