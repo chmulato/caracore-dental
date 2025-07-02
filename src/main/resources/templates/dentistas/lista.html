@@ -1,156 +1,273 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      layout:decorate="~{layout/layout}">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
 <head>
-    <title>Gerenciamento de Dentistas - Sistema CCA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Dentistas - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="container-fluid py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Gerenciamento de Dentistas</h1>
-                <div sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/dentistas/novo}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Novo Dentista
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/dentistas}">
+                            <i class="bi bi-person-badge"></i> Dentistas
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
                     </a>
                 </div>
             </div>
+        </div>
+    </nav>
 
-            <!-- Mensagens de alerta -->
-            <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <span th:text="${sucesso}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <!-- Cabeçalho da página -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">
+                <i class="bi bi-person-badge text-primary"></i>
+                Gerenciamento de Dentistas
+            </h2>
+            <div sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/dentistas/novo}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Novo Dentista
+                </a>
             </div>
-            <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span th:text="${erro}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-            </div>
+        </div>
 
-            <!-- Formulário de busca -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Buscar Dentistas</h6>
-                </div>
-                <div class="card-body">
-                    <form th:action="@{/dentistas/buscar}" method="get" class="row g-3">
-                        <div class="col-md-10">
-                            <input type="text" class="form-control" name="termo" id="termo" 
-                                   placeholder="Digite um termo para busca (nome, especialidade, email...)" 
-                                   th:value="${termoBusca}">
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-search"></i> Buscar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <!-- Mensagens de alerta -->
+        <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${sucesso}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${erro}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
 
-            <!-- Tabela de Dentistas -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Lista de Dentistas</h6>
-                </div>
-                <div class="card-body">
+        <!-- Formulário de busca -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-primary">
+                    <i class="bi bi-search"></i> Buscar Dentistas
+                </h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/dentistas/buscar}" method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="termo" id="termo" 
+                               placeholder="Digite um termo para busca (nome, especialidade, email...)" 
+                               th:value="${termoBusca}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de Dentistas -->
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-people"></i> 
+                    <span th:text="${dentistas != null and !dentistas.isEmpty()} ? 'Lista de Dentistas (' + ${dentistas.size()} + ')' : 'Lista de Dentistas'"></span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Verificar se há dentistas -->
+                <div th:if="${dentistas != null and !dentistas.isEmpty()}">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
+                        <table class="table table-hover">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Especialidade</th>
-                                    <th>Email</th>
-                                    <th>Telefone</th>
-                                    <th>CRO</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
+                                    <th><i class="bi bi-person"></i> Nome</th>
+                                    <th><i class="bi bi-star"></i> Especialidade</th>
+                                    <th><i class="bi bi-envelope"></i> Email</th>
+                                    <th><i class="bi bi-telephone"></i> Telefone</th>
+                                    <th><i class="bi bi-card-text"></i> CRO</th>
+                                    <th><i class="bi bi-clock"></i> Horário</th>
+                                    <th><i class="bi bi-toggle-on"></i> Status</th>
+                                    <th class="text-center"><i class="bi bi-gear"></i> Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="dentista : ${dentistas}" th:class="${!dentista.ativo ? 'table-secondary' : ''}">
-                                    <td th:text="${dentista.nome}"></td>
-                                    <td th:text="${dentista.especialidade != null ? dentista.especialidade : '-'}"></td>
-                                    <td th:text="${dentista.email != null ? dentista.email : '-'}"></td>
-                                    <td th:text="${dentista.telefone != null ? dentista.telefone : '-'}"></td>
-                                    <td th:text="${dentista.cro != null ? dentista.cro : '-'}"></td>
+                                <tr th:each="dentista : ${dentistas}">
                                     <td>
-                                        <span th:if="${dentista.ativo}" class="badge bg-success">Ativo</span>
-                                        <span th:unless="${dentista.ativo}" class="badge bg-secondary">Inativo</span>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 dentista-avatar">
+                                                <span th:text="${#strings.substring(dentista.nome, 0, 1)}"></span>
+                                            </div>
+                                            <strong th:text="${dentista.nome}"></strong>
+                                        </div>
                                     </td>
                                     <td>
+                                        <span th:text="${dentista.especialidade != null ? dentista.especialidade : '-'}"
+                                              class="badge bg-light text-dark"></span>
+                                    </td>
+                                    <td th:text="${dentista.email != null ? dentista.email : '-'}"></td>
+                                    <td th:text="${dentista.telefone != null ? dentista.telefone : '-'}"></td>
+                                    <td>
+                                        <span class="badge bg-info text-dark" th:text="${dentista.cro != null ? dentista.cro : '-'}"></span>
+                                    </td>
+                                    <td>
+                                        <div th:if="${dentista.horarioInicio != null and dentista.horarioFim != null}">
+                                            <span class="badge bg-secondary" 
+                                                  th:text="${dentista.horarioInicio + ' - ' + dentista.horarioFim}"></span>
+                                        </div>
+                                        <span th:unless="${dentista.horarioInicio != null and dentista.horarioFim != null}" 
+                                              class="text-muted">-</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${dentista.ativo}" class="badge bg-success">Ativo</span>
+                                        <span th:unless="${dentista.ativo}" class="badge bg-danger">Inativo</span>
+                                    </td>
+                                    <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a th:href="@{/dentistas/{id}(id=${dentista.id})}" class="btn btn-info btn-sm" title="Detalhes">
-                                                <i class="fas fa-info-circle"></i>
+                                            <a th:href="@{/dentistas/{id}(id=${dentista.id})}" 
+                                               class="btn btn-outline-info btn-sm" title="Ver detalhes">
+                                                <i class="bi bi-eye"></i>
                                             </a>
-                                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/dentistas/{id}/editar(id=${dentista.id})}" class="btn btn-warning btn-sm" title="Editar">
-                                                <i class="fas fa-edit"></i>
+                                            <a sec:authorize="hasRole('ADMIN')" 
+                                               th:href="@{/dentistas/{id}/editar(id=${dentista.id})}" 
+                                               class="btn btn-outline-warning btn-sm" title="Editar">
+                                                <i class="bi bi-pencil"></i>
                                             </a>
                                             <button sec:authorize="hasRole('ADMIN')" 
                                                     type="button" 
-                                                    class="btn btn-danger btn-sm" 
+                                                    class="btn btn-outline-danger btn-sm" 
                                                     title="Excluir" 
                                                     th:data-id="${dentista.id}" 
                                                     th:data-nome="${dentista.nome}"
                                                     th:data-ativo="${dentista.ativo}"
                                                     th:onclick="preparaExclusao(this.getAttribute('data-id'), this.getAttribute('data-nome'), this.getAttribute('data-ativo'))">
-                                                <i class="fas fa-trash"></i>
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
                                     </td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(dentistas)}">
-                                    <td colspan="7" class="text-center">Nenhum dentista encontrado.</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Modal de Confirmação de Exclusão -->
-        <div class="modal fade" id="confirmarExclusaoModal" tabindex="-1" role="dialog" aria-labelledby="confirmarExclusaoModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmarExclusaoModalLabel">Confirmar Exclusão</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <!-- Estado vazio quando não há dentistas -->
+                <div th:if="${dentistas == null or dentistas.isEmpty()}" class="text-center py-5">
+                    <i class="bi bi-person-x text-muted empty-state-icon"></i>
+                    <h4 class="text-muted mt-3">Nenhum dentista encontrado</h4>
+                    <p class="text-muted" th:if="${termoBusca != null and !termoBusca.isEmpty()}">
+                        Não foram encontrados dentistas para o termo "<strong th:text="${termoBusca}"></strong>".
+                    </p>
+                    <p class="text-muted" th:unless="${termoBusca != null and !termoBusca.isEmpty()}">
+                        Ainda não há dentistas cadastrados no sistema.
+                    </p>
+                    <div sec:authorize="hasRole('ADMIN')" class="mt-3">
+                        <a th:href="@{/dentistas/novo}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Cadastrar Primeiro Dentista
+                        </a>
                     </div>
-                    <div class="modal-body">
-                        <p>Deseja realmente excluir o dentista <strong id="nomeDentista"></strong>?</p>
+                </div>
+            </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="confirmarExclusaoModal" tabindex="-1" aria-labelledby="confirmarExclusaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarExclusaoModalLabel">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Deseja realmente excluir o dentista <strong id="nomeDentista"></strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Esta ação não pode ser desfeita.
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <form id="formExclusao" method="post">
-                            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-                            <button type="submit" class="btn btn-danger">Excluir</button>
-                        </form>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="formExclusao" method="post" class="d-inline">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Excluir
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <th:block layout:fragment="scripts">
-        <script>
-            function preparaExclusao(id, nome, ativo) {
-                document.getElementById('nomeDentista').textContent = nome;
-                document.getElementById('formExclusao').action = '/dentistas/' + id + '/excluir';
-                
-                var myModal = new bootstrap.Modal(document.getElementById('confirmarExclusaoModal'), {});
-                myModal.show();
-            }
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    
+    <!-- Script para exclusão -->
+    <script>
+        function preparaExclusao(id, nome, ativo) {
+            document.getElementById('nomeDentista').textContent = nome;
+            document.getElementById('formExclusao').action = '/dentistas/' + id + '/excluir';
             
-            $(document).ready(function() {
-                $('#dataTable').DataTable({
-                    "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"
-                    }
-                });
-            });
-        </script>
-    </th:block>
+            var modal = new bootstrap.Modal(document.getElementById('confirmarExclusaoModal'));
+            modal.show();
+        }
+    </script>
 </body>
+</html>
 </html>

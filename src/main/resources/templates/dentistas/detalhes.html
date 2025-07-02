@@ -5,6 +5,8 @@
       layout:decorate="~{layout/layout}">
 <head>
     <title>Detalhes do Dentista - Sistema CCA</title>
+    <!-- CSS específico para dentistas -->
+    <link rel="stylesheet" th:href="@{/css/dentistas.css}">
 </head>
 <body>
     <div layout:fragment="content">
@@ -18,16 +20,26 @@
                 </ol>
             </nav>
             
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800" th:text="${dentista.nome}"></h1>
-                <div sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/dentistas/{id}/editar(id=${dentista.id})}" class="btn btn-warning">
-                        <i class="fas fa-edit"></i> Editar
-                    </a>
+            <div class="dentista-detalhes">
+                <!-- Perfil do dentista -->
+                <div class="dentista-profile">
+                    <div class="dentista-profile-avatar">
+                        <span th:text="${#strings.substring(dentista.nome, 0, 1)}"></span>
+                    </div>
+                    <div class="dentista-profile-info">
+                        <h2 th:text="${dentista.nome}"></h2>
+                        <p class="text-muted mb-2" th:text="${dentista.especialidade != null ? dentista.especialidade : 'Especialidade não informada'}"></p>
+                        <div>
+                            <span th:if="${dentista.ativo}" class="status-badge status-ativo">Ativo</span>
+                            <span th:unless="${dentista.ativo}" class="status-badge status-inativo">Inativo</span>
+                        </div>
+                    </div>
+                    <div class="ms-auto" sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/dentistas/{id}/editar(id=${dentista.id})}" class="btn-action btn-editar">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Card de informações do dentista -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">Informações do Dentista</h6>

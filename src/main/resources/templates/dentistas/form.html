@@ -1,43 +1,190 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="pt-BR">
 <head>
-    <title th:text="${dentista.id == null ? 'Novo Dentista' : 'Editar Dentista'} + ' - Sistema CCA'"></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${dentista.id == null ? 'Novo Dentista' : 'Editar Dentista'} + ' - Cara Core Agendamento'"></title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="container-fluid py-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary" th:text="${dentista.id == null ? 'Cadastrar Novo Dentista' : 'Editar Dentista'}"></h6>
-                </div>
-                <div class="card-body">
-                    <!-- Formulário para novo dentista -->
-                    <form th:if="${dentista.id == null}" th:action="@{/dentistas/salvar}" th:object="${dentista}" method="post">
-                        <div th:replace="~{dentistas/form-fields :: campos}"></div>
-                        <div class="row mt-3">
-                            <div class="col-md-12 text-end">
-                                <a th:href="@{/dentistas}" class="btn btn-secondary">Cancelar</a>
-                                <button type="submit" class="btn btn-primary">Salvar</button>
-                            </div>
-                        </div>
-                    </form>
-                    
-                    <!-- Formulário para editar dentista existente -->
-                    <form th:if="${dentista.id != null}" th:action="@{/dentistas/{id}/atualizar(id=${dentista.id})}" th:object="${dentista}" method="post">
-                        <input type="hidden" th:field="*{id}" />
-                        <div th:replace="~{dentistas/form-fields :: campos}"></div>
-                        <div class="row mt-3">
-                            <div class="col-md-12 text-end">
-                                <a th:href="@{/dentistas}" class="btn btn-secondary">Cancelar</a>
-                                <button type="submit" class="btn btn-primary">Atualizar</button>
-                            </div>
-                        </div>
-                    </form>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/novo-agendamento}">
+                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/dentistas}">
+                            <i class="bi bi-person-badge"></i> Dentistas
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-plus text-primary" th:if="${dentista.id == null}"></i>
+                    <i class="bi bi-person-gear text-primary" th:if="${dentista.id != null}"></i>
+                    <span th:text="${dentista.id == null ? 'Cadastrar Novo Dentista' : 'Editar Dentista'}"></span>
+                </h4>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/dentistas/salvar}" th:object="${dentista}" method="post">
+                    <!-- Campo oculto para o ID (em caso de edição) -->
+                    <input type="hidden" th:field="*{id}" />
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nome" th:field="*{nome}" required maxlength="100">
+                            <div class="form-text">Digite o nome completo do dentista.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="especialidade" class="form-label">Especialidade</label>
+                            <input type="text" class="form-control" id="especialidade" th:field="*{especialidade}" maxlength="100">
+                            <div class="form-text">Ex: Ortodontia, Implantodontia, Endodontia.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" maxlength="100">
+                            <div class="form-text">Digite um endereço de email válido para contato.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="telefone" th:field="*{telefone}" maxlength="20">
+                            <div class="form-text">Digite o número de telefone com DDD, ex: (11) 99999-9999</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cro" class="form-label">CRO</label>
+                            <input type="text" class="form-control" id="cro" th:field="*{cro}" maxlength="20">
+                            <div class="form-text">Número do registro no Conselho Regional de Odontologia.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ativo" th:field="*{ativo}">
+                                <label class="form-check-label" for="ativo">
+                                    Dentista ativo
+                                </label>
+                            </div>
+                            <div class="form-text">Marque se o dentista está ativo para atendimentos.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="horarioInicio" class="form-label">Horário de Início</label>
+                            <input type="time" class="form-control" id="horarioInicio" th:field="*{horarioInicio}">
+                            <div class="form-text">Horário de início do atendimento.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="horarioFim" class="form-label">Horário de Fim</label>
+                            <input type="time" class="form-control" id="horarioFim" th:field="*{horarioFim}">
+                            <div class="form-text">Horário de fim do atendimento.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/dentistas}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Salvar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    
+    <!-- Script para formatação de telefone -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const telefoneInput = document.getElementById('telefone');
+            
+            telefoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length === 0) {
+                    e.target.value = '';
+                } else if (value.length <= 2) {
+                    e.target.value = '(' + value;
+                } else if (value.length <= 6) {
+                    e.target.value = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+                } else if (value.length <= 10) {
+                    e.target.value = '(' + value.substring(0, 2) + ') ' + value.substring(2, 6) + '-' + value.substring(6);
+                } else {
+                    e.target.value = '(' + value.substring(0, 2) + ') ' + value.substring(2, 7) + '-' + value.substring(7, 11);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,5 +1,12 @@
 -- V9__adicionar_dentistas_exemplo.sql: Adiciona dados de dentistas para exemplo
 
+-- Primeiro, garantir que as colunas existam na tabela profissional
+ALTER TABLE profissional ADD COLUMN IF NOT EXISTS telefone VARCHAR(20);
+ALTER TABLE profissional ADD COLUMN IF NOT EXISTS cro VARCHAR(20);
+ALTER TABLE profissional ADD COLUMN IF NOT EXISTS horario_inicio VARCHAR(5);
+ALTER TABLE profissional ADD COLUMN IF NOT EXISTS horario_fim VARCHAR(5);
+ALTER TABLE profissional ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT TRUE;
+
 -- Atualizar o profissional existente
 UPDATE profissional 
 SET telefone = '(11) 98765-4321', 

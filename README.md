@@ -53,19 +53,54 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta com as seguintes funcionalidades principais:
 
-- [ ] Cadastro e autenticação de usuários (Admin, Dentista, Recepcionista)
-- [ ] Cadastro de pacientes
-- [ ] Cadastro de profissionais
-- [ ] Agendamento de consultas (com interface web)
+- [x] **Autenticação e autorização** com Spring Security e BCrypt
+- [x] **Gestão de usuários** (Admin, Dentista, Recepcionista, Paciente)
+- [x] **Cadastro e gestão de pacientes** com formulário responsivo
+- [x] **Cadastro e gestão de dentistas/profissionais** com horários e especialidades
+- [x] **Agendamento de consultas** com interface web
 - [ ] Visualização de agenda por dia/semana/mês
 - [ ] Edição e cancelamento de agendamentos
 - [ ] Upload de imagens odontológicas no prontuário
 - [ ] Relatórios básicos de agendamentos
 - [ ] Notificações por email (básico)
 - [ ] Interface pública para agendamento online
-- [ ] Controle de acesso por perfil
+- [x] **Controle de acesso por perfil** baseado em roles
 - [ ] LGPD: consentimento e política de privacidade
-- [x] Integração com WhatsApp para comunicação com pacientes
+- [x] **Integração com WhatsApp** para comunicação com pacientes
+
+### **Funcionalidades Implementadas Recentemente:**
+
+✅ **Sistema de Gestão de Dentistas:**
+- Cadastro completo com especialidades, CRO, horários de atendimento
+- Interface responsiva seguindo padrão Bootstrap 5.3.0
+- Busca avançada por nome, especialidade, email
+- Controle de status (ativo/inativo)
+- Validações de formulário e máscaras de entrada
+
+✅ **Versionamento do Banco de Dados:**
+- Flyway migrations organizadas e consolidadas
+- Script V10 para correção de inconsistências
+- Documentação completa em `doc/versionamento_banco_analise.md`
+- Estrutura padronizada para futuras migrações
+
+✅ **Melhorias na Interface:**
+- Design unificado com Bootstrap 5.3.0 e Bootstrap Icons
+- Navegação consistente entre todos os módulos
+- Cards com shadow e elementos visuais modernos
+- Responsividade para dispositivos móveis
+- Remoção de CSS específico e padronização de estilos
+
+✅ **Estrutura de Testes Robusta:**
+- Cobertura de testes para módulo de dentistas
+- Configuração de mocks para isolamento de dependências
+- Testes unitários e de integração
+- Relatórios de cobertura com JaCoCo
+
+✅ **Documentação Atualizada:**
+- Wiki completa com todos os módulos do sistema
+- README.md atualizado com guias de instalação e uso
+- Documentação de APIs e endpoints
+- Guias de contribuição e boas práticas
 
 Funcionalidades previstas para o MVP:
 
@@ -164,7 +199,16 @@ O sistema é inicializado com os seguintes usuários padrões para teste e demon
 
 ---
 
-Para detalhes completos, consulte as seções abaixo ou a [Wiki do Projeto](https://github.com/chmulato/cara-core_cca/wiki).
+Para detalhes completos sobre instalação, configuração, funcionalidades e desenvolvimento, consulte a **[Wiki do Projeto](wiki.md)** que contém documentação abrangente incluindo:
+
+- 📋 Guia completo de gestão de dentistas e pacientes
+- 🗃️ Documentação do versionamento do banco de dados
+- 🧪 Estrutura de testes e práticas de qualidade
+- 📱 Integração com WhatsApp e outras funcionalidades
+- ❓ FAQ e solução de problemas
+- 🚀 Roadmap e próximos passos
+
+---
 
 ## **Sobre o Projeto**
 
@@ -441,6 +485,88 @@ mvn test -Dtest=LoginControllerTest
 # Executar testes de um pacote
 mvn test -Dtest="com.caracore.cca.controller.*Test"
 ```
+
+## **Testes e Qualidade do Código**
+
+O projeto mantém alta qualidade através de uma suíte abrangente de testes automatizados:
+
+### **Cobertura de Testes**
+
+✅ **Testes Unitários:**
+- **Modelos (Entities):** Validação de campos, constraints e comportamentos
+- **Repositórios:** Testes de queries personalizadas e operações CRUD
+- **Serviços:** Lógica de negócio e regras de validação
+- **Controladores:** Endpoints REST e responses HTTP
+
+✅ **Testes de Integração:**
+- **Spring Boot Test:** Testes com contexto completo da aplicação
+- **@WebMvcTest:** Testes focados na camada web
+- **@DataJpaTest:** Testes específicos da camada de persistência
+
+### **Estrutura de Testes**
+
+```
+src/test/java/
+└── com/caracore/cca/
+    ├── model/
+    │   ├── DentistaTest.java        # Testes do modelo Dentista
+    │   ├── UsuarioTest.java         # Testes do modelo Usuario
+    │   └── PacienteTest.java        # Testes do modelo Paciente
+    ├── repository/
+    │   ├── DentistaRepositoryTest.java    # Testes de repositório
+    │   └── UsuarioRepositoryTest.java     # Queries personalizadas
+    ├── service/
+    │   ├── DentistaServiceTest.java       # Lógica de negócio
+    │   └── InitServiceTest.java           # Serviços de inicialização
+    ├── controller/
+    │   ├── DentistaControllerTest.java    # Controllers web
+    │   └── LoginControllerTest.java       # Autenticação
+    └── config/
+        ├── TestWebMvcConfig.java          # Configuração para testes
+        └── SecurityConfigTest.java        # Testes de segurança
+```
+
+### **Configuração de Testes**
+
+**TestWebMvcConfig.java** - Configuração de mocks para testes:
+```java
+@TestConfiguration
+public class TestWebMvcConfig {
+    @Bean @Primary
+    public UserActivityLogger mockUserActivityLogger() {
+        return Mockito.mock(UserActivityLogger.class);
+    }
+    
+    @Bean @Primary
+    public UserActivityInterceptor mockUserActivityInterceptor() {
+        return Mockito.mock(UserActivityInterceptor.class);
+    }
+}
+```
+
+### **Execução de Testes**
+
+```bash
+# Executar todos os testes
+mvn test
+
+# Executar testes específicos do módulo dentistas
+mvn test -Dtest="*Dentista*Test"
+
+# Executar testes com relatório de cobertura
+mvn clean test jacoco:report
+
+# Executar apenas testes unitários (sem integração)
+mvn test -Dtest="!*IntegrationTest"
+```
+
+### **Boas Práticas Implementadas**
+
+- **Isolamento de testes:** Cada teste é independente
+- **Mocking apropriado:** Spring Security e interceptors mockados
+- **Profiles de teste:** Configuração específica para testes
+- **Dados de teste:** Seeds controlados via `data.sql`
+- **Cobertura:** Relatórios de cobertura com JaCoCo
 
 ## **Comandos Úteis**
 
