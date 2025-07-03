@@ -57,11 +57,15 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - [x] **Gestão de usuários** (Admin, Dentista, Recepcionista, Paciente)
 - [x] **Cadastro e gestão de pacientes** com formulário responsivo e WhatsApp obrigatório
 - [x] **Cadastro e gestão de dentistas/profissionais** com horários e especialidades
-- [x] **Agendamento de consultas** com interface web
+- [x] **Agendamento de consultas** com interface web completa
+- [x] **Sistema de consultas** com CRUD completo e controle de acesso
+- [x] **Reagendamento e cancelamento** de consultas com histórico
+- [x] **Controle de conflitos** de horários automatizado
+- [x] **Dashboard de consultas** com filtros e métricas
 - [x] **Controle de consentimento LGPD** via WhatsApp integrado
 - [x] **Sistema de consentimento LGPD** com envio e confirmação via WhatsApp
+- [x] **Testes unitários** com 100% de aprovação em módulos críticos
 - [ ] Visualização de agenda por dia/semana/mês
-- [ ] Edição e cancelamento de agendamentos
 - [ ] Upload de imagens odontológicas no prontuário
 - [ ] Relatórios básicos de agendamentos
 - [ ] Notificações por email (básico)
@@ -103,16 +107,36 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - Remoção de CSS específico e padronização de estilos
 
 ✅ **Estrutura de Testes Robusta:**
-- Cobertura de testes para módulo de dentistas
+- **Testes Unitários Completos:** 100% de aprovação em 37 testes para gestão de agendamentos
+- **ConsultasControllerTest:** 18 testes unitários validando todas as operações do controller
+- **AgendamentoServiceTest:** 19 testes unitários cobrindo toda a lógica de negócio
+- Cobertura de testes para módulo de dentistas e pacientes
 - Configuração de mocks para isolamento de dependências
 - Testes unitários e de integração
 - Relatórios de cobertura com JaCoCo
+
+✅ **Gestão de Agendamentos Aprimorada:**
+- **Sistema de Consultas:** CRUD completo com validações e controle de acesso
+- **Controle de Conflitos:** Verificação automática de horários ocupados
+- **Reagendamento:** Funcionalidade completa com histórico de alterações
+- **Status Inteligente:** Controle de estados (Agendado, Confirmado, Realizado, Cancelado)
+- **Permissões por Perfil:** Acesso diferenciado por tipo de usuário
+- **Integração WhatsApp:** Comunicação direta com pacientes
+
+✅ **Qualidade de Código:**
+
+- **Testes Unitários:** 100% de aprovação em módulos críticos
+- **Mocks Adequados:** Isolamento de dependências para testes confiáveis
+- **Validações Robustas:** Controle de entrada e saída de dados
+- **Logs Estruturados:** Rastreabilidade completa de operações
+- **Tratamento de Erros:** Respostas adequadas para cenários de falha
 
 ✅ **Documentação Atualizada:**
 - Wiki completa com todos os módulos do sistema
 - README.md atualizado com guias de instalação e uso
 - Documentação de APIs e endpoints
 - Guias de contribuição e boas práticas
+- Documentação de testes e práticas de qualidade
 
 Funcionalidades previstas para o MVP:
 

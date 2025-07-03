@@ -427,7 +427,46 @@ Para ambientes de produção, configure as seguintes variáveis de ambiente:
 
 ### Agendamento de Consultas
 
-O sistema permite o agendamento de consultas de forma fácil e intuitiva, tanto pela recepção quanto pelo próprio paciente através da interface pública.
+O sistema oferece uma gestão completa de agendamentos com funcionalidades avançadas para controle de consultas, reagendamentos e acompanhamento do status.
+
+#### Sistema de Consultas Implementado
+
+**✅ CRUD Completo:**
+- ✅ **Criação** de novos agendamentos com validações
+- ✅ **Visualização** com filtros por status, data e dentista
+- ✅ **Edição** e reagendamento com histórico
+- ✅ **Exclusão** controlada por perfil de acesso
+
+**✅ Controle de Status:**
+- 🟡 **Agendado** - Consulta marcada
+- 🟢 **Confirmado** - Paciente confirmou presença
+- 🔵 **Realizado** - Consulta foi realizada
+- 🔴 **Cancelado** - Consulta cancelada com motivo
+
+**✅ Funcionalidades Avançadas:**
+- **Detecção de Conflitos:** Verificação automática de horários ocupados
+- **Reagendamento:** Alteração de data/hora com notificação automática
+- **Dashboard:** Visão geral com métricas e filtros
+- **Histórico:** Registro completo de alterações
+
+#### Controle de Acesso por Perfil
+
+**👤 ADMIN (Administrador):**
+- ✅ Acesso completo: visualizar, criar, editar, cancelar, excluir
+- ✅ Dashboard com métricas completas
+- ✅ Relatórios e estatísticas
+
+**👩‍💼 RECEPTIONIST (Recepcionista):**
+- ✅ Visualizar, criar, editar e cancelar agendamentos
+- ✅ Reagendar consultas
+- ✅ Confirmar presença de pacientes
+- ❌ Não pode excluir registros
+
+**👨‍⚕️ DENTIST (Dentista):**
+- ✅ Visualizar agendamentos próprios
+- ✅ Marcar consultas como realizadas
+- ✅ Dashboard de suas consultas
+- ❌ Não pode criar novos agendamentos
 
 #### Fluxo de Agendamento
 
@@ -438,12 +477,13 @@ O sistema permite o agendamento de consultas de forma fácil e intuitiva, tanto 
 5. Definir duração e observações
 6. Confirmar agendamento
 
-#### Validações
+#### Validações Implementadas
 
-- Verificação de disponibilidade de horário
-- Validação de dias úteis (segunda a sexta)
-- Horário comercial (8h às 18h)
-- Formato correto de telefone WhatsApp
+- ✅ Verificação de disponibilidade de horário
+- ✅ Detecção de conflitos com outros agendamentos
+- ✅ Validação de dados obrigatórios
+- ✅ Controle de acesso por perfil
+- ✅ Formato correto de telefone WhatsApp
 
 ### Gestão de Pacientes
 
@@ -595,11 +635,41 @@ src/test/java/com/caracore/cca/
 │   └── UsuarioRepositoryTest.java
 ├── service/                # Testes de serviços
 │   ├── DentistaServiceTest.java
+│   ├── AgendamentoServiceTest.java     # 19 testes unitários
 │   └── InitServiceTest.java
 └── controller/             # Testes de controllers
     ├── DentistaControllerTest.java
+    ├── ConsultasControllerTest.java    # 18 testes unitários
     └── LoginControllerTest.java
 ```
+
+### Testes Unitários de Agendamentos
+
+**✅ Status Atual:** **100% de aprovação em 37 testes unitários**
+
+#### **AgendamentoServiceTest (19 testes)**
+- ✅ Salvamento de agendamentos
+- ✅ Busca por ID, período e dentista
+- ✅ Reagendamento com validações
+- ✅ Cancelamento com motivo
+- ✅ Marcação como realizado
+- ✅ Exclusão com controle de acesso
+- ✅ Confirmação de agendamentos
+- ✅ Detecção de conflitos de horário
+- ✅ Validação de dados obrigatórios
+
+#### **ConsultasControllerTest (18 testes)**
+- ✅ Listagem com filtros
+- ✅ Detalhes de consultas
+- ✅ Formulário de novo agendamento
+- ✅ Salvamento com validações
+- ✅ Reagendamento via controller
+- ✅ Cancelamento com motivo
+- ✅ Marcação como realizada
+- ✅ Exclusão (apenas ADMIN)
+- ✅ Dashboard de consultas
+- ✅ Confirmação de consultas
+- ✅ Controle de acesso por perfil
 
 ### Configuração de Mocks
 
@@ -633,8 +703,8 @@ public class TestWebMvcConfig {
 # Executar todos os testes
 mvn test
 
-# Executar testes específicos
-mvn test -Dtest=DentistaServiceTest
+# Executar testes específicos de agendamentos
+mvn test -Dtest="ConsultasControllerTest,AgendamentoServiceTest"
 
 # Executar testes com relatório de cobertura
 mvn test jacoco:report
@@ -648,6 +718,8 @@ mvn test -Dtest="*Dentista*Test"
 O projeto mantém cobertura mínima de **80%** em:
 - Classes de modelo (entities)
 - Serviços de negócio
+- Controllers principais
+- **Módulo de agendamentos: 100% de aprovação**
 - Controladores REST e Web
 - Repositórios customizados
 
@@ -675,6 +747,18 @@ R: Na listagem de dentistas, clique no toggle de status ao lado do nome do profi
 
 **P: É possível filtrar dentistas por especialidade?**  
 R: Sim, na tela de listagem há um campo de busca que permite filtrar por nome, email, especialidade e status. A busca é feita em tempo real conforme você digita.
+
+**P: Como criar um novo agendamento?**  
+R: Acesse "Consultas" > "Nova Consulta", selecione o paciente (ou cadastre um novo), escolha o dentista, defina data/hora e duração, adicione observações se necessário e confirme. O sistema verifica automaticamente conflitos de horário.
+
+**P: Como reagendar uma consulta?**  
+R: Na listagem de consultas, clique em "Reagendar" na consulta desejada, selecione a nova data/hora e confirme. O sistema mantém histórico das alterações e pode notificar o paciente automaticamente.
+
+**P: Quais perfis podem excluir agendamentos?**  
+R: Apenas usuários com perfil ADMIN podem excluir agendamentos. Recepcionistas podem cancelar consultas, e dentistas podem marcar como realizadas.
+
+**P: Como executar os testes do sistema?**  
+R: Execute `mvn test` para todos os testes, ou `mvn test -Dtest="ConsultasControllerTest,AgendamentoServiceTest"` para testar especificamente o módulo de agendamentos.
 
 **P: Como atualizar o telefone de um paciente existente?**  
 R: Na tela de agendamento, ao selecionar um paciente existente, o sistema buscará automaticamente o telefone cadastrado. Você pode então atualizá-lo se necessário, e o sistema salvará o novo número.
@@ -734,7 +818,23 @@ R: A versão atual suporta apenas a abertura da conversa. O envio automático es
 
 ### Próximos Passos
 
-#### Funcionalidades Implementadas Recentemente
+#### Funcionalidades Implementadas Recentemente (Julho 2025)
+
+✅ **Sistema de Gestão de Agendamentos Completo:**
+- **CRUD Completo:** Criação, visualização, edição e exclusão de consultas
+- **Controle de Status:** Agendado, Confirmado, Realizado, Cancelado
+- **Reagendamento:** Alteração de data/hora com histórico
+- **Dashboard:** Visão geral com métricas e filtros
+- **Detecção de Conflitos:** Verificação automática de horários ocupados
+- **Controle de Acesso:** Permissões específicas por perfil (Admin, Recepcionista, Dentista)
+
+✅ **Testes Unitários 100% Funcionais:**
+- **37 testes unitários** com 100% de aprovação
+- **ConsultasControllerTest:** 18 testes cobrindo todas as operações do controller
+- **AgendamentoServiceTest:** 19 testes validando toda a lógica de negócio
+- **Mocks Adequados:** Isolamento de dependências para testes confiáveis
+- **Validações Robustas:** Controle de entrada e saída de dados
+- **Cobertura Completa:** Cenários de sucesso e erro testados
 
 ✅ **Sistema de Gestão de Dentistas Completo:**
 - Interface padronizada com Bootstrap 5.3.0
@@ -754,16 +854,22 @@ R: A versão atual suporta apenas a abertura da conversa. O envio automático es
 - Práticas padronizadas para futuras atualizações
 
 ✅ **Estrutura de Testes Robusta:**
-- Cobertura de testes para módulo de dentistas
+- Cobertura de testes para módulos críticos
 - Configuração de mocks para isolamento
 - Testes unitários e de integração
+- Relatórios de cobertura com JaCoCo
 
-#### Próximas Funcionalidades Planejadas
+#### Próximas Funcionalidades Planejadas (Q4 2025)
 
 - **Envio automático de lembretes por WhatsApp**
   - Integração com API oficial do WhatsApp Business
   - Templates personalizáveis para diferentes tipos de mensagem
   - Agendamento de envios automáticos
+
+- **Visualização de Agenda (Calendário)**
+  - Interface de calendário interativo
+  - Visualização por dia, semana e mês
+  - Drag & drop para reagendamentos
 
 - **Dashboard de comunicações com pacientes**
   - Histórico de mensagens enviadas

@@ -369,53 +369,6 @@ public class ConsultasController {
     }
 
     /**
-     * Processa o reagendamento da consulta
-     */
-    @PostMapping("/{id}/reagendar")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
-    public String reagendarConsulta(@PathVariable Long id,
-                                   @RequestParam("novaDataHora") String novaDataHora,
-                                   @RequestParam("motivoReagendamento") String motivoReagendamento,
-                                   @RequestParam(value = "observacoes", required = false) String observacoes,
-                                   @RequestParam(value = "telefoneWhatsapp", required = false) String telefoneWhatsapp,
-                                   @RequestParam(value = "duracao", required = false) Integer duracao,
-                                   RedirectAttributes redirectAttributes) {
-        logger.info("Reagendando consulta ID: {} para nova data/hora: {}", id, novaDataHora);
-        
-        try {
-            LocalDateTime novaDataHoraObj = LocalDateTime.parse(novaDataHora);
-            
-            if (agendamentoService.reagendar(id, novaDataHoraObj)) {
-                // Atualizar campos adicionais se fornecidos
-                Optional<Agendamento> agendamento = agendamentoService.buscarPorId(id);
-                if (agendamento.isPresent()) {
-                    Agendamento ag = agendamento.get();
-                    if (observacoes != null && !observacoes.trim().isEmpty()) {
-                        ag.setObservacao(observacoes);
-                    }
-                    if (telefoneWhatsapp != null && !telefoneWhatsapp.trim().isEmpty()) {
-                        ag.setTelefoneWhatsapp(telefoneWhatsapp);
-                    }
-                    if (duracao != null && duracao > 0) {
-                        ag.setDuracaoMinutos(duracao);
-                    }
-                    agendamentoService.atualizar(ag);
-                }
-                
-                redirectAttributes.addFlashAttribute("sucesso", "Consulta reagendada com sucesso!");
-                return "redirect:/consultas/" + id;
-            } else {
-                redirectAttributes.addFlashAttribute("erro", "Erro ao reagendar consulta. Verifique se o horário está disponível.");
-                return "redirect:/consultas/" + id + "/reagendar";
-            }
-        } catch (Exception e) {
-            logger.error("Erro ao reagendar consulta ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("erro", "Erro ao reagendar consulta: " + e.getMessage());
-            return "redirect:/consultas/" + id + "/reagendar";
-        }
-    }
-
-    /**
      * API para verificar conflitos de horário
      */
     @GetMapping("/verificar-conflito")
