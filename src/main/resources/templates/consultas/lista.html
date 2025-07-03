@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas Agendadas - CCA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        .status-agendado { background-color: #e3f2fd; color: #1976d2; }
+        .status-confirmado { background-color: #e8f5e8; color: #388e3c; }
+        .status-cancelado { background-color: #ffebee; color: #d32f2f; }
+        .status-reagendado { background-color: #fff3e0; color: #f57c00; }
+        .status-realizado { background-color: #f3e5f5; color: #7b1fa2; }
+        .status-falta { background-color: #fce4ec; color: #c2185b; }
+        
+        .priority-card {
+            border-left: 4px solid #dc3545;
+            background-color: #fff5f5;
+        }
+        
+        .today-card {
+            border-left: 4px solid #28a745;
+            background-color: #f8fff8;
+        }
+        
+        .table-responsive {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-calendar-alt"></i> Consultas Agendadas</h2>
+                    <div>
+                        <a href="/consultas/dashboard" class="btn btn-info me-2">
+                            <i class="fas fa-chart-pie"></i> Dashboard
+                        </a>
+                        <a href="/agendamento" class="btn btn-success" sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                            <i class="fas fa-plus"></i> Nova Consulta
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-filter"></i> Filtros</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" th:action="@{/consultas}">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select id="status" name="status" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option value="AGENDADO" th:selected="${param.status == 'AGENDADO'}">Agendado</option>
+                                        <option value="CONFIRMADO" th:selected="${param.status == 'CONFIRMADO'}">Confirmado</option>
+                                        <option value="CANCELADO" th:selected="${param.status == 'CANCELADO'}">Cancelado</option>
+                                        <option value="REAGENDADO" th:selected="${param.status == 'REAGENDADO'}">Reagendado</option>
+                                        <option value="REALIZADO" th:selected="${param.status == 'REALIZADO'}">Realizado</option>
+                                        <option value="FALTA" th:selected="${param.status == 'FALTA'}">Falta</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="dataInicio" class="form-label">Data Início</label>
+                                    <input type="date" id="dataInicio" name="dataInicio" class="form-control" th:value="${param.dataInicio}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="dataFim" class="form-label">Data Fim</label>
+                                    <input type="date" id="dataFim" name="dataFim" class="form-control" th:value="${param.dataFim}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="dentista" class="form-label">Dentista</label>
+                                    <select id="dentista" name="dentista" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option th:each="dentista : ${dentistas}" 
+                                                th:value="${dentista.id}" 
+                                                th:text="${dentista.nome}"
+                                                th:selected="${param.dentista == dentista.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Filtrar
+                                    </button>
+                                    <a href="/consultas" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Limpar
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Resumo por Status -->
+                <div class="row mb-4">
+                    <div class="col-md-2" th:each="entry : ${agendamentosPorStatus}">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted" th:text="${entry.key}"></h6>
+                                <h3 class="card-text" th:text="${entry.value.size()}"></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consultas Prioritárias (Hoje) -->
+                <div class="card mb-4 today-card" th:if="${consultasHoje != null and !consultasHoje.isEmpty()}">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock"></i> Consultas de Hoje</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Horário</th>
+                                        <th>Paciente</th>
+                                        <th>Dentista</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="agendamento : ${consultasHoje}">
+                                        <td th:text="${#temporals.format(agendamento.dataHora, 'HH:mm')}"></td>
+                                        <td th:text="${agendamento.paciente.nome}"></td>
+                                        <td th:text="${agendamento.dentista.nome}"></td>
+                                        <td>
+                                            <span class="status-badge" th:classappend="'status-' + ${agendamento.status.toLowerCase()}" 
+                                                  th:text="${agendamento.status}"></span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/consultas/{id}(id=${agendamento.id})}" 
+                                               class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Consultas -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-list"></i> Todas as Consultas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Paciente</th>
+                                        <th>Dentista</th>
+                                        <th>Duração</th>
+                                        <th>Status</th>
+                                        <th>Observações</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="agendamento : ${agendamentos}" th:if="${agendamentos != null and !agendamentos.isEmpty()}">
+                                        <td>
+                                            <strong th:text="${#temporals.format(agendamento.dataHora, 'dd/MM/yyyy HH:mm')}"></strong>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong th:text="${agendamento.paciente.nome}"></strong>
+                                                <br>
+                                                <small class="text-muted" th:text="${agendamento.paciente.telefone}"></small>
+                                            </div>
+                                        </td>
+                                        <td th:text="${agendamento.dentista.nome}"></td>
+                                        <td th:text="${agendamento.duracaoMinutos != null ? agendamento.duracaoMinutos + ' min' : '30 min'}"></td>
+                                        <td>
+                                            <span class="status-badge" th:classappend="'status-' + ${agendamento.status.toLowerCase()}" 
+                                                  th:text="${agendamento.status}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:text="${agendamento.observacao}" class="text-muted"></span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a th:href="@{/consultas/{id}(id=${agendamento.id})}" 
+                                                   class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                
+                                                <!-- Ações baseadas no status -->
+                                                <div th:if="${agendamento.status == 'AGENDADO' or agendamento.status == 'CONFIRMADO'}">
+                                                    <a th:href="@{/consultas/{id}/confirmar(id=${agendamento.id})}" 
+                                                       class="btn btn-sm btn-success" title="Confirmar"
+                                                       th:if="${agendamento.status == 'AGENDADO'}"
+                                                       sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                                                        <i class="fas fa-check"></i>
+                                                    </a>
+                                                    
+                                                    <a th:href="@{/consultas/{id}/realizar(id=${agendamento.id})}" 
+                                                       class="btn btn-sm btn-primary" title="Marcar como Realizado"
+                                                       sec:authorize="hasAnyRole('ADMIN', 'DENTIST')">
+                                                        <i class="fas fa-user-check"></i>
+                                                    </a>
+                                                    
+                                                    <a th:href="@{/consultas/{id}/reagendar(id=${agendamento.id})}" 
+                                                       class="btn btn-sm btn-warning" title="Reagendar"
+                                                       sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </a>
+                                                    
+                                                    <a th:href="@{/consultas/{id}/cancelar(id=${agendamento.id})}" 
+                                                       class="btn btn-sm btn-danger" title="Cancelar"
+                                                       sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')"
+                                                       onclick="return confirm('Tem certeza que deseja cancelar esta consulta?')">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                </div>
+                                                
+                                                <a th:href="@{/consultas/{id}/excluir(id=${agendamento.id})}" 
+                                                   class="btn btn-sm btn-outline-danger" title="Excluir"
+                                                   sec:authorize="hasRole('ADMIN')"
+                                                   onclick="return confirm('Tem certeza que deseja excluir esta consulta? Esta ação não pode ser desfeita.')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div th:if="${agendamentos == null or agendamentos.isEmpty()}" class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Nenhuma consulta encontrada</h5>
+                            <p class="text-muted">Não há consultas agendadas com os filtros aplicados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

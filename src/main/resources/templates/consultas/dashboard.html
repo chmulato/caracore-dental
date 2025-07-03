@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Consultas Agendadas - CCA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .metric-card {
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .metric-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .metric-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .metric-card.danger {
+            border-left-color: #dc3545;
+        }
+        
+        .metric-card.info {
+            border-left-color: #17a2b8;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+        
+        .today-highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .upcoming-highlight {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-chart-pie"></i> Dashboard - Consultas Agendadas</h2>
+                    <div>
+                        <a href="/consultas" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Ver Todas as Consultas
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Métricas Principais -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title text-muted">Total de Consultas</h6>
+                                        <h3 class="card-text" th:text="${totalConsultas}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-calendar-alt fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card metric-card success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title text-muted">Consultas Confirmadas</h6>
+                                        <h3 class="card-text text-success" th:text="${consultasConfirmadas}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card metric-card warning">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title text-muted">Consultas Hoje</h6>
+                                        <h3 class="card-text text-warning" th:text="${consultasHoje}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-clock fa-2x text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card metric-card danger">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title text-muted">Consultas Canceladas</h6>
+                                        <h3 class="card-text text-danger" th:text="${consultasCanceladas}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-pie-chart"></i> Distribuição por Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="statusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-bar-chart"></i> Consultas por Dentista</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="dentistaChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consultas de Hoje -->
+                <div class="row mb-4" th:if="${consultasHojeLista != null and !consultasHojeLista.isEmpty()}">
+                    <div class="col-md-12">
+                        <div class="card today-highlight">
+                            <div class="card-header">
+                                <h5><i class="fas fa-calendar-day"></i> Consultas de Hoje</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Horário</th>
+                                                <th>Paciente</th>
+                                                <th>Dentista</th>
+                                                <th>Status</th>
+                                                <th>Telefone</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="consulta : ${consultasHojeLista}">
+                                                <td class="fw-bold" th:text="${#temporals.format(consulta.dataHora, 'HH:mm')}"></td>
+                                                <td th:text="${consulta.paciente.nome}"></td>
+                                                <td th:text="${consulta.dentista.nome}"></td>
+                                                <td>
+                                                    <span class="badge" 
+                                                          th:classappend="${consulta.status == 'CONFIRMADO' ? 'bg-success' : 
+                                                                         consulta.status == 'AGENDADO' ? 'bg-warning' : 
+                                                                         consulta.status == 'CANCELADO' ? 'bg-danger' : 'bg-secondary'}"
+                                                          th:text="${consulta.status}"></span>
+                                                </td>
+                                                <td>
+                                                    <a th:href="'https://wa.me/55' + ${consulta.telefoneWhatsapp}" 
+                                                       class="btn btn-sm btn-success" target="_blank" 
+                                                       th:if="${consulta.telefoneWhatsapp != null}">
+                                                        <i class="fab fa-whatsapp"></i>
+                                                    </a>
+                                                    <span th:if="${consulta.telefoneWhatsapp == null}" 
+                                                          class="text-muted" th:text="${consulta.paciente.telefone}"></span>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/consultas/{id}(id=${consulta.id})}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próximas Consultas -->
+                <div class="row mb-4" th:if="${proximasConsultas != null and !proximasConsultas.isEmpty()}">
+                    <div class="col-md-12">
+                        <div class="card upcoming-highlight">
+                            <div class="card-header">
+                                <h5><i class="fas fa-calendar-plus"></i> Próximas Consultas (7 dias)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Data/Hora</th>
+                                                <th>Paciente</th>
+                                                <th>Dentista</th>
+                                                <th>Status</th>
+                                                <th>Observações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="consulta : ${proximasConsultas}">
+                                                <td class="fw-bold" th:text="${#temporals.format(consulta.dataHora, 'dd/MM HH:mm')}"></td>
+                                                <td th:text="${consulta.paciente.nome}"></td>
+                                                <td th:text="${consulta.dentista.nome}"></td>
+                                                <td>
+                                                    <span class="badge" 
+                                                          th:classappend="${consulta.status == 'CONFIRMADO' ? 'bg-success' : 
+                                                                         consulta.status == 'AGENDADO' ? 'bg-warning' : 
+                                                                         consulta.status == 'CANCELADO' ? 'bg-danger' : 'bg-secondary'}"
+                                                          th:text="${consulta.status}"></span>
+                                                </td>
+                                                <td th:text="${consulta.observacao ?: '-'}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas Adicionais -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-user-md"></i> Dentistas Mais Ativos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${dentistasAtivos != null and !dentistasAtivos.isEmpty()}">
+                                    <div th:each="dentista : ${dentistasAtivos}" class="d-flex justify-content-between mb-2">
+                                        <span th:text="${dentista.key}"></span>
+                                        <span class="badge bg-primary" th:text="${dentista.value}"></span>
+                                    </div>
+                                </div>
+                                <div th:if="${dentistasAtivos == null or dentistasAtivos.isEmpty()}" class="text-muted">
+                                    Nenhum dado disponível
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-percentage"></i> Taxa de Confirmação</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <h3 class="text-success" th:text="${taxaConfirmacao != null ? taxaConfirmacao + '%' : '0%'}"></h3>
+                                    <p class="text-muted">Consultas confirmadas vs. agendadas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-chart-line"></i> Tendência Semanal</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <h3 class="text-info" th:text="${consultasEstaSemana != null ? consultasEstaSemana : '0'}"></h3>
+                                    <p class="text-muted">Consultas esta semana</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gráfico de Status
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        const statusChart = new Chart(statusCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Agendado', 'Confirmado', 'Cancelado', 'Realizado', 'Reagendado', 'Falta'],
+                datasets: [{
+                    data: [
+                        /*[[${consultasAgendadas}]]*/ 0,
+                        /*[[${consultasConfirmadas}]]*/ 0,
+                        /*[[${consultasCanceladas}]]*/ 0,
+                        /*[[${consultasRealizadas}]]*/ 0,
+                        /*[[${consultasReagendadas}]]*/ 0,
+                        /*[[${consultasFalta}]]*/ 0
+                    ],
+                    backgroundColor: [
+                        '#2196F3',
+                        '#4CAF50',
+                        '#F44336',
+                        '#9C27B0',
+                        '#FF9800',
+                        '#E91E63'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Dentistas
+        const dentistaCtx = document.getElementById('dentistaChart').getContext('2d');
+        const dentistaChart = new Chart(dentistaCtx, {
+            type: 'bar',
+            data: {
+                labels: [/*[[${dentistasNomes}]]*/ 'Dentista 1', 'Dentista 2'],
+                datasets: [{
+                    label: 'Consultas',
+                    data: [/*[[${dentistasConsultas}]]*/ 0, 0],
+                    backgroundColor: '#2196F3'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
