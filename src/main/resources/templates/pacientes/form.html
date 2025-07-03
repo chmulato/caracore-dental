@@ -85,9 +85,73 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="telefone" class="form-label">Telefone</label>
-                        <input type="text" class="form-control" id="telefone" th:field="*{telefone}" maxlength="20">
-                        <div class="form-text">Digite o número de telefone com DDD, ex: (11) 99999-9999</div>
+                        <label for="telefone" class="form-label">
+                            <i class="bi bi-whatsapp text-success me-1"></i>
+                            WhatsApp <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="telefone" th:field="*{telefone}" 
+                                   placeholder="(99) 99999-9999" required maxlength="20"
+                                   pattern="^\(?[1-9]{2}\)? ?(?:9[1-9]|[2-9])[0-9]{3}\-?[0-9]{4}$">
+                            <button type="button" class="btn btn-success" id="whatsappBtn" 
+                                    title="Abrir WhatsApp" disabled>
+                                <i class="bi bi-whatsapp"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            Digite o número de WhatsApp com DDD. Este campo é obrigatório para comunicação.
+                        </div>
+                        <div class="invalid-feedback">
+                            Por favor, informe um número WhatsApp válido no formato (99) 99999-9999.
+                        </div>
+                    </div>
+
+                    <!-- Seção de Consentimento LGPD -->
+                    <div class="card mb-4 border-info">
+                        <div class="card-header bg-info bg-opacity-10">
+                            <h6 class="mb-0">
+                                <i class="bi bi-shield-check text-info me-2"></i>
+                                Consentimento LGPD
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="consentimentoLgpd" 
+                                               th:field="*{consentimentoLgpd}">
+                                        <label class="form-check-label" for="consentimentoLgpd">
+                                            Consentimento LGPD enviado via WhatsApp
+                                        </label>
+                                    </div>
+                                    <button type="button" class="btn btn-info btn-sm" id="enviarConsentimentoBtn" disabled>
+                                        <i class="bi bi-whatsapp me-1"></i>
+                                        Enviar Consentimento LGPD
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="consentimentoConfirmado" 
+                                               th:field="*{consentimentoConfirmado}">
+                                        <label class="form-check-label" for="consentimentoConfirmado">
+                                            Paciente confirmou recebimento
+                                        </label>
+                                    </div>
+                                    <div th:if="${paciente.dataConsentimento != null}" class="text-muted small">
+                                        <i class="bi bi-clock"></i>
+                                        Enviado em: <span th:text="${#temporals.format(paciente.dataConsentimento, 'dd/MM/yyyy HH:mm')}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-warning mt-3" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Importante:</strong> O consentimento LGPD deve ser enviado e confirmado antes de 
+                                processar dados pessoais do paciente conforme a Lei Geral de Proteção de Dados.
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="d-flex justify-content-between">
@@ -113,25 +177,103 @@
     <!-- Bootstrap JS bundle with Popper -->
     <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
     
-    <!-- Script para formatação de telefone -->
+    <!-- Script para formatação de telefone e funcionalidades LGPD -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const telefoneInput = document.getElementById('telefone');
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            const enviarConsentimentoBtn = document.getElementById('enviarConsentimentoBtn');
+            const consentimentoLgpdCheck = document.getElementById('consentimentoLgpd');
+            const consentimentoConfirmadoCheck = document.getElementById('consentimentoConfirmado');
             
-            telefoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
+            // Formatação do telefone WhatsApp
+            function formatarTelefone(input) {
+                let value = input.value.replace(/\D/g, '');
                 if (value.length === 0) {
-                    e.target.value = '';
+                    input.value = '';
                 } else if (value.length <= 2) {
-                    e.target.value = '(' + value;
+                    input.value = '(' + value;
                 } else if (value.length <= 6) {
-                    e.target.value = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+                    input.value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
                 } else if (value.length <= 10) {
-                    e.target.value = '(' + value.substring(0, 2) + ') ' + value.substring(2, 6) + '-' + value.substring(6);
+                    input.value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7);
                 } else {
-                    e.target.value = '(' + value.substring(0, 2) + ') ' + value.substring(2, 7) + '-' + value.substring(7, 11);
+                    input.value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7, 11);
+                }
+                
+                // Habilita/desabilita botões baseado na validade do telefone
+                const telefoneValido = validarTelefone(input.value);
+                whatsappBtn.disabled = !telefoneValido;
+                enviarConsentimentoBtn.disabled = !telefoneValido;
+            }
+            
+            // Validação do telefone
+            function validarTelefone(telefone) {
+                const regex = /^\([1-9]{2}\) (?:9[1-9]|[2-9])[0-9]{3}\-[0-9]{4}$/;
+                return regex.test(telefone);
+            }
+            
+            // Gerar link do WhatsApp
+            function gerarLinkWhatsApp(telefone) {
+                const numeroLimpo = telefone.replace(/\D/g, '');
+                if (numeroLimpo.length >= 10) {
+                    return `https://wa.me/55${numeroLimpo}`;
+                }
+                return '#';
+            }
+            
+            // Event listeners
+            telefoneInput.addEventListener('input', function() {
+                formatarTelefone(this);
+            });
+            
+            // Botão do WhatsApp
+            whatsappBtn.addEventListener('click', function() {
+                if (!whatsappBtn.disabled) {
+                    const link = gerarLinkWhatsApp(telefoneInput.value);
+                    if (link !== '#') {
+                        window.open(link, '_blank');
+                    }
                 }
             });
+            
+            // Enviar consentimento LGPD via WhatsApp
+            enviarConsentimentoBtn.addEventListener('click', function() {
+                if (!enviarConsentimentoBtn.disabled) {
+                    const telefone = telefoneInput.value;
+                    const nomeInput = document.getElementById('nome');
+                    const nomePaciente = nomeInput.value || 'paciente';
+                    
+                    // Mensagem padrão de consentimento LGPD
+                    const mensagemLgpd = encodeURIComponent(
+                        `Olá ${nomePaciente}! 📋\n\n` +
+                        `Este é o consultório Cara Core Agendamento.\n\n` +
+                        `Conforme a Lei Geral de Proteção de Dados (LGPD), solicitamos seu consentimento para:\n\n` +
+                        `✅ Armazenar seus dados pessoais (nome, telefone, email)\n` +
+                        `✅ Utilizar seus dados para agendamentos e comunicações\n` +
+                        `✅ Enviar lembretes de consultas via WhatsApp\n\n` +
+                        `Seus dados são protegidos e utilizados apenas para fins médicos e administrativos.\n\n` +
+                        `Por favor, responda "ACEITO" para confirmar seu consentimento.\n\n` +
+                        `Obrigado! 🦷`
+                    );
+                    
+                    const link = gerarLinkWhatsApp(telefone) + `?text=${mensagemLgpd}`;
+                    
+                    // Abrir WhatsApp com a mensagem
+                    window.open(link, '_blank');
+                    
+                    // Marcar como enviado
+                    consentimentoLgpdCheck.checked = true;
+                    
+                    // Mostrar alerta de confirmação
+                    alert('Mensagem de consentimento LGPD enviada via WhatsApp!\n\nLembre-se de marcar "Paciente confirmou recebimento" quando o paciente responder positivamente.');
+                }
+            });
+            
+            // Inicializar formatação na carga da página
+            if (telefoneInput.value) {
+                formatarTelefone(telefoneInput);
+            }
         });
     </script>
 </body>

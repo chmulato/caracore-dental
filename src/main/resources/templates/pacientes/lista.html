@@ -106,13 +106,14 @@
                                 <th>ID</th>
                                 <th>Nome</th>
                                 <th>Email</th>
-                                <th>Telefone</th>
+                                <th>WhatsApp</th>
+                                <th>LGPD</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${pacientes.empty}">
-                                <td colspan="5" class="text-center">Nenhum paciente encontrado</td>
+                                <td colspan="6" class="text-center">Nenhum paciente encontrado</td>
                             </tr>
                             <tr th:each="paciente : ${pacientes}">
                                 <td th:text="${paciente.id}"></td>
@@ -126,7 +127,25 @@
                                             <i class="bi bi-whatsapp"></i>
                                         </a>
                                     </span>
-                                    <span th:unless="${paciente.telefone}">-</span>
+                                    <span th:unless="${paciente.telefone}" class="text-danger">
+                                        <i class="bi bi-exclamation-triangle" title="WhatsApp obrigatório"></i> Não informado
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span th:if="${paciente.consentimentoLgpd}" class="badge bg-info mb-1">
+                                            <i class="bi bi-check-circle"></i> Enviado
+                                        </span>
+                                        <span th:unless="${paciente.consentimentoLgpd}" class="badge bg-warning mb-1">
+                                            <i class="bi bi-clock"></i> Pendente
+                                        </span>
+                                        <span th:if="${paciente.consentimentoConfirmado}" class="badge bg-success">
+                                            <i class="bi bi-shield-check"></i> Confirmado
+                                        </span>
+                                        <span th:unless="${paciente.consentimentoConfirmado}" class="badge bg-secondary">
+                                            <i class="bi bi-hourglass"></i> Aguardando
+                                        </span>
+                                    </div>
                                 </td>
                                 <td>
                                     <a th:href="@{/pacientes/{id}(id=${paciente.id})}" class="btn btn-sm btn-outline-info me-1">

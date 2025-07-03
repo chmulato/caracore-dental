@@ -238,4 +238,153 @@ class PacienteServiceTest {
         assertThat(pacientesComTelefoneEspecifico.get(0).getNome()).isEqualTo("João Silva");
         assertThat(pacientesComTelefoneEspecifico.get(0).getTelefone()).isEqualTo("(11) 98765-4321");
     }
+    
+    // --- TESTES DE FUNCIONALIDADES LGPD ---
+
+    @Test
+    @DisplayName("Deve salvar paciente com campos LGPD padrão")
+    void deveSalvarPacienteComCamposLgpdPadrao() {
+        // Dado um paciente sem configurações LGPD específicas
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(paciente);
+        
+        // Quando salvar o paciente
+        Paciente resultado = pacienteService.salvar(paciente);
+        
+        // Então deve ter os valores padrão LGPD
+        assertThat(resultado.getConsentimentoLgpd()).isEqualTo(false);
+        assertThat(resultado.getConsentimentoConfirmado()).isEqualTo(false);
+        assertThat(resultado.getDataConsentimento()).isNull();
+        verify(pacienteRepository).save(paciente);
+    }
+
+    @Test
+    @DisplayName("Deve salvar paciente com consentimento LGPD enviado")
+    void deveSalvarPacienteComConsentimentoLgpdEnviado() {
+        // Dado um paciente com consentimento LGPD marcado como enviado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
+        paciente.setConsentimentoLgpd(true);
+        paciente.setDataConsentimento(agora);
+        
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(paciente);
+        
+        // Quando salvar o paciente
+        Paciente resultado = pacienteService.salvar(paciente);
+        
+        // Então deve manter as configurações LGPD
+        assertThat(resultado.getConsentimentoLgpd()).isTrue();
+        assertThat(resultado.getDataConsentimento()).isEqualTo(agora);
+        assertThat(resultado.getConsentimentoConfirmado()).isFalse();
+        verify(pacienteRepository).save(paciente);
+    }
+
+    @Test
+    @DisplayName("Deve salvar paciente com consentimento LGPD confirmado")
+    void deveSalvarPacienteComConsentimentoLgpdConfirmado() {
+        // Dado um paciente com consentimento LGPD completo
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
+        paciente.setConsentimentoLgpd(true);
+        paciente.setConsentimentoConfirmado(true);
+        paciente.setDataConsentimento(agora);
+        
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(paciente);
+        
+        // Quando salvar o paciente
+        Paciente resultado = pacienteService.salvar(paciente);
+        
+        // Então deve manter todas as configurações LGPD
+        assertThat(resultado.getConsentimentoLgpd()).isTrue();
+        assertThat(resultado.getConsentimentoConfirmado()).isTrue();
+        assertThat(resultado.getDataConsentimento()).isEqualTo(agora);
+        verify(pacienteRepository).save(paciente);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar paciente preservando dados LGPD existentes")
+    void deveAtualizarPacientePreservandoDadosLgpd() {
+        // Dado um paciente existente com dados LGPD
+        Paciente pacienteExistente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        pacienteExistente.setId(1L);
+        java.time.LocalDateTime dataOriginal = java.time.LocalDateTime.now().minusDays(1);
+        pacienteExistente.setConsentimentoLgpd(true);
+        pacienteExistente.setConsentimentoConfirmado(true);
+        pacienteExistente.setDataConsentimento(dataOriginal);
+        
+        // Dado um paciente atualizado com mesmo ID
+        Paciente pacienteAtualizado = new Paciente("João Silva Santos", "joao.santos@teste.com", "(11) 98765-4321");
+        pacienteAtualizado.setId(1L);
+        pacienteAtualizado.setConsentimentoLgpd(true);
+        pacienteAtualizado.setConsentimentoConfirmado(true);
+        pacienteAtualizado.setDataConsentimento(dataOriginal);
+        
+        when(pacienteRepository.existsById(1L)).thenReturn(true);
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteAtualizado);
+        
+        // Quando atualizar o paciente
+        Paciente resultado = pacienteService.atualizar(pacienteAtualizado);
+        
+        // Então deve preservar os dados LGPD
+        assertThat(resultado.getConsentimentoLgpd()).isTrue();
+        assertThat(resultado.getConsentimentoConfirmado()).isTrue();
+        assertThat(resultado.getDataConsentimento()).isEqualTo(dataOriginal);
+        assertThat(resultado.getNome()).isEqualTo("João Silva Santos");
+        assertThat(resultado.getEmail()).isEqualTo("joao.santos@teste.com");
+        verify(pacienteRepository).save(pacienteAtualizado);
+    }
+
+    @Test
+    @DisplayName("Deve buscar pacientes com consentimento LGPD pendente")
+    void deveBuscarPacientesComConsentimentoLgpdPendente() {
+        // Dado pacientes com diferentes status LGPD
+        Paciente pacienteComLgpd = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        pacienteComLgpd.setConsentimentoLgpd(true);
+        pacienteComLgpd.setConsentimentoConfirmado(true);
+        
+        Paciente pacienteSemLgpd = new Paciente("Maria Oliveira", "maria@teste.com", "(11) 91234-5678");
+        pacienteSemLgpd.setConsentimentoLgpd(false);
+        pacienteSemLgpd.setConsentimentoConfirmado(false);
+        
+        when(pacienteRepository.findAll())
+            .thenReturn(Arrays.asList(pacienteComLgpd, pacienteSemLgpd));
+        
+        // Quando buscar todos os pacientes
+        List<Paciente> todosPacientes = pacienteService.buscarTodos();
+        
+        // Então deve ser possível filtrar por status LGPD
+        List<Paciente> pacientesSemConsentimento = todosPacientes.stream()
+            .filter(p -> !p.getConsentimentoLgpd() || !p.getConsentimentoConfirmado())
+            .toList();
+        
+        assertThat(pacientesSemConsentimento).hasSize(1);
+        assertThat(pacientesSemConsentimento.get(0).getNome()).isEqualTo("Maria Oliveira");
+    }
+
+    @Test
+    @DisplayName("Deve permitir alterar apenas status LGPD do paciente")
+    void devePermitirAlterarApenasStatusLgpdPaciente() {
+        // Dado um paciente existente
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        paciente.setId(1L);
+        paciente.setConsentimentoLgpd(false);
+        paciente.setConsentimentoConfirmado(false);
+        
+        when(pacienteRepository.existsById(1L)).thenReturn(true);
+        when(pacienteRepository.save(any(Paciente.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        
+        // Quando alterar apenas o status LGPD
+        paciente.setConsentimentoLgpd(true);
+        paciente.setDataConsentimento(java.time.LocalDateTime.now());
+        Paciente resultado = pacienteService.atualizar(paciente);
+        
+        // Então deve alterar apenas os campos LGPD
+        assertThat(resultado.getConsentimentoLgpd()).isTrue();
+        assertThat(resultado.getDataConsentimento()).isNotNull();
+        assertThat(resultado.getConsentimentoConfirmado()).isFalse(); // Não foi alterado
+        assertThat(resultado.getNome()).isEqualTo("João Silva"); // Dados pessoais inalterados
+        assertThat(resultado.getEmail()).isEqualTo("joao@teste.com");
+        assertThat(resultado.getTelefone()).isEqualTo("(11) 98765-4321");
+    }
 }

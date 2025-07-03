@@ -115,6 +115,58 @@
                     </div>
                     <div class="col-md-6">
                         <div class="card">
+                            <div class="card-header bg-info bg-opacity-10">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-shield-check text-info me-2"></i>
+                                    Status LGPD
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row">
+                                    <dt class="col-sm-6">Consentimento Enviado:</dt>
+                                    <dd class="col-sm-6">
+                                        <span th:if="${paciente.consentimentoLgpd}" class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i> Sim
+                                        </span>
+                                        <span th:unless="${paciente.consentimentoLgpd}" class="badge bg-warning">
+                                            <i class="bi bi-clock"></i> Pendente
+                                        </span>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-6">Confirmação Recebida:</dt>
+                                    <dd class="col-sm-6">
+                                        <span th:if="${paciente.consentimentoConfirmado}" class="badge bg-success">
+                                            <i class="bi bi-shield-check"></i> Confirmado
+                                        </span>
+                                        <span th:unless="${paciente.consentimentoConfirmado}" class="badge bg-secondary">
+                                            <i class="bi bi-hourglass"></i> Aguardando
+                                        </span>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-6">Data de Envio:</dt>
+                                    <dd class="col-sm-6">
+                                        <span th:if="${paciente.dataConsentimento}" 
+                                              th:text="${#temporals.format(paciente.dataConsentimento, 'dd/MM/yyyy HH:mm')}">
+                                        </span>
+                                        <span th:unless="${paciente.dataConsentimento}" class="text-muted">
+                                            Não enviado
+                                        </span>
+                                    </dd>
+                                </dl>
+                                
+                                <div th:unless="${paciente.consentimentoLgpd or paciente.consentimentoConfirmado}" 
+                                     class="alert alert-warning mt-3" role="alert">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Atenção:</strong> Consentimento LGPD pendente.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">Histórico</h5>
                             </div>

@@ -22,6 +22,15 @@ public class Paciente {
     @Column(name = "telefone", nullable = true, length = 20)
     private String telefone; // Armazena o número de WhatsApp do paciente
 
+    @Column(name = "consentimento_lgpd", nullable = false)
+    private Boolean consentimentoLgpd = false; // Consentimento LGPD enviado via WhatsApp
+
+    @Column(name = "consentimento_confirmado", nullable = false)
+    private Boolean consentimentoConfirmado = false; // Confirmação do recebimento do consentimento
+
+    @Column(name = "data_consentimento")
+    private java.time.LocalDateTime dataConsentimento; // Data/hora do envio do consentimento
+
     public Paciente() {
     }
 
@@ -61,6 +70,30 @@ public class Paciente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Boolean getConsentimentoLgpd() {
+        return consentimentoLgpd;
+    }
+
+    public void setConsentimentoLgpd(Boolean consentimentoLgpd) {
+        this.consentimentoLgpd = consentimentoLgpd;
+    }
+
+    public Boolean getConsentimentoConfirmado() {
+        return consentimentoConfirmado;
+    }
+
+    public void setConsentimentoConfirmado(Boolean consentimentoConfirmado) {
+        this.consentimentoConfirmado = consentimentoConfirmado;
+    }
+
+    public java.time.LocalDateTime getDataConsentimento() {
+        return dataConsentimento;
+    }
+
+    public void setDataConsentimento(java.time.LocalDateTime dataConsentimento) {
+        this.dataConsentimento = dataConsentimento;
     }
 
     @Override

@@ -55,9 +55,11 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 
 - [x] **Autenticação e autorização** com Spring Security e BCrypt
 - [x] **Gestão de usuários** (Admin, Dentista, Recepcionista, Paciente)
-- [x] **Cadastro e gestão de pacientes** com formulário responsivo
+- [x] **Cadastro e gestão de pacientes** com formulário responsivo e WhatsApp obrigatório
 - [x] **Cadastro e gestão de dentistas/profissionais** com horários e especialidades
 - [x] **Agendamento de consultas** com interface web
+- [x] **Controle de consentimento LGPD** via WhatsApp integrado
+- [x] **Sistema de consentimento LGPD** com envio e confirmação via WhatsApp
 - [ ] Visualização de agenda por dia/semana/mês
 - [ ] Edição e cancelamento de agendamentos
 - [ ] Upload de imagens odontológicas no prontuário
@@ -69,6 +71,13 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - [x] **Integração com WhatsApp** para comunicação com pacientes
 
 ### **Funcionalidades Implementadas Recentemente:**
+
+✅ **Gestão de Pacientes Aprimorada:**
+- Campo de WhatsApp obrigatório em todos os cadastros
+- Sistema de consentimento LGPD integrado via WhatsApp
+- Envio automático de termos LGPD via WhatsApp Web
+- Controle de confirmação de recebimento do consentimento
+- Interface visual para status de conformidade LGPD
 
 ✅ **Sistema de Gestão de Dentistas:**
 - Cadastro completo com especialidades, CRO, horários de atendimento

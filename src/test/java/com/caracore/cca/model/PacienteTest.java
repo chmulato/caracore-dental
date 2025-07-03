@@ -152,4 +152,88 @@ class PacienteTest {
         assertThat(paciente1).isEqualTo(paciente2);
         assertThat(paciente1.getTelefone()).isNotEqualTo(paciente2.getTelefone());
     }
+    
+    @Test
+    @DisplayName("Deve criar paciente com campos LGPD padrão")
+    void deveCriarPacienteComCamposLgpdPadrao() {
+        // Quando
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        
+        // Então
+        assertThat(paciente.getConsentimentoLgpd()).isEqualTo(false);
+        assertThat(paciente.getConsentimentoConfirmado()).isEqualTo(false);
+        assertThat(paciente.getDataConsentimento()).isNull();
+    }
+    
+    @Test
+    @DisplayName("Deve permitir marcar consentimento LGPD como enviado")
+    void deveMarcarConsentimentoLgpdEnviado() {
+        // Dado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
+        
+        // Quando
+        paciente.setConsentimentoLgpd(true);
+        paciente.setDataConsentimento(agora);
+        
+        // Então
+        assertThat(paciente.getConsentimentoLgpd()).isTrue();
+        assertThat(paciente.getDataConsentimento()).isEqualTo(agora);
+        assertThat(paciente.getConsentimentoConfirmado()).isFalse(); // Ainda não confirmado
+    }
+    
+    @Test
+    @DisplayName("Deve permitir confirmar recebimento do consentimento LGPD")
+    void deveConfirmarRecebimentoConsentimentoLgpd() {
+        // Dado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        java.time.LocalDateTime agora = java.time.LocalDateTime.now();
+        
+        // Quando
+        paciente.setConsentimentoLgpd(true);
+        paciente.setDataConsentimento(agora);
+        paciente.setConsentimentoConfirmado(true);
+        
+        // Então
+        assertThat(paciente.getConsentimentoLgpd()).isTrue();
+        assertThat(paciente.getConsentimentoConfirmado()).isTrue();
+        assertThat(paciente.getDataConsentimento()).isEqualTo(agora);
+    }
+    
+    @Test
+    @DisplayName("Deve permitir alterar status de consentimento LGPD")
+    void deveAlterarStatusConsentimentoLgpd() {
+        // Dado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        
+        // Quando - marcar como enviado
+        paciente.setConsentimentoLgpd(true);
+        assertThat(paciente.getConsentimentoLgpd()).isTrue();
+        
+        // Quando - desmarcar (se necessário)
+        paciente.setConsentimentoLgpd(false);
+        assertThat(paciente.getConsentimentoLgpd()).isFalse();
+        
+        // Quando - confirmar recebimento
+        paciente.setConsentimentoConfirmado(true);
+        assertThat(paciente.getConsentimentoConfirmado()).isTrue();
+        
+        // Quando - reverter confirmação
+        paciente.setConsentimentoConfirmado(false);
+        assertThat(paciente.getConsentimentoConfirmado()).isFalse();
+    }
+    
+    @Test
+    @DisplayName("Deve aceitar data de consentimento nula inicialmente")
+    void deveAceitarDataConsentimentoNula() {
+        // Dado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        
+        // Quando não define data
+        paciente.setConsentimentoLgpd(true);
+        
+        // Então
+        assertThat(paciente.getDataConsentimento()).isNull();
+        assertThat(paciente.getConsentimentoLgpd()).isTrue();
+    }
 }

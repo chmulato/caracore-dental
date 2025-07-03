@@ -8,8 +8,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -65,9 +68,33 @@ public class PacienteController {
      */
     @PostMapping("/salvar")
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
-    public String salvarPaciente(@ModelAttribute Paciente paciente) {
-        logger.info("Salvando novo paciente: {}", paciente.getNome());
-        pacienteRepository.save(paciente);
+    public String salvarPaciente(@ModelAttribute Paciente paciente, RedirectAttributes redirectAttributes) {
+        try {
+            // Se o consentimento LGPD foi marcado como enviado mas não tem data, adicionar a data atual
+            if (Boolean.TRUE.equals(paciente.getConsentimentoLgpd()) && paciente.getDataConsentimento() == null) {
+                paciente.setDataConsentimento(java.time.LocalDateTime.now());
+            }
+            
+            // Validação do telefone WhatsApp obrigatório
+            if (paciente.getTelefone() == null || paciente.getTelefone().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("erro", "O número de WhatsApp é obrigatório.");
+                return "redirect:/pacientes/novo";
+            }
+            
+            logger.info("Salvando paciente: {} - WhatsApp: {} - LGPD: {}", 
+                       paciente.getNome(), paciente.getTelefone(), paciente.getConsentimentoLgpd());
+            
+            pacienteRepository.save(paciente);
+            
+            String mensagem = paciente.getId() == null ? 
+                "Paciente cadastrado com sucesso!" : "Paciente atualizado com sucesso!";
+            redirectAttributes.addFlashAttribute("sucesso", mensagem);
+            
+        } catch (Exception e) {
+            logger.error("Erro ao salvar paciente: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("erro", "Erro ao salvar paciente. Tente novamente.");
+        }
+        
         return "redirect:/pacientes";
     }
 
@@ -143,5 +170,48 @@ public class PacienteController {
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("termoBusca", termo);
         return "pacientes/lista";
+    }
+
+    /**
+     * API para confirmar recebimento do consentimento LGPD
+     * Endpoint para marcar que o paciente confirmou o recebimento do consentimento LGPD
+     */
+    @PostMapping("/{id}/confirmar-lgpd")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
+    @ResponseBody
+    public Map<String, Object> confirmarConsentimentoLgpd(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Optional<Paciente> pacienteOpt = pacienteRepository.findById(id);
+            
+            if (pacienteOpt.isPresent()) {
+                Paciente paciente = pacienteOpt.get();
+                paciente.setConsentimentoConfirmado(true);
+                
+                // Se ainda não foi marcado como enviado, marca também
+                if (!Boolean.TRUE.equals(paciente.getConsentimentoLgpd())) {
+                    paciente.setConsentimentoLgpd(true);
+                    if (paciente.getDataConsentimento() == null) {
+                        paciente.setDataConsentimento(java.time.LocalDateTime.now());
+                    }
+                }
+                
+                pacienteRepository.save(paciente);
+                
+                response.put("success", true);
+                response.put("message", "Consentimento LGPD confirmado com sucesso!");
+                logger.info("Consentimento LGPD confirmado para paciente ID: {}", id);
+            } else {
+                response.put("success", false);
+                response.put("message", "Paciente não encontrado");
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao confirmar consentimento LGPD para paciente ID {}: {}", id, e.getMessage());
+            response.put("success", false);
+            response.put("message", "Erro interno do servidor");
+        }
+        
+        return response;
     }
 }

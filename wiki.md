@@ -59,16 +59,53 @@ Sistema de busca em tempo real com:
 
 ### Gestão de Pacientes
 
-O módulo de pacientes oferece cadastro completo com dados pessoais, histórico de consultas e prontuário digital integrado.
+O módulo de pacientes oferece cadastro completo com dados pessoais, histórico de consultas, prontuário digital integrado e controle total de consentimento LGPD.
 
 #### Dados Armazenados
 
-- **Dados Pessoais**: Nome completo, email, telefone WhatsApp
+- **Dados Pessoais**: Nome completo, email, telefone WhatsApp (obrigatório)
 - **Endereço**: CEP, logradouro, cidade, estado
 - **Histórico Médico**: Alergias, medicamentos, condições especiais
 - **Histórico de Agendamentos**: Consultas realizadas e agendadas
 - **Prontuário Digital**: Upload e organização de documentos
-- **Observações**: Notas importantes sobre o pacientesde a instalação até os detalhes técnicos de cada funcionalidade.
+- **Consentimento LGPD**: Status, confirmação e data de envio
+- **Observações**: Notas importantes sobre o paciente
+
+#### Sistema de Consentimento LGPD
+
+O sistema implementa um controle rigoroso de consentimento LGPD conforme exigido pela Lei Geral de Proteção de Dados:
+
+**Funcionalidades:**
+- **Envio via WhatsApp**: Mensagem padrão de consentimento enviada automaticamente
+- **Controle de Status**: Rastreamento de envio e confirmação
+- **Data/Hora**: Registro temporal de todos os eventos
+- **Validação**: Impedimento de processamento sem consentimento adequado
+
+**Fluxo do Processo:**
+1. **Cadastro**: WhatsApp obrigatório no formulário do paciente
+2. **Envio**: Clique no botão "Enviar Consentimento LGPD" 
+3. **WhatsApp**: Abre mensagem padrão com termos LGPD
+4. **Confirmação**: Marcar quando paciente responder "ACEITO"
+5. **Compliance**: Sistema bloqueia ações sem consentimento
+
+**Mensagem Padrão LGPD:**
+```
+Olá [Nome]! 📋
+
+Este é o consultório Cara Core Agendamento.
+
+Conforme a Lei Geral de Proteção de Dados (LGPD), solicitamos seu consentimento para:
+
+✅ Armazenar seus dados pessoais (nome, telefone, email)
+✅ Utilizar seus dados para agendamentos e comunicações  
+✅ Enviar lembretes de consultas via WhatsApp
+
+Seus dados são protegidos e utilizados apenas para fins médicos e administrativos.
+
+Por favor, responda "ACEITO" para confirmar seu consentimento.
+
+Obrigado! 🦷
+```sde a instalação até os detalhes técnicos de cada funcionalidade.
 
 ## Índice
 
@@ -423,6 +460,16 @@ O projeto mantém cobertura mínima de **80%** em:
 ## FAQ e Solução de Problemas
 
 ### Perguntas Frequentes
+
+**P: Como cadastrar um paciente com consentimento LGPD?**  
+R: No formulário de pacientes:
+1. Preencha o WhatsApp (obrigatório)
+2. Clique em "Enviar Consentimento LGPD" 
+3. WhatsApp abrirá com mensagem padrão
+4. Marque "Consentimento enviado" e "Confirmado" após resposta do paciente
+
+**P: O que acontece se o paciente não der consentimento LGPD?**  
+R: O sistema permite cadastro básico, mas algumas funcionalidades ficam limitadas até que o consentimento seja obtido, conforme exigido pela LGPD.
 
 **P: Como cadastrar um novo dentista no sistema?**  
 R: Acesse o menu "Dentistas" > "Novo Dentista", preencha os dados obrigatórios (nome, email, CRO) e clique em "Salvar". O sistema validará automaticamente se o email é único e se o formato do CRO está correto.

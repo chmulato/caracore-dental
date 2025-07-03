@@ -32,6 +32,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(PacienteController.class)
 @Import({TestConfig.class, PacienteTestConfig.class})
@@ -390,5 +391,129 @@ public class PacienteControllerTest {
         mockMvc.perform(get("/pacientes/buscar")
                         .param("termo", "Teste"))
                 .andExpect(status().isForbidden());
+    }
+
+    // --- TESTES DE FUNCIONALIDADES LGPD ---
+
+    @Test
+    @DisplayName("Deve salvar paciente com campos LGPD padrão")
+    @WithMockUser(roles = {"ADMIN"})
+    public void deveSalvarPacienteComCamposLgpdPadrao() throws Exception {
+        // Configurar mock
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
+
+        mockMvc.perform(post("/pacientes/salvar")
+                .with(csrf())
+                .param("nome", "João Silva")
+                .param("email", "joao@teste.com")
+                .param("telefone", "(11) 98765-4321")
+                .param("consentimentoLgpd", "false")
+                .param("consentimentoConfirmado", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/pacientes"));
+    }
+
+    @Test
+    @DisplayName("Deve salvar paciente com consentimento LGPD enviado")
+    @WithMockUser(roles = {"ADMIN"})
+    public void deveSalvarPacienteComConsentimentoLgpdEnviado() throws Exception {
+        // Configurar mock
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
+
+        mockMvc.perform(post("/pacientes/salvar")
+                .with(csrf())
+                .param("nome", "João Silva")
+                .param("email", "joao@teste.com")
+                .param("telefone", "(11) 98765-4321")
+                .param("consentimentoLgpd", "true")
+                .param("consentimentoConfirmado", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/pacientes"));
+    }
+
+    @Test
+    @DisplayName("Deve salvar paciente com consentimento LGPD confirmado")
+    @WithMockUser(roles = {"ADMIN"})
+    public void deveSalvarPacienteComConsentimentoLgpdConfirmado() throws Exception {
+        // Configurar mock
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
+
+        mockMvc.perform(post("/pacientes/salvar")
+                .with(csrf())
+                .param("nome", "João Silva")
+                .param("email", "joao@teste.com")
+                .param("telefone", "(11) 98765-4321")
+                .param("consentimentoLgpd", "true")
+                .param("consentimentoConfirmado", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/pacientes"));
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar cadastro sem telefone WhatsApp")
+    @WithMockUser(roles = {"ADMIN"})
+    public void deveRejeitarCadastroSemTelefoneWhatsApp() throws Exception {
+        mockMvc.perform(post("/pacientes/salvar")
+                .with(csrf())
+                .param("nome", "João Silva")
+                .param("email", "joao@teste.com")
+                .param("telefone", "")  // Telefone vazio
+                .param("consentimentoLgpd", "false")
+                .param("consentimentoConfirmado", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/pacientes/novo"));
+    }
+
+    @Test
+    @DisplayName("Admin deve poder confirmar consentimento LGPD via API")
+    @WithMockUser(roles = {"ADMIN"})
+    public void devePermitirConfirmarConsentimentoLgpdViaAPI() throws Exception {
+        // Setup
+        pacienteTeste.setConsentimentoLgpd(true);
+        when(pacienteRepository.findById(1L)).thenReturn(Optional.of(pacienteTeste));
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
+
+        mockMvc.perform(post("/pacientes/1/confirmar-lgpd")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Consentimento LGPD confirmado com sucesso!"));
+    }
+
+    @Test
+    @DisplayName("Recepcionista deve poder confirmar consentimento LGPD via API")
+    @WithMockUser(roles = {"RECEPTIONIST"})
+    public void devePermitirRecepcionistaConfirmarConsentimentoLgpdViaAPI() throws Exception {
+        // Setup
+        pacienteTeste.setConsentimentoLgpd(true);
+        when(pacienteRepository.findById(1L)).thenReturn(Optional.of(pacienteTeste));
+        when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
+
+        mockMvc.perform(post("/pacientes/1/confirmar-lgpd")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("Dentista não deve poder confirmar consentimento LGPD via API")
+    @WithMockUser(roles = {"DENTIST"})
+    public void deveNegarDentistaConfirmarConsentimentoLgpdViaAPI() throws Exception {
+        mockMvc.perform(post("/pacientes/1/confirmar-lgpd")
+                .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Deve tratar erro ao confirmar LGPD para paciente inexistente")
+    @WithMockUser(roles = {"ADMIN"})
+    public void deveTratarErroAoConfirmarLgpdPacienteInexistente() throws Exception {
+        when(pacienteRepository.findById(999L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/pacientes/999/confirmar-lgpd")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Paciente não encontrado"));
     }
 }
