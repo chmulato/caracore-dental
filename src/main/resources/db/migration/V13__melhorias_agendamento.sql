@@ -29,6 +29,11 @@ ALTER COLUMN dentista TYPE VARCHAR(100);
 ALTER TABLE agendamento 
 ALTER COLUMN status TYPE VARCHAR(20);
 
+-- Atualizar registros com status NULL para valor padrão antes de tornar NOT NULL
+UPDATE agendamento 
+SET status = 'AGENDADO' 
+WHERE status IS NULL;
+
 -- Adicionar constraints de not null onde necessário
 ALTER TABLE agendamento 
 ALTER COLUMN paciente SET NOT NULL;
