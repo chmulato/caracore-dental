@@ -73,9 +73,46 @@
                     <input type="hidden" th:field="*{id}" />
                     
                     <div class="mb-3">
-                        <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
+                        <label for="nome" class="form-label">Nome Completo (Registro Civil) <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="nome" th:field="*{nome}" required maxlength="100">
-                        <div class="form-text">Digite o nome completo do paciente.</div>
+                        <div class="form-text">Digite o nome completo conforme documento de identidade.</div>
+                    </div>
+
+                    <!-- Nome Social conforme Portaria 2.836/2011 -->
+                    <div class="mb-3">
+                        <label for="nomeSocial" class="form-label">
+                            <i class="bi bi-person-heart text-info me-1"></i>
+                            Nome Social
+                        </label>
+                        <input type="text" class="form-control" id="nomeSocial" th:field="*{nomeSocial}" maxlength="100">
+                        <div class="form-text">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Nome pelo qual a pessoa se identifica socialmente. 
+                                <strong>Portaria nº 2.836/2011 - Ministério da Saúde</strong>
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Gênero -->
+                    <div class="mb-3">
+                        <label for="genero" class="form-label">
+                            <i class="bi bi-gender-ambiguous text-info me-1"></i>
+                            Gênero (Autodeclaração)
+                        </label>
+                        <select class="form-select" id="genero" th:field="*{genero}">
+                            <option value="">Selecione o gênero</option>
+                            <option value="FEMININO">Feminino</option>
+                            <option value="MASCULINO">Masculino</option>
+                            <option value="NAO_BINARIO">Não-binário</option>
+                            <option value="OUTRO">Outro</option>
+                            <option value="PREFERE_NAO_INFORMAR">Prefere não informar</option>
+                        </select>
+                        <div class="form-text">
+                            <small class="text-muted">
+                                Autodeclaração de gênero conforme identidade do paciente.
+                            </small>
+                        </div>
                     </div>
                     
                     <div class="mb-3">
@@ -107,6 +144,22 @@
                         <div class="invalid-feedback">
                             Por favor, informe um número WhatsApp válido no formato (99) 99999-9999.
                         </div>
+                    </div>
+
+                    <!-- Seção Informativa sobre Nome Social -->
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Portaria nº 2.836/2011 - Ministério da Saúde
+                        </h6>
+                        <p class="mb-2">
+                            <strong>Nome Social:</strong> É o nome pelo qual a pessoa se identifica e é socialmente 
+                            reconhecida, independentemente do nome civil constante no registro civil.
+                        </p>
+                        <small class="text-muted">
+                            Este direito está garantido pela legislação brasileira e deve ser respeitado em todas 
+                            as situações de atendimento no Sistema Único de Saúde (SUS).
+                        </small>
                     </div>
 
                     <!-- Seção de Consentimento LGPD -->

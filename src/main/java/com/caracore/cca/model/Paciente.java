@@ -17,6 +17,12 @@ public class Paciente {
     @Column(nullable = false)
     private String nome;
 
+    @Column(name = "nome_social", nullable = true, length = 100)
+    private String nomeSocial; // Nome social conforme Portaria nº 2.836/2011
+
+    @Column(name = "genero", nullable = true, length = 50)
+    private String genero; // Gênero conforme autodeclaração do paciente
+
     private String email;
 
     @Column(name = "telefone", nullable = true, length = 20)
@@ -54,6 +60,22 @@ public class Paciente {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getNomeSocial() {
+        return nomeSocial;
+    }
+
+    public void setNomeSocial(String nomeSocial) {
+        this.nomeSocial = nomeSocial;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 
     public String getEmail() {

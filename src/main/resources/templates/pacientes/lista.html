@@ -117,7 +117,20 @@
                             </tr>
                             <tr th:each="paciente : ${pacientes}">
                                 <td th:text="${paciente.id}"></td>
-                                <td th:text="${paciente.nome}"></td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${paciente.nome}"></strong>
+                                        <div th:if="${paciente.nomeSocial != null and !paciente.nomeSocial.isEmpty()}" 
+                                             class="text-muted small">
+                                            <i class="bi bi-person-heart text-info me-1"></i>
+                                            <em th:text="${paciente.nomeSocial}"></em>
+                                        </div>
+                                        <div th:if="${paciente.genero != null and !paciente.genero.isEmpty()}" 
+                                             class="mt-1">
+                                            <span class="badge bg-light text-dark small" th:text="${paciente.genero}"></span>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td th:text="${paciente.email ?: '-'}"></td>
                                 <td>
                                     <span th:if="${paciente.telefone}" th:text="${paciente.telefone}"></span>

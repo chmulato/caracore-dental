@@ -92,13 +92,32 @@
                                     <dt class="col-sm-3">ID:</dt>
                                     <dd class="col-sm-9" th:text="${paciente.id}"></dd>
                                     
-                                    <dt class="col-sm-3">Nome:</dt>
+                                    <dt class="col-sm-3">Nome Civil:</dt>
                                     <dd class="col-sm-9" th:text="${paciente.nome}"></dd>
+                                    
+                                    <dt class="col-sm-3">Nome Social:</dt>
+                                    <dd class="col-sm-9">
+                                        <span th:if="${paciente.nomeSocial != null and !paciente.nomeSocial.isEmpty()}" 
+                                              class="fw-bold text-info">
+                                            <i class="bi bi-person-heart me-1"></i>
+                                            <span th:text="${paciente.nomeSocial}"></span>
+                                        </span>
+                                        <span th:unless="${paciente.nomeSocial != null and !paciente.nomeSocial.isEmpty()}" 
+                                              class="text-muted">Não informado</span>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-3">Gênero:</dt>
+                                    <dd class="col-sm-9">
+                                        <span th:if="${paciente.genero != null and !paciente.genero.isEmpty()}" 
+                                              class="badge bg-info text-dark" th:text="${paciente.genero}"></span>
+                                        <span th:unless="${paciente.genero != null and !paciente.genero.isEmpty()}" 
+                                              class="text-muted">Não informado</span>
+                                    </dd>
                                     
                                     <dt class="col-sm-3">Email:</dt>
                                     <dd class="col-sm-9" th:text="${paciente.email ?: 'Não informado'}"></dd>
                                     
-                                    <dt class="col-sm-3">Telefone:</dt>
+                                    <dt class="col-sm-3">WhatsApp:</dt>
                                     <dd class="col-sm-9">
                                         <span th:if="${paciente.telefone}" th:text="${paciente.telefone}"></span>
                                         <span th:if="${paciente.telefone}" class="ms-2">

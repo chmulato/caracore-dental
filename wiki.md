@@ -1,6 +1,111 @@
 # Wiki do Projeto Cara Core Agendamento (CCA)
 
-Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a documentação completa do ### Gestão de Dentistas
+Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a documentação completa do sistema, desde a instalação até os detalhes técnicos de cada funcionalidade.
+
+## Índice
+
+- [Wiki do Projeto Cara Core Agendamento (CCA)](#wiki-do-projeto-cara-core-agendamento-cca)
+  - [Índice](#índice)
+  - [Visão Geral do Sistema](#visão-geral-do-sistema)
+    - [Tecnologias Utilizadas](#tecnologias-utilizadas)
+    - [Arquitetura](#arquitetura)
+  - [Instalação e Configuração](#instalação-e-configuração)
+    - [Pré-requisitos](#pré-requisitos)
+    - [Passos para Instalação](#passos-para-instalação)
+    - [Configuração para Produção](#configuração-para-produção)
+  - [Funcionalidades Principais](#funcionalidades-principais)
+    - [Gestão de Dentistas](#gestão-de-dentistas)
+      - [Cadastro e Edição](#cadastro-e-edição)
+      - [Busca e Filtros](#busca-e-filtros)
+      - [Controle de Status](#controle-de-status)
+    - [Gestão de Pacientes](#gestão-de-pacientes)
+      - [Dados Armazenados](#dados-armazenados)
+      - [Portaria nº 2.836/2011 - Ministério da Saúde](#portaria-nº-28362011---ministério-da-saúde)
+      - [Sistema de Consentimento LGPD](#sistema-de-consentimento-lgpd)
+    - [Agendamento de Consultas](#agendamento-de-consultas)
+      - [Fluxo de Agendamento](#fluxo-de-agendamento)
+      - [Validações](#validações)
+    - [Integração com WhatsApp](#integração-com-whatsapp)
+      - [Funcionalidades Implementadas](#funcionalidades-implementadas)
+      - [Benefícios](#benefícios)
+      - [Como utilizar](#como-utilizar)
+      - [Código de Exemplo](#código-de-exemplo)
+  - [Compliance Legal e Regulamentações](#compliance-legal-e-regulamentações)
+    - [Lei Geral de Proteção de Dados (LGPD)](#lei-geral-de-proteção-de-dados-lgpd)
+    - [Portaria nº 2.836/2011 - Ministério da Saúde](#portaria-nº-28362011---ministério-da-saúde-1)
+  - [Versionamento do Banco de Dados](#versionamento-do-banco-de-dados)
+    - [Flyway Migrations](#flyway-migrations)
+    - [Scripts Consolidados](#scripts-consolidados)
+    - [Boas Práticas](#boas-práticas)
+  - [Testes e Qualidade](#testes-e-qualidade)
+    - [Estrutura de Testes](#estrutura-de-testes)
+    - [Configuração de Mocks](#configuração-de-mocks)
+  - [FAQ e Solução de Problemas](#faq-e-solução-de-problemas)
+    - [Perguntas Frequentes](#perguntas-frequentes)
+    - [Problemas Comuns](#problemas-comuns)
+  - [Contribuindo com o Projeto](#contribuindo-com-o-projeto)
+    - [Como Contribuir](#como-contribuir)
+    - [Padrões de Código](#padrões-de-código)
+    - [Próximos Passos](#próximos-passos)
+
+---
+
+## Visão Geral do Sistema
+
+O Cara Core Agendamento (CCA) é uma solução completa para gestão de agendamentos em consultórios odontológicos. O sistema foi desenvolvido com foco na usabilidade, eficiência, comunicação com o paciente e **total conformidade com a legislação brasileira** (LGPD e Portaria nº 2.836/2011 do Ministério da Saúde).
+
+### Tecnologias Utilizadas
+
+- **Backend:** Java 17 + Spring Boot 3.2.6
+- **Frontend:** Thymeleaf + Bootstrap 5.3.0
+- **Banco de Dados:** PostgreSQL 15+
+- **Segurança:** Spring Security + BCrypt
+- **DevOps:** Docker + Maven
+- **Compliance:** LGPD + Portaria MS 2.836/2011
+
+### Arquitetura
+
+O sistema segue o padrão MVC (Model-View-Controller) com a seguinte estrutura:
+
+```
+src/main/
+├── java/com/caracore/cca/
+│   ├── config/             # Configurações Spring
+│   ├── controller/         # Controllers MVC e REST
+│   ├── dto/                # Data Transfer Objects
+│   ├── model/              # Entidades JPA
+│   ├── repository/         # Repositories
+│   ├── service/            # Lógica de negócio
+│   └── util/               # Utilitários
+├── resources/
+│   ├── templates/          # Templates Thymeleaf
+│   ├── static/             # Recursos estáticos
+│   └── application.yml     # Configurações da aplicação
+```
+
+---
+
+## Instalação e Configuração
+
+### Pré-requisitos
+
+- Java 17+
+- Docker e Docker Compose
+- PostgreSQL 15+ (ou use o container Docker)
+- Maven 3.8+
+
+### Passos para Instalação
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/chmulato/cara-core_cca.git
+   ```
+
+---
+
+## Funcionalidades Principais
+
+### Gestão de Dentistas
 
 O módulo de gestão de dentistas oferece controle completo sobre os profissionais do consultório, seguindo o padrão visual Bootstrap 5.3.0 e práticas modernas de UX/UI.
 
@@ -59,17 +164,108 @@ Sistema de busca em tempo real com:
 
 ### Gestão de Pacientes
 
-O módulo de pacientes oferece cadastro completo com dados pessoais, histórico de consultas, prontuário digital integrado e controle total de consentimento LGPD.
+O módulo de pacientes oferece cadastro completo com dados pessoais, histórico de consultas, prontuário digital integrado e controle total de consentimento LGPD, além do atendimento à **Portaria nº 2.836/2011 do Ministério da Saúde** para nome social e identidade de gênero.
 
 #### Dados Armazenados
 
-- **Dados Pessoais**: Nome completo, email, telefone WhatsApp (obrigatório)
+- **Dados Pessoais**: Nome completo (civil), email, telefone WhatsApp (obrigatório)
+- **Nome Social**: Conforme Portaria nº 2.836/2011 do Ministério da Saúde
+- **Gênero**: Autodeclaração com opções padronizadas (Feminino, Masculino, Não-binário, Outro, Prefere não informar)
 - **Endereço**: CEP, logradouro, cidade, estado
 - **Histórico Médico**: Alergias, medicamentos, condições especiais
 - **Histórico de Agendamentos**: Consultas realizadas e agendadas
 - **Prontuário Digital**: Upload e organização de documentos
 - **Consentimento LGPD**: Status, confirmação e data de envio
 - **Observações**: Notas importantes sobre o paciente
+
+#### Portaria nº 2.836/2011 - Ministério da Saúde
+
+O sistema implementa integralmente os direitos garantidos pela Portaria nº 2.836/2011 do Ministério da Saúde, que institui a **Política Nacional de Saúde Integral de Lésbicas, Gays, Bissexuais, Travestis e Transexuais (LGBT)** no âmbito do Sistema Único de Saúde (SUS).
+
+**Implementação Técnica:**
+
+- **Nome Social**: Campo opcional separado do nome civil
+  - Exibido com destaque visual (ícone específico)
+  - Usado preferencialmente em interfaces do sistema
+  - Respeitado em todas as comunicações com o paciente
+
+- **Gênero**: Autodeclaração com 5 opções padronizadas:
+  - **Feminino**
+  - **Masculino** 
+  - **Não-binário**
+  - **Outro**
+  - **Prefere não informar**
+
+**Interface do Usuário:**
+```html
+<!-- Nome Social -->
+<div class="mb-3">
+    <label for="nomeSocial" class="form-label">
+        <i class="bi bi-person-heart text-info me-1"></i>
+        Nome Social
+    </label>
+    <input type="text" class="form-control" id="nomeSocial" name="nomeSocial" maxlength="100">
+    <div class="form-text">
+        <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Nome pelo qual a pessoa se identifica socialmente. 
+            <strong>Portaria nº 2.836/2011 - Ministério da Saúde</strong>
+        </small>
+    </div>
+</div>
+
+<!-- Gênero -->
+<div class="mb-3">
+    <label for="genero" class="form-label">
+        <i class="bi bi-gender-ambiguous text-info me-1"></i>
+        Gênero (Autodeclaração)
+    </label>
+    <select class="form-select" id="genero" name="genero">
+        <option value="">Selecione o gênero</option>
+        <option value="FEMININO">Feminino</option>
+        <option value="MASCULINO">Masculino</option>
+        <option value="NAO_BINARIO">Não-binário</option>
+        <option value="OUTRO">Outro</option>
+        <option value="PREFERE_NAO_INFORMAR">Prefere não informar</option>
+    </select>
+</div>
+```
+
+**Seção Informativa:**
+O formulário inclui uma seção educativa sobre a legislação:
+
+```html
+<div class="alert alert-info" role="alert">
+    <h6 class="alert-heading">
+        <i class="bi bi-info-circle me-2"></i>
+        Portaria nº 2.836/2011 - Ministério da Saúde
+    </h6>
+    <p class="mb-2">
+        <strong>Nome Social:</strong> É o nome pelo qual a pessoa se identifica e é socialmente 
+        reconhecida, independentemente do nome civil constante no registro civil.
+    </p>
+    <small class="text-muted">
+        Este direito está garantido pela legislação brasileira e deve ser respeitado em todas 
+        as situações de atendimento no Sistema Único de Saúde (SUS).
+    </small>
+</div>
+```
+
+**Exibição na Lista de Pacientes:**
+```html
+<td>
+    <div>
+        <strong>João Silva Santos</strong> <!-- Nome Civil -->
+        <div class="text-muted small">
+            <i class="bi bi-person-heart text-info me-1"></i>
+            <em>João Silva</em> <!-- Nome Social -->
+        </div>
+        <div class="mt-1">
+            <span class="badge bg-light text-dark small">MASCULINO</span>
+        </div>
+    </div>
+</td>
+```
 
 #### Sistema de Consentimento LGPD
 

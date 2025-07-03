@@ -78,6 +78,9 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - Envio automático de termos LGPD via WhatsApp Web
 - Controle de confirmação de recebimento do consentimento
 - Interface visual para status de conformidade LGPD
+- **Nome Social:** Implementação conforme Portaria nº 2.836/2011 do Ministério da Saúde
+- **Gênero:** Campo de autodeclaração com opções padronizadas (Feminino, Masculino, Não-binário, Outro, Prefere não informar)
+- **Legislação:** Atendimento às diretrizes do SUS para identidade de gênero e nome social
 
 ✅ **Sistema de Gestão de Dentistas:**
 - Cadastro completo com especialidades, CRO, horários de atendimento
@@ -855,10 +858,27 @@ mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.VerificarHash" -De
 
 ### **LGPD Compliance**
 
-- Consentimento explícito para coleta de dados
-- Política de privacidade integrada
-- Controle de retenção de dados
-- Logs de auditoria
+- ✅ Consentimento explícito para coleta de dados via WhatsApp
+- ✅ Política de privacidade integrada ao sistema
+- ✅ Controle de retenção de dados pessoais
+- ✅ Logs de auditoria para rastreabilidade
+- ✅ Interface de confirmação de consentimento
+- ✅ Data/hora de envio do consentimento registrada
+
+### **Portaria nº 2.836/2011 - Ministério da Saúde**
+
+**Implementação dos direitos de nome social e identidade de gênero:**
+
+- ✅ **Nome Social:** Campo opcional no cadastro de pacientes
+- ✅ **Gênero:** Autodeclaração com opções padronizadas:
+  - Feminino
+  - Masculino 
+  - Não-binário
+  - Outro
+  - Prefere não informar
+- ✅ **Interface:** Seção informativa sobre a Portaria no formulário
+- ✅ **Banco de Dados:** Campos separados para nome civil e nome social
+- ✅ **Legislação:** Atendimento às diretrizes do SUS para respeito à identidade de gênero
 
 ## **Contribuição**
 

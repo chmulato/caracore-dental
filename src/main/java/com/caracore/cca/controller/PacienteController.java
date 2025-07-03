@@ -81,8 +81,12 @@ public class PacienteController {
                 return "redirect:/pacientes/novo";
             }
             
-            logger.info("Salvando paciente: {} - WhatsApp: {} - LGPD: {}", 
-                       paciente.getNome(), paciente.getTelefone(), paciente.getConsentimentoLgpd());
+            logger.info("Salvando paciente: {} (Nome Social: {}) - Gênero: {} - WhatsApp: {} - LGPD: {}", 
+                       paciente.getNome(), 
+                       paciente.getNomeSocial() != null ? paciente.getNomeSocial() : "Não informado",
+                       paciente.getGenero() != null ? paciente.getGenero() : "Não informado",
+                       paciente.getTelefone(), 
+                       paciente.getConsentimentoLgpd());
             
             pacienteRepository.save(paciente);
             
