@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Testes para o PublicController
  */
 @WebMvcTest(PublicController.class)
+@Import(TestSecurityConfig.class)
 class PublicControllerTest {
 
     @Autowired
@@ -30,6 +31,9 @@ class PublicControllerTest {
     
     @MockBean
     private UserActivityLogger userActivityLogger;
+    
+    @Autowired
+    private WebApplicationContext context;
 
     @Test
     void testAgendamentoLanding() throws Exception {
