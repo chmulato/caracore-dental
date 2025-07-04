@@ -107,15 +107,18 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - Remoção de CSS específico e padronização de estilos
 
 ✅ **Estrutura de Testes Robusta:**
-- **Testes Unitários Completos:** 100% de aprovação em 37 testes para gestão de agendamentos
+- **Total de Testes:** 306 testes unitários com 100% de aprovação (Validado em Julho 2025)
+- **Cobertura Completa:** Controllers (165), Services (54), Models/DTOs (49), Repositories (6), Segurança (10), Utilitários (22)
 - **ConsultasControllerTest:** 18 testes unitários validando todas as operações do controller
 - **AgendamentoServiceTest:** 19 testes unitários cobrindo toda a lógica de negócio
-- Cobertura de testes para módulo de dentistas e pacientes
+- **PacienteControllerTest:** 37 testes validando CRUD completo e LGPD
+- **Testes de Segurança:** 22 testes cobrindo autenticação, autorização e criptografia
 - Configuração de mocks para isolamento de dependências
 - Testes unitários e de integração
 - Relatórios de cobertura com JaCoCo
 
 ✅ **Gestão de Agendamentos Aprimorada:**
+
 - **Sistema de Consultas:** CRUD completo com validações e controle de acesso
 - **Controle de Conflitos:** Verificação automática de horários ocupados
 - **Reagendamento:** Funcionalidade completa com histórico de alterações
