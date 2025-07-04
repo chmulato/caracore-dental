@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agendamento Online</title>
+</head>
+<body>
+    <h1>Agendamento Online</h1>
+    <form>
+        <select>
+            <option th:each="dentista : ${dentistas}" th:text="${dentista}">Dentista</option>
+        </select>
+    </form>
+</body>
+</html>

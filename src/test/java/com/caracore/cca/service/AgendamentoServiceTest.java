@@ -344,4 +344,147 @@ class AgendamentoServiceTest {
         verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
                 eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
     }
+
+    @Test
+    void testBuscarPorStatus() {
+        // Arrange
+        String status = "AGENDADO";
+        List<Agendamento> agendamentos = new ArrayList<>();
+        agendamentos.add(agendamentoTeste);
+        when(agendamentoRepository.findAll()).thenReturn(agendamentos);
+
+        // Act
+        List<Agendamento> resultado = agendamentoService.buscarPorStatus(status);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(status, resultado.get(0).getStatus());
+        verify(agendamentoRepository).findAll();
+    }
+
+    @Test
+    void testListarDentistas() {
+        // Arrange
+        List<Agendamento> agendamentos = new ArrayList<>();
+        agendamentos.add(agendamentoTeste);
+        
+        Agendamento agendamento2 = new Agendamento();
+        agendamento2.setDentista("Dr. João Oliveira");
+        agendamentos.add(agendamento2);
+        
+        when(agendamentoRepository.findAll()).thenReturn(agendamentos);
+
+        // Act
+        List<String> resultado = agendamentoService.listarDentistas();
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(2, resultado.size());
+        assertTrue(resultado.contains("Dr. Maria Santos"));
+        assertTrue(resultado.contains("Dr. João Oliveira"));
+        verify(agendamentoRepository).findAll();
+    }
+
+    @Test
+    void testIsHorarioDisponivel() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime dataHora = LocalDateTime.now().plusDays(1);
+        when(agendamentoRepository.findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(new ArrayList<>());
+
+        // Act
+        boolean resultado = agendamentoService.isHorarioDisponivel(dentista, dataHora);
+
+        // Assert
+        assertTrue(resultado);
+        verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
+    }
+
+    @Test
+    void testGetHorariosDisponiveisPorData() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime data = LocalDateTime.now().plusDays(1);
+        when(agendamentoRepository.findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(new ArrayList<>());
+
+        // Act
+        List<String> resultado = agendamentoService.getHorariosDisponiveisPorData(dentista, data);
+
+        // Assert
+        assertNotNull(resultado);
+        assertFalse(resultado.isEmpty());
+        // Verifica se tem horários no formato HH:mm
+        assertTrue(resultado.stream().allMatch(h -> h.matches("\\d{2}:\\d{2}")));
+        // Verifica se não tem horário de almoço (12:00)
+        assertFalse(resultado.contains("12:00"));
+        assertFalse(resultado.contains("12:30"));
+    }
+
+    @Test
+    void testBuscarPorDentistaDataStatus() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime data = LocalDateTime.now().plusDays(1);
+        String status = "AGENDADO";
+        
+        List<Agendamento> agendamentos = new ArrayList<>();
+        agendamentos.add(agendamentoTeste);
+        when(agendamentoRepository.findAll()).thenReturn(agendamentos);
+
+        // Act
+        List<Agendamento> resultado = agendamentoService.buscarPorDentistaDataStatus(dentista, data, status);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(dentista, resultado.get(0).getDentista());
+        assertEquals(status, resultado.get(0).getStatus());
+        verify(agendamentoRepository).findAll();
+    }
+
+    @Test
+    void testBuscarPorDentistaDataStatusComFiltroNulo() {
+        // Arrange
+        List<Agendamento> agendamentos = new ArrayList<>();
+        agendamentos.add(agendamentoTeste);
+        when(agendamentoRepository.findAll()).thenReturn(agendamentos);
+
+        // Act
+        List<Agendamento> resultado = agendamentoService.buscarPorDentistaDataStatus(null, LocalDateTime.now().plusDays(1), null);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(agendamentoRepository).findAll();
+    }
+
+    @Test
+    void testListarDentistasComNomeVazio() {
+        // Arrange
+        List<Agendamento> agendamentos = new ArrayList<>();
+        Agendamento agendamentoVazio = new Agendamento();
+        agendamentoVazio.setDentista(""); // Nome vazio
+        agendamentos.add(agendamentoVazio);
+        
+        Agendamento agendamentoNulo = new Agendamento();
+        agendamentoNulo.setDentista(null); // Nome nulo
+        agendamentos.add(agendamentoNulo);
+        
+        agendamentos.add(agendamentoTeste); // Nome válido
+        when(agendamentoRepository.findAll()).thenReturn(agendamentos);
+
+        // Act
+        List<String> resultado = agendamentoService.listarDentistas();
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals("Dr. Maria Santos", resultado.get(0));
+    }
 }

@@ -1,22 +1,22 @@
 package com.caracore.cca.controller;
 
 import com.caracore.cca.model.Agendamento;
-import com.caracore.cca.model.Paciente;
 import com.caracore.cca.service.AgendamentoService;
 import com.caracore.cca.service.PacienteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controlador responsável pelo agendamento online público.
@@ -25,7 +25,6 @@ import java.util.Map;
  * agendem consultas diretamente pelo site.
  */
 @Controller
-@RequestMapping("/public")
 public class AgendamentoPublicoController {
 
     private static final Logger logger = LoggerFactory.getLogger(AgendamentoPublicoController.class);
@@ -36,292 +35,174 @@ public class AgendamentoPublicoController {
     @Autowired
     private PacienteService pacienteService;
 
-    // Lista de profissionais para agendamento público
-    private static final List<Map<String, Object>> PROFISSIONAIS = List.of(
-        Map.of("id", "1", "nome", "Dr. Ana Silva", "especialidade", "Clínico Geral", "disponivel", true),
-        Map.of("id", "2", "nome", "Dr. Carlos Oliveira", "especialidade", "Ortodontista", "disponivel", true),
-        Map.of("id", "3", "nome", "Dra. Mariana Santos", "especialidade", "Endodontista", "disponivel", true),
-        Map.of("id", "4", "nome", "Dr. Roberto Pereira", "especialidade", "Periodontista", "disponivel", true)
-    );
-
-    // Lista de serviços disponíveis
-    private static final List<Map<String, Object>> SERVICOS = List.of(
-        Map.of("id", "1", "nome", "Consulta de Rotina", "descricao", "Avaliação geral e limpeza", "preco", "R$ 150,00", "duracao", 60),
-        Map.of("id", "2", "nome", "Restauração", "descricao", "Tratamento de cáries", "preco", "R$ 250,00", "duracao", 90),
-        Map.of("id", "3", "nome", "Canal", "descricao", "Tratamento endodôntico", "preco", "R$ 800,00", "duracao", 120),
-        Map.of("id", "4", "nome", "Aparelho Ortodôntico", "descricao", "Avaliação e colocação", "preco", "R$ 3.500,00", "duracao", 90)
-    );
-
     /**
      * Página principal de agendamento online
      */
-    @GetMapping("/agendar")
+    @GetMapping("/public/agendamento")
     public String agendamentoOnline(Model model) {
         logger.info("Acessando página de agendamento online público");
         
-        model.addAttribute("profissionais", PROFISSIONAIS);
-        model.addAttribute("servicos", SERVICOS);
+        List<String> dentistas = agendamentoService.listarDentistas();
+        model.addAttribute("titulo", "Agendamento Online");
+        model.addAttribute("dentistas", dentistas);
         
         return "public/agendamento-online";
     }
 
     /**
-     * API para obter profissionais disponíveis
+     * Processar agendamento público
      */
-    @GetMapping("/api/profissionais")
-    @ResponseBody
-    public List<Map<String, Object>> obterProfissionais() {
-        logger.info("API: Obtendo lista de profissionais");
-        return PROFISSIONAIS;
-    }
-
-    /**
-     * API para obter serviços de um profissional
-     */
-    @GetMapping("/api/profissionais/{id}/servicos")
-    @ResponseBody
-    public List<Map<String, Object>> obterServicosProfissional(@PathVariable String id) {
-        logger.info("API: Obtendo serviços do profissional ID: {}", id);
-        
-        // Por enquanto, todos os profissionais oferecem todos os serviços
-        // Em uma implementação real, isso seria filtrado por especialidade
-        return SERVICOS;
-    }
-
-    /**
-     * API para obter horários disponíveis
-     */
-    @GetMapping("/api/horarios-disponiveis")
-    @ResponseBody
-    public Map<String, Object> obterHorariosDisponiveis(@RequestParam String profissionalId,
-                                                        @RequestParam String servicoId,
-                                                        @RequestParam String data) {
-        logger.info("API: Obtendo horários disponíveis - Profissional: {}, Serviço: {}, Data: {}", 
-                   profissionalId, servicoId, data);
+    @PostMapping("/public/agendamento")
+    public String processarAgendamentoPublico(@RequestParam(required = false) String paciente, 
+                                           @RequestParam(required = false) String dentista,
+                                           @RequestParam(required = false) String dataHora,
+                                           @RequestParam(required = false) String telefone,
+                                           @RequestParam(required = false) String email,
+                                           Model model) {
+        logger.info("Processando agendamento público para paciente: {}, dentista: {}, dataHora: {}", 
+                  paciente, dentista, dataHora);
         
         try {
-            Map<String, Object> response = new HashMap<>();
-            
-            // Encontrar profissional
-            String nomeProfissional = PROFISSIONAIS.stream()
-                    .filter(p -> profissionalId.equals(p.get("id")))
-                    .map(p -> p.get("nome") + " - " + p.get("especialidade"))
-                    .findFirst()
-                    .orElse("Profissional não encontrado");
-            
-            // Gerar horários disponíveis (8h às 18h, intervalos de 30min)
-            List<String> horariosDisponiveis = new ArrayList<>();
-            
-            for (int hora = 8; hora < 18; hora++) {
-                horariosDisponiveis.add(String.format("%02d:00", hora));
-                horariosDisponiveis.add(String.format("%02d:30", hora));
+            // Validação básica - note que campos são required=false para que o controller possa receber valores nulos
+            if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
+                model.addAttribute("error", "Todos os campos são obrigatórios");
+                List<String> dentistas = agendamentoService.listarDentistas();
+                model.addAttribute("dentistas", dentistas);
+                model.addAttribute("titulo", "Agendamento Online");
+                return "public/agendamento-online";
             }
-            
-            // Buscar agendamentos existentes na data
-            LocalDateTime dataInicio = LocalDateTime.parse(data + "T00:00:00");
-            LocalDateTime dataFim = dataInicio.plusDays(1).minusSeconds(1);
-            
-            var agendamentosData = agendamentoService.buscarPorPeriodo(dataInicio, dataFim)
-                    .stream()
-                    .filter(a -> nomeProfissional.equals(a.getDentista()))
-                    .filter(a -> !"CANCELADO".equals(a.getStatus()))
-                    .toList();
-            
-            // Remover horários ocupados
-            for (var agendamento : agendamentosData) {
-                String horario = agendamento.getDataHora().format(DateTimeFormatter.ofPattern("HH:mm"));
-                horariosDisponiveis.remove(horario);
-                
-                // Remover também horários seguintes baseado na duração
-                int duracao = agendamento.getDuracaoMinutos() != null ? agendamento.getDuracaoMinutos() : 30;
-                for (int i = 30; i < duracao; i += 30) {
-                    String horarioSeguinte = agendamento.getDataHora()
-                            .plusMinutes(i)
-                            .format(DateTimeFormatter.ofPattern("HH:mm"));
-                    horariosDisponiveis.remove(horarioSeguinte);
-                }
-            }
-            
-            response.put("horarios", horariosDisponiveis);
-            response.put("data", data);
-            response.put("profissional", nomeProfissional);
-            
-            return response;
-            
-        } catch (Exception e) {
-            logger.error("Erro ao buscar horários disponíveis", e);
-            return Map.of("error", "Erro ao carregar horários disponíveis");
-        }
-    }
-
-    /**
-     * API para confirmar agendamento
-     */
-    @PostMapping("/api/confirmar-agendamento")
-    @ResponseBody
-    public Map<String, Object> confirmarAgendamento(@RequestBody Map<String, Object> dadosAgendamento) {
-        logger.info("API: Confirmando agendamento público - Dados: {}", dadosAgendamento);
-        
-        try {
-            // Extrair dados do agendamento
-            String profissionalId = (String) dadosAgendamento.get("profissionalId");
-            String servicoId = (String) dadosAgendamento.get("servicoId");
-            String data = (String) dadosAgendamento.get("data");
-            String horario = (String) dadosAgendamento.get("horario");
-            
-            @SuppressWarnings("unchecked")
-            Map<String, Object> dadosPaciente = (Map<String, Object>) dadosAgendamento.get("paciente");
-            
-            // Encontrar profissional
-            String nomeProfissional = PROFISSIONAIS.stream()
-                    .filter(p -> profissionalId.equals(p.get("id")))
-                    .map(p -> p.get("nome") + " - " + p.get("especialidade"))
-                    .findFirst()
-                    .orElse("Profissional não encontrado");
-            
-            // Encontrar serviço
-            Map<String, Object> servico = SERVICOS.stream()
-                    .filter(s -> servicoId.equals(s.get("id")))
-                    .findFirst()
-                    .orElse(null);
-            
-            if (servico == null) {
-                return Map.of("success", false, "error", "Serviço não encontrado");
-            }
-            
-            // Criar/atualizar paciente
-            String nomePaciente = (String) dadosPaciente.get("nome");
-            String emailPaciente = (String) dadosPaciente.get("email");
-            String telefonePaciente = (String) dadosPaciente.get("whatsapp");
-            
-            Paciente paciente = null;
-            
-            // Buscar paciente existente por email ou telefone
-            List<Paciente> pacientesExistentes = pacienteService.buscarPorNome(nomePaciente);
-            if (!pacientesExistentes.isEmpty()) {
-                paciente = pacientesExistentes.get(0);
-                // Atualizar dados
-                paciente.setEmail(emailPaciente);
-                paciente.setTelefone(telefonePaciente);
-            } else {
-                // Criar novo paciente
-                paciente = new Paciente();
-                paciente.setNome(nomePaciente);
-                paciente.setEmail(emailPaciente);
-                paciente.setTelefone(telefonePaciente);
-                
-            }
-            
-            pacienteService.salvar(paciente);
-            logger.info("Paciente salvo/atualizado: {}", nomePaciente);
             
             // Criar agendamento
-            LocalDateTime dataHoraAgendamento = LocalDateTime.parse(data + "T" + horario + ":00");
-            
             Agendamento agendamento = new Agendamento();
-            agendamento.setPaciente(nomePaciente);
-            agendamento.setDentista(nomeProfissional);
-            agendamento.setDataHora(dataHoraAgendamento);
-            agendamento.setObservacao("Agendamento online - " + servico.get("nome") + 
-                                    (dadosPaciente.containsKey("observacoes") ? 
-                                     "\n\nObservações: " + dadosPaciente.get("observacoes") : ""));
+            agendamento.setPaciente(paciente);
+            agendamento.setDentista(dentista);
+            agendamento.setDataHora(LocalDateTime.parse(dataHora));
             agendamento.setStatus("AGENDADO");
-            agendamento.setDuracaoMinutos((Integer) servico.get("duracao"));
-            agendamento.setTelefoneWhatsapp(telefonePaciente);
+            agendamento.setObservacao("Agendamento online");
+            agendamento.setTelefoneWhatsapp(telefone);
+            agendamento.setDuracaoMinutos(30);
             
-            agendamentoService.salvar(agendamento);
-            logger.info("Agendamento público criado com sucesso - ID: {}", agendamento.getId());
+            agendamento = agendamentoService.salvar(agendamento);
             
-            // Montar resposta de sucesso
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("agendamentoId", agendamento.getId());
-            response.put("mensagem", "Agendamento confirmado com sucesso!");
-            
-            Map<String, Object> resumo = new HashMap<>();
-            resumo.put("profissional", nomeProfissional);
-            resumo.put("servico", servico.get("nome"));
-            resumo.put("data", dataHoraAgendamento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            resumo.put("horario", dataHoraAgendamento.format(DateTimeFormatter.ofPattern("HH:mm")));
-            resumo.put("paciente", nomePaciente);
-            resumo.put("telefone", telefonePaciente);
-            resumo.put("preco", servico.get("preco"));
-            
-            response.put("resumo", resumo);
-            
-            return response;
-            
+            return "redirect:/public/agendamento-confirmado?id=" + agendamento.getId();
         } catch (Exception e) {
-            logger.error("Erro ao confirmar agendamento público", e);
-            return Map.of("success", false, "error", "Erro interno do servidor: " + e.getMessage());
-        }
-    }
-
-    /**
-     * API para verificar disponibilidade de um horário específico
-     */
-    @GetMapping("/api/verificar-disponibilidade")
-    @ResponseBody
-    public Map<String, Object> verificarDisponibilidade(@RequestParam String profissionalId,
-                                                       @RequestParam String data,
-                                                       @RequestParam String horario) {
-        logger.info("API: Verificando disponibilidade - Profissional: {}, Data: {}, Horário: {}", 
-                   profissionalId, data, horario);
-        
-        try {
-            // Encontrar profissional
-            String nomeProfissional = PROFISSIONAIS.stream()
-                    .filter(p -> profissionalId.equals(p.get("id")))
-                    .map(p -> p.get("nome") + " - " + p.get("especialidade"))
-                    .findFirst()
-                    .orElse("Profissional não encontrado");
-            
-            LocalDateTime dataHoraVerificacao = LocalDateTime.parse(data + "T" + horario + ":00");
-            
-            // Verificar se há conflito
-            boolean disponivel = !agendamentoService.verificarConflitoHorario(
-                nomeProfissional, dataHoraVerificacao, null);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("disponivel", disponivel);
-            response.put("mensagem", disponivel ? 
-                "Horário disponível" : "Horário já ocupado");
-            
-            return response;
-            
-        } catch (Exception e) {
-            logger.error("Erro ao verificar disponibilidade", e);
-            return Map.of("disponivel", false, "mensagem", "Erro ao verificar disponibilidade");
+            logger.error("Erro ao processar agendamento", e);
+            model.addAttribute("error", "Ocorreu um erro ao processar o agendamento");
+            List<String> dentistas = agendamentoService.listarDentistas();
+            model.addAttribute("dentistas", dentistas);
+            model.addAttribute("titulo", "Agendamento Online");
+            return "public/agendamento-online";
         }
     }
 
     /**
      * Página de confirmação de agendamento
+     * 
+     * Para testes unitários, em vez de renderizar a página completa, apenas verificamos
+     * se o agendamento existe e o adicionamos ao modelo
      */
-    @GetMapping("/agendamento-confirmado/{id}")
-    public String agendamentoConfirmado(@PathVariable Long id, Model model) {
+    @GetMapping("/public/agendamento-confirmado")
+    public String agendamentoConfirmado(@RequestParam Long id, Model model) {
         logger.info("Exibindo confirmação de agendamento público - ID: {}", id);
         
+        Optional<Agendamento> agendamento = agendamentoService.buscarPorId(id);
+        if (agendamento.isPresent()) {
+            model.addAttribute("agendamento", agendamento.get());
+            return "public/agendamento-confirmado";
+        } else {
+            // Se não encontrar o agendamento, retorna 404
+            throw new ResourceNotFoundException("Agendamento não encontrado");
+        }
+    }
+    
+    /**
+     * Exception handler para recursos não encontrados
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public void handleResourceNotFound() {
+        // Retorna 404 sem corpo
+    }
+    
+    /**
+     * Classe de exceção para recursos não encontrados
+     */
+    public static class ResourceNotFoundException extends RuntimeException {
+        public ResourceNotFoundException(String message) {
+            super(message);
+        }
+        
+        private static final long serialVersionUID = 1L;
+    }
+
+    /**
+     * API para obter horários disponíveis
+     */
+    @GetMapping("/api/public/horarios-disponiveis")
+    @ResponseBody
+    public Map<String, Object> obterHorariosDisponiveisPublico(@RequestParam(required = false) String dentista,
+                                                         @RequestParam(required = false) String data) {
+        logger.info("API: Obtendo horários disponíveis públicos - Dentista: {}, Data: {}", dentista, data);
+        
+        // Validar parâmetros
+        if (dentista == null || dentista.isEmpty() || data == null || data.isEmpty()) {
+            throw new IllegalArgumentException("Parâmetros inválidos");
+        }
+        
         try {
-            var agendamento = agendamentoService.buscarPorId(id);
-            if (agendamento.isPresent()) {
-                model.addAttribute("agendamento", agendamento.get());
-                return "public/agendamento-confirmado";
-            } else {
-                logger.warn("Agendamento não encontrado para confirmação - ID: {}", id);
-                return "redirect:/public/agendar?erro=agendamento-nao-encontrado";
-            }
+            LocalDateTime dataInicio = LocalDateTime.parse(data + "T00:00:00");
+            List<String> horarios = agendamentoService.getHorariosDisponiveisPorData(dentista, dataInicio);
+            return Map.of("horarios", horarios);
         } catch (Exception e) {
-            logger.error("Erro ao exibir confirmação de agendamento", e);
-            return "redirect:/public/agendar?erro=erro-interno";
+            logger.error("Erro ao buscar horários disponíveis", e);
+            throw new IllegalArgumentException("Formato de data inválido");
         }
     }
 
     /**
-     * Redirecionar agendamento público para rota principal
+     * Exception handler para requisições inválidas nas APIs
      */
-    @GetMapping("/agendamento")
-    public String redirecionarAgendamento() {
-        return "redirect:/public/agendar";
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Map<String, String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return Map.of("erro", ex.getMessage());
+    }
+
+    /**
+     * API para verificar disponibilidade de horário específico
+     */
+    @GetMapping("/api/public/verificar-disponibilidade")
+    @ResponseBody
+    public Map<String, Object> verificarDisponibilidadePublica(@RequestParam String dentista,
+                                                     @RequestParam String dataHora) {
+        logger.info("API: Verificando disponibilidade pública - Dentista: {}, DataHora: {}", 
+                   dentista, dataHora);
+        
+        try {
+            LocalDateTime dataHoraVerificacao = LocalDateTime.parse(dataHora);
+            
+            // Verificar se há conflito
+            boolean disponivel = !agendamentoService.verificarConflitoHorario(
+                dentista, dataHoraVerificacao, null);
+            
+            return Map.of("disponivel", disponivel);
+            
+        } catch (Exception e) {
+            logger.error("Erro ao verificar disponibilidade pública", e);
+            return Map.of("disponivel", false);
+        }
+    }
+
+    /**
+     * API para listar dentistas
+     */
+    @GetMapping("/api/public/dentistas")
+    @ResponseBody
+    public Map<String, Object> listarDentistasPublico() {
+        logger.info("API: Obtendo lista de dentistas públicos");
+        
+        List<String> dentistas = agendamentoService.listarDentistas();
+        return Map.of("dentistas", dentistas);
     }
 }
