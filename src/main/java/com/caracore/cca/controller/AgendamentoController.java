@@ -166,13 +166,21 @@ public class AgendamentoController {
                 // Atualiza o telefone do paciente existente
                 paciente = pacientesEncontrados.get(0);
                 paciente.setTelefone(telefoneWhatsapp); // Mantém o formato para exibição
-                pacienteService.atualizar(paciente);
-                logger.info("Telefone WhatsApp do paciente {} atualizado: {}", nomePaciente, telefoneWhatsapp);
+                try {
+                    pacienteService.atualizar(paciente);
+                    logger.info("Telefone WhatsApp do paciente {} atualizado: {}", nomePaciente, telefoneWhatsapp);
+                } catch (Exception e) {
+                    logger.error("Erro ao atualizar paciente: {}", e.getMessage());
+                }
             } else {
                 // Cria um novo paciente se não existir
                 paciente = new Paciente(nomePaciente, null, telefoneWhatsapp); // Mantém o formato para exibição
-                pacienteService.salvar(paciente);
-                logger.info("Novo paciente criado: {} com telefone WhatsApp: {}", nomePaciente, telefoneWhatsapp);
+                try {
+                    pacienteService.salvar(paciente);
+                    logger.info("Novo paciente criado: {} com telefone WhatsApp: {}", nomePaciente, telefoneWhatsapp);
+                } catch (Exception e) {
+                    logger.error("Erro ao salvar novo paciente: {}", e.getMessage());
+                }
             }
             
             // Cria e salva o agendamento

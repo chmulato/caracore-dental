@@ -402,6 +402,9 @@ class AgendamentoServiceTest {
         assertTrue(resultado);
         verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
                 eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
+        assertTrue(resultado);
+        verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -486,5 +489,25 @@ class AgendamentoServiceTest {
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
         assertEquals("Dr. Maria Santos", resultado.get(0));
+    }
+
+    @Test
+    void testIsHorarioNaoDisponivel() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime dataHora = LocalDateTime.now().plusDays(1);
+        List<Agendamento> agendamentos = new ArrayList<>();
+        agendamentos.add(agendamentoTeste);
+        when(agendamentoRepository.findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(agendamentos);
+
+        // Act
+        boolean resultado = agendamentoService.isHorarioDisponivel(dentista, dataHora);
+
+        // Assert
+        assertFalse(resultado);
+        verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 }
