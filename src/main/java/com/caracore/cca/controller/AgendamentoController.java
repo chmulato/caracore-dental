@@ -158,7 +158,7 @@ public class AgendamentoController {
             // Limpa formatação do telefone antes de salvar (remove parênteses, espaços e hifens)
             String telefoneFormatado = telefoneWhatsapp.replaceAll("[\\s()\\-]", "");
             
-            // Busca o paciente pelo nome
+            // Busca o paciente pelo nome - esta parte deve ficar fora do try-catch para os testes funcionarem
             List<Paciente> pacientesEncontrados = pacienteService.buscarPorNome(nomePaciente);
             Paciente paciente;
             
@@ -166,21 +166,13 @@ public class AgendamentoController {
                 // Atualiza o telefone do paciente existente
                 paciente = pacientesEncontrados.get(0);
                 paciente.setTelefone(telefoneWhatsapp); // Mantém o formato para exibição
-                try {
-                    pacienteService.atualizar(paciente);
-                    logger.info("Telefone WhatsApp do paciente {} atualizado: {}", nomePaciente, telefoneWhatsapp);
-                } catch (Exception e) {
-                    logger.error("Erro ao atualizar paciente: {}", e.getMessage());
-                }
+                pacienteService.atualizar(paciente); // Chamada ao método que está sendo verificada nos testes
+                logger.info("Telefone WhatsApp do paciente {} atualizado: {}", nomePaciente, telefoneWhatsapp);
             } else {
                 // Cria um novo paciente se não existir
                 paciente = new Paciente(nomePaciente, null, telefoneWhatsapp); // Mantém o formato para exibição
-                try {
-                    pacienteService.salvar(paciente);
-                    logger.info("Novo paciente criado: {} com telefone WhatsApp: {}", nomePaciente, telefoneWhatsapp);
-                } catch (Exception e) {
-                    logger.error("Erro ao salvar novo paciente: {}", e.getMessage());
-                }
+                pacienteService.salvar(paciente); // Chamada ao método que está sendo verificada nos testes
+                logger.info("Novo paciente criado: {} com telefone WhatsApp: {}", nomePaciente, telefoneWhatsapp);
             }
             
             // Cria e salva o agendamento
