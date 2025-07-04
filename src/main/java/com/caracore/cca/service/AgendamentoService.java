@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -229,6 +231,81 @@ public class AgendamentoService {
                 .filter(a -> !"CANCELADO".equals(a.getStatus()))
                 .sorted((a1, a2) -> a1.getDataHora().compareTo(a2.getDataHora()))
                 .limit(10)
+                .toList();
+    }
+
+    /**
+     * Lista agendamentos por status
+     */
+    public List<Agendamento> buscarPorStatus(String status) {
+        return agendamentoRepository.findAll().stream()
+                .filter(a -> status.equals(a.getStatus()))
+                .sorted((a1, a2) -> a1.getDataHora().compareTo(a2.getDataHora()))
+                .toList();
+    }
+
+    /**
+     * Lista todos os dentistas com agendamentos
+     */
+    public List<String> listarDentistas() {
+        return agendamentoRepository.findAll().stream()
+                .map(Agendamento::getDentista)
+                .distinct()
+                .filter(d -> d != null && !d.trim().isEmpty())
+                .sorted()
+                .toList();
+    }
+
+    /**
+     * Verifica se um horário está disponível para agendamento
+     */
+    public boolean isHorarioDisponivel(String dentista, LocalDateTime dataHora) {
+        // Verifica se não há conflito de horário
+        return !verificarConflitoHorario(dentista, dataHora, null);
+    }
+
+    /**
+     * Gera lista de horários disponíveis para um dentista em uma data específica
+     */
+    public List<String> getHorariosDisponiveisPorData(String dentista, LocalDateTime data) {
+        List<String> horariosDisponiveis = new ArrayList<>();
+        
+        // Horários padrão de atendimento (8h às 18h, intervalos de 30 minutos)
+        LocalDateTime inicioExpediente = data.withHour(8).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fimExpediente = data.withHour(18).withMinute(0).withSecond(0).withNano(0);
+        
+        LocalDateTime horarioAtual = inicioExpediente;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        
+        while (horarioAtual.isBefore(fimExpediente)) {
+            // Pula horário de almoço (12h às 13h)
+            if (horarioAtual.getHour() == 12) {
+                horarioAtual = horarioAtual.plusHours(1);
+                continue;
+            }
+            
+            if (isHorarioDisponivel(dentista, horarioAtual)) {
+                horariosDisponiveis.add(horarioAtual.format(formatter));
+            }
+            
+            horarioAtual = horarioAtual.plusMinutes(30);
+        }
+        
+        return horariosDisponiveis;
+    }
+
+    /**
+     * Busca agendamentos por dentista, data e status
+     */
+    public List<Agendamento> buscarPorDentistaDataStatus(String dentista, LocalDateTime data, String status) {
+        LocalDateTime inicioData = data.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fimData = data.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        
+        return agendamentoRepository.findAll().stream()
+                .filter(a -> dentista == null || dentista.equals(a.getDentista()))
+                .filter(a -> status == null || status.equals(a.getStatus()))
+                .filter(a -> a.getDataHora().isAfter(inicioData) && a.getDataHora().isBefore(fimData))
+                .sorted((a1, a2) -> a1.getDataHora().compareTo(a2.getDataHora()))
                 .toList();
     }
 }

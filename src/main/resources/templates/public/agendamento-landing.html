@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cara Core - Agendamento Online</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Main CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .feature-card {
+            transition: transform 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-agendar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .btn-agendar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-middle me-2" style="height: 40px;">
+                <span class="text-primary fw-bold">Cara Core</span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/login">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1 class="display-4 fw-bold mb-4">Agendamento Online</h1>
+                    <p class="lead mb-5">Agende sua consulta odontológica de forma rápida e prática, 24 horas por dia, 7 dias por semana.</p>
+                    <a href="/public/agendamento" class="btn btn-light btn-agendar">
+                        <i class="bi bi-calendar-plus me-2"></i> Agendar Consulta
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <i class="bi bi-calendar-check text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">Agendamento Rápido</h5>
+                        <p class="card-text">Escolha o melhor horário para você com nosso sistema intuitivo e prático.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <i class="bi bi-clock text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">Disponível 24/7</h5>
+                        <p class="card-text">Agende sua consulta a qualquer hora do dia, sem precisar ligar ou aguardar atendimento.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <i class="bi bi-shield-check text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">Seguro e Confiável</h5>
+                        <p class="card-text">Seus dados estão protegidos com a melhor tecnologia de segurança disponível.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-5">Como Funciona</h2>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 text-center">
+                    <div class="step-number">1</div>
+                    <h5>Escolha o Profissional</h5>
+                    <p>Selecione o dentista de sua preferência</p>
+                </div>
+                <div class="col-lg-3 text-center">
+                    <div class="step-number">2</div>
+                    <h5>Selecione Data e Hora</h5>
+                    <p>Escolha o melhor horário disponível</p>
+                </div>
+                <div class="col-lg-3 text-center">
+                    <div class="step-number">3</div>
+                    <h5>Informe seus Dados</h5>
+                    <p>Preencha suas informações pessoais</p>
+                </div>
+                <div class="col-lg-3 text-center">
+                    <div class="step-number">4</div>
+                    <h5>Confirme o Agendamento</h5>
+                    <p>Receba a confirmação por email</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4">Precisa de Ajuda?</h2>
+                    <p class="lead mb-4">Nossa equipe está pronta para ajudar você. Entre em contato conosco!</p>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <i class="bi bi-telephone text-primary me-3 fs-4"></i>
+                                <div>
+                                    <h6 class="mb-0">Telefone</h6>
+                                    <p class="mb-0">(11) 3456-7890</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <i class="bi bi-envelope text-primary me-3 fs-4"></i>
+                                <div>
+                                    <h6 class="mb-0">Email</h6>
+                                    <p class="mb-0">contato@caracore.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <i class="bi bi-geo-alt text-primary me-3 fs-4"></i>
+                                <div>
+                                    <h6 class="mb-0">Endereço</h6>
+                                    <p class="mb-0">Av. Principal, 123</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 Cara Core Informática. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Sistema de Agendamento Online v1.0</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+</body>
+</html>

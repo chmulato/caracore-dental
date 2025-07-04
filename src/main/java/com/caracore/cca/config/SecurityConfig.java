@@ -54,7 +54,7 @@ public class SecurityConfig {
                 // Recursos públicos
                 .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
                 // Páginas públicas
-                .requestMatchers("/", "/login", "/agendar", "/api/public/**").permitAll()
+                .requestMatchers("/", "/login", "/agendar", "/api/public/**", "/public/**").permitAll()
                 // Páginas administrativas
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Gerenciamento de usuários

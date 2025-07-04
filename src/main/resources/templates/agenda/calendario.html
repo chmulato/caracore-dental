@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - Calendário - CCA</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+    
+    <style>
+        .fc-event {
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .fc-event.status-agendado {
+            background-color: #3788d8;
+            border-color: #2c5aa0;
+        }
+        
+        .fc-event.status-confirmado {
+            background-color: #28a745;
+            border-color: #1e7e34;
+        }
+        
+        .fc-event.status-cancelado {
+            background-color: #dc3545;
+            border-color: #a71d2a;
+        }
+        
+        .fc-event.status-reagendado {
+            background-color: #fd7e14;
+            border-color: #ca5a00;
+        }
+        
+        .fc-event.status-realizado {
+            background-color: #6f42c1;
+            border-color: #5a2d91;
+        }
+        
+        .legend {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        
+        .toolbar-custom {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="text-center">
+                <div class="spinner-border loading-spinner" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <div class="mt-3 text-white">Carregando agenda...</div>
+            </div>
+        </div>
+        
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-calendar3"></i> Agenda - Calendário</h2>
+                    <div class="btn-group">
+                        <a href="/novo-agendamento" class="btn btn-success" sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                            <i class="bi bi-plus-circle"></i> Novo Agendamento
+                        </a>
+                        <a href="/consultas" class="btn btn-primary">
+                            <i class="bi bi-list"></i> Lista de Consultas
+                        </a>
+                        <a href="/consultas/dashboard" class="btn btn-info">
+                            <i class="bi bi-graph-up"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtros e Legenda -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="toolbar-custom">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <label for="filtroDesntista" class="form-label me-2 mb-0">
+                                    <i class="bi bi-person-badge"></i> Dentista:
+                                </label>
+                                <select id="filtroDentista" class="form-select form-select-sm" style="width: auto;">
+                                    <option value="">Todos os dentistas</option>
+                                    <option value="Dr. Ana Silva - Clínico Geral">Dr. Ana Silva - Clínico Geral</option>
+                                    <option value="Dr. Carlos Oliveira - Ortodontista">Dr. Carlos Oliveira - Ortodontista</option>
+                                    <option value="Dra. Mariana Santos - Endodontista">Dra. Mariana Santos - Endodontista</option>
+                                    <option value="Dr. Roberto Pereira - Periodontista">Dr. Roberto Pereira - Periodontista</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <label for="filtroStatus" class="form-label me-2 mb-0">
+                                    <i class="bi bi-funnel"></i> Status:
+                                </label>
+                                <select id="filtroStatus" class="form-select form-select-sm" style="width: auto;">
+                                    <option value="">Todos os status</option>
+                                    <option value="AGENDADO">Agendado</option>
+                                    <option value="CONFIRMADO">Confirmado</option>
+                                    <option value="CANCELADO">Cancelado</option>
+                                    <option value="REAGENDADO">Reagendado</option>
+                                    <option value="REALIZADO">Realizado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legenda -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="legend">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-palette"></i> Legenda de Status:</h6>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #3788d8;"></div>
+                                <span>Agendado</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #28a745;"></div>
+                                <span>Confirmado</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #fd7e14;"></div>
+                                <span>Reagendado</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #6f42c1;"></div>
+                                <span>Realizado</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #dc3545;"></div>
+                                <span>Cancelado</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-info-circle"></i> Instruções:</h6>
+                            <ul class="mb-0" style="font-size: 0.9em;">
+                                <li>Clique em um evento para ver detalhes</li>
+                                <li>Arraste eventos para reagendar (em breve)</li>
+                                <li>Use os filtros para organizar a visualização</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calendário -->
+        <div class="row">
+            <div class="col-md-12">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Detalhes -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">
+                        <i class="bi bi-calendar-event"></i> Detalhes da Consulta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="eventDetails">
+                        <!-- Conteúdo será carregado via JavaScript -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a id="editEventBtn" href="#" class="btn btn-warning" sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a id="viewEventBtn" href="#" class="btn btn-primary">
+                        <i class="bi bi-eye"></i> Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/pt-br.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let calendar;
+            let currentEvents = [];
+            
+            // Inicializar calendário
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                buttonText: {
+                    today: 'Hoje',
+                    month: 'Mês',
+                    week: 'Semana',
+                    day: 'Dia'
+                },
+                height: 'auto',
+                eventClick: function(info) {
+                    showEventDetails(info.event);
+                },
+                eventDidMount: function(info) {
+                    // Adicionar classe CSS baseada no status
+                    const status = info.event.extendedProps.status;
+                    if (status) {
+                        info.el.classList.add('status-' + status.toLowerCase());
+                    }
+                },
+                loading: function(bool) {
+                    if (bool) {
+                        showLoading();
+                    } else {
+                        hideLoading();
+                    }
+                }
+            });
+            
+            // Carregar eventos
+            loadEvents();
+            
+            // Renderizar calendário
+            calendar.render();
+            
+            // Event listeners para filtros
+            document.getElementById('filtroDentista').addEventListener('change', function() {
+                filterEvents();
+            });
+            
+            document.getElementById('filtroStatus').addEventListener('change', function() {
+                filterEvents();
+            });
+            
+            // Função para carregar eventos
+            function loadEvents() {
+                showLoading();
+                
+                fetch('/consultas/api/eventos')
+                    .then(response => response.json())
+                    .then(data => {
+                        currentEvents = data;
+                        calendar.removeAllEvents();
+                        calendar.addEventSource(data);
+                        hideLoading();
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar eventos:', error);
+                        hideLoading();
+                        alert('Erro ao carregar os eventos do calendário');
+                    });
+            }
+            
+            // Função para filtrar eventos
+            function filterEvents() {
+                const dentistaFilter = document.getElementById('filtroDentista').value;
+                const statusFilter = document.getElementById('filtroStatus').value;
+                
+                let filteredEvents = currentEvents;
+                
+                if (dentistaFilter) {
+                    filteredEvents = filteredEvents.filter(event => 
+                        event.extendedProps.dentista === dentistaFilter
+                    );
+                }
+                
+                if (statusFilter) {
+                    filteredEvents = filteredEvents.filter(event => 
+                        event.extendedProps.status === statusFilter
+                    );
+                }
+                
+                calendar.removeAllEvents();
+                calendar.addEventSource(filteredEvents);
+            }
+            
+            // Função para mostrar detalhes do evento
+            function showEventDetails(event) {
+                const eventId = event.id;
+                const eventProps = event.extendedProps;
+                
+                // Montar HTML dos detalhes
+                const detailsHtml = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-person"></i> Paciente:</h6>
+                            <p class="mb-3">${eventProps.paciente}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-person-badge"></i> Dentista:</h6>
+                            <p class="mb-3">${eventProps.dentista}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-calendar"></i> Data e Hora:</h6>
+                            <p class="mb-3">${formatDateTime(event.start)}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-clock"></i> Duração:</h6>
+                            <p class="mb-3">${eventProps.duracao || 30} minutos</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-tag"></i> Status:</h6>
+                            <p class="mb-3">
+                                <span class="badge bg-${getStatusColor(eventProps.status)}">${eventProps.status}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-whatsapp"></i> WhatsApp:</h6>
+                            <p class="mb-3">${eventProps.telefone || 'Não informado'}</p>
+                        </div>
+                    </div>
+                    ${eventProps.observacao ? `
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6><i class="bi bi-journal-text"></i> Observações:</h6>
+                                <p class="mb-3">${eventProps.observacao}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('eventDetails').innerHTML = detailsHtml;
+                
+                // Configurar botões
+                document.getElementById('editEventBtn').href = `/consultas/${eventId}/reagendar`;
+                document.getElementById('viewEventBtn').href = `/consultas/${eventId}`;
+                
+                // Mostrar modal
+                const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+                modal.show();
+            }
+            
+            // Função para formatar data/hora
+            function formatDateTime(date) {
+                return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            
+            // Função para obter cor do status
+            function getStatusColor(status) {
+                switch (status) {
+                    case 'AGENDADO': return 'primary';
+                    case 'CONFIRMADO': return 'success';
+                    case 'CANCELADO': return 'danger';
+                    case 'REAGENDADO': return 'warning';
+                    case 'REALIZADO': return 'secondary';
+                    default: return 'light';
+                }
+            }
+            
+            // Função para mostrar/esconder loading
+            function showLoading() {
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+            }
+            
+            function hideLoading() {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
