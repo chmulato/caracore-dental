@@ -42,7 +42,8 @@ public class AgendamentoPublicoController {
     public String agendamentoOnline(Model model) {
         logger.info("Acessando página de agendamento online público");
         
-        List<String> dentistas = agendamentoService.listarDentistas();
+        // Usar apenas dentistas ativos para exposição pública
+        List<String> dentistas = agendamentoService.listarDentistasAtivos();
         model.addAttribute("titulo", "Agendamento Online");
         model.addAttribute("dentistas", dentistas);
         
@@ -66,7 +67,7 @@ public class AgendamentoPublicoController {
             // Validação básica - note que campos são required=false para que o controller possa receber valores nulos
             if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
                 model.addAttribute("error", "Todos os campos são obrigatórios");
-                List<String> dentistas = agendamentoService.listarDentistas();
+                List<String> dentistas = agendamentoService.listarDentistasAtivos();
                 model.addAttribute("dentistas", dentistas);
                 model.addAttribute("titulo", "Agendamento Online");
                 return "public/agendamento-online";
@@ -88,7 +89,7 @@ public class AgendamentoPublicoController {
         } catch (Exception e) {
             logger.error("Erro ao processar agendamento", e);
             model.addAttribute("error", "Ocorreu um erro ao processar o agendamento");
-            List<String> dentistas = agendamentoService.listarDentistas();
+            List<String> dentistas = agendamentoService.listarDentistasAtivos();
             model.addAttribute("dentistas", dentistas);
             model.addAttribute("titulo", "Agendamento Online");
             return "public/agendamento-online";
@@ -195,14 +196,15 @@ public class AgendamentoPublicoController {
     }
 
     /**
-     * API para listar dentistas
+     * API para listar dentistas ativos para agendamento público
      */
     @GetMapping("/api/public/dentistas")
     @ResponseBody
     public Map<String, Object> listarDentistasPublico() {
-        logger.info("API: Obtendo lista de dentistas públicos");
+        logger.info("API: Obtendo lista de dentistas públicos (apenas ativos)");
         
-        List<String> dentistas = agendamentoService.listarDentistas();
+        // Usar apenas dentistas ativos para exposição pública
+        List<String> dentistas = agendamentoService.listarDentistasAtivos();
         return Map.of("dentistas", dentistas);
     }
 }

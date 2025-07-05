@@ -24,4 +24,12 @@ public class ConfiguracoesController {
         model.addAttribute("activeLink", "configuracoes");
         return "configuracoes/index";
     }
+
+    /**
+     * Redireciona para as ferramentas administrativas
+     */
+    @GetMapping("/admin")
+    public String redirecionarAdmin() {
+        return "redirect:/admin/sistema";
+    }
 }

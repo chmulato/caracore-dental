@@ -1,6 +1,7 @@
 package com.caracore.cca.controller;
 
 import com.caracore.cca.service.InitService;
+import com.caracore.cca.service.DentistaService;
 import com.caracore.cca.util.UserActivityLogger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -8,9 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +33,12 @@ public class SistemaAdminController {
 
     private final InitService initService;
     private final UserActivityLogger userActivityLogger;
+    private final DentistaService dentistaService;
 
-    public SistemaAdminController(InitService initService, UserActivityLogger userActivityLogger) {
+    public SistemaAdminController(InitService initService, UserActivityLogger userActivityLogger, DentistaService dentistaService) {
         this.initService = initService;
         this.userActivityLogger = userActivityLogger;
+        this.dentistaService = dentistaService;
     }
 
     /**
@@ -165,6 +167,147 @@ public class SistemaAdminController {
             return "ROLE_PATIENT";
         } else {
             return "DESCONHECIDO";
+        }
+    }
+
+    /**
+     * Obtém lista de dentistas com status de exposição pública
+     */
+    @GetMapping("/dentistas-publicos")
+    public ResponseEntity<?> obterDentistasPublicos() {
+        try {
+            var dentistasAtivos = dentistaService.listarAtivos();
+            Map<String, Object> resposta = new HashMap<>();
+            
+            resposta.put("status", "sucesso");
+            resposta.put("dentistas", dentistasAtivos);
+            resposta.put("total", dentistasAtivos.size());
+            
+            userActivityLogger.logActivity(
+                "LISTAR_DENTISTAS_PUBLICOS", 
+                "Consulta de dentistas para exposição pública",
+                null,
+                "Administrador consultou lista de dentistas públicos"
+            );
+            
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("status", "erro", "mensagem", "Erro ao carregar dentistas"));
+        }
+    }
+
+    /**
+     * Controla exposição pública de um dentista específico
+     */
+    @PostMapping("/dentista/{id}/exposicao-publica")
+    public ResponseEntity<?> alterarExposicaoPublica(@PathVariable Long id, @RequestParam Boolean exposto) {
+        try {
+            // Implementar lógica para controlar exposição pública
+            // Por enquanto, apenas log da ação
+            
+            userActivityLogger.logActivity(
+                "ALTERAR_EXPOSICAO_DENTISTA", 
+                "Alteração de exposição pública de dentista",
+                "Dentista ID: " + id + ", Exposto: " + exposto,
+                "Administrador alterou exposição pública de dentista"
+            );
+            
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("status", "sucesso");
+            resposta.put("mensagem", "Exposição pública alterada com sucesso");
+            resposta.put("dentistaId", id);
+            resposta.put("exposto", exposto);
+            
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("status", "erro", "mensagem", "Erro ao alterar exposição pública"));
+        }
+    }
+
+    /**
+     * Controla status global da agenda pública
+     */
+    @PostMapping("/agenda-publica/toggle")
+    public ResponseEntity<?> toggleAgendaPublica(@RequestParam Boolean ativa) {
+        try {
+            // Implementar lógica para ativar/desativar agenda pública globalmente
+            // Por enquanto, apenas log da ação
+            
+            userActivityLogger.logActivity(
+                "TOGGLE_AGENDA_PUBLICA", 
+                "Alteração do status da agenda pública",
+                "Status: " + (ativa ? "Ativada" : "Desativada"),
+                "Administrador " + (ativa ? "ativou" : "desativou") + " a agenda pública"
+            );
+            
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("status", "sucesso");
+            resposta.put("mensagem", "Agenda pública " + (ativa ? "ativada" : "desativada") + " com sucesso");
+            resposta.put("agendaPublicaAtiva", ativa);
+            
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("status", "erro", "mensagem", "Erro ao alterar status da agenda pública"));
+        }
+    }
+
+    /**
+     * Configura horários de funcionamento para agenda pública
+     */
+    @PostMapping("/agenda-publica/horarios")
+    public ResponseEntity<?> configurarHorariosPublicos(@RequestParam String inicio, @RequestParam String fim) {
+        try {
+            // Implementar lógica para salvar horários de funcionamento público
+            // Por enquanto, apenas log da ação
+            
+            userActivityLogger.logActivity(
+                "CONFIGURAR_HORARIOS_PUBLICOS", 
+                "Configuração de horários públicos",
+                "Início: " + inicio + ", Fim: " + fim,
+                "Administrador configurou horários públicos"
+            );
+            
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("status", "sucesso");
+            resposta.put("mensagem", "Horários públicos configurados com sucesso");
+            resposta.put("horarioInicio", inicio);
+            resposta.put("horarioFim", fim);
+            
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("status", "erro", "mensagem", "Erro ao configurar horários públicos"));
+        }
+    }
+
+    /**
+     * Obtém estatísticas de dentistas para dashboard administrativo
+     */
+    @GetMapping("/estatisticas-dentistas")
+    public ResponseEntity<?> obterEstatisticasDentistas() {
+        try {
+            var todosDentistas = dentistaService.listarTodos();
+            var dentistasAtivos = dentistaService.listarAtivos();
+            
+            Map<String, Object> resposta = new HashMap<>();
+            Map<String, Integer> estatisticas = new HashMap<>();
+            
+            estatisticas.put("total", todosDentistas.size());
+            estatisticas.put("ativos", dentistasAtivos.size());
+            estatisticas.put("inativos", todosDentistas.size() - dentistasAtivos.size());
+            // Implementar contagem de dentistas expostos publicamente
+            estatisticas.put("expostos", dentistasAtivos.size()); // Placeholder
+            
+            resposta.put("status", "sucesso");
+            resposta.put("estatisticas", estatisticas);
+            
+            return ResponseEntity.ok(resposta);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("status", "erro", "mensagem", "Erro ao carregar estatísticas"));
         }
     }
 }

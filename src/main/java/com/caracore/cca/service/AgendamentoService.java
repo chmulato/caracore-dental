@@ -257,6 +257,29 @@ public class AgendamentoService {
     }
 
     /**
+     * Lista apenas dentistas ativos para exposição pública
+     * Este método deve ser usado para agendamento público para garantir
+     * que apenas dentistas ativos apareçam na interface pública
+     */
+    public List<String> listarDentistasAtivos() {
+        // TODO: Implementar filtro baseado no status ativo do dentista
+        // Por enquanto retorna todos, mas deveria filtrar apenas os ativos
+        return listarDentistas().stream()
+                .filter(d -> isExpostoPublicamente(d))
+                .toList();
+    }
+
+    /**
+     * Verifica se um dentista deve ser exposto publicamente
+     * Esta lógica deveria ser baseada no campo 'ativo' da entidade Dentista
+     */
+    private boolean isExpostoPublicamente(String nomeDentista) {
+        // TODO: Implementar verificação real com o DentistaService
+        // Por enquanto retorna true, mas deveria verificar o status ativo
+        return true;
+    }
+
+    /**
      * Verifica se um horário está disponível para agendamento
      */
     public boolean isHorarioDisponivel(String dentista, LocalDateTime dataHora) {

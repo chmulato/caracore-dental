@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramentas Administrativas - Sistema CCA</title>
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/webjars/bootstrap-icons/1.11.1/font/bootstrap-icons.css}" rel="stylesheet">
+    <style>
+        .admin-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-ativo { background-color: #28a745; }
+        .status-inativo { background-color: #dc3545; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-calendar-heart me-2"></i>CCA - Administração
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/configuracoes}">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar às Configurações
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="h2 mb-3">
+                    <i class="bi bi-tools me-2"></i>Ferramentas Administrativas
+                </h1>
+                <p class="text-muted">Gerencie aspectos críticos do sistema e controle a exposição pública da agenda.</p>
+            </div>
+        </div>
+
+        <!-- Seção 1: Gerenciamento de Usuários Padrão -->
+        <div class="row mb-5">
+            <div class="col">
+                <h3 class="h4 mb-3">
+                    <i class="bi bi-people me-2"></i>Gerenciamento de Usuários Padrão
+                </h3>
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="card admin-card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
+                                </div>
+                                <h5 class="card-title">Verificar Usuários</h5>
+                                <p class="card-text text-muted">Verifica e cria usuários padrão faltantes no sistema.</p>
+                                <form th:action="@{/admin/sistema/verificar-usuarios}" method="post">
+                                    <button type="submit" class="btn btn-primary">Executar Verificação</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card admin-card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-key text-warning" style="font-size: 2rem;"></i>
+                                </div>
+                                <h5 class="card-title">Redefinir Senhas</h5>
+                                <p class="card-text text-muted">Redefine todas as senhas de usuários padrão.</p>
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#resetAllModal">
+                                    Redefinir Todas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card admin-card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-info-circle text-info" style="font-size: 2rem;"></i>
+                                </div>
+                                <h5 class="card-title">Status dos Usuários</h5>
+                                <p class="card-text text-muted">Visualiza o status de todos os usuários padrão.</p>
+                                <button type="button" class="btn btn-info" onclick="verificarStatusUsuarios()">
+                                    Verificar Status
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção 2: Controle da Agenda Pública -->
+        <div class="row mb-5">
+            <div class="col">
+                <h3 class="h4 mb-3">
+                    <i class="bi bi-globe me-2"></i>Controle da Agenda Pública
+                </h3>
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="card admin-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-toggle-on text-success me-2" style="font-size: 1.5rem;"></i>
+                                    <h5 class="card-title mb-0">Status da Agenda Pública</h5>
+                                </div>
+                                <p class="card-text text-muted">Controla se o agendamento online está disponível para o público.</p>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="agendaPublicaAtiva" checked>
+                                    <label class="form-check-label" for="agendaPublicaAtiva">
+                                        <span class="status-indicator status-ativo"></span>
+                                        Agenda pública ativa
+                                    </label>
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm" onclick="toggleAgendaPublica()">
+                                    Aplicar Alteração
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card admin-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-clock text-primary me-2" style="font-size: 1.5rem;"></i>
+                                    <h5 class="card-title mb-0">Horários Públicos</h5>
+                                </div>
+                                <p class="card-text text-muted">Define os horários disponíveis para agendamento público.</p>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label small">Início:</label>
+                                        <input type="time" class="form-control form-control-sm" value="08:00" id="horarioInicioPublico">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small">Fim:</label>
+                                        <input type="time" class="form-control form-control-sm" value="18:00" id="horarioFimPublico">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm mt-2" onclick="salvarHorariosPublicos()">
+                                    Salvar Horários
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção 3: Dentistas na Agenda Pública -->
+        <div class="row mb-5">
+            <div class="col">
+                <h3 class="h4 mb-3">
+                    <i class="bi bi-person-badge me-2"></i>Dentistas na Agenda Pública
+                </h3>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Controle de Exposição Pública</h5>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="atualizarListaDentistas()">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Atualizar Lista
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Dentista</th>
+                                        <th>Especialidade</th>
+                                        <th>Status Geral</th>
+                                        <th>Exposição Pública</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaDentistas">
+                                    <!-- Dados carregados via JavaScript -->
+                                    <tr>
+                                        <td>
+                                            <i class="bi bi-person-circle me-2"></i>
+                                            Dr. João Silva
+                                        </td>
+                                        <td>Clínico Geral</td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>Ativo
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                                <label class="form-check-label small">Visível publicamente</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm">
+                                                <i class="bi bi-gear"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <i class="bi bi-person-circle me-2"></i>
+                                            Dra. Maria Santos
+                                        </td>
+                                        <td>Ortodontista</td>
+                                        <td>
+                                            <span class="badge bg-warning">
+                                                <i class="bi bi-pause-circle me-1"></i>Inativo
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" disabled>
+                                                <label class="form-check-label small text-muted">Indisponível</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm">
+                                                <i class="bi bi-gear"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção 4: Informações do Sistema -->
+        <div class="row">
+            <div class="col">
+                <h3 class="h4 mb-3">
+                    <i class="bi bi-info-circle me-2"></i>Informações do Sistema
+                </h3>
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="card admin-card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Status dos Serviços</h5>
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>Agenda Interna</span>
+                                        <span class="badge bg-success">Online</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>Agenda Pública</span>
+                                        <span class="badge bg-success">Online</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>Base de Dados</span>
+                                        <span class="badge bg-success">Conectado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card admin-card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Estatísticas</h5>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="border-end">
+                                            <h6 class="text-primary mb-0" id="totalDentistas">4</h6>
+                                            <small class="text-muted">Dentistas</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border-end">
+                                            <h6 class="text-success mb-0" id="dentistasAtivos">3</h6>
+                                            <small class="text-muted">Ativos</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="text-info mb-0" id="dentistasPublicos">2</h6>
+                                        <small class="text-muted">Públicos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação para Reset de Senhas -->
+    <div class="modal fade" id="resetAllModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Redefinição de Senhas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Atenção!</strong> Esta ação irá redefinir as senhas de todos os usuários padrão para seus valores iniciais.
+                    </div>
+                    <p>Tem certeza que deseja continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="@{/admin/sistema/redefinir-todas-senhas-padrao}" method="post">
+                        <button type="submit" class="btn btn-warning">Redefinir Todas as Senhas</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        // Funções JavaScript para interação
+        function verificarStatusUsuarios() {
+            fetch('/admin/sistema/status-usuarios-padrao', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Status verificado: ' + JSON.stringify(data.usuarios, null, 2));
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao verificar status dos usuários');
+            });
+        }
+
+        function toggleAgendaPublica() {
+            const checkbox = document.getElementById('agendaPublicaAtiva');
+            const ativa = checkbox.checked;
+            
+            // Aqui você implementaria a chamada para o backend
+            console.log('Agenda pública:', ativa ? 'Ativada' : 'Desativada');
+            alert('Configuração da agenda pública ' + (ativa ? 'ativada' : 'desativada') + ' com sucesso!');
+        }
+
+        function salvarHorariosPublicos() {
+            const inicio = document.getElementById('horarioInicioPublico').value;
+            const fim = document.getElementById('horarioFimPublico').value;
+            
+            // Aqui você implementaria a chamada para o backend
+            console.log('Horários salvos:', inicio, 'às', fim);
+            alert('Horários públicos salvos: ' + inicio + ' às ' + fim);
+        }
+
+        function atualizarListaDentistas() {
+            // Aqui você implementaria a chamada para o backend para atualizar a lista
+            console.log('Atualizando lista de dentistas...');
+            alert('Lista de dentistas atualizada!');
+        }
+
+        // Carregar dados iniciais
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aqui você carregaria os dados reais do backend
+            console.log('Página de ferramentas administrativas carregada');
+        });
+    </script>
+</body>
+</html>
