@@ -8,8 +8,6 @@ import com.caracore.cca.service.PacienteService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +26,7 @@ public class AgendamentoController {
 
     private static final Logger logger = LoggerFactory.getLogger(AgendamentoController.class);
     private final AgendamentoRepository repository;
+    private final PacienteService pacienteService;
     
     // Lista de dentistas para o dropdown
     private static final List<String> DENTISTAS = Arrays.asList(
@@ -37,15 +36,8 @@ public class AgendamentoController {
         "Dr. Roberto Pereira - Periodontista"
     );
     
-    @Autowired
-    private PacienteService pacienteService; // Utilizado apenas para autocomplete se implementarmos
-
-    public AgendamentoController(AgendamentoRepository repository) {
+    public AgendamentoController(AgendamentoRepository repository, PacienteService pacienteService) {
         this.repository = repository;
-    }
-    
-    // Setter para facilitar testes unitários
-    public void setPacienteService(PacienteService pacienteService) {
         this.pacienteService = pacienteService;
     }
 
@@ -154,9 +146,6 @@ public class AgendamentoController {
             // Atualiza ou cria o paciente com o telefone WhatsApp
             String nomePaciente = form.getPaciente();
             String telefoneWhatsapp = form.getTelefoneWhatsapp();
-            
-            // Limpa formatação do telefone antes de salvar (remove parênteses, espaços e hifens)
-            String telefoneFormatado = telefoneWhatsapp.replaceAll("[\\s()\\-]", "");
             
             // Busca o paciente pelo nome - esta parte deve ficar fora do try-catch para os testes funcionarem
             List<Paciente> pacientesEncontrados = pacienteService.buscarPorNome(nomePaciente);

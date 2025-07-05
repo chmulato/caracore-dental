@@ -17,6 +17,9 @@ ADD COLUMN IF NOT EXISTS data_atualizacao TIMESTAMP;
 
 -- Alterar tamanho da coluna observacao para comportar mais texto
 ALTER TABLE agendamento 
+RENAME COLUMN descricao TO observacao;
+
+ALTER TABLE agendamento 
 ALTER COLUMN observacao TYPE VARCHAR(1000);
 
 -- Alterar tamanho das colunas de texto
@@ -25,6 +28,9 @@ ALTER COLUMN paciente TYPE VARCHAR(100);
 
 ALTER TABLE agendamento 
 ALTER COLUMN dentista TYPE VARCHAR(100);
+
+ALTER TABLE agendamento
+ADD COLUMN IF NOT EXISTS status VARCHAR(20);
 
 ALTER TABLE agendamento 
 ALTER COLUMN status TYPE VARCHAR(20);

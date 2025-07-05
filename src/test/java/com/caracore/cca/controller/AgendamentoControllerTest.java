@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
@@ -19,11 +18,11 @@ import org.springframework.validation.BindingResult;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AgendamentoControllerTest {
-
     @Mock
     private AgendamentoRepository agendamentoRepository;
 
@@ -43,10 +41,8 @@ class AgendamentoControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // Manually set up the controller with mocks
-        controller = new AgendamentoController(agendamentoRepository);
-        // Manually inject pacienteService
-        controller.setPacienteService(pacienteService);
+        // Corrigido: passar os dois mocks necessários ao construtor
+        controller = new AgendamentoController(agendamentoRepository, pacienteService);
     }
 
     @Test
@@ -189,7 +185,7 @@ class AgendamentoControllerTest {
         AgendamentoForm form = new AgendamentoForm();
         form.setPaciente("Maria da Silva");
         form.setDentista("Dr. Teste");
-        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(10));
+        form.setDataHora(LocalDateTime.of(2025, 7, 7, 10, 0)); // Uma segunda-feira
         form.setTelefoneWhatsapp("(11) 98765-4321");
         form.setStatus("AGENDADO");
         form.setDuracaoMinutos(30);
@@ -233,7 +229,7 @@ class AgendamentoControllerTest {
         AgendamentoForm form = new AgendamentoForm();
         form.setPaciente("Novo Paciente");
         form.setDentista("Dr. Teste");
-        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(10));
+        form.setDataHora(LocalDateTime.of(2025, 7, 7, 10, 0)); // Uma segunda-feira
         form.setTelefoneWhatsapp("(11) 98765-4321");
         form.setStatus("AGENDADO");
         form.setDuracaoMinutos(30);
@@ -263,5 +259,31 @@ class AgendamentoControllerTest {
         
         // Verificar resultado
         assertThat(resultado).isEqualTo("redirect:/");
+    }
+    
+    @Test
+    @DisplayName("Deve retornar ao formulário com erro se a validação falhar")
+    void deveRetornarFormularioComErroSeDadosInvalidos() {
+        // Mock dos objetos necessários
+        Model model = mock(Model.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        AgendamentoForm form = new AgendamentoForm(); // Form com dados inválidos
+
+        // Simular erro de validação
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        // Executar método
+        String resultado = controller.agendar(form, bindingResult, model, null);
+
+        // Verificações
+        // Não deve salvar nem paciente nem agendamento
+        verify(pacienteService, times(0)).salvar(any(Paciente.class));
+        verify(agendamentoRepository, times(0)).save(any(Agendamento.class));
+        
+        // Deve adicionar a lista de dentistas de volta ao model
+        verify(model).addAttribute(eq("dentistas"), any(List.class));
+
+        // Deve retornar para a view do formulário
+        assertThat(resultado).isEqualTo("novo-agendamento");
     }
 }

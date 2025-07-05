@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Testes para o AgendamentoPublicoController
  */
-@WebMvcTest(controllers = AgendamentoPublicoTestController.class)
+@WebMvcTest(controllers = AgendamentoPublicoController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(MockThymeleafConfig.class)
 @TestPropertySource(properties = {
