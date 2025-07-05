@@ -1,31 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações do Sistema - Cara Core Agendamento</title>
-    
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/main.css">
-</head>
+<head th:replace="~{fragments/layout :: head('Configurações do Sistema')}"></head>
 <body>
-    <!-- Header -->
-    <div th:replace="fragments/layout :: header"></div>
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar('configuracoes')}"></nav>
     
-    <div class="container-fluid">
+    <!-- Main Content -->
+    <div class="container">
         <div class="row">
-            <!-- Sidebar -->
-            <div th:replace="fragments/layout :: sidebar"></div>
-            
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 main-content">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1><i class="bi bi-gear me-2"></i>Configurações do Sistema</h1>
-                </div>
+            <div class="col-12">
+                <div th:replace="~{fragments/layout :: page-header('Configurações do Sistema', '', '')}"></div>
                 
                 <!-- Configurações de Sistema -->
                 <div class="card mb-4">
@@ -170,8 +154,14 @@
         </div>
     </div>
     
-    <!-- Bootstrap JS -->
-    <script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    
+    <!-- Loading Overlay -->
+    <div th:replace="~{fragments/layout :: loading-overlay}"></div>
+    
+    <!-- Scripts -->
+    <div th:replace="~{fragments/layout :: scripts}"></div>
     
     <script>
         // Adicionar funcionalidade aos botões de salvar
