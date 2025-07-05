@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações do Sistema - Cara Core Agendamento</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <!-- Header -->
+    <div th:replace="fragments/layout :: header"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div th:replace="fragments/layout :: sidebar"></div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="bi bi-gear me-2"></i>Configurações do Sistema</h1>
+                </div>
+                
+                <!-- Configurações de Sistema -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-gear-fill me-2"></i>Configurações Gerais</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="bi bi-people me-2"></i>Usuários do Sistema</h6>
+                                        <p class="text-muted">Gerenciar usuários e permissões</p>
+                                        <a href="/usuarios" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-people me-1"></i>Gerenciar Usuários
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6><i class="bi bi-tools me-2"></i>Administração</h6>
+                                        <p class="text-muted">Ferramentas administrativas</p>
+                                        <a href="/admin/sistema" class="btn btn-secondary btn-sm">
+                                            <i class="bi bi-tools me-1"></i>Ferramentas Admin
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Configurações de Agendamento -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-calendar-week me-2"></i>Configurações de Agendamento</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="horarioInicio" class="form-label">Horário de Início</label>
+                                    <input type="time" class="form-control" id="horarioInicio" value="08:00">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="horarioFim" class="form-label">Horário de Fim</label>
+                                    <input type="time" class="form-control" id="horarioFim" value="18:00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="duracaoConsulta" class="form-label">Duração da Consulta (minutos)</label>
+                                    <input type="number" class="form-control" id="duracaoConsulta" value="30" min="15" max="120">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="intervaloConsultas" class="form-label">Intervalo entre Consultas (minutos)</label>
+                                    <input type="number" class="form-control" id="intervaloConsultas" value="5" min="0" max="60">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Salvar Configurações
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Configurações de Notificações -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-bell me-2"></i>Configurações de Notificações</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificacaoEmail" checked>
+                                    <label class="form-check-label" for="notificacaoEmail">
+                                        Notificações por Email
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificacaoSMS">
+                                    <label class="form-check-label" for="notificacaoSMS">
+                                        Notificações por SMS
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="lembreteConsulta" checked>
+                                    <label class="form-check-label" for="lembreteConsulta">
+                                        Lembrete de Consulta (24h antes)
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="confirmacaoAgendamento" checked>
+                                    <label class="form-check-label" for="confirmacaoAgendamento">
+                                        Confirmação de Agendamento
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Salvar Configurações
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informações do Sistema -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-info-circle me-2"></i>Informações do Sistema</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Versão:</strong> 1.0.0</p>
+                                <p><strong>Data de Instalação:</strong> 2025-07-05</p>
+                                <p><strong>Última Atualização:</strong> 2025-07-05</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Banco de Dados:</strong> PostgreSQL 16.9</p>
+                                <p><strong>Servidor:</strong> Apache Tomcat 10.1.24</p>
+                                <p><strong>Java Version:</strong> 21.0.6</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Adicionar funcionalidade aos botões de salvar
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            if (button.textContent.includes('Salvar Configurações')) {
+                button.addEventListener('click', function() {
+                    // Simular salvamento
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-circle me-1"></i>Salvo!';
+                    this.classList.add('btn-success');
+                    this.classList.remove('btn-primary');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-primary');
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

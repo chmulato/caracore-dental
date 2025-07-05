@@ -286,4 +286,47 @@ class AgendamentoControllerTest {
         // Deve retornar para a view do formulário
         assertThat(resultado).isEqualTo("novo-agendamento");
     }
+    
+    @Test
+    @DisplayName("Deve carregar página de novo agendamento através do endpoint /novo")
+    void deveCarregarPaginaNovoAgendamentoEndpointNovo() {
+        // Mock do model
+        Model model = mock(Model.class);
+        
+        // Executar método através do endpoint /novo
+        String resultado = controller.novoAgendamentoViewAlias(model, null);
+        
+        // Verificações
+        assertThat(resultado).isEqualTo("novo-agendamento");
+        
+        // Verificar que os atributos foram adicionados ao model
+        verify(model).addAttribute(eq("agendamentoForm"), any(AgendamentoForm.class));
+        verify(model).addAttribute(eq("dentistas"), any(List.class));
+    }
+    
+    @Test
+    @DisplayName("Deve carregar página de novo agendamento com dados do paciente através do endpoint /novo")
+    void deveCarregarPaginaNovoAgendamentoComPacienteEndpointNovo() {
+        // Mock do model
+        Model model = mock(Model.class);
+        String nomePaciente = "Maria da Silva";
+        
+        // Mock do paciente existente
+        Paciente paciente = new Paciente(nomePaciente, "maria@teste.com", "(11) 98765-4321");
+        when(pacienteService.buscarPorNome(eq(nomePaciente)))
+                .thenReturn(Collections.singletonList(paciente));
+        
+        // Executar método através do endpoint /novo com parâmetro de paciente
+        String resultado = controller.novoAgendamentoViewAlias(model, nomePaciente);
+        
+        // Verificações
+        assertThat(resultado).isEqualTo("novo-agendamento");
+        
+        // Verificar que o serviço foi chamado
+        verify(pacienteService).buscarPorNome(eq(nomePaciente));
+        
+        // Verificar que os atributos foram adicionados ao model
+        verify(model).addAttribute(eq("agendamentoForm"), any(AgendamentoForm.class));
+        verify(model).addAttribute(eq("dentistas"), any(List.class));
+    }
 }

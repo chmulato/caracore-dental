@@ -78,6 +78,12 @@ public class AgendamentoController {
         return "novo-agendamento";
     }
     
+    // Mapeamento adicional para compatibilidade com o menu
+    @GetMapping("/novo")
+    public String novoAgendamentoViewAlias(Model model, @RequestParam(required = false) String pacienteNome) {
+        return novoAgendamentoView(model, pacienteNome);
+    }
+    
     @GetMapping("/api/verificar-horario")
     @ResponseBody
     public Map<String, Object> verificarHorario(@RequestParam String dentista, @RequestParam String dataHora) {
