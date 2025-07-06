@@ -18,6 +18,7 @@
 12. `V12__add_nome_social_genero_paciente.sql` - **NOVO** - Adiciona nome social e gênero
 13. `V13__melhorias_agendamento.sql` - **NOVO** - Melhora estrutura de agendamento
 14. `V14__adicionar_exposicao_publica_dentista.sql` - **NOVO** - Controle de exposição pública
+15. `V15__add_data_nascimento_paciente.sql` - **NOVO** - Adiciona data de nascimento na tabela paciente
 
 ## Problemas Identificados
 
@@ -72,6 +73,12 @@
 - Adiciona campo `exposto_publicamente` na tabela `profissional`
 - Permite controlar visibilidade de dentistas na agenda pública
 - Inclui comentários explicativos
+
+### **V15 - Data de Nascimento** (05/07/2025)
+
+- Adiciona campo `data_nascimento` na tabela `paciente`
+- Permite melhor controle de idade e faixa etária
+- Inclui validações de formato e não nulo
 
 ## Soluções Implementadas em V10:
 
