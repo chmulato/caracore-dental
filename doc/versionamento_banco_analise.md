@@ -3,6 +3,7 @@
 ## Estado Atual (05/07/2025) - ATUALIZADO
 
 ### Scripts de Migração Flyway Identificados:
+
 1. `V1__inicial.sql` - Criação das tabelas principais
 2. `V2__dados_iniciais.sql` - Inserção de dados iniciais para MVP
 3. `V3__criar_tabela_usuario.sql` - Criação da tabela usuario (DUPLICADA)
@@ -46,19 +47,19 @@
 
 ## Evoluções Recentes (V11-V14)
 
-### ✅ **V11 - Campos LGPD** (02/07/2025)
+### **V11 - Campos LGPD** (02/07/2025)
 
 - Adiciona campos de consentimento LGPD na tabela `paciente`
 - Inclui controle de confirmação e data do consentimento
 - Cria índices para otimizar consultas de status
 
-### ✅ **V12 - Nome Social e Gênero** (02/07/2025)
+### **V12 - Nome Social e Gênero** (02/07/2025)
 
 - Atende Portaria nº 2.836/2011 do Ministério da Saúde
 - Adiciona campos `nome_social` e `genero` na tabela `paciente`
 - Inclui documentação e índices apropriados
 
-### ✅ **V13 - Melhorias Agendamento** (03/07/2025)
+### **V13 - Melhorias Agendamento** (03/07/2025)
 
 - Renomeia `descricao` para `observacao` (VARCHAR(1000))
 - Adiciona campos: `duracao_minutos`, `telefone_whatsapp`, `status`
@@ -66,7 +67,7 @@
 - Cria índices compostos para otimização de consultas
 - Adiciona documentação detalhada dos campos
 
-### ✅ **V14 - Controle Exposição Pública** (05/07/2025)
+### **V14 - Controle Exposição Pública** (05/07/2025)
 
 - Adiciona campo `exposto_publicamente` na tabela `profissional`
 - Permite controlar visibilidade de dentistas na agenda pública
@@ -74,25 +75,28 @@
 
 ## Soluções Implementadas em V10:
 
-### ✅ **Consolidação da Estrutura**
+### **Consolidação da Estrutura**
 
 - Padronização da coluna `role` para `VARCHAR(50)`
 - Remoção de registros duplicados
 - Criação da tabela `dentista` com estrutura completa
 
-### ✅ **Limpeza de Dados**
+### **Limpeza de Dados**
+
 - Remoção de duplicatas usando ROW_NUMBER()
 - Uso de `ON CONFLICT DO UPDATE` para evitar duplicações futuras
 - Migração de dados de `profissional` para `dentista`
 
-### ✅ **Verificação de Integridade**
+### **Verificação de Integridade**
+
 - Query final para verificar contagem de registros
 - Estrutura consistente entre todas as tabelas
 
 ## Recomendações para o Futuro:
 
 ### 1. **Padrão de Nomenclatura**
-```
+
+```markdown
 V{numero}__{acao}_{entidade}_{descricao}.sql
 Exemplos:
 - V11__create_table_consulta.sql
@@ -101,36 +105,39 @@ Exemplos:
 ```
 
 ### 2. **Separação de Responsabilidades**
+
 - **Estrutura**: Um script apenas para DDL (CREATE, ALTER, DROP)
 - **Dados**: Scripts separados para DML (INSERT, UPDATE, DELETE)
 - **Índices**: Scripts específicos para otimizações
 
 ### 3. **Ambiente de Teste**
+
 - Sempre testar migrações em ambiente de desenvolvimento
 - Usar transações quando possível
 - Documentar rollback procedures
 
 ### 4. **Controle de Versão**
+
 - Nunca modificar scripts já aplicados em produção
 - Usar apenas novos scripts para correções
 - Manter changelog atualizado
 
 ## Status Atual do Banco
 
-### ✅ **Estruturas Consolidadas** (V10)
+### **Estruturas Consolidadas** (V10)
 
 - Padronização da coluna `role` para `VARCHAR(50)`
 - Remoção de registros duplicados
 - Criação da tabela `dentista` com estrutura completa
 
-### ✅ **Funcionalidades Implementadas** (V11-V14)
+### **Funcionalidades Implementadas** (V11-V14)
 
 - **LGPD**: Campos de consentimento e controle de comunicação
 - **Inclusão Social**: Nome social e gênero conforme legislação
 - **Agendamento Avançado**: Status, duração, timestamps, WhatsApp
 - **Controle de Exposição**: Visibilidade pública de profissionais
 
-### ✅ **Qualidade e Performance**
+### **Qualidade e Performance**
 
 - Índices otimizados para consultas frequentes
 - Documentação completa dos campos
