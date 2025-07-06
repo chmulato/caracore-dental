@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.containsString;
 
 /**
  * Testes para o AgendamentoPublicoController
@@ -34,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(properties = {
     "spring.thymeleaf.prefix=classpath:/templates/",
-    "spring.thymeleaf.check-template-location=false"
+    "spring.thymeleaf.check-template-location=false",
+    "spring.profiles.active=test"
 })
 class AgendamentoPublicoControllerTest {
 
@@ -51,6 +53,9 @@ class AgendamentoPublicoControllerTest {
     private com.caracore.cca.service.RateLimitService rateLimitService;
     
     @MockBean
+    private com.caracore.cca.service.CaptchaService captchaService;
+    
+    @MockBean
     private UserActivityLogger userActivityLogger;
 
     private Agendamento agendamentoTeste;
@@ -65,6 +70,11 @@ class AgendamentoPublicoControllerTest {
         agendamentoTeste.setStatus("AGENDADO");
         agendamentoTeste.setObservacao("Consulta de rotina");
         agendamentoTeste.setDuracaoMinutos(30);
+        
+        // Configurar mocks padrão
+        when(rateLimitService.isAllowed(any())).thenReturn(true);
+        when(captchaService.isEnabled()).thenReturn(false); // Desabilitado por padrão nos testes
+        when(captchaService.validateCaptcha(any(), any())).thenReturn(true);
     }
 
     @Test
@@ -402,6 +412,107 @@ class AgendamentoPublicoControllerTest {
                 .andExpect(jsonPath("$.disponivel").value(false));
 
         verify(agendamentoService, times(1)).verificarConflitoHorario(eq(dentista), any(LocalDateTime.class), eq(null));
+    }
+
+    @Test
+    void testObterConfiguracoesRecaptcha() throws Exception {
+        // Arrange
+        when(captchaService.isEnabled()).thenReturn(true);
+        when(captchaService.getSiteKey()).thenReturn("test-site-key");
+
+        // Act & Assert
+        mockMvc.perform(get("/public/api/recaptcha-config"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.enabled").value(true))
+                .andExpect(jsonPath("$.siteKey").value("test-site-key"));
+    }
+
+    @Test
+    void testObterConfiguracoesRecaptchaDesabilitado() throws Exception {
+        // Arrange
+        when(captchaService.isEnabled()).thenReturn(false);
+        when(captchaService.getSiteKey()).thenReturn("");
+
+        // Act & Assert
+        mockMvc.perform(get("/public/api/recaptcha-config"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.enabled").value(false))
+                .andExpect(jsonPath("$.siteKey").value(""));
+    }
+
+    @Test
+    void testAgendarConsultaComCaptchaHabilitado() throws Exception {
+        // Arrange
+        when(captchaService.isEnabled()).thenReturn(true);
+        when(captchaService.validateCaptcha("valid-token", "127.0.0.1")).thenReturn(true);
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(List.of("Dr. Maria Santos"));
+        when(agendamentoService.salvar(any(Agendamento.class))).thenReturn(agendamentoTeste);
+
+        // Data futura em horário comercial (14h)
+        LocalDateTime dataFutura = LocalDateTime.now().plusDays(1).withHour(14).withMinute(30);
+
+        // Act & Assert
+        mockMvc.perform(post("/public/agendar")
+                .param("paciente", "João Silva")
+                .param("dentista", "Dr. Maria Santos")
+                .param("dataHora", dataFutura.toString())
+                .param("telefone", "(11) 99999-9999")
+                .param("captchaToken", "valid-token"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.TEXT_PLAIN))
+                .andExpect(content().string("Agendamento realizado com sucesso!"));
+
+        verify(captchaService).validateCaptcha("valid-token", "127.0.0.1");
+    }
+
+    @Test
+    void testAgendarConsultaComCaptchaInvalido() throws Exception {
+        // Arrange
+        when(captchaService.isEnabled()).thenReturn(true);
+        when(captchaService.validateCaptcha("invalid-token", "127.0.0.1")).thenReturn(false);
+
+        // Data futura em horário comercial (14h)
+        LocalDateTime dataFutura = LocalDateTime.now().plusDays(1).withHour(14).withMinute(30);
+
+        // Act & Assert
+        mockMvc.perform(post("/public/agendar")
+                .param("paciente", "João Silva")
+                .param("dentista", "Dr. Maria Santos")
+                .param("dataHora", dataFutura.toString())
+                .param("telefone", "(11) 99999-9999")
+                .param("captchaToken", "invalid-token"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.TEXT_PLAIN))
+                .andExpect(content().string(containsString("Captcha")))
+                .andExpect(content().string(containsString("lido")));
+
+        verify(captchaService).validateCaptcha("invalid-token", "127.0.0.1");
+        verify(agendamentoService, never()).salvar(any());
+    }
+
+    @Test
+    void testAgendarConsultaComCaptchaDesabilitado() throws Exception {
+        // Arrange
+        when(captchaService.isEnabled()).thenReturn(false);
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(List.of("Dr. Maria Santos"));
+        when(agendamentoService.salvar(any(Agendamento.class))).thenReturn(agendamentoTeste);
+
+        // Data futura em horário comercial (14h)
+        LocalDateTime dataFutura = LocalDateTime.now().plusDays(1).withHour(14).withMinute(30);
+
+        // Act & Assert
+        mockMvc.perform(post("/public/agendar")
+                .param("paciente", "João Silva")
+                .param("dentista", "Dr. Maria Santos")
+                .param("dataHora", dataFutura.toString())
+                .param("telefone", "(11) 99999-9999"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.TEXT_PLAIN))
+                .andExpect(content().string("Agendamento realizado com sucesso!"));
+
+        verify(captchaService, never()).validateCaptcha(any(), any());
     }
 
 }

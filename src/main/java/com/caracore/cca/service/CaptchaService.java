@@ -20,8 +20,14 @@ public class CaptchaService {
     @Value("${google.recaptcha.secret:}")
     private String recaptchaSecret;
     
+    @Value("${google.recaptcha.site-key:}")
+    private String recaptchaSiteKey;
+    
     @Value("${google.recaptcha.verify-url:https://www.google.com/recaptcha/api/siteverify}")
     private String recaptchaVerifyUrl;
+    
+    @Value("${google.recaptcha.enabled:false}")
+    private boolean recaptchaEnabled;
     
     private final RestTemplate restTemplate;
     
@@ -30,17 +36,32 @@ public class CaptchaService {
     }
     
     /**
+     * Verifica se o reCAPTCHA está habilitado
+     */
+    public boolean isEnabled() {
+        return recaptchaEnabled && recaptchaSecret != null && !recaptchaSecret.isEmpty();
+    }
+    
+    /**
+     * Retorna a chave pública do site para uso no frontend
+     */
+    public String getSiteKey() {
+        return recaptchaSiteKey;
+    }
+    
+    /**
      * Valida o token do reCAPTCHA
      */
     public boolean validateCaptcha(String captchaToken, String clientIp) {
+        // Se não estiver habilitado, retorna true (desenvolvimento)
+        if (!isEnabled()) {
+            logger.debug("reCAPTCHA desabilitado - validação pulada para IP: {}", clientIp);
+            return true;
+        }
+        
         if (captchaToken == null || captchaToken.isEmpty()) {
             logger.warn("Token de captcha vazio para IP: {}", clientIp);
             return false;
-        }
-        
-        if (recaptchaSecret == null || recaptchaSecret.isEmpty()) {
-            logger.warn("Chave secreta do reCAPTCHA não configurada - validação desabilitada");
-            return true; // Em desenvolvimento, pode retornar true
         }
         
         try {

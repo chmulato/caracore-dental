@@ -69,6 +69,14 @@ cca:
       secret: ${JWT_SECRET:your-homolog-jwt-secret-key}
       expiration: 86400000  # 24 horas
 
+# Configurações do reCAPTCHA para homologação
+recaptcha:
+  enabled: ${RECAPTCHA_ENABLED:true}  # Habilitado em homologação
+  site-key: ${RECAPTCHA_SITE_KEY}  # Deve ser configurado via variável de ambiente
+  secret-key: ${RECAPTCHA_SECRET_KEY}  # Deve ser configurado via variável de ambiente
+  verify-url: ${RECAPTCHA_VERIFY_URL:https://www.google.com/recaptcha/api/siteverify}
+  threshold: ${RECAPTCHA_THRESHOLD:0.5}  # Threshold para reCAPTCHA v3
+
 # Configurações do servidor para homologação
 server:
   port: ${SERVER_PORT:8080}

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento Online - Consultório Odontológico</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .captcha-container {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .security-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 1rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="form-container">
+            <div class="text-center mb-4">
+                <h2 class="text-primary">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Agendamento Online
+                </h2>
+                <p class="text-muted">Agende sua consulta de forma rápida e segura</p>
+            </div>
+            
+            <!-- Alertas -->
+            <div id="alertContainer"></div>
+            
+            <form id="agendamentoForm" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="paciente" class="form-label">
+                            <i class="bi bi-person me-1"></i>
+                            Nome Completo *
+                        </label>
+                        <input type="text" class="form-control" id="paciente" name="paciente" 
+                               placeholder="Seu nome completo" required maxlength="100">
+                        <div class="invalid-feedback">
+                            Por favor, informe seu nome completo.
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="telefone" class="form-label">
+                            <i class="bi bi-whatsapp me-1"></i>
+                            WhatsApp *
+                        </label>
+                        <input type="tel" class="form-control" id="telefone" name="telefone" 
+                               placeholder="(11) 99999-9999" required>
+                        <div class="invalid-feedback">
+                            Por favor, informe um número de WhatsApp válido.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        <i class="bi bi-envelope me-1"></i>
+                        E-mail
+                    </label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           placeholder="seu@email.com">
+                    <div class="form-text">Opcional - para confirmações por e-mail</div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="dentista" class="form-label">
+                            <i class="bi bi-person-badge me-1"></i>
+                            Dentista *
+                        </label>
+                        <select class="form-select" id="dentista" name="dentista" required>
+                            <option value="">Selecione o dentista</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Por favor, selecione um dentista.
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="dataHora" class="form-label">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Data e Hora *
+                        </label>
+                        <input type="datetime-local" class="form-control" id="dataHora" name="dataHora" required>
+                        <div class="invalid-feedback">
+                            Por favor, selecione uma data e hora.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="observacoes" class="form-label">
+                        <i class="bi bi-chat-text me-1"></i>
+                        Observações
+                    </label>
+                    <textarea class="form-control" id="observacoes" name="observacoes" 
+                              rows="3" placeholder="Informações adicionais (opcional)" maxlength="500"></textarea>
+                    <div class="form-text">Máximo 500 caracteres</div>
+                </div>
+                
+                <!-- reCAPTCHA Container -->
+                <div class="captcha-container" id="captchaContainer">
+                    <div id="recaptcha-element"></div>
+                </div>
+                
+                <!-- Botão de Envio -->
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg btn-submit" id="submitBtn">
+                        <span class="loading-spinner spinner-border spinner-border-sm me-2" role="status"></span>
+                        <i class="bi bi-calendar-plus me-2"></i>
+                        Agendar Consulta
+                    </button>
+                </div>
+                
+                <!-- Informações de Segurança -->
+                <div class="security-info text-center">
+                    <i class="bi bi-shield-check text-success me-1"></i>
+                    <small>
+                        Seus dados são protegidos e utilizados apenas para fins médicos e administrativos.
+                        <br>
+                        <strong>Rate Limiting:</strong> Máximo 5 tentativas por minuto.
+                        <span id="captchaStatus"></span>
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script Principal -->
+    <script>
+        class AgendamentoOnline {
+            constructor() {
+                this.recaptchaConfig = null;
+                this.recaptchaWidget = null;
+                this.init();
+            }
+            
+            async init() {
+                await this.loadRecaptchaConfig();
+                await this.loadDentistas();
+                this.setupEventListeners();
+                this.setupFormValidation();
+                
+                if (this.recaptchaConfig.enabled) {
+                    this.loadRecaptchaScript();
+                }
+            }
+            
+            async loadRecaptchaConfig() {
+                try {
+                    const response = await fetch('/public/api/recaptcha-config');
+                    this.recaptchaConfig = await response.json();
+                    
+                    const statusElement = document.getElementById('captchaStatus');
+                    if (this.recaptchaConfig.enabled) {
+                        statusElement.innerHTML = '<br><strong>reCAPTCHA:</strong> Habilitado para proteção adicional.';
+                    } else {
+                        statusElement.innerHTML = '<br><strong>reCAPTCHA:</strong> Desabilitado (modo desenvolvimento).';
+                        document.getElementById('captchaContainer').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar configurações do reCAPTCHA:', error);
+                    this.recaptchaConfig = { enabled: false };
+                }
+            }
+            
+            async loadDentistas() {
+                try {
+                    const response = await fetch('/public/api/dentistas');
+                    const dentistas = await response.json();
+                    
+                    const select = document.getElementById('dentista');
+                    dentistas.forEach(dentista => {
+                        const option = document.createElement('option');
+                        option.value = dentista;
+                        option.textContent = dentista;
+                        select.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Erro ao carregar dentistas:', error);
+                    this.showAlert('Erro ao carregar lista de dentistas', 'danger');
+                }
+            }
+            
+            loadRecaptchaScript() {
+                const script = document.createElement('script');
+                script.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaReady&render=explicit';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+                
+                // Callback global para quando o reCAPTCHA estiver pronto
+                window.onRecaptchaReady = () => {
+                    this.recaptchaWidget = grecaptcha.render('recaptcha-element', {
+                        sitekey: this.recaptchaConfig.siteKey,
+                        callback: this.onRecaptchaCallback.bind(this),
+                        'expired-callback': this.onRecaptchaExpired.bind(this)
+                    });
+                };
+            }
+            
+            onRecaptchaCallback(response) {
+                console.log('reCAPTCHA resolvido:', response);
+                document.getElementById('submitBtn').disabled = false;
+            }
+            
+            onRecaptchaExpired() {
+                console.log('reCAPTCHA expirado');
+                document.getElementById('submitBtn').disabled = true;
+            }
+            
+            setupEventListeners() {
+                document.getElementById('agendamentoForm').addEventListener('submit', this.handleSubmit.bind(this));
+                
+                // Máscara para telefone
+                document.getElementById('telefone').addEventListener('input', this.formatPhone);
+                
+                // Validação em tempo real
+                document.querySelectorAll('.form-control, .form-select').forEach(input => {
+                    input.addEventListener('blur', () => this.validateField(input));
+                });
+            }
+            
+            setupFormValidation() {
+                // Configurar data mínima (hoje)
+                const today = new Date();
+                const minDate = today.toISOString().slice(0, 16);
+                document.getElementById('dataHora').min = minDate;
+            }
+            
+            formatPhone(event) {
+                let value = event.target.value.replace(/\D/g, '');
+                if (value.length <= 10) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                } else {
+                    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                }
+                event.target.value = value;
+            }
+            
+            validateField(field) {
+                if (field.checkValidity()) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                } else {
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                }
+            }
+            
+            async handleSubmit(event) {
+                event.preventDefault();
+                
+                const form = event.target;
+                const submitBtn = document.getElementById('submitBtn');
+                const spinner = submitBtn.querySelector('.loading-spinner');
+                
+                // Validar formulário
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                    form.classList.add('was-validated');
+                    return;
+                }
+                
+                // Desabilitar botão e mostrar loading
+                submitBtn.disabled = true;
+                spinner.style.display = 'inline-block';
+                
+                try {
+                    const formData = new FormData(form);
+                    
+                    // Adicionar token do reCAPTCHA se habilitado
+                    if (this.recaptchaConfig.enabled && this.recaptchaWidget !== null) {
+                        const captchaResponse = grecaptcha.getResponse(this.recaptchaWidget);
+                        if (!captchaResponse) {
+                            throw new Error('Por favor, complete o reCAPTCHA');
+                        }
+                        formData.append('captchaToken', captchaResponse);
+                    }
+                    
+                    const response = await fetch('/public/agendar', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.text();
+                    
+                    if (response.ok) {
+                        this.showAlert('Agendamento realizado com sucesso! Entraremos em contato para confirmação.', 'success');
+                        form.reset();
+                        form.classList.remove('was-validated');
+                        
+                        // Reset reCAPTCHA
+                        if (this.recaptchaConfig.enabled && this.recaptchaWidget !== null) {
+                            grecaptcha.reset(this.recaptchaWidget);
+                        }
+                    } else {
+                        throw new Error(result || 'Erro ao processar agendamento');
+                    }
+                } catch (error) {
+                    console.error('Erro ao agendar:', error);
+                    this.showAlert(error.message || 'Erro ao processar agendamento', 'danger');
+                    
+                    // Reset reCAPTCHA em caso de erro
+                    if (this.recaptchaConfig.enabled && this.recaptchaWidget !== null) {
+                        grecaptcha.reset(this.recaptchaWidget);
+                    }
+                } finally {
+                    // Reabilitar botão e esconder loading
+                    submitBtn.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            }
+            
+            showAlert(message, type) {
+                const alertContainer = document.getElementById('alertContainer');
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-dismissible fade show`;
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto-remover após 5 segundos
+                setTimeout(() => {
+                    if (alert.parentElement) {
+                        alert.remove();
+                    }
+                }, 5000);
+            }
+        }
+        
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            new AgendamentoOnline();
+        });
+    </script>
+</body>
+</html>

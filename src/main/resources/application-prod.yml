@@ -94,6 +94,14 @@ cca:
     schedule: "0 2 * * *"  # Todo dia às 2h
     retention-days: 30
 
+# Configurações do reCAPTCHA para produção
+recaptcha:
+  enabled: ${RECAPTCHA_ENABLED:true}  # Habilitado obrigatoriamente em produção
+  site-key: ${RECAPTCHA_SITE_KEY}  # OBRIGATÓRIO via variável de ambiente
+  secret-key: ${RECAPTCHA_SECRET_KEY}  # OBRIGATÓRIO via variável de ambiente
+  verify-url: ${RECAPTCHA_VERIFY_URL:https://www.google.com/recaptcha/api/siteverify}
+  threshold: ${RECAPTCHA_THRESHOLD:0.7}  # Threshold mais restritivo para produção
+
 # Configurações do servidor otimizadas para produção
 server:
   port: ${SERVER_PORT:8080}
