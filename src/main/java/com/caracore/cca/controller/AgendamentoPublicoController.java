@@ -396,13 +396,10 @@ public class AgendamentoPublicoController {
     /**
      * Endpoint de teste simples para debug
      */
-    @PostMapping(value = "/public/test-simple", produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping("/public/test-simple")
     @ResponseBody
     public String testeSimpleDebug() {
-        logger.info("=== TESTE SIMPLE DEBUG EXECUTADO ===");
-        String response = "Teste executado com sucesso!";
-        logger.info("Retornando resposta: {}", response);
-        return response;
+        return "Teste executado com sucesso!";
     }
     
     /**
@@ -437,7 +434,11 @@ public class AgendamentoPublicoController {
         
         try {
             // 1. Validação e sanitização básica (primeiro para testes)
+            logger.info("DEBUG: Validando input - paciente: '{}', dentista: '{}', dataHora: '{}', telefone: '{}'", 
+                       paciente, dentista, dataHora, telefone);
             ValidationResult validation = validateAndSanitizeInput(paciente, dentista, dataHora, telefone);
+            logger.info("DEBUG: Resultado da validação - válido: {}, mensagem: '{}'", 
+                       validation.isValid(), validation.getErrorMessage());
             if (!validation.isValid()) {
                 logger.warn("Dados inválidos do IP: {} - {}", clientIp, validation.getErrorMessage());
                 return ResponseEntity.badRequest()
@@ -524,7 +525,8 @@ public class AgendamentoPublicoController {
             return xrHeader.trim();
         }
         
-        return request.getRemoteAddr();
+        String remoteAddr = request.getRemoteAddr();
+        return remoteAddr != null ? remoteAddr : "127.0.0.1";
     }
     
     /**
