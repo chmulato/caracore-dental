@@ -108,7 +108,7 @@ public class UsuarioControllerTest {
     @WithMockUser(roles = {"DENTIST"})
     public void deveNegarAcessoAListaDeUsuariosParaUsuarioNaoAdmin() throws Exception {
         mockMvc.perform(get("/usuarios"))
-                .andExpect(status().isOk()); // 200 devido ao CustomAccessDeniedHandler que redireciona para a página de acesso negado
+                .andExpect(status().isForbidden()); // 403 - Usuário autenticado mas sem permissão para acessar
     }
 
     @Test
