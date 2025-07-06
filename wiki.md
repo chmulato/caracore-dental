@@ -22,6 +22,13 @@ Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a docum
       - [Dados Armazenados](#dados-armazenados)
       - [Portaria nº 2.836/2011 - Ministério da Saúde](#portaria-nº-28362011---ministério-da-saúde)
       - [Sistema de Consentimento LGPD](#sistema-de-consentimento-lgpd)
+  - [Índice](#índice-1)
+  - [Visão Geral do Sistema](#visão-geral-do-sistema-1)
+    - [Tecnologias Utilizadas](#tecnologias-utilizadas-1)
+    - [Arquitetura](#arquitetura-1)
+  - [Instalação e Configuração](#instalação-e-configuração-1)
+    - [Pré-requisitos](#pré-requisitos-1)
+    - [Passos para Instalação](#passos-para-instalação-1)
     - [Configuração para Produção](#configuração-para-produção)
   - [Funcionalidades Principais](#funcionalidades-principais-2)
     - [Agendamento de Consultas](#agendamento-de-consultas)
@@ -44,8 +51,8 @@ Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a docum
       - [3. **GET /public/api/horarios-disponiveis** - Horários Disponíveis](#3-get-publicapihorarios-disponiveis---horários-disponíveis)
       - [4. **GET /public/test-simple** - Teste de Conectividade](#4-get-publictest-simple---teste-de-conectividade)
     - [Estratégias de Segurança](#estratégias-de-segurança)
-      - [🔒 **Rate Limiting**](#-rate-limiting)
-      - [🤖 **Proteção reCAPTCHA**](#-proteção-recaptcha)
+      - [**Rate Limiting**](#rate-limiting)
+      - [**Proteção reCAPTCHA**](#proteção-recaptcha)
       - [🛡️ **Validação e Sanitização**](#️-validação-e-sanitização)
       - [📝 **Logs e Auditoria**](#-logs-e-auditoria)
       - [🔐 **Headers de Segurança**](#-headers-de-segurança)
@@ -132,9 +139,10 @@ src/main/
 ### Passos para Instalação
 
 1. Clone o repositório:
-   ```bash
-   git clone https://github.com/chmulato/cara-core_cca.git
-   ```
+
+```bash
+git clone https://github.com/chmulato/cara-core_cca.git
+```
 
 ---
 
@@ -232,6 +240,7 @@ O sistema implementa integralmente os direitos garantidos pela Portaria nº 2.83
   - **Prefere não informar**
 
 **Interface do Usuário:**
+
 ```html
 <!-- Nome Social -->
 <div class="mb-3">
@@ -287,6 +296,7 @@ O formulário inclui uma seção educativa sobre a legislação:
 ```
 
 **Exibição na Lista de Pacientes:**
+
 ```html
 <td>
     <div>
@@ -307,12 +317,14 @@ O formulário inclui uma seção educativa sobre a legislação:
 O sistema implementa um controle rigoroso de consentimento LGPD conforme exigido pela Lei Geral de Proteção de Dados:
 
 **Funcionalidades:**
+
 - **Envio via WhatsApp**: Mensagem padrão de consentimento enviada automaticamente
 - **Controle de Status**: Rastreamento de envio e confirmação
 - **Data/Hora**: Registro temporal de todos os eventos
 - **Validação**: Impedimento de processamento sem consentimento adequado
 
 **Fluxo do Processo:**
+
 1. **Cadastro**: WhatsApp obrigatório no formulário do paciente
 2. **Envio**: Clique no botão "Enviar Consentimento LGPD" 
 3. **WhatsApp**: Abre mensagem padrão com termos LGPD
@@ -320,23 +332,26 @@ O sistema implementa um controle rigoroso de consentimento LGPD conforme exigido
 5. **Compliance**: Sistema bloqueia ações sem consentimento
 
 **Mensagem Padrão LGPD:**
-```
-Olá [Nome]! 📋
+
+```markdown
+Olá [Nome]!
 
 Este é o consultório Cara Core Agendamento.
 
 Conforme a Lei Geral de Proteção de Dados (LGPD), solicitamos seu consentimento para:
 
-✅ Armazenar seus dados pessoais (nome, telefone, email)
-✅ Utilizar seus dados para agendamentos e comunicações  
-✅ Enviar lembretes de consultas via WhatsApp
+Armazenar seus dados pessoais (nome, telefone, email)
+Utilizar seus dados para agendamentos e comunicações  
+Enviar lembretes de consultas via WhatsApp
 
 Seus dados são protegidos e utilizados apenas para fins médicos e administrativos.
 
 Por favor, responda "ACEITO" para confirmar seu consentimento.
 
-Obrigado! 🦷
-```sde a instalação até os detalhes técnicos de cada funcionalidade.
+Obrigado!
+```
+
+de a instalação até os detalhes técnicos de cada funcionalidade.
 
 ## Índice
 
@@ -348,29 +363,74 @@ Obrigado! 🦷
   - [Instalação e Configuração](#instalação-e-configuração)
     - [Pré-requisitos](#pré-requisitos)
     - [Passos para Instalação](#passos-para-instalação)
-    - [Configuração para Produção](#configuração-para-produção)
   - [Funcionalidades Principais](#funcionalidades-principais)
     - [Gestão de Dentistas](#gestão-de-dentistas)
+      - [Funcionalidades Principais](#funcionalidades-principais-1)
       - [Cadastro e Edição](#cadastro-e-edição)
       - [Busca e Filtros](#busca-e-filtros)
       - [Controle de Status](#controle-de-status)
     - [Gestão de Pacientes](#gestão-de-pacientes)
       - [Dados Armazenados](#dados-armazenados)
+      - [Portaria nº 2.836/2011 - Ministério da Saúde](#portaria-nº-28362011---ministério-da-saúde)
+      - [Sistema de Consentimento LGPD](#sistema-de-consentimento-lgpd)
+  - [Índice](#índice-1)
+  - [Visão Geral do Sistema](#visão-geral-do-sistema-1)
+    - [Tecnologias Utilizadas](#tecnologias-utilizadas-1)
+    - [Arquitetura](#arquitetura-1)
+  - [Instalação e Configuração](#instalação-e-configuração-1)
+    - [Pré-requisitos](#pré-requisitos-1)
+    - [Passos para Instalação](#passos-para-instalação-1)
+    - [Configuração para Produção](#configuração-para-produção)
+  - [Funcionalidades Principais](#funcionalidades-principais-2)
     - [Agendamento de Consultas](#agendamento-de-consultas)
+      - [Sistema de Consultas Implementado](#sistema-de-consultas-implementado)
+      - [Controle de Acesso por Perfil](#controle-de-acesso-por-perfil)
       - [Fluxo de Agendamento](#fluxo-de-agendamento)
-      - [Validações](#validações)
+      - [Validações Implementadas](#validações-implementadas)
+    - [Gestão de Pacientes](#gestão-de-pacientes-1)
+      - [Dados Armazenados](#dados-armazenados-1)
     - [Integração com WhatsApp](#integração-com-whatsapp)
       - [Funcionalidades Implementadas](#funcionalidades-implementadas)
       - [Benefícios](#benefícios)
       - [Como utilizar](#como-utilizar)
       - [Código de Exemplo](#código-de-exemplo)
-  - [Versionamento do Banco de Dados](#versionamento-do-banco-de-dados)
+  - [Endpoints Públicos de Agendamento](#endpoints-públicos-de-agendamento)
+    - [Visão Geral](#visão-geral)
+    - [Endpoints Implementados](#endpoints-implementados)
+      - [1. **POST /public/agendar** - Agendamento Online](#1-post-publicagendar---agendamento-online)
+      - [2. **GET /public/api/dentistas** - Lista de Dentistas](#2-get-publicapidentistas---lista-de-dentistas)
+      - [3. **GET /public/api/horarios-disponiveis** - Horários Disponíveis](#3-get-publicapihorarios-disponiveis---horários-disponíveis)
+      - [4. **GET /public/test-simple** - Teste de Conectividade](#4-get-publictest-simple---teste-de-conectividade)
+    - [Estratégias de Segurança](#estratégias-de-segurança)
+      - [**Rate Limiting**](#rate-limiting)
+      - [**Proteção reCAPTCHA**](#proteção-recaptcha)
+      - [🛡️ **Validação e Sanitização**](#️-validação-e-sanitização)
+      - [📝 **Logs e Auditoria**](#-logs-e-auditoria)
+      - [🔐 **Headers de Segurança**](#-headers-de-segurança)
+    - [Exemplos de Uso](#exemplos-de-uso)
+      - [Exemplo JavaScript (Frontend)](#exemplo-javascript-frontend)
+      - [Exemplo cURL (Testes)](#exemplo-curl-testes)
+    - [Validação e Sanitização](#validação-e-sanitização)
+      - [Validações Implementadas](#validações-implementadas-1)
+      - [Tratamento de Erros](#tratamento-de-erros)
+  - [Compliance Legal e Regulamentações](#compliance-legal-e-regulamentações)
     - [Flyway Migrations](#flyway-migrations)
+      - [Exemplo de Structure:](#exemplo-de-structure)
     - [Scripts Consolidados](#scripts-consolidados)
     - [Boas Práticas](#boas-práticas)
+      - [Comandos Úteis:](#comandos-úteis)
   - [Testes e Qualidade](#testes-e-qualidade)
     - [Estrutura de Testes](#estrutura-de-testes)
+    - [Testes Unitários de Agendamentos](#testes-unitários-de-agendamentos)
+      - [**AgendamentoServiceTest (19 testes)**](#agendamentoservicetest-19-testes)
+      - [**ConsultasControllerTest (18 testes)**](#consultascontrollertest-18-testes)
     - [Configuração de Mocks](#configuração-de-mocks)
+      - [Tipos de Teste Implementados:](#tipos-de-teste-implementados)
+      - [Execução de Testes:](#execução-de-testes)
+    - [Testes de Endpoints Públicos](#testes-de-endpoints-públicos)
+      - [✅ **AgendamentoPublicoControllerTest**](#-agendamentopublicocontrollertest)
+      - [Exemplo de Teste Completo:](#exemplo-de-teste-completo)
+      - [Cobertura de Código:](#cobertura-de-código)
   - [FAQ e Solução de Problemas](#faq-e-solução-de-problemas)
     - [Perguntas Frequentes](#perguntas-frequentes)
     - [Problemas Comuns](#problemas-comuns)
@@ -378,6 +438,8 @@ Obrigado! 🦷
     - [Como Contribuir](#como-contribuir)
     - [Padrões de Código](#padrões-de-código)
     - [Próximos Passos](#próximos-passos)
+      - [Funcionalidades Implementadas Recentemente (Julho 2025)](#funcionalidades-implementadas-recentemente-julho-2025)
+      - [Próximas Funcionalidades Planejadas (Q4 2025)](#próximas-funcionalidades-planejadas-q4-2025)
 
 ---
 
@@ -397,7 +459,7 @@ O Cara Core Agendamento (CCA) é uma solução completa para gestão de agendame
 
 O sistema segue o padrão MVC (Model-View-Controller) com a seguinte estrutura:
 
-```
+```markdown
 src/main/
 ├── java/com/caracore/cca/
 │   ├── config/             # Configurações Spring
@@ -427,20 +489,23 @@ src/main/
 ### Passos para Instalação
 
 1. Clone o repositório:
-   ```bash
-   git clone https://github.com/chmulato/cara-core_cca.git
-   cd cara-core_cca
-   ```
+
+```bash
+git clone https://github.com/chmulato/cara-core_cca.git
+cd cara-core_cca
+```
 
 2. Inicie o banco de dados:
-   ```bash
-   docker-compose up -d
-   ```
+
+```bash
+docker-compose up -d
+```
 
 3. Compile e execute a aplicação:
-   ```bash
-   mvn clean spring-boot:run
-   ```
+
+```bash
+mvn clean spring-boot:run
+```
 
 4. Acesse o sistema em: [http://localhost:8080](http://localhost:8080)
 
@@ -466,19 +531,22 @@ O sistema oferece uma gestão completa de agendamentos com funcionalidades avan�
 
 #### Sistema de Consultas Implementado
 
-**✅ CRUD Completo:**
-- ✅ **Criação** de novos agendamentos com validações
-- ✅ **Visualização** com filtros por status, data e dentista
-- ✅ **Edição** e reagendamento com histórico
-- ✅ **Exclusão** controlada por perfil de acesso
+**CRUD Completo:**
 
-**✅ Controle de Status:**
-- 🟡 **Agendado** - Consulta marcada
-- 🟢 **Confirmado** - Paciente confirmou presença
-- 🔵 **Realizado** - Consulta foi realizada
-- 🔴 **Cancelado** - Consulta cancelada com motivo
+- **Criação** de novos agendamentos com validações
+- **Visualização** com filtros por status, data e dentista
+- **Edição** e reagendamento com histórico
+- **Exclusão** controlada por perfil de acesso
 
-**✅ Funcionalidades Avançadas:**
+**Controle de Status:**
+
+- **Agendado** - Consulta marcada
+- **Confirmado** - Paciente confirmou presença
+- **Realizado** - Consulta foi realizada
+- **Cancelado** - Consulta cancelada com motivo
+
+**Funcionalidades Avançadas:**
+
 - **Detecção de Conflitos:** Verificação automática de horários ocupados
 - **Reagendamento:** Alteração de data/hora com notificação automática
 - **Dashboard:** Visão geral com métricas e filtros
@@ -486,22 +554,25 @@ O sistema oferece uma gestão completa de agendamentos com funcionalidades avan�
 
 #### Controle de Acesso por Perfil
 
-**👤 ADMIN (Administrador):**
-- ✅ Acesso completo: visualizar, criar, editar, cancelar, excluir
-- ✅ Dashboard com métricas completas
-- ✅ Relatórios e estatísticas
+**ADMIN (Administrador):**
 
-**👩‍💼 RECEPTIONIST (Recepcionista):**
-- ✅ Visualizar, criar, editar e cancelar agendamentos
-- ✅ Reagendar consultas
-- ✅ Confirmar presença de pacientes
-- ❌ Não pode excluir registros
+- Acesso completo: visualizar, criar, editar, cancelar, excluir
+- Dashboard com métricas completas
+- Relatórios e estatísticas
 
-**👨‍⚕️ DENTIST (Dentista):**
-- ✅ Visualizar agendamentos próprios
-- ✅ Marcar consultas como realizadas
-- ✅ Dashboard de suas consultas
-- ❌ Não pode criar novos agendamentos
+**RECEPTIONIST (Recepcionista):**
+
+- Visualizar, criar, editar e cancelar agendamentos
+- Reagendar consultas
+- Confirmar presença de pacientes
+- Não pode excluir registros
+
+**DENTIST (Dentista):**
+
+- Visualizar agendamentos próprios
+- Marcar consultas como realizadas
+- Dashboard de suas consultas
+- Não pode criar novos agendamentos
 
 #### Fluxo de Agendamento
 
@@ -514,11 +585,11 @@ O sistema oferece uma gestão completa de agendamentos com funcionalidades avan�
 
 #### Validações Implementadas
 
-- ✅ Verificação de disponibilidade de horário
-- ✅ Detecção de conflitos com outros agendamentos
-- ✅ Validação de dados obrigatórios
-- ✅ Controle de acesso por perfil
-- ✅ Formato correto de telefone WhatsApp
+- Verificação de disponibilidade de horário
+- Detecção de conflitos com outros agendamentos
+- Validação de dados obrigatórios
+- Controle de acesso por perfil
+- Formato correto de telefone WhatsApp
 
 ### Gestão de Pacientes
 
@@ -586,17 +657,19 @@ O sistema possui uma API pública segura para permitir agendamentos online diret
 
 Os endpoints públicos foram desenvolvidos seguindo os princípios de **Security by Design**, implementando múltiplas camadas de proteção contra ataques comuns como CSRF, XSS, SQL Injection, e ataques de força bruta.
 
-**✅ Funcionalidades Implementadas:**
-- 🔒 **Rate Limiting**: Proteção contra ataques de força bruta
-- 🛡️ **Validação Rigorosa**: Sanitização de entrada em todos os campos
-- 📝 **Logs Detalhados**: Auditoria completa de todas as requisições
-- 🔐 **Headers de Segurança**: Proteção contra XSS e outros ataques
-- 📊 **Monitoramento**: Métricas de uso e detecção de anomalias
+**Funcionalidades Implementadas:**
+
+- **Rate Limiting**: Proteção contra ataques de força bruta
+- **Validação Rigorosa**: Sanitização de entrada em todos os campos
+- **Logs Detalhados**: Auditoria completa de todas as requisições
+- **Headers de Segurança**: Proteção contra XSS e outros ataques
+- **Monitoramento**: Métricas de uso e detecção de anomalias
 - ⚡ **Performance**: Respostas otimizadas com cache adequado
 
 ### Endpoints Implementados
 
 #### 1. **POST /public/agendar** - Agendamento Online
+
 Endpoint principal para criação de agendamentos por pacientes:
 
 ```http
@@ -615,6 +688,7 @@ Content-Type: application/json
 ```
 
 **Resposta de Sucesso:**
+
 ```json
 {
   "success": true,
@@ -627,6 +701,7 @@ Content-Type: application/json
 ```
 
 #### 2. **GET /public/api/dentistas** - Lista de Dentistas
+
 Retorna dentistas disponíveis para agendamento:
 
 ```http
@@ -634,6 +709,7 @@ GET /public/api/dentistas
 ```
 
 **Resposta:**
+
 ```json
 {
   "success": true,
@@ -655,6 +731,7 @@ GET /public/api/dentistas
 ```
 
 #### 3. **GET /public/api/horarios-disponiveis** - Horários Disponíveis
+
 Consulta horários livres para agendamento:
 
 ```http
@@ -662,6 +739,7 @@ GET /public/api/horarios-disponiveis?dentistaId=1&data=2025-07-15
 ```
 
 **Resposta:**
+
 ```json
 {
   "success": true,
@@ -674,6 +752,7 @@ GET /public/api/horarios-disponiveis?dentistaId=1&data=2025-07-15
 ```
 
 #### 4. **GET /public/test-simple** - Teste de Conectividade
+
 Endpoint de teste para verificar disponibilidade da API:
 
 ```http
@@ -681,6 +760,7 @@ GET /public/test-simple
 ```
 
 **Resposta:**
+
 ```json
 {
   "status": "online",
@@ -691,7 +771,7 @@ GET /public/test-simple
 
 ### Estratégias de Segurança
 
-#### 🔒 **Rate Limiting**
+#### **Rate Limiting**
 Implementado controle de taxa de requisições para prevenir ataques:
 
 ```java
@@ -707,11 +787,13 @@ private ResponseEntity<?> handleRateLimit(AgendamentoRequest request, Exception 
 ```
 
 **Configuração:**
+
 - **Limite**: 10 requisições por minuto por IP
 - **Janela**: 60 segundos
 - **Fallback**: Resposta HTTP 429 (Too Many Requests)
 
-#### 🤖 **Proteção reCAPTCHA**
+#### **Proteção reCAPTCHA**
+
 Implementado controle de bot e spam através do Google reCAPTCHA v2/v3:
 
 ```java
@@ -745,6 +827,7 @@ public class CaptchaService {
 ```
 
 **Configuração:**
+
 - **Tipo**: reCAPTCHA v2 (checkbox) ou v3 (invisible)
 - **Validação**: Server-side obrigatória
 - **Fallback**: Quando desabilitado, permite acesso normal
@@ -753,6 +836,7 @@ public class CaptchaService {
 **Configuração nos arquivos de ambiente:**
 
 **application-local.yml:**
+
 ```yaml
 recaptcha:
   enabled: false  # Desabilitado para desenvolvimento local
@@ -762,6 +846,7 @@ recaptcha:
 ```
 
 **application-dev.yml:**
+
 ```yaml
 recaptcha:
   enabled: true
@@ -771,6 +856,7 @@ recaptcha:
 ```
 
 **application-homolog.yml / application-prod.yml:**
+
 ```yaml
 recaptcha:
   enabled: true

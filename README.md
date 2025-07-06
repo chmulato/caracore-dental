@@ -551,7 +551,7 @@ src/main/
 
 O projeto inclui testes abrangentes para todos os componentes principais:
 
-```
+```markdown
 src/test/
 ├── java/com/caracore/cca/
 │   ├── config/                     # Configurações de teste
@@ -588,20 +588,22 @@ O projeto mantém alta qualidade através de uma suíte abrangente de testes aut
 
 ### **Cobertura de Testes**
 
-✅ **Testes Unitários:**
+**Testes Unitários:**
 - **Modelos (Entities):** Validação de campos, constraints e comportamentos
 - **Repositórios:** Testes de queries personalizadas e operações CRUD
 - **Serviços:** Lógica de negócio e regras de validação
 - **Controladores:** Endpoints REST e responses HTTP
 
-✅ **Testes de Integração:**
+
+**Testes de Integração:**
 - **Spring Boot Test:** Testes com contexto completo da aplicação
+
 - **@WebMvcTest:** Testes focados na camada web
 - **@DataJpaTest:** Testes específicos da camada de persistência
 
 ### **Estrutura de Testes**
 
-```
+```markdown
 src/test/java/
 └── com/caracore/cca/
     ├── model/
@@ -625,6 +627,7 @@ src/test/java/
 ### **Configuração de Testes**
 
 **TestWebMvcConfig.java** - Configuração de mocks para testes:
+
 ```java
 @TestConfiguration
 public class TestWebMvcConfig {
@@ -768,12 +771,16 @@ O sistema possui endpoints REST para administração do sistema, acessíveis ape
 
 O sistema segue a política de **não sobrescrever usuários existentes** durante a inicialização. Entretanto, os administradores podem forçar a atualização ou recriação dos usuários padrão através dos seguintes endpoints:
 
-| **Método** | **Endpoint**                                | **Descrição**                                     |
-|------------|------------------------------------------|--------------------------------------------------|
-| POST       | /admin/sistema/verificar-usuarios          | Verifica e recria usuários padrão faltantes      |
-| POST       | /admin/sistema/resetar-senha/{email}       | Redefine a senha de um usuário para valor padrão |
-| POST       | /admin/sistema/redefinir-todas-senhas-padrao | Redefine todas as senhas de usuários padrão    |
-| POST       | /admin/sistema/status-usuarios-padrao      | Obtém status de todos os usuários padrão        |
+```markdown
+|------------|----------------------------------------------|--------------------------------------------------|
+| **Método** | **Endpoint**                                 | **Descrição**                                    |
+|------------|----------------------------------------------|--------------------------------------------------|
+| POST       | /admin/sistema/verificar-usuarios            | Verifica e recria usuários padrão faltantes      |
+| POST       | /admin/sistema/resetar-senha/{email}         | Redefine a senha de um usuário para valor padrão |
+| POST       | /admin/sistema/redefinir-todas-senhas-padrao | Redefine todas as senhas de usuários padrão      |
+| POST       | /admin/sistema/status-usuarios-padrao        | Obtém status de todos os usuários padrão         |
+|------------|----------------------------------------------|--------------------------------------------------|
+```
 
 **Exemplos de uso:**
 
@@ -789,16 +796,16 @@ curl -X POST http://localhost:8080/admin/sistema/resetar-senha/dentista@teste.co
 
 ## **Documentação Técnica**
 
-- 📚 **[Configuração de Ambientes](doc/CONFIGURACAO_AMBIENTES.md)** - Guia completo dos arquivos application.yml para diferentes ambientes
-- 🔗 **[Documentação da API - Swagger](doc/SWAGGER_README.md)** - Como usar e testar os endpoints da API
-- 📋 **[Versionamento do Banco](doc/VERSIONAMENTO_BANCO_ANALISE.md)** - Análise e gestão de migrations
-- 🧪 **[Estrutura de Testes](doc/status_consultas_agendadas.md)** - Documentação de testes e qualidade
+- **[Configuração de Ambientes](doc/CONFIGURACAO_AMBIENTES.md)** - Guia completo dos arquivos application.yml para diferentes ambientes
+- **[Documentação da API - Swagger](doc/SWAGGER_README.md)** - Como usar e testar os endpoints da API
+- **[Versionamento do Banco](doc/VERSIONAMENTO_BANCO_ANALISE.md)** - Análise e gestão de migrations
+- **[Estrutura de Testes](doc/status_consultas_agendadas.md)** - Documentação de testes e qualidade
 
 ## **Links Úteis**
 
-- 🌐 **Swagger UI (Desenvolvimento)**: http://localhost:8080/swagger-ui.html
-- 📊 **API Docs**: http://localhost:8080/api-docs
-- 🔍 **Console H2 (Dev)**: http://localhost:8080/h2-console
+- **Swagger UI (Desenvolvimento)**: http://localhost:8080/swagger-ui.html
+- **API Docs**: http://localhost:8080/api-docs
+- **Console H2 (Dev)**: http://localhost:8080/h2-console
 
 ---
 
@@ -863,6 +870,7 @@ docker run -p 8080:8080 \
 ### **Deploy em Produção**
 
 1. **Servidor de Aplicação:
+
 ```bash
 # Copiar JAR para servidor
 scp target/cca-0.0.1-SNAPSHOT.jar user@servidor:/opt/cca/
@@ -957,27 +965,27 @@ mvn compile exec:java -Dexec.mainClass="com.caracore.cca.util.VerificarHash" -De
 
 ### **LGPD Compliance**
 
-- ✅ Consentimento explícito para coleta de dados via WhatsApp
-- ✅ Política de privacidade integrada ao sistema
-- ✅ Controle de retenção de dados pessoais
-- ✅ Logs de auditoria para rastreabilidade
-- ✅ Interface de confirmação de consentimento
-- ✅ Data/hora de envio do consentimento registrada
+- Consentimento explícito para coleta de dados via WhatsApp
+- Política de privacidade integrada ao sistema
+- Controle de retenção de dados pessoais
+- Logs de auditoria para rastreabilidade
+- Interface de confirmação de consentimento
+- Data/hora de envio do consentimento registrada
 
 ### **Portaria nº 2.836/2011 - Ministério da Saúde**
 
 **Implementação dos direitos de nome social e identidade de gênero:**
 
-- ✅ **Nome Social:** Campo opcional no cadastro de pacientes
-- ✅ **Gênero:** Autodeclaração com opções padronizadas:
+- **Nome Social:** Campo opcional no cadastro de pacientes
+- **Gênero:** Autodeclaração com opções padronizadas:
   - Feminino
   - Masculino 
   - Não-binário
   - Outro
   - Prefere não informar
-- ✅ **Interface:** Seção informativa sobre a Portaria no formulário
-- ✅ **Banco de Dados:** Campos separados para nome civil e nome social
-- ✅ **Legislação:** Atendimento às diretrizes do SUS para respeito à identidade de gênero
+- **Interface:** Seção informativa sobre a Portaria no formulário
+- **Banco de Dados:** Campos separados para nome civil e nome social
+- **Legislação:** Atendimento às diretrizes do SUS para respeito à identidade de gênero
 
 ## **Contribuição**
 
@@ -1070,7 +1078,7 @@ Isso significa que você pode usar este sistema livremente em projetos comerciai
 
 Veja o arquivo [LICENSE](LICENSE) para o texto completo da licença.
 
-```
+```markdown
 MIT License
 
 Copyright (c) 2025 Cara Core Informática
