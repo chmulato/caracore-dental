@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamentos}">
+                            <i class="bi bi-calendar"></i> Agendamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/relatorios}">
+                            <i class="bi bi-file-earmark-bar-graph"></i> Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-file-earmark-bar-graph"></i> Relatórios</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Selecione o tipo de relatório que deseja gerar:</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-calendar-check"></i> Relatório de Agendamentos</h5>
+                                        <p class="card-text">Informações sobre agendamentos, incluindo status, dentistas e pacientes.</p>
+                                        <form th:action="@{/relatorios/agendamentos}" method="get" class="mt-3">
+                                            <div class="mb-3">
+                                                <label for="dataInicio1" class="form-label">Data Início:</label>
+                                                <input type="date" class="form-control" id="dataInicio1" name="dataInicio"
+                                                       th:value="${#temporals.format(dataInicio, 'yyyy-MM-dd')}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="dataFim1" class="form-label">Data Fim:</label>
+                                                <input type="date" class="form-control" id="dataFim1" name="dataFim"
+                                                       th:value="${#temporals.format(dataFim, 'yyyy-MM-dd')}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="tipoStatus" class="form-label">Status:</label>
+                                                <select class="form-select" id="tipoStatus" name="tipoStatus">
+                                                    <option value="">Todos</option>
+                                                    <option value="AGENDADO">Agendado</option>
+                                                    <option value="CONFIRMADO">Confirmado</option>
+                                                    <option value="REALIZADO">Realizado</option>
+                                                    <option value="CANCELADO">Cancelado</option>
+                                                    <option value="REAGENDADO">Reagendado</option>
+                                                    <option value="NAO_COMPARECEU">Não Compareceu</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-search"></i> Gerar Relatório
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-people"></i> Relatório de Pacientes</h5>
+                                        <p class="card-text">Detalhes sobre pacientes, status LGPD e estatísticas gerais.</p>
+                                        <form th:action="@{/relatorios/pacientes}" method="get" class="mt-3">
+                                            <div class="mb-3">
+                                                <label for="dataInicio2" class="form-label">Data Início:</label>
+                                                <input type="date" class="form-control" id="dataInicio2" name="dataInicio"
+                                                       th:value="${#temporals.format(dataInicio, 'yyyy-MM-dd')}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="dataFim2" class="form-label">Data Fim:</label>
+                                                <input type="date" class="form-control" id="dataFim2" name="dataFim"
+                                                       th:value="${#temporals.format(dataFim, 'yyyy-MM-dd')}" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-search"></i> Gerar Relatório
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4" sec:authorize="hasRole('ADMIN')">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-graph-up"></i> Relatório de Desempenho</h5>
+                                        <p class="card-text">Análise de desempenho dos dentistas e estatísticas por profissional.</p>
+                                        <form th:action="@{/relatorios/desempenho}" method="get" class="mt-3">
+                                            <div class="mb-3">
+                                                <label for="dataInicio3" class="form-label">Data Início:</label>
+                                                <input type="date" class="form-control" id="dataInicio3" name="dataInicio"
+                                                       th:value="${#temporals.format(dataInicio, 'yyyy-MM-dd')}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="dataFim3" class="form-label">Data Fim:</label>
+                                                <input type="date" class="form-control" id="dataFim3" name="dataFim"
+                                                       th:value="${#temporals.format(dataFim, 'yyyy-MM-dd')}" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-search"></i> Gerar Relatório
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Instruções -->
+                        <div class="alert alert-info">
+                            <h5><i class="bi bi-info-circle"></i> Instruções</h5>
+                            <ul>
+                                <li>Selecione o período desejado nos campos de data.</li>
+                                <li>Para relatórios de agendamento, você pode filtrar por status.</li>
+                                <li>Os relatórios podem ser exportados em formato PDF e CSV após serem gerados.</li>
+                                <li>O relatório de desempenho está disponível apenas para administradores.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

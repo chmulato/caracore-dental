@@ -115,7 +115,7 @@ public class SistemaAdminControllerExpandedTest {
             mockMvc.perform(get("/admin/sistema/dentistas-publicos")
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(csrf()))
-                    .andExpect(status().isOk()); // Teste ambiente retorna 200 mas não executa lógica
+                    .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
             
             verifyNoInteractions(dentistaService);
         }
@@ -128,7 +128,7 @@ public class SistemaAdminControllerExpandedTest {
                     .param("ativa", "true")
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(csrf()))
-                    .andExpect(status().isOk()); // Teste ambiente retorna 200 mas não executa lógica
+                    .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
             
             verifyNoInteractions(userActivityLogger);
         }

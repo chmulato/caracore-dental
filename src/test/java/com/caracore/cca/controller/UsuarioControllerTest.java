@@ -108,7 +108,7 @@ public class UsuarioControllerTest {
     @WithMockUser(roles = {"DENTIST"})
     public void deveNegarAcessoAListaDeUsuariosParaUsuarioNaoAdmin() throws Exception {
         mockMvc.perform(get("/usuarios"))
-                .andExpect(status().isForbidden()); // 403 - Usuário autenticado mas sem permissão para acessar
+                .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
     }
 
     @Test

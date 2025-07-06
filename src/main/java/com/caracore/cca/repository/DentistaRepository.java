@@ -16,6 +16,8 @@ public interface DentistaRepository extends JpaRepository<Dentista, Long> {
     List<Dentista> findByAtivoTrueAndExpostoPublicamenteTrue();
     
     List<Dentista> findByNomeContainingIgnoreCase(String nome);
+    
+    List<Dentista> findByAtivo(boolean ativo);
 
     @Query("SELECT d FROM Dentista d WHERE " +
            "LOWER(d.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +

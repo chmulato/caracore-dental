@@ -97,7 +97,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(post("/admin/sistema/verificar-usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf()))
-                .andExpect(status().isOk()); // No ambiente de teste está retornando 200 devido à configuração do acesso negado
+                .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
         
         verifyNoInteractions(initService);
         verifyNoInteractions(userActivityLogger);
@@ -110,7 +110,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(post("/admin/sistema/verificar-usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf()))
-                .andExpect(status().isOk()); // No ambiente de teste está retornando 200 devido à configuração do acesso negado
+                .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
         
         verifyNoInteractions(initService);
         verifyNoInteractions(userActivityLogger);
@@ -123,7 +123,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(post("/admin/sistema/verificar-usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf()))
-                .andExpect(status().isOk()); // No ambiente de teste está retornando 200 devido à configuração do acesso negado
+                .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
         
         verifyNoInteractions(initService);
         verifyNoInteractions(userActivityLogger);
@@ -443,7 +443,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(get("/admin/sistema/dentistas-publicos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf()))
-                .andExpect(status().isOk()); // No ambiente de teste retorna 200 devido à configuração
+                .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
 
         verifyNoInteractions(dentistaService);
         verifyNoInteractions(userActivityLogger);
@@ -457,7 +457,7 @@ public class SistemaAdminControllerTest {
                 .param("ativa", "true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf()))
-                .andExpect(status().isOk()); // No ambiente de teste retorna 200 devido à configuração
+                .andExpect(status().isForbidden()); // 403 Forbidden para usuários não autorizados
 
         verifyNoInteractions(userActivityLogger);
     }

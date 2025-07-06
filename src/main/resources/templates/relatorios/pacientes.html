@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Pacientes - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <!-- DataTables -->
+    <link rel="stylesheet" th:href="@{/webjars/datatables/1.13.6/css/dataTables.bootstrap5.min.css}">
+    <style>
+        .stat-card {
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-total { border-left-color: #0d6efd; }
+        .stat-consent { border-left-color: #198754; }
+        .stat-email { border-left-color: #fd7e14; }
+        .stat-phone { border-left-color: #6f42c1; }
+        
+        .badge-sim {
+            background-color: #198754;
+            color: white;
+        }
+        .badge-nao {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamentos}">
+                            <i class="bi bi-calendar"></i> Agendamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/relatorios}">
+                            <i class="bi bi-file-earmark-bar-graph"></i> Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/relatorios}">Relatórios</a></li>
+                        <li class="breadcrumb-item active">Pacientes</li>
+                    </ol>
+                </nav>
+                
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="bi bi-people"></i> Relatório de Pacientes</h4>
+                            <div>
+                                <button id="btnExportPDF" class="btn btn-sm btn-outline-light me-2 export-button">
+                                    <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                                </button>
+                                <button id="btnExportCSV" class="btn btn-sm btn-outline-light me-2 export-button">
+                                    <i class="bi bi-file-earmark-excel"></i> Exportar CSV
+                                </button>
+                                <a th:href="@{/relatorios}" class="btn btn-sm btn-outline-light">
+                                    <i class="bi bi-arrow-left"></i> Voltar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="relatorioContent" class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <strong>Período:</strong> 
+                                    <span th:text="${#temporals.format(dataInicio, 'dd/MM/yyyy')}"></span> até 
+                                    <span th:text="${#temporals.format(dataFim, 'dd/MM/yyyy')}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Cards de Estatísticas -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card stat-card stat-total">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Total de Pacientes</h6>
+                                        <h3 class="text-primary" th:text="${estatisticas.totalPacientes}">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stat-card stat-consent">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Com Consentimento LGPD</h6>
+                                        <h3 class="text-success" th:text="${estatisticas.comConsentimento}">0</h3>
+                                        <p class="text-muted mb-0" th:if="${estatisticas.totalPacientes > 0}">
+                                            <small>
+                                                <span th:text="${#numbers.formatPercent(estatisticas.comConsentimento / estatisticas.totalPacientes, 1, 1)}">0%</span> do total
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stat-card stat-email">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Com Email</h6>
+                                        <h3 class="text-warning" th:text="${estatisticas.comEmail}">0</h3>
+                                        <p class="text-muted mb-0" th:if="${estatisticas.totalPacientes > 0}">
+                                            <small>
+                                                <span th:text="${#numbers.formatPercent(estatisticas.comEmail / estatisticas.totalPacientes, 1, 1)}">0%</span> do total
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stat-card stat-phone">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">Com Telefone</h6>
+                                        <h3 class="text-purple" th:text="${estatisticas.comTelefone}">0</h3>
+                                        <p class="text-muted mb-0" th:if="${estatisticas.totalPacientes > 0}">
+                                            <small>
+                                                <span th:text="${#numbers.formatPercent(estatisticas.comTelefone / estatisticas.totalPacientes, 1, 1)}">0%</span> do total
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mb-3">Lista de Pacientes</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="tabelaPacientes">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Telefone</th>
+                                        <th>Data de Nascimento</th>
+                                        <th>Idade</th>
+                                        <th>Consentimento LGPD</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="paciente : ${pacientes}">
+                                        <td th:text="${paciente.id}">1</td>
+                                        <td th:text="${paciente.nome}">Nome do Paciente</td>
+                                        <td th:text="${paciente.email ?: 'N/A'}">email@example.com</td>
+                                        <td th:text="${paciente.telefone ?: 'N/A'}">11999999999</td>
+                                        <td th:text="${paciente.dataNascimento != null ? #temporals.format(paciente.dataNascimento, 'dd/MM/yyyy') : 'N/A'}">01/01/1990</td>
+                                        <td th:text="${paciente.idade ?: 'N/A'}">33</td>
+                                        <td>
+                                            <span th:if="${paciente.consentimentoConfirmado}" class="badge badge-sim">Sim</span>
+                                            <span th:unless="${paciente.consentimentoConfirmado}" class="badge badge-nao">Não</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'/pacientes/' + ${paciente.id}}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+    <script th:src="@{/webjars/datatables/1.13.6/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/webjars/datatables/1.13.6/js/dataTables.bootstrap5.min.js}"></script>
+    <script th:src="@{/js/html2pdf.bundle.min.js}"></script>
+    <script th:src="@{/js/report-exporter.js}"></script>
+    
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            // Inicializa DataTables
+            $('#tabelaPacientes').DataTable({
+                "language": {
+                    "url": /*[[@{/js/pt-BR.json}]]*/'/js/pt-BR.json'
+                },
+                "order": [1, 'asc'],
+                "pageLength": 10
+            });
+            
+            // Obter datas para nomes de arquivo
+            var periodoInicio = /*[[${#temporals.format(dataInicio, 'dd-MM-yyyy')}]]*/ 'data-inicio';
+            var periodoFim = /*[[${#temporals.format(dataFim, 'dd-MM-yyyy')}]]*/ 'data-fim';
+            
+            // Configurar botão de exportação para PDF
+            $('#btnExportPDF').click(function() {
+                // Preparar o nome do arquivo
+                var filename = 'relatorio-pacientes-' + periodoInicio + '-a-' + periodoFim + '.pdf';
+                
+                // Exportar conteúdo do relatório para PDF
+                exportToPdf('relatorioContent', filename, {
+                    jsPDF: { orientation: 'portrait' }
+                });
+            });
+            
+            // Configurar botão de exportação para CSV
+            $('#btnExportCSV').click(function() {
+                // Preparar o nome do arquivo
+                var filename = 'relatorio-pacientes-' + periodoInicio + '-a-' + periodoFim + '.csv';
+                
+                // Exportar tabela para CSV
+                exportTableToCSV('tabelaPacientes', filename);
+            });
+        });
+    </script>
+</body>
+</html>

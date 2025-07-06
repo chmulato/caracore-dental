@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Desempenho - Cara Core Agendamento</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <!-- Chart.js -->
+    <script th:src="@{/webjars/chart.js/4.3.0/dist/chart.umd.js}"></script>
+    <!-- html2pdf -->
+    <script th:src="@{/js/html2pdf.bundle.min.js}"></script>
+    <style>
+        .performance-card {
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s;
+        }
+        .performance-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .progress {
+            height: 10px;
+        }
+        
+        .rating-high {
+            color: #198754;
+        }
+        .rating-medium {
+            color: #fd7e14;
+        }
+        .rating-low {
+            color: #dc3545;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-text-top me-2 navbar-logo">
+                Cara Core Agendamento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamentos}">
+                            <i class="bi bi-calendar"></i> Agendamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-people"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/usuarios}">
+                            <i class="bi bi-person-gear"></i> Usuários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/relatorios}">
+                            <i class="bi bi-file-earmark-bar-graph"></i> Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" th:text="${#authentication.name}"></span>
+                    <a class="btn btn-outline-light btn-sm" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/relatorios}">Relatórios</a></li>
+                        <li class="breadcrumb-item active">Desempenho</li>
+                    </ol>
+                </nav>
+                
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="bi bi-graph-up"></i> Relatório de Desempenho</h4>
+                            <div>
+                                <button id="btnExportPDF" class="btn btn-sm btn-outline-light me-2 export-button">
+                                    <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                                </button>
+                                <a th:href="@{/relatorios}" class="btn btn-sm btn-outline-light">
+                                    <i class="bi bi-arrow-left"></i> Voltar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="relatorioContent" class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <strong>Período:</strong> 
+                                    <span th:text="${#temporals.format(dataInicio, 'dd/MM/yyyy')}"></span> até 
+                                    <span th:text="${#temporals.format(dataFim, 'dd/MM/yyyy')}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Gráficos -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="taxaRealizacaoChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="agendamentosChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mb-3">Desempenho por Dentista</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Dentista</th>
+                                        <th>Total Agendamentos</th>
+                                        <th>Realizados</th>
+                                        <th>Cancelados</th>
+                                        <th>Pendentes</th>
+                                        <th>Taxa de Realização</th>
+                                        <th>Performance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="dentista : ${resumoDesempenho}">
+                                        <td th:text="${dentista.dentista.nome}">Nome do Dentista</td>
+                                        <td th:text="${dentista.totalAgendamentos}">50</td>
+                                        <td th:text="${dentista.realizados}">40</td>
+                                        <td th:text="${dentista.cancelados}">5</td>
+                                        <td th:text="${dentista.pendentes}">5</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                         th:style="'width: ' + ${dentista.taxaRealizacao} + '%'" 
+                                                         th:aria-valuenow="${dentista.taxaRealizacao}" 
+                                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span th:text="${#numbers.formatDecimal(dentista.taxaRealizacao, 1, 1) + '%'}">80.0%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span th:class="${dentista.taxaRealizacao >= 80 ? 'rating-high' : (dentista.taxaRealizacao >= 60 ? 'rating-medium' : 'rating-low')}">
+                                                <i th:class="${dentista.taxaRealizacao >= 80 ? 'bi bi-star-fill' : (dentista.taxaRealizacao >= 60 ? 'bi bi-star-half' : 'bi bi-star')}"></i>
+                                                <span th:text="${dentista.taxaRealizacao >= 80 ? 'Excelente' : (dentista.taxaRealizacao >= 60 ? 'Bom' : 'Regular')}">Excelente</span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="alert alert-info mt-4">
+                            <p><strong>Notas sobre o relatório:</strong></p>
+                            <ul>
+                                <li>A taxa de realização é calculada como: (Agendamentos realizados / Total de agendamentos) × 100%</li>
+                                <li>Performance: Excelente ≥ 80% | Bom ≥ 60% | Regular < 60%</li>
+                                <li>Os agendamentos pendentes incluem status "Pendente" e "Confirmado"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rodapé -->
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Cara Core Informática - Sistema de Agendamento</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/report-exporter.js}"></script>
+    
+    <script th:inline="javascript">
+        // Dados do relatório
+        const resumoDesempenho = /*[[${resumoDesempenho}]]*/ [];
+        
+        // Extrair dados para os gráficos
+        const dentistaNomes = resumoDesempenho.map(item => item.dentista.nome);
+        const taxasRealizacao = resumoDesempenho.map(item => item.taxaRealizacao);
+        const totaisAgendamentos = resumoDesempenho.map(item => item.totalAgendamentos);
+        const realizados = resumoDesempenho.map(item => item.realizados);
+        const cancelados = resumoDesempenho.map(item => item.cancelados);
+        const pendentes = resumoDesempenho.map(item => item.pendentes);
+        
+        // Configurar gráfico de taxa de realização
+        const taxaCtx = document.getElementById('taxaRealizacaoChart').getContext('2d');
+        new Chart(taxaCtx, {
+            type: 'bar',
+            data: {
+                labels: dentistaNomes,
+                datasets: [{
+                    label: 'Taxa de Realização (%)',
+                    data: taxasRealizacao,
+                    backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                    borderColor: 'rgb(13, 110, 253)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Taxa de Realização por Dentista (%)'
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+        
+        // Configurar gráfico de agendamentos
+        const agendamentosCtx = document.getElementById('agendamentosChart').getContext('2d');
+        new Chart(agendamentosCtx, {
+            type: 'bar',
+            data: {
+                labels: dentistaNomes,
+                datasets: [
+                    {
+                        label: 'Realizados',
+                        data: realizados,
+                        backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                        borderColor: 'rgb(25, 135, 84)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Cancelados',
+                        data: cancelados,
+                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                        borderColor: 'rgb(220, 53, 69)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Pendentes',
+                        data: pendentes,
+                        backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                        borderColor: 'rgb(255, 193, 7)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Distribuição de Agendamentos por Dentista'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: false
+                    },
+                    y: {
+                        beginAtZero: true,
+                        stacked: false
+                    }
+                }
+            }
+        });
+        
+        // Obter datas para nomes de arquivo
+        var periodoInicio = /*[[${#temporals.format(dataInicio, 'dd-MM-yyyy')}]]*/ 'data-inicio';
+        var periodoFim = /*[[${#temporals.format(dataFim, 'dd-MM-yyyy')}]]*/ 'data-fim';
+        
+        // Configurar botão de exportação para PDF
+        $('#btnExportPDF').click(function() {
+            // Preparar o nome do arquivo
+            var filename = 'relatorio-desempenho-' + periodoInicio + '-a-' + periodoFim + '.pdf';
+            
+            // Exportar conteúdo do relatório para PDF
+            exportToPdf('relatorioContent', filename, {
+                jsPDF: { orientation: 'portrait' }
+            });
+        });
+    </script>
+</body>
+</html>

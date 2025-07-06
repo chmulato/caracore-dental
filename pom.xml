@@ -70,6 +70,7 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
         
+        <!-- Dependência do Flyway para PostgreSQL -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
@@ -114,6 +115,20 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-core</artifactId>
+        </dependency>
+        
+        <!-- Chart.js para gráficos -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>chart.js</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+        
+        <!-- DataTables para tabelas interativas -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>datatables</artifactId>
+            <version>1.10.25</version>
         </dependency>
         
         <!-- Swagger/OpenAPI 3 para documentação da API -->

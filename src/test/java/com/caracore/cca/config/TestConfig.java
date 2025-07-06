@@ -37,13 +37,13 @@ public class TestConfig implements WebMvcConfigurer {
     }
     
     /**
-     * Fornece uma implementação de AccessDeniedHandler para testes
-     * Em vez de usar um mock, utilizamos a implementação real
-     * para garantir que o comportamento de redirecionamento funcione corretamente
+     * Fornece uma implementação de AccessDeniedHandler específica para testes
+     * Em vez de redirecionar para uma página de acesso negado, esta implementação
+     * simplesmente retorna status 403 Forbidden, o que facilita os testes
      */
     @Bean
     @Primary
     public AccessDeniedHandler accessDeniedHandler() {
-        return new CustomAccessDeniedHandler();
+        return new TestAccessDeniedHandler();
     }
 }
