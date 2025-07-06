@@ -72,10 +72,19 @@ public class AgendamentoPublicoController {
             model.addAttribute("titulo", "Agendamento Online");
             model.addAttribute("dentistas", dentistas);
             
-            return "public/agendamento-online";
+            // Adicionar informações do reCAPTCHA se habilitado
+            if (captchaService.isEnabled()) {
+                model.addAttribute("recaptchaEnabled", true);
+                model.addAttribute("recaptchaSiteKey", captchaService.getSiteKey());
+                return "public/agendamento-online-captcha";
+            } else {
+                model.addAttribute("recaptchaEnabled", false);
+                return "public/agendamento-online";
+            }
         } catch (Exception e) {
             logger.error("Erro ao carregar página de agendamento", e);
             model.addAttribute("error", "Erro interno do servidor");
+            // Em caso de erro, usar o template simples
             return "public/agendamento-online";
         }
     }
@@ -89,17 +98,26 @@ public class AgendamentoPublicoController {
                                            @RequestParam(required = false) String dataHora,
                                            @RequestParam(required = false) String telefone,
                                            @RequestParam(required = false) String email,
-                                           Model model) {
+                                           @RequestParam(required = false) String captchaToken,
+                                           Model model,
+                                           HttpServletRequest request) {
         logger.info("Processando agendamento público para paciente: {}, dentista: {}, dataHora: {}", 
                   paciente, dentista, dataHora);
         try {
+            // Validação do reCAPTCHA (se habilitado)
+            if (captchaService.isEnabled()) {
+                String clientIp = getClientIp(request);
+                if (!captchaService.validateCaptcha(captchaToken, clientIp)) {
+                    logger.warn("Captcha inválido do IP: {}", clientIp);
+                    model.addAttribute("error", "Captcha inválido. Verifique e tente novamente.");
+                    return prepareModelAndReturnTemplate(model);
+                }
+            }
+            
             // Validação básica - note que campos são required=false para que o controller possa receber valores nulos
             if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
                 model.addAttribute("error", "Todos os campos são obrigatórios");
-                List<String> dentistas = agendamentoService.listarDentistasAtivos();
-                model.addAttribute("dentistas", dentistas);
-                model.addAttribute("titulo", "Agendamento Online");
-                return "public/agendamento-online";
+                return prepareModelAndReturnTemplate(model);
             }
             // Validação: impedir agendamento no passado
             LocalDateTime dataHoraAgendamento;
@@ -111,18 +129,12 @@ public class AgendamentoPublicoController {
                     dataHoraAgendamento = LocalDateTime.parse(dataHora + ":00");
                 } catch (Exception e2) {
                     model.addAttribute("error", "Formato de data/hora inválido");
-                    List<String> dentistas = agendamentoService.listarDentistasAtivos();
-                    model.addAttribute("dentistas", dentistas);
-                    model.addAttribute("titulo", "Agendamento Online");
-                    return "public/agendamento-online";
+                    return prepareModelAndReturnTemplate(model);
                 }
             }
             if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
                 model.addAttribute("error", "Não é possível agendar consultas no passado");
-                List<String> dentistas = agendamentoService.listarDentistasAtivos();
-                model.addAttribute("dentistas", dentistas);
-                model.addAttribute("titulo", "Agendamento Online");
-                return "public/agendamento-online";
+                return prepareModelAndReturnTemplate(model);
             }
             // Criar agendamento
             Agendamento agendamento = new Agendamento();
@@ -138,9 +150,25 @@ public class AgendamentoPublicoController {
         } catch (Exception e) {
             logger.error("Erro ao processar agendamento", e);
             model.addAttribute("error", "Ocorreu um erro ao processar o agendamento");
-            List<String> dentistas = agendamentoService.listarDentistasAtivos();
-            model.addAttribute("dentistas", dentistas);
-            model.addAttribute("titulo", "Agendamento Online");
+            return prepareModelAndReturnTemplate(model);
+        }
+    }
+    
+    /**
+     * Método auxiliar para preparar o modelo e retornar o template correto
+     */
+    private String prepareModelAndReturnTemplate(Model model) {
+        List<String> dentistas = agendamentoService.listarDentistasAtivos();
+        model.addAttribute("dentistas", dentistas);
+        model.addAttribute("titulo", "Agendamento Online");
+        
+        // Adicionar informações do reCAPTCHA se habilitado
+        if (captchaService.isEnabled()) {
+            model.addAttribute("recaptchaEnabled", true);
+            model.addAttribute("recaptchaSiteKey", captchaService.getSiteKey());
+            return "public/agendamento-online-captcha";
+        } else {
+            model.addAttribute("recaptchaEnabled", false);
             return "public/agendamento-online";
         }
     }

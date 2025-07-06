@@ -3,21 +3,26 @@
 
 # Configurações do servidor
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   servlet:
     context-path: /
+    session:
+      timeout: 60m  # 1 hora para desenvolvimento
   error:
     include-message: always
     include-binding-errors: always
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
 
 spring:
   main:
     allow-bean-definition-overriding: true
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/cca_local
-    username: ${DB_USERNAME:cca_user}
-    password: ${DB_PASSWORD:cca_password}
+    url: jdbc:postgresql://localhost:5432/cca_db
+    username: cca_user
+    password: cca_password
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -28,7 +33,7 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: update  # Permite alterações automáticas para desenvolvimento local
+      ddl-auto: create-drop  # Cria e remove o schema para desenvolvimento local
     show-sql: true
     open-in-view: false
     properties:
@@ -37,7 +42,8 @@ spring:
           '[time_zone]': America/Sao_Paulo
         '[format_sql]': true
         '[use_sql_comments]': true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+        '[generate_statistics]': false
+        '[dialect]': org.hibernate.dialect.PostgreSQLDialect
   
   # Configurações de internacionalização
   web:
@@ -73,12 +79,10 @@ spring:
     validate-on-migrate: true
     locations: classpath:db/migration
   
-  # Inicialização do banco com dados de desenvolvimento
+  # Desabilitar inicialização automática de scripts SQL
   sql:
     init:
-      mode: always  # Executar scripts data.sql
-      data-locations: classpath:data.sql
-      continue-on-error: false
+      mode: never
 
 # Logging detalhado para desenvolvimento local
 logging:
@@ -120,22 +124,12 @@ cca:
       secret: ${JWT_SECRET:local-development-secret-key-change-in-production}
       expiration: 86400000  # 24 horas
 
-# Configuração do reCAPTCHA para ambiente local
+# Configurações do reCAPTCHA para ambiente local
 recaptcha:
   enabled: false  # Desabilitado para desenvolvimento local
   secret: ""
   site-key: ""
   verify-url: "https://www.google.com/recaptcha/api/siteverify"
-
-# Configurações do servidor para desenvolvimento local
-server:
-  port: ${SERVER_PORT:8080}
-  servlet:
-    session:
-      timeout: 60m  # 1 hora para desenvolvimento
-  compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
 
 # Monitoramento e métricas para desenvolvimento
 management:

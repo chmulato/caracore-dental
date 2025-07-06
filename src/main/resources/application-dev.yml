@@ -113,7 +113,7 @@ cca:
 
 # Configuração do reCAPTCHA para ambiente dev
 recaptcha:
-  enabled: true
+  enabled: false  # Desabilitado para desenvolvimento
   secret: ${RECAPTCHA_SECRET_KEY:6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe}  # Chave de teste do Google
   site-key: ${RECAPTCHA_SITE_KEY:6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI}  # Chave de teste do Google
   verify-url: "https://www.google.com/recaptcha/api/siteverify"

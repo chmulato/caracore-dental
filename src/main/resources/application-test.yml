@@ -73,6 +73,13 @@ cca:
       secret: test-secret-key-for-testing-only
       expiration: 3600000  # 1 hora
 
+# Configuração do reCAPTCHA para ambiente de teste
+recaptcha:
+  enabled: false  # Desabilitado para testes
+  secret: ""
+  site-key: ""
+  verify-url: "https://www.google.com/recaptcha/api/siteverify"
+
 # Configurações do servidor para testes
 server:
   port: 0  # Porta aleatória para evitar conflitos

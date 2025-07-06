@@ -17,16 +17,16 @@ public class CaptchaService {
     
     private static final Logger logger = LoggerFactory.getLogger(CaptchaService.class);
     
-    @Value("${google.recaptcha.secret:}")
+    @Value("${recaptcha.secret:}")
     private String recaptchaSecret;
     
-    @Value("${google.recaptcha.site-key:}")
+    @Value("${recaptcha.site-key:}")
     private String recaptchaSiteKey;
     
-    @Value("${google.recaptcha.verify-url:https://www.google.com/recaptcha/api/siteverify}")
+    @Value("${recaptcha.verify-url:https://www.google.com/recaptcha/api/siteverify}")
     private String recaptchaVerifyUrl;
     
-    @Value("${google.recaptcha.enabled:false}")
+    @Value("${recaptcha.enabled:false}")
     private boolean recaptchaEnabled;
     
     private final RestTemplate restTemplate;
