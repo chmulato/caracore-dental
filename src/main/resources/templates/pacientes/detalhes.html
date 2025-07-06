@@ -138,7 +138,8 @@
                                     
                                     <dt class="col-sm-3">Idade:</dt>
                                     <dd class="col-sm-9">
-                                        <span th:if="${paciente.idade}" th:text="${paciente.idade + ' anos'}"></span>
+                                        <span id="idadePacienteJs" th:attr="data-nascimento=${paciente.dataNascimento != null} ? ${#temporals.format(paciente.dataNascimento, 'yyyy-MM-dd')} : ''"></span>
+                                        <span id="idadePacienteFallback" th:if="${paciente.idade}" th:text="${paciente.idade + ' anos'}" style="display:none;"></span>
                                         <span th:unless="${paciente.idade}">Não calculada</span>
                                     </dd>
                                 </dl>
@@ -239,5 +240,26 @@
 
     <!-- Bootstrap JS bundle with Popper -->
     <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var idadeSpan = document.getElementById('idadePacienteJs');
+            var fallback = document.getElementById('idadePacienteFallback');
+            var dataNascimento = idadeSpan.getAttribute('data-nascimento');
+            if (dataNascimento) {
+                var hoje = new Date();
+                var nascimento = new Date(dataNascimento);
+                var idade = hoje.getFullYear() - nascimento.getFullYear();
+                var m = hoje.getMonth() - nascimento.getMonth();
+                if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+                    idade--;
+                }
+                idadeSpan.textContent = idade + ' anos';
+                if (fallback) fallback.style.display = 'none';
+            } else {
+                idadeSpan.style.display = 'none';
+                if (fallback) fallback.style.display = '';
+            }
+        });
+    </script>
 </body>
 </html>
