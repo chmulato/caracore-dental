@@ -48,6 +48,9 @@ class AgendamentoPublicoControllerTest {
     private PacienteService pacienteService;
     
     @MockBean
+    private com.caracore.cca.service.RateLimitService rateLimitService;
+    
+    @MockBean
     private UserActivityLogger userActivityLogger;
 
     private Agendamento agendamentoTeste;
@@ -144,13 +147,13 @@ class AgendamentoPublicoControllerTest {
                 .thenReturn(horarios);
 
         // Act & Assert
-        mockMvc.perform(get("/api/public/horarios-disponiveis")
+        mockMvc.perform(get("/public/api/horarios-disponiveis")
                 .param("dentista", dentista)
                 .param("data", data))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.horarios").isArray())
-                .andExpect(jsonPath("$.horarios.length()").value(3));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(3));
 
         verify(agendamentoService).getHorariosDisponiveisPorData(eq(dentista), any(LocalDateTime.class));
     }
@@ -158,7 +161,7 @@ class AgendamentoPublicoControllerTest {
     @Test
     void testGetHorariosDisponiveisPublicoComParametrosInvalidos() throws Exception {
         // Act & Assert
-        mockMvc.perform(get("/api/public/horarios-disponiveis")
+        mockMvc.perform(get("/public/api/horarios-disponiveis")
                 .param("dentista", "")
                 .param("data", "data-invalida"))
                 .andExpect(status().isBadRequest());
@@ -225,11 +228,11 @@ class AgendamentoPublicoControllerTest {
         when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistas);
 
         // Act & Assert
-        mockMvc.perform(get("/api/public/dentistas"))
+        mockMvc.perform(get("/public/api/dentistas"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.dentistas").isArray())
-                .andExpect(jsonPath("$.dentistas.length()").value(2));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2));
 
         verify(agendamentoService).listarDentistasAtivos();
     }
@@ -268,13 +271,13 @@ class AgendamentoPublicoControllerTest {
         when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasAtivos);
 
         // Act & Assert
-        mockMvc.perform(get("/api/public/dentistas")
+        mockMvc.perform(get("/public/api/dentistas")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.dentistas").isArray())
-                .andExpect(jsonPath("$.dentistas[0]").value("Dr. João Silva - Clínico Geral"))
-                .andExpect(jsonPath("$.dentistas[1]").value("Dra. Ana Costa - Periodontista"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0]").value("Dr. João Silva - Clínico Geral"))
+                .andExpect(jsonPath("$[1]").value("Dra. Ana Costa - Periodontista"));
 
         verify(agendamentoService, times(1)).listarDentistasAtivos();
         verify(agendamentoService, never()).listarDentistas(); // Não deve usar o método antigo
@@ -342,15 +345,15 @@ class AgendamentoPublicoControllerTest {
             .thenReturn(horariosDisponiveis);
 
         // Act & Assert
-        mockMvc.perform(get("/api/public/horarios-disponiveis")
+        mockMvc.perform(get("/public/api/horarios-disponiveis")
                 .param("dentista", dentista)
                 .param("data", data)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.horarios").isArray())
-                .andExpect(jsonPath("$.horarios[0]").value("08:00"))
-                .andExpect(jsonPath("$.horarios[1]").value("08:30"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0]").value("08:00"))
+                .andExpect(jsonPath("$[1]").value("08:30"));
 
         verify(agendamentoService, times(1)).getHorariosDisponiveisPorData(eq(dentista), any(LocalDateTime.class));
     }

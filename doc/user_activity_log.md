@@ -163,8 +163,56 @@ Para adicionar novos registros de atividade, siga o formato acima e mantenha a o
 - **FAILED_LOGIN:** Tentativas de login malsucedidas (importante para segurança)
 - **BULK_ACTION:** Ações em massa (cancelamento de agendamentos, envio de notificações)
 
+## Atividades Recentes do Sistema
+
+### Resumo das atividades da última semana (29/06 - 05/07/2025):
+
+- **Total de logins:** 47
+- **Novos pacientes cadastrados:** 8
+- **Agendamentos criados:** 23
+- **Agendamentos modificados:** 12
+- **Agendamentos excluídos:** 3
+- **Tentativas de login falhadas:** 2
+
+### Principais atividades por usuário:
+
+**Administrador (suporte@caracore.com.br):**
+
+- 5 logins
+- 2 usuários criados
+- 3 configurações de sistema modificadas
+
+**Dentista (maria.silva@exemplo.com.br):**
+
+- 15 logins
+- 18 agendamentos gerenciados
+- 5 pacientes atualizados
+
+**Recepcionista (recepcionista@exemplo.com.br):**
+
+- 22 logins
+- 8 pacientes cadastrados
+- 12 agendamentos processados
+
+### Eventos de Segurança:
+
+#### [2025-07-04 14:32:18] unknown@test.com - FAILED_LOGIN
+
+- **IP:** 203.45.67.89
+- **Dispositivo:** Chrome 125.0.0.0 / Windows 10
+- **Detalhes:** Tentativa de login com credenciais inválidas
+- **Observações:** IP bloqueado temporariamente após 3 tentativas
+
+#### [2025-07-05 02:15:44] sistema - BULK_ACTION
+
+- **IP:** 127.0.0.1
+- **Dispositivo:** Sistema Interno
+- **Detalhes:** Envio automático de lembretes de consulta
+- **Entidades afetadas:** 15 agendamentos para hoje
+- **Observações:** Rotina automática executada com sucesso
+
 ---
 
-**Última atualização:** 30 de junho de 2025  
+**Última atualização:** 5 de julho de 2025  
 **Responsável pela documentação:** Christian V. Mulato  
 **Repositório oficial:** [https://github.com/chmulato/cara-core_cca/](https://github.com/chmulato/cara-core_cca/)

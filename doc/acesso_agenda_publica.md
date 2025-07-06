@@ -2,7 +2,7 @@
 
 ## Quem Terá Acesso à Agenda Pública?
 
-### 🌐 **ACESSO PÚBLICO (Sem Autenticação)**
+### **ACESSO PÚBLICO (Sem Autenticação)**
 
 A agenda pública foi projetada para ser **completamente acessível ao público geral**, sem necessidade de login ou cadastro prévio. Qualquer pessoa pode:
 

@@ -91,7 +91,7 @@ public class SecurityConfig {
                 .rememberMeParameter("remember-me")
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**") // Opcional: desativa para endpoints de API se necessário
+                .ignoringRequestMatchers("/api/**", "/public/**") // Desativa CSRF para endpoints de API e públicos
             )
             .exceptionHandling(handling -> handling
                 .accessDeniedHandler(accessDeniedHandler)

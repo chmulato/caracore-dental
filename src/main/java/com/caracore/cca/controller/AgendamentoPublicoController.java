@@ -3,6 +3,7 @@ package com.caracore.cca.controller;
 import com.caracore.cca.model.Agendamento;
 import com.caracore.cca.service.AgendamentoService;
 import com.caracore.cca.service.PacienteService;
+import com.caracore.cca.service.RateLimitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +21,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Controlador responsável pelo agendamento online público.
@@ -44,6 +46,9 @@ public class AgendamentoPublicoController {
 
     @Autowired
     private PacienteService pacienteService;
+    
+    @Autowired
+    private RateLimitService rateLimitService;
 
     /**
      * Página principal de agendamento online
@@ -223,14 +228,16 @@ public class AgendamentoPublicoController {
     })
     @GetMapping(value = "/public/consultar-agendamento", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<Agendamento>> consultarAgendamentoPorPaciente(
+    public ResponseEntity<?> consultarAgendamentoPorPaciente(
             @Parameter(description = "Nome do paciente", required = true, example = "João Silva")
             @RequestParam(required = false) String paciente) {
         logger.info("API: Consultando agendamentos por paciente: {}", paciente);
         
         // Validar parâmetros
         if (paciente == null || paciente.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Campo paciente é obrigatório");
         }
         
         try {
@@ -377,6 +384,28 @@ public class AgendamentoPublicoController {
     }
 
     /**
+     * Método de teste simples
+     */
+    @PostMapping(value = "/public/test")
+    @ResponseBody
+    public String testeSimples() {
+        System.out.println("DEBUG: Método testeSimples CHAMADO!");
+        return "Teste funcionando!";
+    }
+    
+    /**
+     * Endpoint de teste simples para debug
+     */
+    @PostMapping(value = "/public/test-simple", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String testeSimpleDebug() {
+        logger.info("=== TESTE SIMPLE DEBUG EXECUTADO ===");
+        String response = "Teste executado com sucesso!";
+        logger.info("Retornando resposta: {}", response);
+        return response;
+    }
+    
+    /**
      * Endpoint REST compatível com os testes automatizados (resposta texto)
      */
     @Operation(
@@ -390,7 +419,7 @@ public class AgendamentoPublicoController {
                     content = @Content(mediaType = "text/plain", schema = @Schema(type = "string", example = "Todos os campos obrigatórios devem ser preenchidos"))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    @PostMapping(value = "/public/agendar", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/public/agendar")
     @ResponseBody
     public ResponseEntity<String> agendarConsultaPublicaCompat(
             @Parameter(description = "Nome do paciente", required = true, example = "João Silva")
@@ -400,58 +429,178 @@ public class AgendamentoPublicoController {
             @Parameter(description = "Data e hora do agendamento no formato ISO", required = true, example = "2025-07-10T10:00")
             @RequestParam(required = false) String dataHora,
             @Parameter(description = "Telefone para contato (WhatsApp)", required = false, example = "11999999999")
-            @RequestParam(required = false) String telefone) {
+            @RequestParam(required = false) String telefone,
+            HttpServletRequest request) {
         
-        logger.info("DEBUG: Iniciando agendarConsultaPublicaCompat - paciente: {}, dentista: {}, dataHora: {}", 
-                   paciente, dentista, dataHora);
+        String clientIp = getClientIp(request);
+        logger.info("Tentativa de agendamento público - IP: {}", clientIp);
         
         try {
-            // Validação básica
-            if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
-                logger.info("DEBUG: Validação básica falhou");
-                return ResponseEntity.badRequest().body("Todos os campos obrigatórios devem ser preenchidos");
+            // 1. Validação e sanitização básica (primeiro para testes)
+            ValidationResult validation = validateAndSanitizeInput(paciente, dentista, dataHora, telefone);
+            if (!validation.isValid()) {
+                logger.warn("Dados inválidos do IP: {} - {}", clientIp, validation.getErrorMessage());
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body(validation.getErrorMessage());
             }
             
-            // Validação: impedir agendamento no passado
+            // 2. Rate Limiting por IP
+            if (!rateLimitService.isAllowed(clientIp)) {
+                logger.warn("Rate limit excedido para IP: {}", clientIp);
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Muitas tentativas. Tente novamente em alguns minutos.");
+            }
+            
+            // 3. Validação de horário comercial (depois da validação básica)
+            if (!isBusinessHours()) {
+                logger.warn("Tentativa de agendamento fora do horário comercial - IP: {}", clientIp);
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Agendamentos só podem ser feitos durante horário comercial (Segunda a Sexta, 8h às 18h).");
+            }
+            
+            // 4. Validação de data/hora
             LocalDateTime dataHoraAgendamento;
             try {
                 dataHoraAgendamento = LocalDateTime.parse(dataHora);
-                logger.info("DEBUG: Data parseada: {}, atual: {}", dataHoraAgendamento, LocalDateTime.now());
             } catch (Exception e) {
-                logger.info("DEBUG: Erro de parsing de data: {}", e.getMessage());
-                return ResponseEntity.badRequest().body("Formato de data/hora inválido");
+                logger.warn("Formato de data inválido - IP: {}, DataHora: {}", clientIp, dataHora);
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Formato de data/hora inválido");
             }
             
             if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
-                logger.info("DEBUG: Data no passado detectada");
-                return ResponseEntity.badRequest().body("Não é possível agendar consultas no passado");
+                logger.warn("Data no passado - IP: {}, DataHora: {}", clientIp, dataHoraAgendamento);
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Não é possível agendar consultas no passado");
             }
             
-            // Validação: dentista ativo
+            // 5. Validação de dentista ativo
             List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
-            logger.info("DEBUG: Dentistas ativos: {}", dentistasAtivos);
             if (!dentistasAtivos.contains(dentista)) {
-                logger.info("DEBUG: Dentista não encontrado na lista de ativos");
-                return ResponseEntity.badRequest().body("Dentista não disponível para agendamento público");
+                logger.warn("Dentista indisponível - IP: {}, Dentista: {}", clientIp, dentista);
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Dentista não disponível para agendamento público");
             }
             
-            // Criar agendamento
-            Agendamento agendamento = new Agendamento();
-            agendamento.setPaciente(paciente);
-            agendamento.setDentista(dentista);
-            agendamento.setDataHora(dataHoraAgendamento);
-            agendamento.setStatus("AGENDADO");
-            agendamento.setObservacao("Agendamento online");
-            agendamento.setTelefoneWhatsapp(telefone);
-            agendamento.setDuracaoMinutos(30);
+            // 6. Criar agendamento com auditoria
+            Agendamento agendamento = createSecureAgendamento(paciente, dentista, dataHoraAgendamento, telefone, clientIp);
             agendamento = agendamentoService.salvar(agendamento);
             
-            logger.info("DEBUG: Agendamento salvo com sucesso, ID: {}", agendamento.getId());
-            return ResponseEntity.ok().body("Agendamento realizado com sucesso!");
+            // 7. Log de auditoria
+            logger.info("Agendamento público criado com sucesso - ID: {}, IP: {}, Paciente: {}", 
+                       agendamento.getId(), clientIp, paciente);
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Agendamento realizado com sucesso!");
             
         } catch (Exception e) {
-            logger.error("DEBUG: Erro interno ao processar agendamento", e);
-            return ResponseEntity.internalServerError().body("Erro interno do servidor");
+            logger.error("Erro interno ao processar agendamento - IP: {}", clientIp, e);
+            return ResponseEntity.internalServerError()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Erro interno do servidor");
+        }
+    }
+    
+    // ========== MÉTODOS AUXILIARES DE SEGURANÇA ==========
+    
+    /**
+     * Obtém o IP real do cliente considerando proxies
+     */
+    private String getClientIp(HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader != null && !xfHeader.isEmpty()) {
+            return xfHeader.split(",")[0].trim();
+        }
+        
+        String xrHeader = request.getHeader("X-Real-IP");
+        if (xrHeader != null && !xrHeader.isEmpty()) {
+            return xrHeader.trim();
+        }
+        
+        return request.getRemoteAddr();
+    }
+    
+    /**
+     * Valida e sanitiza os dados de entrada
+     */
+    private ValidationResult validateAndSanitizeInput(String paciente, String dentista, String dataHora, String telefone) {
+        // Validação de campos obrigatórios
+        if (paciente == null || paciente.trim().isEmpty() || 
+            dentista == null || dentista.trim().isEmpty() || 
+            dataHora == null || dataHora.trim().isEmpty()) {
+            return new ValidationResult(false, "Todos os campos obrigatórios devem ser preenchidos");
+        }
+        
+        // Validação do nome do paciente (apenas letras, espaços e acentos)
+        String pacienteClean = paciente.trim();
+        if (!Pattern.matches("^[a-zA-ZÀ-ÿ\\s]{2,100}$", pacienteClean)) {
+            return new ValidationResult(false, "Nome do paciente inválido (apenas letras e espaços, 2-100 caracteres)");
+        }
+        
+        // Validação do telefone se fornecido
+        if (telefone != null && !telefone.trim().isEmpty()) {
+            String telefoneNumerico = telefone.replaceAll("\\D", "");
+            if (!Pattern.matches("^\\d{10,11}$", telefoneNumerico)) {
+                return new ValidationResult(false, "Formato de telefone inválido (10-11 dígitos)");
+            }
+        }
+        
+        return new ValidationResult(true, null);
+    }
+    
+    /**
+     * Verifica se está dentro do horário comercial
+     */
+    private boolean isBusinessHours() {
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int dayOfWeek = now.getDayOfWeek().getValue();
+        
+        // Segunda a sexta (1-5), 8h às 18h
+        return dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 8 && hour <= 18;
+    }
+    
+    /**
+     * Cria um agendamento com informações de auditoria
+     */
+    private Agendamento createSecureAgendamento(String paciente, String dentista, LocalDateTime dataHora, String telefone, String clientIp) {
+        Agendamento agendamento = new Agendamento();
+        agendamento.setPaciente(paciente.trim());
+        agendamento.setDentista(dentista.trim());
+        agendamento.setDataHora(dataHora);
+        agendamento.setStatus("PENDENTE_CONFIRMACAO");
+        agendamento.setObservacao(String.format("Agendamento online seguro - IP: %s", clientIp));
+        agendamento.setTelefoneWhatsapp(telefone != null ? telefone.trim() : null);
+        agendamento.setDuracaoMinutos(30);
+        
+        return agendamento;
+    }
+    
+    /**
+     * Classe auxiliar para resultado de validação
+     */
+    private static class ValidationResult {
+        private final boolean valid;
+        private final String errorMessage;
+        
+        public ValidationResult(boolean valid, String errorMessage) {
+            this.valid = valid;
+            this.errorMessage = errorMessage;
+        }
+        
+        public boolean isValid() {
+            return valid;
+        }
+        
+        public String getErrorMessage() {
+            return errorMessage;
         }
     }
 }

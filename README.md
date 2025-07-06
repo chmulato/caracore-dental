@@ -14,7 +14,7 @@ Sistema de agendamento para consultórios odontológicos desenvolvido com Spring
 
 ## ✅ **CONFIGURAÇÃO COMPLETA - PRONTO PARA USO!**
 
-### 🚀 **Execução Rápida**
+### **Execução Rápida**
 
 ```bash
 # Executar aplicação no perfil desenvolvimento (H2 - padrão)
@@ -40,7 +40,7 @@ http://localhost:8080/h2-console
 - **Recepcionista**: `recepcao@caracore.com.br` / `admin123`
 - **Paciente**: `paciente@caracore.com.br` / `admin123`
 
-### 🗄️ **Configuração de Ambientes**
+### **Configuração de Ambientes**
 
 - **Desenvolvimento**: H2 Database (em memória) - Padrão
 - **Local**: PostgreSQL local (para desenvolvimento com BD real)
@@ -113,6 +113,7 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 ### **Funcionalidades Implementadas Recentemente:**
 
 ✅ **Gestão de Pacientes Aprimorada:**
+
 - Campo de WhatsApp obrigatório em todos os cadastros
 - Sistema de consentimento LGPD integrado via WhatsApp
 - Envio automático de termos LGPD via WhatsApp Web

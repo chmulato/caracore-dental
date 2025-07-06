@@ -2,7 +2,7 @@
 
 Esta pasta contém scripts utilitários para configuração e manutenção do sistema CCA.
 
-## 🐘 Setup PostgreSQL Local
+## Setup PostgreSQL Local
 
 Scripts para configurar rapidamente um banco PostgreSQL local para desenvolvimento.
 
@@ -25,12 +25,12 @@ chmod +x scripts/setup-postgres-local.sh
 
 ### O que os scripts fazem:
 
-1. ✅ **Verificam** se PostgreSQL está instalado e rodando
-2. 🏗️ **Criam** banco `cca_local` 
-3. 👤 **Criam** usuário `cca_user` com senha `cca_password`
-4. 🔐 **Configuram** permissões adequadas
-5. 🔍 **Testam** a conexão
-6. 📋 **Exibem** informações de uso
+1. **Verificam** se PostgreSQL está instalado e rodando
+2. **Criam** banco `cca_local` 
+3. **Criam** usuário `cca_user` com senha `cca_password`
+4. **Configuram** permissões adequadas
+5. **Testam** a conexão
+6. **Exibem** informações de uso
 
 ### Após executar o script:
 
@@ -39,7 +39,7 @@ chmod +x scripts/setup-postgres-local.sh
 mvn spring-boot:run -Dspring.profiles.active=local
 ```
 
-## 🔧 Configuração Manual (Alternativa)
+## Configuração Manual (Alternativa)
 
 Se preferir configurar manualmente:
 
@@ -59,7 +59,7 @@ GRANT ALL PRIVILEGES ON DATABASE cca_local TO cca_user;
 \q
 ```
 
-## 🌐 Variáveis de Ambiente (Opcionais)
+## Variáveis de Ambiente (Opcionais)
 
 ```bash
 # Linux/macOS
@@ -75,7 +75,7 @@ set DB_USERNAME=cca_user
 set DB_PASSWORD=cca_password
 ```
 
-## 📊 Verificar Configuração
+## Verificar Configuração
 
 ```bash
 # Testar conexão
@@ -88,7 +88,7 @@ psql -h localhost -U cca_user -l
 psql -h localhost -U cca_user -d cca_local
 ```
 
-## 🐳 Alternativa com Docker
+## Alternativa com Docker
 
 Se preferir usar Docker em vez de PostgreSQL nativo:
 
@@ -111,17 +111,21 @@ docker stop cca-postgres
 docker start cca-postgres
 ```
 
-## 🎯 Perfis de Aplicação
+## Perfis de Aplicação
 
-| Perfil | Banco | Descrição |
-|--------|-------|-----------|
-| `dev` (padrão) | H2 (memória) | Desenvolvimento rápido |
-| `local` | PostgreSQL local | Desenvolvimento com BD real |
-| `homolog` | PostgreSQL remoto | Homologação |
-| `prod` | PostgreSQL produção | Produção |
-| `test` | H2 (memória) | Testes automatizados |
+```markdown
+|----------------|---------------------|-----------------------------|
+| Perfil         | Banco               | Descrição                   |
+|----------------|---------------------|-----------------------------|
+| `dev` (padrão) | H2 (memória)        | Desenvolvimento rápido      |
+| `local`        | PostgreSQL local    | Desenvolvimento com BD real |
+| `homolog`      | PostgreSQL remoto   | Homologação                 |
+| `prod`         | PostgreSQL produção | Produção                    |
+| `test`         | H2 (memória)        | Testes automatizados        |
+|----------------|---------------------|-----------------------------|
+```
 
-## 🚀 Comandos de Execução
+## Comandos de Execução
 
 ```bash
 # H2 (padrão)
@@ -137,7 +141,7 @@ mvn spring-boot:run -Dspring.profiles.active=homolog
 mvn spring-boot:run -Dspring.profiles.active=prod
 ```
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### PostgreSQL não inicia
 
@@ -172,5 +176,6 @@ ALTER USER cca_user SUPERUSER;
 ---
 
 Para mais informações sobre configuração de ambientes, consulte:
+
 - `doc/APPLICATION_YML_GUIDE.md`
 - `doc/CONFIGURACAO_AMBIENTES.md`
