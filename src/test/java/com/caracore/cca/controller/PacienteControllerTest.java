@@ -13,7 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -515,5 +514,20 @@ public class PacienteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Paciente não encontrado"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar data de nascimento do paciente se existir na base de dados")
+    @WithMockUser(roles = {"ADMIN"})
+    public void deveRetornarDataNascimentoSeExistir() throws Exception {
+        java.time.LocalDate dataNascimento = java.time.LocalDate.of(1990, 5, 20);
+        pacienteTeste.setDataNascimento(dataNascimento);
+        when(pacienteRepository.findById(1L)).thenReturn(Optional.of(pacienteTeste));
+
+        mockMvc.perform(get("/pacientes/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pacientes/detalhes"))
+                .andExpect(model().attributeExists("paciente"))
+                .andExpect(model().attribute("paciente", org.hamcrest.Matchers.hasProperty("dataNascimento", org.hamcrest.Matchers.equalTo(dataNascimento))));
     }
 }

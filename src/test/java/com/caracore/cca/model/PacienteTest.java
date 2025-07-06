@@ -382,4 +382,20 @@ class PacienteTest {
         assertThat(paciente.getConsentimentoConfirmado()).isTrue();
         assertThat(paciente.getDataConsentimento()).isEqualTo(agora);
     }
+    
+    @Test
+    @DisplayName("Deve calcular idade corretamente a partir da data de nascimento")
+    void deveCalcularIdadeCorretamente() {
+        // Dado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        java.time.LocalDate dataNascimento = java.time.LocalDate.of(1990, 7, 6); // 6 de julho de 1990
+        paciente.setDataNascimento(dataNascimento);
+
+        // Quando
+        int idadeEsperada = java.time.Period.between(dataNascimento, java.time.LocalDate.now()).getYears();
+        Integer idadeCalculada = paciente.getIdade(); // Supondo que existe getIdade()
+
+        // Então
+        assertThat(idadeCalculada).isEqualTo(idadeEsperada);
+    }
 }
