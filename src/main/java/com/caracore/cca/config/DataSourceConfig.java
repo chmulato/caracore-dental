@@ -1,0 +1,174 @@
+package com.caracore.cca.config;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
+
+import javax.sql.DataSource;
+
+/**
+ * Configuração personalizada do pool de conexões HikariCP
+ * Otimizada para PostgreSQL com diferentes configurações por ambiente
+ */
+@Configuration
+public class DataSourceConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
+
+    private final Environment env;
+
+    public DataSourceConfig(Environment env) {
+        this.env = env;
+    }
+
+    @Bean
+    @Primary
+    public DataSource dataSource() {
+        String activeProfile = getActiveProfile();
+        logger.info("Configurando DataSource para perfil: {}", activeProfile);
+
+        HikariConfig config = new HikariConfig();
+        
+        // Configurações básicas
+        config.setJdbcUrl(env.getProperty("spring.datasource.url"));
+        config.setUsername(env.getProperty("spring.datasource.username"));
+        config.setPassword(env.getProperty("spring.datasource.password"));
+        config.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
+
+        // Configurações específicas por ambiente
+        configureByEnvironment(config, activeProfile);
+
+        // Configurações gerais de otimização
+        configureGeneral(config);
+
+        // Configurações de monitoramento
+        configureMonitoring(config, activeProfile);
+
+        HikariDataSource dataSource = new HikariDataSource(config);
+        logger.info("DataSource configurado com sucesso - Pool: {}, Max: {}, Min: {}", 
+                   config.getPoolName(), config.getMaximumPoolSize(), config.getMinimumIdle());
+        
+        return dataSource;
+    }
+
+    private void configureByEnvironment(HikariConfig config, String profile) {
+        switch (profile) {
+            case "local":
+                configureLocal(config);
+                break;
+            case "dev":
+                configureDev(config);
+                break;
+            case "homolog":
+                configureHomolog(config);
+                break;
+            case "prod":
+                configureProd(config);
+                break;
+            default:
+                configureDefault(config);
+        }
+    }
+
+    private void configureLocal(HikariConfig config) {
+        config.setPoolName("CCA-Local-Pool");
+        config.setMaximumPoolSize(15);
+        config.setMinimumIdle(5);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        config.setLeakDetectionThreshold(60000);
+        logger.info("Configuração LOCAL aplicada - Pool otimizado para desenvolvimento");
+    }
+
+    private void configureDev(HikariConfig config) {
+        config.setPoolName("CCA-Dev-Pool");
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(3);
+        config.setConnectionTimeout(20000);
+        config.setIdleTimeout(300000);
+        config.setMaxLifetime(1800000);
+        logger.info("Configuração DEV aplicada - Pool básico para desenvolvimento");
+    }
+
+    private void configureHomolog(HikariConfig config) {
+        config.setPoolName("CCA-Homolog-Pool");
+        config.setMaximumPoolSize(15);
+        config.setMinimumIdle(5);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        config.setLeakDetectionThreshold(60000);
+        logger.info("Configuração HOMOLOG aplicada - Pool para testes");
+    }
+
+    private void configureProd(HikariConfig config) {
+        config.setPoolName("CCA-Production-Pool");
+        config.setMaximumPoolSize(25);
+        config.setMinimumIdle(10);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        config.setLeakDetectionThreshold(60000);
+        config.setIsolateInternalQueries(true);
+        logger.info("Configuração PRODUÇÃO aplicada - Pool otimizado para alta performance");
+    }
+
+    private void configureDefault(HikariConfig config) {
+        config.setPoolName("CCA-Default-Pool");
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(3);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        logger.info("Configuração DEFAULT aplicada");
+    }
+
+    private void configureGeneral(HikariConfig config) {
+        // Configurações gerais de otimização
+        config.setConnectionTestQuery("SELECT 1");
+        config.setValidationTimeout(5000);
+        config.setAutoCommit(false);
+        config.setConnectionInitSql("SET search_path TO public");
+        config.setAllowPoolSuspension(false);
+        
+        // Configurações específicas do PostgreSQL
+        config.addDataSourceProperty("ApplicationName", "CCA-Application");
+        config.addDataSourceProperty("connectTimeout", "30");
+        config.addDataSourceProperty("socketTimeout", "30");
+        config.addDataSourceProperty("tcpKeepAlive", "true");
+        config.addDataSourceProperty("logUnclosedConnections", "true");
+        
+        logger.debug("Configurações gerais aplicadas");
+    }
+
+    private void configureMonitoring(HikariConfig config, String profile) {
+        // Monitoramento JMX habilitado para todos os ambientes
+        config.setRegisterMbeans(true);
+        
+        // Configurações específicas de monitoramento por ambiente
+        if ("prod".equals(profile)) {
+            // Em produção, configurações mais restritivas
+            config.setMetricRegistry(null); // Desabilitar métricas Dropwizard se não usado
+        } else {
+            // Em desenvolvimento, mais detalhes de debug
+            config.setLeakDetectionThreshold(30000); // 30 segundos para detectar vazamentos
+        }
+        
+        logger.debug("Configurações de monitoramento aplicadas para perfil: {}", profile);
+    }
+
+    private String getActiveProfile() {
+        String[] profiles = env.getActiveProfiles();
+        if (profiles.length > 0) {
+            return profiles[0];
+        }
+        return "default";
+    }
+}

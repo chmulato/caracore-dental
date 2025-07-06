@@ -20,7 +20,6 @@ import com.caracore.cca.util.UserActivityLogger;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.*;
 
 /**
  * Classe de teste para o DashboardController.

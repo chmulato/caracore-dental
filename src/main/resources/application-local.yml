@@ -25,11 +25,23 @@ spring:
     password: cca_password
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 3
-      connection-timeout: 20000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      # Pool de conexões para desenvolvimento local
+      maximum-pool-size: 15        # Máximo de conexões simultâneas
+      minimum-idle: 5              # Mínimo de conexões ociosas
+      connection-timeout: 30000    # Timeout para obter conexão (30s)
+      idle-timeout: 600000         # Timeout para conexão ociosa (10min)
+      max-lifetime: 1800000        # Tempo máximo de vida da conexão (30min)
+      leak-detection-threshold: 60000  # Detectar vazamento de conexão (60s)
+      pool-name: CCA-Local-Pool
+      # Configurações de validação
+      validation-timeout: 5000     # Timeout para validação (5s)
+      connection-test-query: SELECT 1
+      auto-commit: false           # Controle manual de transações
+      # Configurações de inicialização
+      connection-init-sql: "SET search_path TO public"
+      # Configurações de performance
+      register-mbeans: true        # Monitoramento JMX
+      allow-pool-suspension: false
   
   jpa:
     hibernate:
@@ -49,12 +61,6 @@ spring:
   web:
     locale: pt_BR
     locale-resolver: fixed
-    properties:
-      hibernate:
-        '[format_sql]': true
-        '[use_sql_comments]': true
-        '[generate_statistics]': false
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
   
   # H2 Console desabilitado (usando PostgreSQL)
   h2:

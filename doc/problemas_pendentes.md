@@ -248,168 +248,276 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Testes de conflito de horário usando buscarPorDentistaEPeriodo
   - Validação de todas as funcionalidades de CRUD e regras de negócio
   - Cobertura de testes expandida com cenários de sucesso e erro
+- [x] **CONSUL-IMPL-011** - ✅ **NOVO** - Criação de scripts de inicialização de ambiente
+  - Scripts para Windows (.bat e .ps1) e Linux/macOS (.sh)
+  - Verificação automática de Docker e docker-compose
+  - Inicialização do PostgreSQL via docker-compose
+  - Scripts de conveniência na raiz do projeto
+  - Documentação atualizada no README.md principal e scripts/README.md
+  - Facilitação do setup do ambiente local para desenvolvimento
 
-### Melhorias Gerais
+### Infraestrutura e Automação
 
-- [x] **FIXED-001** - Corrigido problema de autenticação com BCrypt
-- [x] **FIXED-002** - Corrigida integração de Bootstrap Icons via WebJars
-- [x] **FIXED-003** - Resolvido problema de porta 8080 já em uso durante inicialização
-- [x] **FIXED-004** - Corrigido erro na tela de login em navegadores Safari
-- [x] **FIXED-005** - Implementada obrigatoriedade do telefone WhatsApp no agendamento
-- [x] **FIXED-006** - Adicionada integração direta com WhatsApp Web na tela de agendamento
-- [x] **FIXED-007** - Implementado modelo Paciente com campos LGPD, nome social e gênero
-- [x] **FIXED-008** - Criadas migrations para suporte LGPD e melhorias de agendamento
-- [x] **FIXED-009** - Atualizada documentação com legislação (Portaria 2.836/2011 e LGPD)
+- [x] **INFRA-001** - ✅ **RESOLVIDO** - Criar scripts de inicialização do ambiente
+  - Scripts para Windows: `start-environment.bat` e `start-environment.ps1`
+  - Scripts para Linux/macOS: `start-environment.sh`
+  - Scripts detalhados na pasta `scripts/`: `start-docker.bat`, `start-docker.sh`, `start-docker.ps1`
+  - Verificação automática de Docker e docker-compose
+  - Navegação automática para diretório do projeto
+  - Inicialização do PostgreSQL via docker-compose
+  - Mensagens informativas sobre status e próximos passos
+- [ ] **INFRA-002** - Criar scripts de parada do ambiente
+  - Scripts para parar containers Docker
+  - Limpeza de recursos e volumes
+  - Backup automático antes da parada
+- [ ] **INFRA-003** - Implementar scripts de backup do banco de dados
+  - Backup automático do PostgreSQL
+  - Rotação de backups antigos
+  - Restore automático para desenvolvimento
+- [ ] **INFRA-004** - Criar pipeline de CI/CD
+  - GitHub Actions para testes automatizados
+  - Deploy automático para homologação
+  - Testes de integração contínua
+- [x] **INFRA-005** - ✅ **RESOLVIDO** - Configurar pool de conexões otimizado
+  - Pool HikariCP configurado para todos os ambientes
+  - Configurações específicas por ambiente (local, homolog, prod)
+  - Monitoramento automático com health checks
+  - Logs periódicos de métricas do pool
+  - Detecção de vazamentos de conexão
+  - Configurações otimizadas para PostgreSQL
+  - Testes automatizados do pool
+  - Documentação completa em POOL_CONEXOES.md
 
----
+## Problemas de Média Prioridade
 
-## Prioridades de Desenvolvimento
+### Funcionalidades - Gestão de Consultas
 
-### Próximos Sprints (Ordem de Prioridade)
+- [x] **FUNC-001** - ✅ **RESOLVIDO** - Implementar integração básica com WhatsApp
+  - ✅ Webhook configurado para receber mensagens
+  - ✅ API para envio de mensagens automáticas
+  - ✅ Templates de mensagens configurados
+- [x] **FUNC-002** - ✅ **RESOLVIDO** - Criar interface de listagem de consultas agendadas
+  - ✅ Listagem com filtros por data/status/dentista
+  - ✅ Paginação e ordenação implementadas
+  - ✅ Interface responsiva para mobile
+- [x] **FUNC-003** - ✅ **RESOLVIDO** - Implementar dashboard de consultas com métricas
+  - ✅ Gráficos de consultas por período
+  - ✅ Estatísticas de cancelamentos/confirmações
+  - ✅ Indicadores de performance
+- [x] **FUNC-004** - ✅ **RESOLVIDO** - Criar sistema de reagendamento de consultas
+  - ✅ Validação de conflitos de horários
+  - ✅ Notificações automáticas de reagendamento
+  - ✅ Logs de histórico de alterações
+- [x] **FUNC-005** - ✅ **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
+  - ✅ Enum StatusConsulta com todos os status necessários
+  - ✅ Transições de status validadas
+  - ✅ Auditoria de mudanças de status
+- [ ] **FUNC-006** - Adicionar opção de cancelamento pelo paciente
+- [ ] **FUNC-007** - Completar implementação do prontuário digital
+- [ ] **FUNC-008** - Adicionar filtros avançados nos relatórios
+- [ ] **FUNC-009** - Implementar notificações automáticas por WhatsApp com templates
+- [ ] **FUNC-010** - Adicionar sistema de lembretes de consulta
 
-1. **CONSUL-002** - Integração com calendário visual (ALTO)
-   - Incluir FullCalendar.js
-   - Criar endpoints de API para eventos
-   - Implementar interface de drag-and-drop
-2. **CONSUL-003** - Validações de horário de funcionamento (ALTO)
-   - Implementar regras de horário por dentista
-   - Adicionar validação de antecedência mínima
-3. **CONSUL-004** - Implementar notificações automáticas de confirmação via WhatsApp/Email (MÉDIO)
-   - Implementar templates de mensagem
-   - Configurar sistema de lembretes automáticos
-4. **VALID-001** - Validação de antecedência mínima (MÉDIO)
-   - Configurar regras de antecedência por tipo de consulta
-5. **FUNC-009** - Notificações automáticas WhatsApp (MÉDIO)
-   - Implementar templates de mensagem
-   - Configurar sistema de lembretes
-6. **UI-001** - Melhorias de interface mobile (MÉDIO)
-   - Corrigir layout responsivo
-   - Implementar componentes touch-friendly
-   - Configurar templates de mensagens WhatsApp
-   - Implementar sistema de lembretes automáticos
-   - Adicionar confirmação de presença por WhatsApp
-   - Criar logs de envio de notificações
+### Validações e Regras de Negócio
 
-### Teste e Validação Recomendados
+- [ ] **VALID-001** - Implementar validação de antecedência mínima para agendamento
+- [ ] **VALID-002** - Adicionar validação de conflitos de horário mais robusta
+- [ ] **VALID-003** - Implementar regras de horário de funcionamento por dentista
+- [ ] **VALID-004** - Validar disponibilidade de dentista em feriados/férias
 
-```bash
-# Para testar a interface atual:
-mvn spring-boot:run
-# Acessar: http://localhost:8080/consultas
+### Performance
 
-# Para executar testes unitários:
-mvn test -Dtest=ConsultasControllerTest
-mvn test -Dtest=AgendamentoServiceTest
-```
+- [ ] **PERF-001** - Otimizar carregamento de imagens no prontuário
+- [ ] **PERF-002** - Implementar cache para consultas frequentes do dashboard
+- [ ] **PERF-003** - Reduzir tempo de resposta da API de agendamento
+- [ ] **PERF-004** - Otimizar queries de busca de conflitos de horário
 
-### Métricas de Progresso
+## Problemas de Baixa Prioridade
 
-- **Gestão de Consultas**: 90% concluído
-  - ✅ Templates Thymeleaf implementados (lista, detalhes, dashboard, reagendamento)
-  - ✅ Controller completo com endpoints
-  - ✅ Service com métodos principais
-  - ✅ Dashboard com estatísticas
-  - ✅ Sistema de filtros
-  - ✅ Controle de acesso por roles
-  - ✅ Integração WhatsApp
-  - ✅ Testes unitários funcionais e compatíveis
-  - ❌ Calendário visual
-  - ❌ Validações de horário de funcionamento
-  - ❌ Notificações automáticas
-- **Interface de Usuário**: 85% concluído
-- **Validações e Regras**: 40% concluído  
-- **Integrações**: 30% concluído
-- **Testes**: 85% concluído
+### Melhorias de Interface
 
-### Arquivos Criados/Modificados (Gestão de Consultas)
+- [ ] **IMP-001** - Melhorar mensagens de erro para o usuário final
+- [ ] **IMP-002** - Adicionar tema escuro (dark mode)
+- [x] **IMP-003** - Implementar histórico de alterações nos agendamentos
+- [ ] **IMP-004** - Adicionar mais opções de relatórios estatísticos
+- [ ] **IMP-005** - Implementar busca avançada de consultas
+- [ ] **IMP-006** - Adicionar exportação de relatórios em PDF/Excel
+- [ ] **IMP-007** - Melhorar responsividade do dashboard em tablets
 
-#### Templates Thymeleaf
+### Integrações
 
-- `src/main/resources/templates/consultas/lista.html`
-- `src/main/resources/templates/consultas/detalhes.html`
-- `src/main/resources/templates/consultas/dashboard.html`
-- `src/main/resources/templates/consultas/reagendar.html`
+- [ ] **INT-001** - Integração com Google Calendar
+- [ ] **INT-002** - Integração com sistemas de pagamento
+- [ ] **INT-003** - API para integração com sistemas terceiros
+- [ ] **INT-004** - Sincronização com agenda pessoal dos dentistas
 
-#### Controllers
+### Documentação
 
-- `src/main/java/com/caracore/cca/controller/ConsultasController.java`
+- [ ] **DOC-001** - Atualizar documentação da API REST
+- [ ] **DOC-002** - Criar manual do usuário com screenshots
+- [ ] **DOC-003** - Documentar processo de instalação em servidores Linux
+- [ ] **DOC-004** - Criar guia de uso do sistema de consultas agendadas
 
-#### Services
+### Bugs Conhecidos
 
-- `src/main/java/com/caracore/cca/service/AgendamentoService.java` (expandido)
+### Consultas Agendadas
 
-#### Repositories
+- [x] **BUG-006** - ✅ **RESOLVIDO** - Testes unitários do ConsultasController não passam devido a incompatibilidade de métodos
+  - ✅ Testes alinhados com métodos existentes no service atual
+  - ✅ Mocks corrigidos para usar campos corretos do modelo Agendamento
+  - ✅ Assinaturas de métodos compatibilizadas entre controller e service
+  - ✅ Novo AgendamentoServiceTest criado com 100% de compatibilidade
+- [ ] **BUG-007** - Verificação de conflito de horário pode não funcionar corretamente com fusos horários
+  - Validar comportamento com diferentes fusos horários
+  - Garantir consistência entre frontend e backend
+- [ ] **BUG-008** - Interface de reagendamento não valida horários passados
+  - Adicionar validação de data/hora futura
+  - Melhorar feedback para usuário
+- [ ] **BUG-009** - Alguns métodos do service não têm implementação completa
+  - Verificar implementação de todos os métodos do AgendamentoService
+  - Validar retorno de métodos booleanos (confirmar, cancelar, reagendar)
 
-- `src/main/java/com/caracore/cca/repository/AgendamentoRepository.java` (expandido)
+### Geral
 
-#### Migrations
+- [ ] **BUG-001** - Erro ao agendar consulta em feriados específicos
+- [ ] **BUG-002** - Notificações por email não são enviadas quando o servidor está sobrecarregado
+- [ ] **BUG-003** - Relatório mensal não contabiliza corretamente cancelamentos
+- [ ] **BUG-004** - Upload de imagens falha com arquivos maiores que 5MB
+- [ ] **BUG-005** - Inconsistência na exibição de horários entre fusos horários diferentes
 
-- `src/main/resources/db/migration/V13__melhorias_agendamento.sql`
+## Itens Resolvidos
 
-#### Testes (corrigidos e atualizados)
+### Consultas Agendadas - Recentemente Implementados
 
-- `src/test/java/com/caracore/cca/controller/ConsultasControllerTest.java` ✅
-- `src/test/java/com/caracore/cca/service/AgendamentoServiceTest.java` ✅
+- [x] **CONSUL-IMPL-001** - Criados templates Thymeleaf para gestão de consultas (lista, detalhes, dashboard, reagendamento)
+  - Template `consultas/lista.html` com filtros por status, período e dentista
+  - Template `consultas/detalhes.html` com informações completas e histórico
+  - Template `consultas/dashboard.html` com estatísticas e métricas
+  - Template `consultas/reagendar.html` com formulário de reagendamento
+- [x] **CONSUL-IMPL-002** - Implementado ConsultasController com endpoints completos
+  - Listagem com filtros avançados
+  - Visualização de detalhes
+  - Dashboard com estatísticas
+  - Reagendamento com verificação de conflitos
+  - APIs para calendário e horários disponíveis
+- [x] **CONSUL-IMPL-003** - Adicionados métodos no AgendamentoService (confirmar, cancelar, reagendar, marcar como realizado)
+  - Implementação básica dos métodos principais
+  - Validação de status e regras de negócio
+  - Logs de atividade para auditoria
+- [x] **CONSUL-IMPL-004** - Criada interface de dashboard com métricas e estatísticas
+  - Métricas principais (total, confirmadas, hoje, canceladas)
+  - Gráficos de distribuição por status e dentista
+  - Consultas de hoje e próximas
+  - Taxa de confirmação e tendências
+- [x] **CONSUL-IMPL-005** - Implementado sistema de filtros (status, período, dentista)
+  - Filtros dinâmicos na listagem
+  - Resumo por status na interface
+  - Consultas de hoje destacadas
+- [x] **CONSUL-IMPL-006** - Adicionado controle de acesso baseado em roles (ADMIN, DENTIST, RECEPTIONIST)
+  - Permissões específicas por tipo de usuário
+  - Administradores: acesso completo
+  - Recepcionistas: criar, editar, cancelar, reagendar
+  - Dentistas: visualizar próprios agendamentos e marcar como realizadas
+- [x] **CONSUL-IMPL-007** - Integração com WhatsApp nos templates de consultas
+  - Links diretos para WhatsApp Web
+  - Botões de contato rápido
+  - Integração com telefone do paciente
+- [x] **CONSUL-IMPL-008** - Expansão do modelo Agendamento com novos campos
+  - Status detalhado (AGENDADO, CONFIRMADO, CANCELADO, REAGENDADO, REALIZADO, FALTA)
+  - Campos de duração em minutos
+  - Telefone WhatsApp dedicado
+  - Timestamps de criação e atualização
+- [x] **CONSUL-IMPL-009** - Criação da migration V13 para melhorias do agendamento
+  - Novos campos de status e duração
+  - Índices para performance
+  - Compatibilidade com dados existentes
+- [x] **CONSUL-IMPL-010** - ✅ **NOVO** - Correção e alinhamento completo dos testes unitários
+  - ConsultasControllerTest: 100% compatível com implementação atual
+  - AgendamentoServiceTest: Totalmente refatorado e funcional
+  - Remoção de métodos duplicados no ConsultasController
+  - Mocks ajustados para usar campos corretos do modelo Agendamento
+  - Testes de conflito de horário usando buscarPorDentistaEPeriodo
+  - Validação de todas as funcionalidades de CRUD e regras de negócio
+  - Cobertura de testes expandida com cenários de sucesso e erro
+- [x] **CONSUL-IMPL-011** - ✅ **NOVO** - Criação de scripts de inicialização de ambiente
+  - Scripts para Windows (.bat e .ps1) e Linux/macOS (.sh)
+  - Verificação automática de Docker e docker-compose
+  - Inicialização do PostgreSQL via docker-compose
+  - Scripts de conveniência na raiz do projeto
+  - Documentação atualizada no README.md principal e scripts/README.md
+  - Facilitação do setup do ambiente local para desenvolvimento
 
-### Funcionalidades por Perfil de Usuário
+### Infraestrutura e Automação
 
-#### Para Administradores
+- [x] **INFRA-001** - ✅ **RESOLVIDO** - Criar scripts de inicialização do ambiente
+  - Scripts para Windows: `start-environment.bat` e `start-environment.ps1`
+  - Scripts para Linux/macOS: `start-environment.sh`
+  - Scripts detalhados na pasta `scripts/`: `start-docker.bat`, `start-docker.sh`, `start-docker.ps1`
+  - Verificação automática de Docker e docker-compose
+  - Navegação automática para diretório do projeto
+  - Inicialização do PostgreSQL via docker-compose
+  - Mensagens informativas sobre status e próximos passos
+- [ ] **INFRA-002** - Criar scripts de parada do ambiente
+  - Scripts para parar containers Docker
+  - Limpeza de recursos e volumes
+  - Backup automático antes da parada
+- [ ] **INFRA-003** - Implementar scripts de backup do banco de dados
+  - Backup automático do PostgreSQL
+  - Rotação de backups antigos
+  - Restore automático para desenvolvimento
+- [ ] **INFRA-004** - Criar pipeline de CI/CD
+  - GitHub Actions para testes automatizados
+  - Deploy automático para homologação
+  - Testes de integração contínua
+- [x] **INFRA-005** - ✅ **RESOLVIDO** - Configurar pool de conexões otimizado
+  - Pool HikariCP configurado para todos os ambientes
+  - Configurações específicas por ambiente (local, homolog, prod)
+  - Monitoramento automático com health checks
+  - Logs periódicos de métricas do pool
+  - Detecção de vazamentos de conexão
+  - Configurações otimizadas para PostgreSQL
+  - Testes automatizados do pool
+  - Documentação completa em POOL_CONEXOES.md
 
-- Acesso completo: visualizar, criar, editar, cancelar, excluir
-- Dashboard com métricas completas
-- Gestão de usuários e permissões
-- Relatórios avançados
+## Problemas de Média Prioridade
 
-#### Para Recepcionistas
+### Funcionalidades - Gestão de Consultas
 
-- Visualizar, criar, editar e cancelar agendamentos
-- Reagendar consultas
-- Confirmar presença de pacientes
-- Dashboard básico
+- [x] **FUNC-001** - ✅ **RESOLVIDO** - Implementar integração básica com WhatsApp
+  - ✅ Webhook configurado para receber mensagens
+  - ✅ API para envio de mensagens automáticas
+  - ✅ Templates de mensagens configurados
+- [x] **FUNC-002** - ✅ **RESOLVIDO** - Criar interface de listagem de consultas agendadas
+  - ✅ Listagem com filtros por data/status/dentista
+  - ✅ Paginação e ordenação implementadas
+  - ✅ Interface responsiva para mobile
+- [x] **FUNC-003** - ✅ **RESOLVIDO** - Implementar dashboard de consultas com métricas
+  - ✅ Gráficos de consultas por período
+  - ✅ Estatísticas de cancelamentos/confirmações
+  - ✅ Indicadores de performance
+- [x] **FUNC-004** - ✅ **RESOLVIDO** - Criar sistema de reagendamento de consultas
+  - ✅ Validação de conflitos de horários
+  - ✅ Notificações automáticas de reagendamento
+  - ✅ Logs de histórico de alterações
+- [x] **FUNC-005** - ✅ **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
+  - ✅ Enum StatusConsulta com todos os status necessários
+  - ✅ Transições de status validadas
+  - ✅ Auditoria de mudanças de status
+- [ ] **FUNC-006** - Adicionar opção de cancelamento pelo paciente
+- [ ] **FUNC-007** - Completar implementação do prontuário digital
+- [ ] **FUNC-008** - Adicionar filtros avançados nos relatórios
+- [ ] **FUNC-009** - Implementar notificações automáticas por WhatsApp com templates
+- [ ] **FUNC-010** - Adicionar sistema de lembretes de consulta
 
-#### Para Dentistas
+### Validações e Regras de Negócio
 
-- Visualizar agendamentos próprios
-- Marcar consultas como realizadas
-- Ver dashboard de suas consultas
-- Reagendar próprias consultas
+- [ ] **VALID-001** - Implementar validação de antecedência mínima para agendamento
+- [ ] **VALID-002** - Adicionar validação de conflitos de horário mais robusta
+- [ ] **VALID-003** - Implementar regras de horário de funcionamento por dentista
+- [ ] **VALID-004** - Validar disponibilidade de dentista em feriados/férias
 
-### Integração LGPD Mantida ✅
+### Performance
 
-As consultas mantêm compatibilidade com:
-
-- Consentimento LGPD dos pacientes
-- Campos de nome social e gênero
-- Logs de atividade do usuário
-- Controle de acesso a dados pessoais
-
----
-
-## Como Reportar Novos Problemas
-
-Para reportar novos problemas, por favor inclua:
-
-1. **Identificador**: Um código único seguindo o padrão CATEGORIA-NNN
-2. **Descrição**: Descrição clara e concisa do problema
-3. **Como Reproduzir**: Passos para reproduzir o problema
-4. **Comportamento Esperado**: O que deveria acontecer
-5. **Comportamento Atual**: O que está acontecendo
-6. **Screenshots**: Se aplicável
-7. **Ambiente**: Navegador, sistema operacional, dispositivo
-8. **Contexto Adicional**: Qualquer informação relevante
-
----
-
-**Última atualização:** Janeiro 2025  
-**Responsável pela documentação:** Christian V. Mulato  
-**Repositório oficial:** [https://github.com/chmulato/cara-core_cca/](https://github.com/chmulato/cara-core_cca/)  
-**Status do projeto:** 95% concluído - Sistema completo de agendamento implementado e funcional
-
-**Principais conquistas recentes:**
-- ✅ Testes unitários 100% funcionais e compatíveis
-- ✅ Cobertura de testes expandida para 85%+
-- ✅ Todos os métodos do AgendamentoService implementados
-- ✅ Todos os endpoints do ConsultasController funcionais
-- ✅ Documentação atualizada e alinhada com código-fonte
-- ✅ Integração WhatsApp 100% funcional
-- ✅ Dashboard administrativo completo
+- [ ] **PERF-001** - Otimizar carregamento de imagens no prontuário
+- [ ] **PERF-002** - Implementar cache para consultas frequentes do dashboard
+- [ ] **PERF-003** - Reduzir tempo de resposta da API de agendamento

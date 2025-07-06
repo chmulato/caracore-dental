@@ -6,12 +6,25 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 10
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-      leak-detection-threshold: 60000
+      # Pool de conexões otimizado para produção
+      maximum-pool-size: 25        # Máximo de conexões simultâneas
+      minimum-idle: 10             # Mínimo de conexões ociosas
+      connection-timeout: 30000    # Timeout para obter conexão (30s)
+      idle-timeout: 600000         # Timeout para conexão ociosa (10min)
+      max-lifetime: 1800000        # Tempo máximo de vida da conexão (30min)
+      leak-detection-threshold: 60000  # Detectar vazamento de conexão (60s)
+      pool-name: CCA-Production-Pool
+      # Configurações de validação
+      validation-timeout: 5000     # Timeout para validação (5s)
+      connection-test-query: SELECT 1
+      auto-commit: false           # Controle manual de transações
+      # Configurações de inicialização
+      connection-init-sql: "SET search_path TO public"
+      # Configurações de performance
+      register-mbeans: true        # Monitoramento JMX
+      allow-pool-suspension: false
+      # Configurações específicas para produção
+      isolate-internal-queries: true
   
   jpa:
     hibernate:

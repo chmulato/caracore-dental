@@ -6,11 +6,23 @@ spring:
     password: ${DB_PASSWORD:cca_homolog_password}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      # Pool de conexões para homologação
+      maximum-pool-size: 15        # Máximo de conexões simultâneas
+      minimum-idle: 5              # Mínimo de conexões ociosas
+      connection-timeout: 30000    # Timeout para obter conexão (30s)
+      idle-timeout: 600000         # Timeout para conexão ociosa (10min)
+      max-lifetime: 1800000        # Tempo máximo de vida da conexão (30min)
+      leak-detection-threshold: 60000  # Detectar vazamento de conexão (60s)
+      pool-name: CCA-Homolog-Pool
+      # Configurações de validação
+      validation-timeout: 5000     # Timeout para validação (5s)
+      connection-test-query: SELECT 1
+      auto-commit: false           # Controle manual de transações
+      # Configurações de inicialização
+      connection-init-sql: "SET search_path TO public"
+      # Configurações de performance
+      register-mbeans: true        # Monitoramento JMX
+      allow-pool-suspension: false
   
   jpa:
     hibernate:

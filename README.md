@@ -16,6 +16,21 @@ Sistema de agendamento para consultórios odontológicos desenvolvido com Spring
 
 ### **Execução Rápida**
 
+#### Opção 1: Usando os scripts de inicialização (Recomendado)
+
+```bash
+# Windows (duplo clique ou cmd)
+start-environment.bat
+
+# Windows PowerShell
+.\start-environment.ps1
+
+# Linux/macOS
+./start-environment.sh
+```
+
+#### Opção 2: Comandos manuais
+
 ```bash
 # Executar aplicação no perfil desenvolvimento (H2 - padrão)
 mvn spring-boot:run

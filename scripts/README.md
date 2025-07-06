@@ -2,11 +2,50 @@
 
 Esta pasta contém scripts utilitários para configuração e manutenção do sistema CCA.
 
+## Start Docker (Novo)
+
+Scripts para iniciar o Docker e docker-compose do projeto de forma automática.
+
+### Windows
+
+```batch
+# Batch script (duplo clique ou pelo CMD)
+.\scripts\start-docker.bat
+
+# PowerShell script (mais robusto)
+.\scripts\start-docker.ps1
+```
+
+### Linux/macOS
+
+```bash
+# Tornar executável (se necessário)
+chmod +x scripts/start-docker.sh
+
+# Executar
+./scripts/start-docker.sh
+```
+
+### Funcionalidades dos scripts de Docker
+
+1. **Verificam** se o Docker está rodando
+2. **Verificam** se o docker-compose está disponível
+3. **Navegam** para o diretório raiz do projeto
+4. **Executam** `docker-compose up -d` para iniciar o PostgreSQL
+5. **Exibem** informações sobre os serviços iniciados
+
+### Uso após executar o script
+
+```bash
+# Executar aplicação com PostgreSQL via Docker
+mvn spring-boot:run -Dspring.profiles.active=local
+```
+
 ## Setup PostgreSQL Local
 
 Scripts para configurar rapidamente um banco PostgreSQL local para desenvolvimento.
 
-### Linux/macOS
+### Linux/macOS (PostgreSQL)
 
 ```bash
 # Tornar executável
@@ -16,23 +55,23 @@ chmod +x scripts/setup-postgres-local.sh
 ./scripts/setup-postgres-local.sh
 ```
 
-### Windows (PowerShell)
+### Windows (PowerShell - PostgreSQL)
 
 ```powershell
 # Executar como Administrador
 .\scripts\setup-postgres-local.ps1
 ```
 
-### O que os scripts fazem:
+### Funcionalidades dos scripts de PostgreSQL
 
 1. **Verificam** se PostgreSQL está instalado e rodando
-2. **Criam** banco `cca_local` 
+2. **Criam** banco `cca_local`
 3. **Criam** usuário `cca_user` com senha `cca_password`
 4. **Configuram** permissões adequadas
 5. **Testam** a conexão
 6. **Exibem** informações de uso
 
-### Após executar o script:
+### Uso após executar o script PostgreSQL
 
 ```bash
 # Executar aplicação com PostgreSQL local

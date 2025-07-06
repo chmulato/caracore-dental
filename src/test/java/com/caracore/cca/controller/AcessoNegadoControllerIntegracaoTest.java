@@ -30,7 +30,6 @@ import org.springframework.web.context.WebApplicationContext;
 import jakarta.servlet.RequestDispatcher;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
