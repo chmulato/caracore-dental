@@ -22,19 +22,30 @@ public class UpdatePasswordHashTest {
         
         // Redirecionar saída padrão para evitar mensagens nos logs de teste
         PrintStream originalOut = System.out;
+        PrintStream originalErr = System.err;
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
         
         try {
             // Se tentarmos executar o main, ele vai tentar se conectar ao banco
             // O que provavelmente falhará, mas o método main já trata as exceções internamente
             UpdatePasswordHash.main(new String[0]);
+            
+            // Verificamos se houve erro de conexão (esperado em testes)
+            String errorOutput = errContent.toString();
+            assertTrue(errorOutput.contains("Erro ao atualizar a senha") || 
+                      errorOutput.contains("relation \"usuario\" does not exist") ||
+                      errorOutput.contains("Connection refused"),
+                      "Erro esperado de conexão com banco deve aparecer");
         } finally {
             // Restaurar saída padrão
             System.setOut(originalOut);
+            System.setErr(originalErr);
         }
         
         // Se chegamos aqui sem outras exceções, o teste passou
-        // Não há asserções específicas porque estamos apenas verificando se o método existe e é sintaticamente válido
+        // O erro de SQL é esperado pois não há banco PostgreSQL nos testes
     }
 }

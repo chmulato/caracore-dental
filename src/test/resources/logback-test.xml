@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Configuração simples para testes -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger específico para atividades de usuário nos testes -->
+    <!-- Durante os testes, queremos que os logs apareçam no console para serem capturados -->
+    <!-- Adicionamos additivity="true" para garantir que os logs também vão para o root logger -->
+    <logger name="USER_ACTIVITY" level="INFO" additivity="true">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Configuração para outros loggers -->
+    <logger name="org.springframework.security" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="com.caracore.cca" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

@@ -38,7 +38,7 @@ logging:
     '[org.springframework.web]': WARN
     '[com.caracore.cca]': INFO
     '[org.hibernate.SQL]': WARN
-    '[USER_ACTIVITY]': WARN
+    '[USER_ACTIVITY]': INFO
   
 # Swagger desabilitado para testes
 springdoc:
