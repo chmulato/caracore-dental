@@ -128,6 +128,19 @@
                                         </span>
                                         <span th:unless="${paciente.telefone}">Não informado</span>
                                     </dd>
+                                    
+                                    <dt class="col-sm-3">Data de Nascimento:</dt>
+                                    <dd class="col-sm-9">
+                                        <span th:if="${paciente.dataNascimento}" 
+                                              th:text="${#temporals.format(paciente.dataNascimento, 'dd/MM/yyyy')}"></span>
+                                        <span th:unless="${paciente.dataNascimento}">Não informado</span>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-3">Idade:</dt>
+                                    <dd class="col-sm-9">
+                                        <span th:if="${paciente.idade}" th:text="${paciente.idade + ' anos'}"></span>
+                                        <span th:unless="${paciente.idade}">Não calculada</span>
+                                    </dd>
                                 </dl>
                             </div>
                         </div>

@@ -1,6 +1,8 @@
 package com.caracore.cca.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 
 /**
@@ -27,6 +29,9 @@ public class Paciente {
 
     @Column(name = "telefone", nullable = true, length = 20)
     private String telefone; // Armazena o número de WhatsApp do paciente
+
+    @Column(name = "data_nascimento", nullable = true)
+    private LocalDate dataNascimento; // Data de nascimento do paciente (opcional)
 
     @Column(name = "consentimento_lgpd", nullable = false)
     private Boolean consentimentoLgpd = false; // Consentimento LGPD enviado via WhatsApp
@@ -92,6 +97,25 @@ public class Paciente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    /**
+     * Calcula a idade do paciente com base na data de nascimento
+     * @return idade em anos, ou null se data de nascimento não estiver informada
+     */
+    public Integer getIdade() {
+        if (dataNascimento == null) {
+            return null;
+        }
+        return Period.between(dataNascimento, LocalDate.now()).getYears();
     }
 
     public Boolean getConsentimentoLgpd() {

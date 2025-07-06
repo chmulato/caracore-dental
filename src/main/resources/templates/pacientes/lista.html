@@ -107,13 +107,14 @@
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>WhatsApp</th>
+                                <th>Idade</th>
                                 <th>LGPD</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${pacientes.empty}">
-                                <td colspan="6" class="text-center">Nenhum paciente encontrado</td>
+                                <td colspan="7" class="text-center">Nenhum paciente encontrado</td>
                             </tr>
                             <tr th:each="paciente : ${pacientes}">
                                 <td th:text="${paciente.id}"></td>
@@ -143,6 +144,10 @@
                                     <span th:unless="${paciente.telefone}" class="text-danger">
                                         <i class="bi bi-exclamation-triangle" title="WhatsApp obrigatório"></i> Não informado
                                     </span>
+                                </td>
+                                <td class="text-center">
+                                    <span th:if="${paciente.idade}" th:text="${paciente.idade + ' anos'}" class="badge bg-light text-dark"></span>
+                                    <span th:unless="${paciente.idade}" class="text-muted">--</span>
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column">

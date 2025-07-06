@@ -146,6 +146,27 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="dataNascimento" class="form-label">
+                            <i class="bi bi-calendar-date me-1"></i>
+                            Data de Nascimento
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-calendar"></i>
+                            </span>
+                            <input type="date" class="form-control" id="dataNascimento" th:field="*{dataNascimento}" 
+                                   th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                            <span class="input-group-text bg-light" id="idadeDisplay">
+                                <i class="bi bi-person-badge"></i>
+                                <span id="idadeTexto">Idade: --</span>
+                            </span>
+                        </div>
+                        <div class="form-text">
+                            Data de nascimento é opcional. Será utilizada para calcular a idade automaticamente.
+                        </div>
+                    </div>
+
                     <!-- Seção Informativa sobre Nome Social -->
                     <div class="alert alert-info" role="alert">
                         <h6 class="alert-heading">
@@ -326,6 +347,49 @@
             // Inicializar formatação na carga da página
             if (telefoneInput.value) {
                 formatarTelefone(telefoneInput);
+            }
+
+            // Função para calcular idade
+            function calcularIdade(dataNascimento) {
+                if (!dataNascimento) return null;
+                
+                const hoje = new Date();
+                const nascimento = new Date(dataNascimento);
+                
+                let idade = hoje.getFullYear() - nascimento.getFullYear();
+                const mesAtual = hoje.getMonth();
+                const mesNascimento = nascimento.getMonth();
+                
+                if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                    idade--;
+                }
+                
+                return idade;
+            }
+
+            // Atualizar display da idade
+            function atualizarIdade() {
+                const dataNascimentoInput = document.getElementById('dataNascimento');
+                const idadeTexto = document.getElementById('idadeTexto');
+                
+                if (dataNascimentoInput.value) {
+                    const idade = calcularIdade(dataNascimentoInput.value);
+                    if (idade !== null && idade >= 0) {
+                        idadeTexto.textContent = `Idade: ${idade} anos`;
+                    } else {
+                        idadeTexto.textContent = 'Idade: --';
+                    }
+                } else {
+                    idadeTexto.textContent = 'Idade: --';
+                }
+            }
+
+            // Event listener para data de nascimento
+            const dataNascimentoInput = document.getElementById('dataNascimento');
+            if (dataNascimentoInput) {
+                dataNascimentoInput.addEventListener('change', atualizarIdade);
+                // Calcular idade inicial se já houver data
+                atualizarIdade();
             }
         });
     </script>
