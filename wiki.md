@@ -53,13 +53,13 @@ Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a docum
     - [Estratégias de Segurança](#estratégias-de-segurança)
       - [**Rate Limiting**](#rate-limiting)
       - [**Proteção reCAPTCHA**](#proteção-recaptcha)
-      - [🛡️ **Validação e Sanitização**](#️-validação-e-sanitização)
-      - [📝 **Logs e Auditoria**](#-logs-e-auditoria)
-      - [🔐 **Headers de Segurança**](#-headers-de-segurança)
+      - [**Validação e Sanitização**](#validação-e-sanitização)
+      - [**Logs e Auditoria**](#logs-e-auditoria)
+      - [**Headers de Segurança**](#headers-de-segurança)
     - [Exemplos de Uso](#exemplos-de-uso)
       - [Exemplo JavaScript (Frontend)](#exemplo-javascript-frontend)
       - [Exemplo cURL (Testes)](#exemplo-curl-testes)
-    - [Validação e Sanitização](#validação-e-sanitização)
+    - [Validação e Sanitização](#validação-e-sanitização-1)
       - [Validações Implementadas](#validações-implementadas-1)
       - [Tratamento de Erros](#tratamento-de-erros)
   - [Compliance Legal e Regulamentações](#compliance-legal-e-regulamentações)
@@ -77,7 +77,7 @@ Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a docum
       - [Tipos de Teste Implementados:](#tipos-de-teste-implementados)
       - [Execução de Testes:](#execução-de-testes)
     - [Testes de Endpoints Públicos](#testes-de-endpoints-públicos)
-      - [✅ **AgendamentoPublicoControllerTest**](#-agendamentopublicocontrollertest)
+      - [**AgendamentoPublicoControllerTest**](#agendamentopublicocontrollertest)
       - [Exemplo de Teste Completo:](#exemplo-de-teste-completo)
       - [Cobertura de Código:](#cobertura-de-código)
   - [FAQ e Solução de Problemas](#faq-e-solução-de-problemas)
@@ -404,13 +404,13 @@ de a instalação até os detalhes técnicos de cada funcionalidade.
     - [Estratégias de Segurança](#estratégias-de-segurança)
       - [**Rate Limiting**](#rate-limiting)
       - [**Proteção reCAPTCHA**](#proteção-recaptcha)
-      - [🛡️ **Validação e Sanitização**](#️-validação-e-sanitização)
-      - [📝 **Logs e Auditoria**](#-logs-e-auditoria)
-      - [🔐 **Headers de Segurança**](#-headers-de-segurança)
+      - [**Validação e Sanitização**](#validação-e-sanitização)
+      - [**Logs e Auditoria**](#logs-e-auditoria)
+      - [**Headers de Segurança**](#headers-de-segurança)
     - [Exemplos de Uso](#exemplos-de-uso)
       - [Exemplo JavaScript (Frontend)](#exemplo-javascript-frontend)
       - [Exemplo cURL (Testes)](#exemplo-curl-testes)
-    - [Validação e Sanitização](#validação-e-sanitização)
+    - [Validação e Sanitização](#validação-e-sanitização-1)
       - [Validações Implementadas](#validações-implementadas-1)
       - [Tratamento de Erros](#tratamento-de-erros)
   - [Compliance Legal e Regulamentações](#compliance-legal-e-regulamentações)
@@ -428,7 +428,7 @@ de a instalação até os detalhes técnicos de cada funcionalidade.
       - [Tipos de Teste Implementados:](#tipos-de-teste-implementados)
       - [Execução de Testes:](#execução-de-testes)
     - [Testes de Endpoints Públicos](#testes-de-endpoints-públicos)
-      - [✅ **AgendamentoPublicoControllerTest**](#-agendamentopublicocontrollertest)
+      - [**AgendamentoPublicoControllerTest**](#agendamentopublicocontrollertest)
       - [Exemplo de Teste Completo:](#exemplo-de-teste-completo)
       - [Cobertura de Código:](#cobertura-de-código)
   - [FAQ e Solução de Problemas](#faq-e-solução-de-problemas)
@@ -873,16 +873,19 @@ Para ambientes de homologação e produção, configure as seguintes variáveis 
 - `RECAPTCHA_SITE_KEY`: Chave pública do reCAPTCHA (client-side)
 
 **Configuração por Ambiente:**
+
 - **Local**: reCAPTCHA desabilitado para facilitar desenvolvimento
 - **Dev**: reCAPTCHA habilitado com chaves de teste
 - **Homolog/Prod**: reCAPTCHA habilitado com chaves reais via variáveis de ambiente
 
 **Endpoint de Configuração:**
+
 ```http
 GET /public/api/recaptcha-config
 ```
 
 **Resposta:**
+
 ```json
 {
   "enabled": true,
@@ -890,7 +893,8 @@ GET /public/api/recaptcha-config
 }
 ```
 
-#### 🛡️ **Validação e Sanitização**
+#### **Validação e Sanitização**
+
 Todos os dados de entrada são rigorosamente validados:
 
 ```java
@@ -925,7 +929,8 @@ public class AgendamentoRequest {
 }
 ```
 
-#### 📝 **Logs e Auditoria**
+#### **Logs e Auditoria**
+
 Sistema completo de logs para rastreamento e auditoria:
 
 ```java
@@ -951,7 +956,8 @@ public class PublicEndpointLogger {
 }
 ```
 
-#### 🔐 **Headers de Segurança**
+#### **Headers de Segurança**
+
 Configuração de headers para proteção contra ataques:
 
 ```java
@@ -985,6 +991,7 @@ public class SecurityHeadersConfig {
 ### Exemplos de Uso
 
 #### Exemplo JavaScript (Frontend)
+
 ```javascript
 async function agendarConsulta() {
     const dadosAgendamento = {
@@ -1022,6 +1029,7 @@ async function agendarConsulta() {
 ```
 
 #### Exemplo cURL (Testes)
+
 ```bash
 # Testar conectividade
 curl -X GET "http://localhost:8080/public/test-simple" \
@@ -1053,7 +1061,8 @@ curl -X POST "http://localhost:8080/public/agendar" \
 
 #### Validações Implementadas
 
-**📋 Campos Obrigatórios:**
+**Campos Obrigatórios:**
+
 - Nome completo (2-100 caracteres, apenas letras e espaços)
 - Telefone (formato brasileiro com DDD)
 - Email (formato válido)
@@ -1061,13 +1070,15 @@ curl -X POST "http://localhost:8080/public/agendar" \
 - Data (deve ser futura)
 - Hora (formato HH:mm)
 
-**🔍 Validações de Negócio:**
+**Validações de Negócio:**
+
 - Dentista deve existir e estar ativo
 - Data/hora deve estar disponível
 - Horário deve estar dentro do funcionamento
 - Não permitir agendamentos duplicados
 
-**🛡️ Sanitização:**
+**Sanitização:**
+
 - Remoção de caracteres especiais perigosos
 - Normalização de dados (trim, case)
 - Validação de tamanho e formato
@@ -1130,7 +1141,7 @@ V{versão}__{descrição}.sql
 
 #### Exemplo de Structure:
 
-```
+```markdown
 db/migration/
 ├── V1__create_initial_schema.sql
 ├── V2__add_usuarios_table.sql
@@ -1193,7 +1204,7 @@ O projeto mantém alta qualidade através de uma suíte abrangente de testes aut
 
 ### Estrutura de Testes
 
-```
+```markdown
 src/test/java/com/caracore/cca/
 ├── config/                 # Configurações de teste
 │   ├── TestWebMvcConfig.java       # Mocks para controllers
@@ -1218,31 +1229,33 @@ src/test/java/com/caracore/cca/
 
 ### Testes Unitários de Agendamentos
 
-**✅ Status Atual:** **100% de aprovação em 37 testes unitários**
+**Status Atual:** **100% de aprovação em 37 testes unitários**
 
 #### **AgendamentoServiceTest (19 testes)**
-- ✅ Salvamento de agendamentos
-- ✅ Busca por ID, período e dentista
-- ✅ Reagendamento com validações
-- ✅ Cancelamento com motivo
-- ✅ Marcação como realizado
-- ✅ Exclusão com controle de acesso
-- ✅ Confirmação de agendamentos
-- ✅ Detecção de conflitos de horário
-- ✅ Validação de dados obrigatórios
+
+- Salvamento de agendamentos
+- Busca por ID, período e dentista
+- Reagendamento com validações
+- Cancelamento com motivo
+- Marcação como realizado
+- Exclusão com controle de acesso
+- Confirmação de agendamentos
+- Detecção de conflitos de horário
+- Validação de dados obrigatórios
 
 #### **ConsultasControllerTest (18 testes)**
-- ✅ Listagem com filtros
-- ✅ Detalhes de consultas
-- ✅ Formulário de novo agendamento
-- ✅ Salvamento com validações
-- ✅ Reagendamento via controller
-- ✅ Cancelamento com motivo
-- ✅ Marcação como realizada
-- ✅ Exclusão (apenas ADMIN)
-- ✅ Dashboard de consultas
-- ✅ Confirmação de consultas
-- ✅ Controle de acesso por perfil
+
+- Listagem com filtros
+- Detalhes de consultas
+- Formulário de novo agendamento
+- Salvamento com validações
+- Reagendamento via controller
+- Cancelamento com motivo
+- Marcação como realizada
+- Exclusão (apenas ADMIN)
+- Dashboard de consultas
+- Confirmação de consultas
+- Controle de acesso por perfil
 
 ### Configuração de Mocks
 
@@ -1288,18 +1301,20 @@ mvn test -Dtest="*Dentista*Test"
 
 ### Testes de Endpoints Públicos
 
-#### ✅ **AgendamentoPublicoControllerTest**
+#### **AgendamentoPublicoControllerTest**
+
 Suite completa de testes para validar os endpoints públicos de agendamento:
 
 **Testes Unitários Implementados:**
-- **✅ Conectividade**: Teste do endpoint `/public/test-simple`
-- **✅ Lista de Dentistas**: Validação do endpoint `/public/api/dentistas`
-- **✅ Horários Disponíveis**: Teste do endpoint `/public/api/horarios-disponiveis`
-- **✅ Agendamento Válido**: Criação de agendamento com dados corretos
-- **✅ Validação de Dados**: Teste de campos obrigatórios e formatos
-- **✅ Conflitos de Horário**: Detecção de agendamentos duplicados
-- **✅ Tratamento de Erros**: Validação de responses de erro
-- **✅ Headers de Segurança**: Verificação de headers de resposta
+
+- **Conectividade**: Teste do endpoint `/public/test-simple`
+- **Lista de Dentistas**: Validação do endpoint `/public/api/dentistas`
+- **Horários Disponíveis**: Teste do endpoint `/public/api/horarios-disponiveis`
+- **Agendamento Válido**: Criação de agendamento com dados corretos
+- **Validação de Dados**: Teste de campos obrigatórios e formatos
+- **Conflitos de Horário**: Detecção de agendamentos duplicados
+- **Tratamento de Erros**: Validação de responses de erro
+- **Headers de Segurança**: Verificação de headers de resposta
 
 **Diferenças entre Testes MockMvc e Servidor Real:**
 
@@ -1368,6 +1383,7 @@ public void testAgendarConsulta_ComValidacaoCompleta() throws Exception {
 #### Cobertura de Código:
 
 O projeto mantém cobertura mínima de **80%** em:
+
 - Classes de modelo (entities)
 - Serviços de negócio
 - Controllers principais
@@ -1383,7 +1399,9 @@ O projeto mantém cobertura mínima de **80%** em:
 ### Perguntas Frequentes
 
 **P: Como cadastrar um paciente com consentimento LGPD?**  
+
 R: No formulário de pacientes:
+
 1. Preencha o WhatsApp (obrigatório)
 2. Clique em "Enviar Consentimento LGPD" 
 3. WhatsApp abrirá com mensagem padrão
@@ -1424,7 +1442,9 @@ R: Verifique se:
 3. O WhatsApp Web já está autenticado no navegador
 
 **P: Como executar as migrations do banco de dados manualmente?**  
+
 R: Use os comandos Maven:
+
 - `mvn flyway:migrate` - Executa migrations pendentes
 - `mvn flyway:info` - Mostra status das migrations
 - `mvn flyway:validate` - Valida migrations
