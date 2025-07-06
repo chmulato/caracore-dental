@@ -70,6 +70,29 @@ Cada entrada do log segue o formato:
 - **Entidades afetadas:** Agendamento ID 3478, Paciente ID 562 (João Santos)
 - **Observações:** Consulta padrão (30 min)
 
+#### [2025-07-05 09:15:30] maria.silva@exemplo.com.br - LOGIN
+
+- **IP:** 187.122.45.67
+- **Dispositivo:** Safari 17.5.1 / macOS 15.1
+- **Detalhes:** Login bem-sucedido
+- **Observações:** Acesso via desktop
+
+#### [2025-07-05 09:23:12] maria.silva@exemplo.com.br - MODIFY_PACIENTE
+
+- **IP:** 187.122.45.67
+- **Dispositivo:** Safari 17.5.1 / macOS 15.1
+- **Detalhes:** Modificou registro de paciente
+- **Entidades afetadas:** Paciente ID 562 (João Santos)
+- **Observações:** Atualizou dados de contato
+
+#### [2025-07-05 10:45:22] maria.silva@exemplo.com.br - DELETE_AGENDAMENTO
+
+- **IP:** 187.122.45.67
+- **Dispositivo:** Safari 17.5.1 / macOS 15.1
+- **Detalhes:** Excluiu agendamento
+- **Entidades afetadas:** Agendamento ID 3480
+- **Observações:** Cancelamento solicitado pelo paciente
+
 ### recepcionista@exemplo.com.br (Recepcionista)
 
 #### [2025-06-30 08:30:15] recepcionista@exemplo.com.br - LOGIN
@@ -94,6 +117,29 @@ Cada entrada do log segue o formato:
 - **Detalhes:** Remarcação de consulta
 - **Entidades afetadas:** Agendamento ID 3465, Paciente ID 458 (Carlos Ferreira)
 - **Observações:** Motivo: paciente solicitou remarcação por telefone
+
+#### [2025-07-05 08:15:42] recepcionista@exemplo.com.br - LOGIN
+
+- **IP:** 192.168.1.105
+- **Dispositivo:** Edge 125.0.0.0 / Windows 11
+- **Detalhes:** Login bem-sucedido
+- **Observações:** Início do expediente
+
+#### [2025-07-05 08:32:15] recepcionista@exemplo.com.br - CREATE_PACIENTE
+
+- **IP:** 192.168.1.105
+- **Dispositivo:** Edge 125.0.0.0 / Windows 11
+- **Detalhes:** Criou novo registro de paciente
+- **Entidades afetadas:** Paciente ID 892 (Roberto Andrade)
+- **Observações:** Primeira consulta marcada para amanhã
+
+#### [2025-07-05 11:20:38] recepcionista@exemplo.com.br - MODIFY_AGENDAMENTO
+
+- **IP:** 192.168.1.105
+- **Dispositivo:** Edge 125.0.0.0 / Windows 11
+- **Detalhes:** Modificou agendamento existente
+- **Entidades afetadas:** Agendamento ID 3485
+- **Observações:** Alterou horário a pedido do paciente
 
 ---
 

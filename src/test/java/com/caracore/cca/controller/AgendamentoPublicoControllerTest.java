@@ -81,13 +81,14 @@ class AgendamentoPublicoControllerTest {
     void testProcessarAgendamentoPublico() throws Exception {
         // Arrange
         when(agendamentoService.salvar(any(Agendamento.class))).thenReturn(agendamentoTeste);
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(List.of("Dr. Maria Santos"));
 
         // Act & Assert
         mockMvc.perform(post("/public/agendamento")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("paciente", "João Silva")
                 .param("dentista", "Dr. Maria Santos")
-                .param("dataHora", "2025-07-05T10:00")
+                .param("dataHora", "2025-07-10T10:00:00")
                 .param("telefone", "(11) 99999-9999")
                 .param("email", "joao@email.com"))
                 .andExpect(status().is3xxRedirection())

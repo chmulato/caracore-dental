@@ -8,9 +8,45 @@ Sistema de agendamento para consultórios odontológicos desenvolvido com Spring
 
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.0-purple.svg)](https://getbootstrap.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
+[![H2 Database](https://img.shields.io/badge/H2-Database-yellow.svg)](https://www.h2database.com/)
+[![Swagger](https://img.shields.io/badge/Swagger-API-green.svg)](https://swagger.io/)
+
+## ✅ **CONFIGURAÇÃO COMPLETA - PRONTO PARA USO!**
+
+### 🚀 **Execução Rápida**
+
+```bash
+# Executar aplicação no perfil desenvolvimento (H2 - padrão)
+mvn spring-boot:run
+
+# Executar com PostgreSQL local
+mvn spring-boot:run -Dspring.profiles.active=local
+
+# Acessar aplicação
+http://localhost:8080
+
+# Acessar documentação da API (Swagger)
+http://localhost:8080/swagger-ui.html
+
+# Acessar H2 Console (perfil dev)
+http://localhost:8080/h2-console
+```
+
+### 👥 **Usuários de Teste Criados**
+
+- **Admin**: `suporte@caracore.com.br` / `admin123`
+- **Dentista**: `dentista@caracore.com.br` / `admin123`
+- **Recepcionista**: `recepcao@caracore.com.br` / `admin123`
+- **Paciente**: `paciente@caracore.com.br` / `admin123`
+
+### 🗄️ **Configuração de Ambientes**
+
+- **Desenvolvimento**: H2 Database (em memória) - Padrão
+- **Local**: PostgreSQL local (para desenvolvimento com BD real)
+- **Homologação**: PostgreSQL com variáveis de ambiente
+- **Produção**: PostgreSQL otimizado e seguro
+- **Testes**: H2 com configurações específicas
 
 ## **Como Subir a Aplicação (Desenvolvimento e Produção)**
 
@@ -87,6 +123,7 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - **Legislação:** Atendimento às diretrizes do SUS para identidade de gênero e nome social
 
 ✅ **Sistema de Gestão de Dentistas:**
+
 - Cadastro completo com especialidades, CRO, horários de atendimento
 - Interface responsiva seguindo padrão Bootstrap 5.3.0
 - Busca avançada por nome, especialidade, email
@@ -94,12 +131,14 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - Validações de formulário e máscaras de entrada
 
 ✅ **Versionamento do Banco de Dados:**
+
 - Flyway migrations organizadas e consolidadas
 - Script V10 para correção de inconsistências
-- Documentação completa em `doc/versionamento_banco_analise.md`
+- Documentação completa em `doc/VERSIONAMENTO_BANCO_ANALISE.md`
 - Estrutura padronizada para futuras migrações
 
 ✅ **Melhorias na Interface:**
+
 - Design unificado com Bootstrap 5.3.0 e Bootstrap Icons
 - Navegação consistente entre todos os módulos
 - Cards com shadow e elementos visuais modernos
@@ -107,6 +146,7 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - Remoção de CSS específico e padronização de estilos
 
 ✅ **Estrutura de Testes Robusta:**
+
 - **Total de Testes:** 306 testes unitários com 100% de aprovação (Validado em Julho 2025)
 - **Cobertura Completa:** Controllers (165), Services (54), Models/DTOs (49), Repositories (6), Segurança (10), Utilitários (22)
 - **ConsultasControllerTest:** 18 testes unitários validando todas as operações do controller
@@ -135,6 +175,7 @@ O MVP do **Cara Core Agendamento (CCA)** está em desenvolvimento e já conta co
 - **Tratamento de Erros:** Respostas adequadas para cenários de falha
 
 ✅ **Documentação Atualizada:**
+
 - Wiki completa com todos os módulos do sistema
 - README.md atualizado com guias de instalação e uso
 - Documentação de APIs e endpoints
@@ -240,12 +281,12 @@ O sistema é inicializado com os seguintes usuários padrões para teste e demon
 
 Para detalhes completos sobre instalação, configuração, funcionalidades e desenvolvimento, consulte a **[Wiki do Projeto](wiki.md)** que contém documentação abrangente incluindo:
 
-- 📋 Guia completo de gestão de dentistas e pacientes
-- 🗃️ Documentação do versionamento do banco de dados
-- 🧪 Estrutura de testes e práticas de qualidade
-- 📱 Integração com WhatsApp e outras funcionalidades
-- ❓ FAQ e solução de problemas
-- 🚀 Roadmap e próximos passos
+- Guia completo de gestão de dentistas e pacientes
+- Documentação do versionamento do banco de dados
+- Estrutura de testes e práticas de qualidade
+- Integração com WhatsApp e outras funcionalidades
+- FAQ e solução de problemas
+- Roadmap e próximos passos
 
 ---
 
@@ -730,6 +771,21 @@ curl -X POST http://localhost:8080/admin/sistema/resetar-senha/dentista@teste.co
 
 ---
 
+## **Documentação Técnica**
+
+- 📚 **[Configuração de Ambientes](doc/CONFIGURACAO_AMBIENTES.md)** - Guia completo dos arquivos application.yml para diferentes ambientes
+- 🔗 **[Documentação da API - Swagger](doc/SWAGGER_README.md)** - Como usar e testar os endpoints da API
+- 📋 **[Versionamento do Banco](doc/VERSIONAMENTO_BANCO_ANALISE.md)** - Análise e gestão de migrations
+- 🧪 **[Estrutura de Testes](doc/status_consultas_agendadas.md)** - Documentação de testes e qualidade
+
+## **Links Úteis**
+
+- 🌐 **Swagger UI (Desenvolvimento)**: http://localhost:8080/swagger-ui.html
+- 📊 **API Docs**: http://localhost:8080/api-docs
+- 🔍 **Console H2 (Dev)**: http://localhost:8080/h2-console
+
+---
+
 ## **Testes**
 
 ### **Executar Testes**
@@ -790,7 +846,7 @@ docker run -p 8080:8080 \
 
 ### **Deploy em Produção**
 
-1. **Servidor de Aplicação:**
+1. **Servidor de Aplicação:
 ```bash
 # Copiar JAR para servidor
 scp target/cca-0.0.1-SNAPSHOT.jar user@servidor:/opt/cca/

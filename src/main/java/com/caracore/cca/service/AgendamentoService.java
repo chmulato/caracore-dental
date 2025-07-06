@@ -26,6 +26,9 @@ public class AgendamentoService {
     @Autowired
     private AgendamentoRepository agendamentoRepository;
 
+    @Autowired
+    private DentistaService dentistaService;
+
     /**
      * Lista todos os agendamentos do sistema
      */
@@ -209,7 +212,7 @@ public class AgendamentoService {
             return true;
         }
         logger.warn("Agendamento ID {} não encontrado para exclusão", id);
-        return false;
+        throw new RuntimeException("Agendamento não encontrado para exclusão");
     }
 
     /**
@@ -257,26 +260,15 @@ public class AgendamentoService {
     }
 
     /**
-     * Lista apenas dentistas ativos para exposição pública
+     * Lista apenas dentistas ativos e expostos publicamente
      * Este método deve ser usado para agendamento público para garantir
-     * que apenas dentistas ativos apareçam na interface pública
+     * que apenas dentistas ativos e expostos publicamente apareçam na interface pública
      */
     public List<String> listarDentistasAtivos() {
-        // TODO: Implementar filtro baseado no status ativo do dentista
-        // Por enquanto retorna todos, mas deveria filtrar apenas os ativos
-        return listarDentistas().stream()
-                .filter(d -> isExpostoPublicamente(d))
+        return dentistaService.listarAtivosExpostosPublicamente()
+                .stream()
+                .map(dentista -> dentista.getNome() + " - " + dentista.getEspecialidade())
                 .toList();
-    }
-
-    /**
-     * Verifica se um dentista deve ser exposto publicamente
-     * Esta lógica deveria ser baseada no campo 'ativo' da entidade Dentista
-     */
-    private boolean isExpostoPublicamente(String nomeDentista) {
-        // TODO: Implementar verificação real com o DentistaService
-        // Por enquanto retorna true, mas deveria verificar o status ativo
-        return true;
     }
 
     /**

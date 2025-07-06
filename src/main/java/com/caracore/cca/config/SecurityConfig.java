@@ -53,6 +53,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // Recursos públicos
                 .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
+                // Swagger/OpenAPI documentação
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                 // Páginas públicas
                 .requestMatchers("/", "/login", "/agendar", "/api/public/**", "/public/**").permitAll()
                 // Páginas administrativas

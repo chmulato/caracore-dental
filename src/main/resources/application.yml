@@ -1,40 +1,65 @@
+# Configurações comuns para todos os ambientes
 server:
   port: 8080
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
 spring:
+  profiles:
+    active: dev  # Perfil padrão para desenvolvimento local
+  
   main:
     allow-bean-definition-overriding: true
-  datasource:
-    url: jdbc:postgresql://localhost:5432/cca_db
-    driver-class-name: org.postgresql.Driver
-    username: cca_user
-    password: cca_password
-  h2:
-    console:
-      enabled: false
+  
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    open-in-view: false
     properties:
       hibernate:
-        format_sql: true
-  security:
-    debug: true
+        jdbc:
+          '[time_zone]': America/Sao_Paulo
+        '[format_sql]': true
+        '[use_sql_comments]': true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  
+  # Configurações de internacionalização
+  web:
+    locale: pt_BR
+    locale-resolver: fixed
+
+# Configurações do Swagger/OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    try-it-out-enabled: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+# Configurações de logging comuns
 logging:
-  level:
-    org.springframework.security: DEBUG
-    com.caracore.cca: DEBUG
-    org.hibernate.SQL: DEBUG
-    USER_ACTIVITY: INFO
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   file:
-    name: ./logs/user-activity.log
+    name: ./logs/cca-application.log
   logback:
     rollingpolicy:
-      file-name-pattern: ./logs/archived/user-activity-%d{yyyy-MM-dd}.%i.log
-      max-file-size: 10MB
+      file-name-pattern: ./logs/archived/cca-application-%d{yyyy-MM-dd}.%i.log
+      max-file-size: 50MB
       max-history: 30
-spring.sql.init.mode: never
-# Para evitar execução dupla de scripts em ambiente de teste, descomente a linha acima se necessário.
+      total-size-cap: 1GB
+
+# Configurações do Flyway
+spring.flyway:
+  enabled: true
+  baseline-on-migrate: true
+  validate-on-migrate: true
+  locations: classpath:db/migration

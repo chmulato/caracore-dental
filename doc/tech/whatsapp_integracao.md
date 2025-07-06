@@ -4,11 +4,11 @@
 **Data da implementação:** Julho de 2025  
 **Desenvolvido por:** Equipe Cara Core
 
-## 📱 Visão Geral da Funcionalidade
+## Visão Geral da Funcionalidade
 
 A integração com WhatsApp do sistema CCA permite aos profissionais da clínica odontológica manter uma comunicação eficiente e direta com os pacientes, utilizando a plataforma mais popular de mensagens no Brasil. Esta funcionalidade foi desenvolvida para simplificar a comunicação com pacientes e reduzir o índice de faltas em consultas, além de criar um canal direto e eficiente para envio de orientações pré e pós-procedimentos.
 
-## 🔧 Componentes Técnicos
+## Componentes Técnicos
 
 ### 1. Formulário de Agendamento
 
@@ -65,7 +65,7 @@ function atualizarLinkWhatsApp() {
 }
 ```
 
-## 🛠️ Implementação no Backend
+## Implementação no Backend
 
 ### 1. Controller (AgendamentoController.java)
 
@@ -107,7 +107,7 @@ A view foi atualizada com:
 3. **Validação cliente-side** e formatação automática
 4. **Busca automática** do telefone ao selecionar paciente
 
-## 📊 Benefícios Esperados
+## Benefícios Esperados
 
 1. **Redução de 30% nas faltas** devido a lembretes eficientes
 2. **Melhoria na experiência do paciente** com comunicação simplificada
@@ -124,14 +124,14 @@ A view foi atualizada com:
 5. **Recepcionista** utiliza o botão WhatsApp para iniciar conversa
 6. **WhatsApp Web** abre com o número do paciente pré-preenchido
 
-## ⚠️ Observações e Limitações
+## Observações e Limitações
 
 - A funcionalidade requer que o WhatsApp Web esteja autenticado no navegador
 - A implementação atual não utiliza a API oficial do WhatsApp Business
 - A formatação suporta apenas números brasileiros (código +55)
 - É necessário que pop-ups estejam habilitados no navegador
 
-## 🔮 Melhorias Futuras
+## Melhorias Futuras
 
 - **Integração com API oficial do WhatsApp Business**
 - **Envio automatizado de lembretes** 24h antes da consulta

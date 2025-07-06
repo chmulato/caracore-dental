@@ -124,7 +124,13 @@
                                     Dentista ativo
                                 </label>
                             </div>
-                            <div class="form-text">Marque se o dentista está ativo para atendimentos.</div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="expostoPublicamente" th:field="*{expostoPublicamente}">
+                                <label class="form-check-label" for="expostoPublicamente">
+                                    Exposto na agenda pública
+                                </label>
+                            </div>
+                            <div class="form-text">Configure se o dentista aparece na agenda pública online e se pode receber agendamentos diretos de pacientes.</div>
                         </div>
                     </div>
                     

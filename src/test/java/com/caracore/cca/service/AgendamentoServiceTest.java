@@ -245,11 +245,8 @@ class AgendamentoServiceTest {
         // Arrange
         when(agendamentoRepository.existsById(1L)).thenReturn(false);
 
-        // Act
-        boolean resultado = agendamentoService.excluir(1L);
-
-        // Assert
-        assertFalse(resultado);
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> agendamentoService.excluir(1L));
         verify(agendamentoRepository).existsById(1L);
         verify(agendamentoRepository, never()).deleteById(1L);
     }

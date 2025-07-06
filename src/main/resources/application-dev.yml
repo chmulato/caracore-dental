@@ -1,24 +1,86 @@
+# Configurações para ambiente de DESENVOLVIMENTO
 spring:
   datasource:
-    url: jdbc:h2:mem:cca_dev
+    # Opção 1: H2 Database (mais simples para desenvolvimento)
+    url: jdbc:h2:mem:devdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: 
     driver-class-name: org.h2.Driver
+    
+    # Opção 2: PostgreSQL (descomente as linhas abaixo e comente as linhas do H2)
+    # url: jdbc:postgresql://localhost:5432/cca_dev
+    # username: cca_dev
+    # password: cca_dev_password
+    # driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+  
   jpa:
     hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: create-drop  # Recria o schema a cada inicialização para desenvolvimento
     show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+        '[use_sql_comments]': true
+        '[generate_statistics]': false
+        '[dialect]': org.hibernate.dialect.H2Dialect
+  
+  # H2 Console para debug
   h2:
     console:
-      enabled: true
+      enabled: true  # Habilitado para H2
       path: /h2-console
-  main:
-    allow-bean-definition-overriding: true
+  
+  # DevTools habilitado
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  
+  # Cache desabilitado para desenvolvimento
+  cache:
+    type: none
+  
+  # Flyway desabilitado para desenvolvimento (usando create-drop)
+  flyway:
+    enabled: false
+  
+  # Inicialização do banco desabilitada para desenvolvimento
+  sql:
+    init:
+      mode: never
+  
+  # Security debug
+  security:
+    debug: true
 
-# Logging
+# Logging detalhado para desenvolvimento
 logging:
   level:
-    org.springframework.security: INFO
-    com.caracore.cca: DEBUG
-    org.hibernate.SQL: DEBUG
+    root: INFO
+    '[org.springframework.security]': DEBUG
+    '[org.springframework.web]': DEBUG
+    '[com.caracore.cca]': DEBUG
+    '[org.hibernate.SQL]': DEBUG
+    '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
+    '[USER_ACTIVITY]': INFO
+  
+# Swagger habilitado para desenvolvimento
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+# Configurações específicas da aplicação para desenvolvimento
+cca:
+  ambiente: desenvolvimento
+  debug-mode: true
+  mock-external-services: true
+  whatsapp:
+    api-url: http://localhost:3000/mock  # Mock para desenvolvimento
+    enabled: false

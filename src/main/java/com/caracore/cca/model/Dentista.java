@@ -38,6 +38,9 @@ public class Dentista {
     @Column
     private Boolean ativo = true;
 
+    @Column(name = "exposto_publicamente")
+    private Boolean expostoPublicamente = true;
+
     // Getters e Setters
     
     public Long getId() {
@@ -110,6 +113,14 @@ public class Dentista {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public Boolean getExpostoPublicamente() {
+        return expostoPublicamente;
+    }
+
+    public void setExpostoPublicamente(Boolean expostoPublicamente) {
+        this.expostoPublicamente = expostoPublicamente;
     }
 
     @Override

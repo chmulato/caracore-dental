@@ -1,5 +1,6 @@
 package com.caracore.cca.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,34 +18,44 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "agendamento")
+@Schema(description = "Representa um agendamento de consulta odontológica")
 public class Agendamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "ID único do agendamento", example = "1")
     private Long id;
 
     @Column(nullable = false, length = 100)
+    @Schema(description = "Nome do paciente", example = "João Silva", required = true)
     private String paciente;
 
     @Column(nullable = false, length = 100)
+    @Schema(description = "Nome do dentista", example = "Dr. João Silva - Clínico Geral", required = true)
     private String dentista;
 
     @Column(name = "data_hora", nullable = false)
+    @Schema(description = "Data e hora do agendamento", example = "2025-07-10T10:00:00", required = true)
     private LocalDateTime dataHora;
     
     @Column(length = 1000)
+    @Schema(description = "Observações sobre o agendamento", example = "Consulta de rotina")
     private String observacao;
     
     @Column(nullable = false, length = 20)
+    @Schema(description = "Status do agendamento", example = "AGENDADO", allowableValues = {"AGENDADO", "CONFIRMADO", "REAGENDADO", "REALIZADO", "CANCELADO", "NAO_COMPARECEU"})
     private String status = "AGENDADO";
     
     @Column(name = "duracao_minutos")
+    @Schema(description = "Duração da consulta em minutos", example = "30")
     private Integer duracaoMinutos = 30;
     
     @Column(name = "telefone_whatsapp", length = 20)
+    @Schema(description = "Telefone do paciente para contato via WhatsApp", example = "11999999999")
     private String telefoneWhatsapp;
     
     @Column(name = "data_criacao", nullable = false)
+    @Schema(description = "Data de criação do agendamento", example = "2025-07-05T21:30:00")
     private LocalDateTime dataCriacao = LocalDateTime.now();
     
     @Column(name = "data_atualizacao")

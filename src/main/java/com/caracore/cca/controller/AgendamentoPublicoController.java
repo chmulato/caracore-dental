@@ -3,11 +3,20 @@ package com.caracore.cca.controller;
 import com.caracore.cca.model.Agendamento;
 import com.caracore.cca.service.AgendamentoService;
 import com.caracore.cca.service.PacienteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +34,7 @@ import java.util.Optional;
  * agendem consultas diretamente pelo site.
  */
 @Controller
+@Tag(name = "Agendamento Público", description = "Endpoints públicos para agendamento de consultas")
 public class AgendamentoPublicoController {
 
     private static final Logger logger = LoggerFactory.getLogger(AgendamentoPublicoController.class);
@@ -42,12 +52,18 @@ public class AgendamentoPublicoController {
     public String agendamentoOnline(Model model) {
         logger.info("Acessando página de agendamento online público");
         
-        // Usar apenas dentistas ativos para exposição pública
-        List<String> dentistas = agendamentoService.listarDentistasAtivos();
-        model.addAttribute("titulo", "Agendamento Online");
-        model.addAttribute("dentistas", dentistas);
-        
-        return "public/agendamento-online";
+        try {
+            // Usar apenas dentistas ativos para exposição pública
+            List<String> dentistas = agendamentoService.listarDentistasAtivos();
+            model.addAttribute("titulo", "Agendamento Online");
+            model.addAttribute("dentistas", dentistas);
+            
+            return "public/agendamento-online";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar página de agendamento", e);
+            model.addAttribute("error", "Erro interno do servidor");
+            return "public/agendamento-online";
+        }
     }
 
     /**
@@ -62,7 +78,6 @@ public class AgendamentoPublicoController {
                                            Model model) {
         logger.info("Processando agendamento público para paciente: {}, dentista: {}, dataHora: {}", 
                   paciente, dentista, dataHora);
-        
         try {
             // Validação básica - note que campos são required=false para que o controller possa receber valores nulos
             if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
@@ -72,19 +87,39 @@ public class AgendamentoPublicoController {
                 model.addAttribute("titulo", "Agendamento Online");
                 return "public/agendamento-online";
             }
-            
+            // Validação: impedir agendamento no passado
+            LocalDateTime dataHoraAgendamento;
+            try {
+                dataHoraAgendamento = LocalDateTime.parse(dataHora);
+            } catch (Exception e) {
+                // Se não conseguir fazer parse, tenta adicionar segundos
+                try {
+                    dataHoraAgendamento = LocalDateTime.parse(dataHora + ":00");
+                } catch (Exception e2) {
+                    model.addAttribute("error", "Formato de data/hora inválido");
+                    List<String> dentistas = agendamentoService.listarDentistasAtivos();
+                    model.addAttribute("dentistas", dentistas);
+                    model.addAttribute("titulo", "Agendamento Online");
+                    return "public/agendamento-online";
+                }
+            }
+            if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
+                model.addAttribute("error", "Não é possível agendar consultas no passado");
+                List<String> dentistas = agendamentoService.listarDentistasAtivos();
+                model.addAttribute("dentistas", dentistas);
+                model.addAttribute("titulo", "Agendamento Online");
+                return "public/agendamento-online";
+            }
             // Criar agendamento
             Agendamento agendamento = new Agendamento();
             agendamento.setPaciente(paciente);
             agendamento.setDentista(dentista);
-            agendamento.setDataHora(LocalDateTime.parse(dataHora));
+            agendamento.setDataHora(dataHoraAgendamento);
             agendamento.setStatus("AGENDADO");
             agendamento.setObservacao("Agendamento online");
             agendamento.setTelefoneWhatsapp(telefone);
             agendamento.setDuracaoMinutos(30);
-            
             agendamento = agendamentoService.salvar(agendamento);
-            
             return "redirect:/public/agendamento-confirmado?id=" + agendamento.getId();
         } catch (Exception e) {
             logger.error("Erro ao processar agendamento", e);
@@ -139,44 +174,115 @@ public class AgendamentoPublicoController {
     /**
      * API para obter horários disponíveis
      */
-    @GetMapping("/api/public/horarios-disponiveis")
+    @Operation(
+        summary = "Obter horários disponíveis para agendamento",
+        description = "Retorna lista de horários disponíveis para um dentista em uma data específica"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de horários disponíveis retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(type = "array", example = "[\"09:00\", \"10:00\", \"14:00\"]"))),
+        @ApiResponse(responseCode = "400", description = "Parâmetros inválidos ou ausentes"),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping(value = "/public/api/horarios-disponiveis", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Map<String, Object> obterHorariosDisponiveisPublico(@RequestParam(required = false) String dentista,
-                                                         @RequestParam(required = false) String data) {
+    public ResponseEntity<List<String>> obterHorariosDisponiveisPublico(
+            @Parameter(description = "Nome do dentista", required = true, example = "Dr. João Silva - Clínico Geral")
+            @RequestParam(required = false) String dentista,
+            @Parameter(description = "Data para consulta no formato YYYY-MM-DD", required = true, example = "2025-07-10")
+            @RequestParam(required = false) String data) {
         logger.info("API: Obtendo horários disponíveis públicos - Dentista: {}, Data: {}", dentista, data);
         
         // Validar parâmetros
         if (dentista == null || dentista.isEmpty() || data == null || data.isEmpty()) {
-            throw new IllegalArgumentException("Parâmetros inválidos");
+            return ResponseEntity.badRequest().build();
         }
         
         try {
             LocalDateTime dataInicio = LocalDateTime.parse(data + "T00:00:00");
             List<String> horarios = agendamentoService.getHorariosDisponiveisPorData(dentista, dataInicio);
-            return Map.of("horarios", horarios);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(horarios);
         } catch (Exception e) {
             logger.error("Erro ao buscar horários disponíveis", e);
-            throw new IllegalArgumentException("Formato de data inválido");
+            return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * API para consultar agendamentos por paciente
+     */
+    @Operation(
+        summary = "Consultar agendamentos por paciente",
+        description = "Retorna lista de agendamentos para um paciente específico"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de agendamentos retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Agendamento.class))),
+        @ApiResponse(responseCode = "400", description = "Nome do paciente não informado"),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping(value = "/public/consultar-agendamento", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<Agendamento>> consultarAgendamentoPorPaciente(
+            @Parameter(description = "Nome do paciente", required = true, example = "João Silva")
+            @RequestParam(required = false) String paciente) {
+        logger.info("API: Consultando agendamentos por paciente: {}", paciente);
+        
+        // Validar parâmetros
+        if (paciente == null || paciente.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        try {
+            List<Agendamento> agendamentos = agendamentoService.buscarPorPaciente(paciente);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(agendamentos);
+        } catch (Exception e) {
+            logger.error("Erro ao buscar agendamentos por paciente", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Exception handler for RuntimeException (internal server errors)
+     */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        logger.error("Erro interno do servidor", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro interno do servidor");
+    }
+    
     /**
      * Exception handler para requisições inválidas nas APIs
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Map<String, String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return Map.of("erro", ex.getMessage());
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     /**
      * API para verificar disponibilidade de horário específico
      */
+    @Operation(
+        summary = "Verificar disponibilidade de horário específico",
+        description = "Verifica se um horário específico está disponível para agendamento com um dentista"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Verificação realizada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(example = "{\"disponivel\": true}"))),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
     @GetMapping("/api/public/verificar-disponibilidade")
     @ResponseBody
-    public Map<String, Object> verificarDisponibilidadePublica(@RequestParam String dentista,
-                                                     @RequestParam String dataHora) {
+    public Map<String, Object> verificarDisponibilidadePublica(
+            @Parameter(description = "Nome do dentista", required = true, example = "Dr. João Silva - Clínico Geral")
+            @RequestParam String dentista,
+            @Parameter(description = "Data e hora no formato ISO", required = true, example = "2025-07-10T10:00")
+            @RequestParam String dataHora) {
         logger.info("API: Verificando disponibilidade pública - Dentista: {}, DataHora: {}", 
                    dentista, dataHora);
         
@@ -198,13 +304,154 @@ public class AgendamentoPublicoController {
     /**
      * API para listar dentistas ativos para agendamento público
      */
-    @GetMapping("/api/public/dentistas")
+    @Operation(
+        summary = "Listar dentistas disponíveis para agendamento público",
+        description = "Retorna lista de dentistas ativos e expostos publicamente para agendamento"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de dentistas retornada com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(type = "array", example = "[\"Dr. João Silva - Clínico Geral\", \"Dra. Maria Santos - Ortodontista\"]"))),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping(value = "/public/api/dentistas", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Map<String, Object> listarDentistasPublico() {
+    public List<String> listarDentistasPublico() {
         logger.info("API: Obtendo lista de dentistas públicos (apenas ativos)");
         
-        // Usar apenas dentistas ativos para exposição pública
-        List<String> dentistas = agendamentoService.listarDentistasAtivos();
-        return Map.of("dentistas", dentistas);
+        try {
+            // Usar apenas dentistas ativos para exposição pública
+            List<String> dentistas = agendamentoService.listarDentistasAtivos();
+            return dentistas;
+        } catch (Exception e) {
+            logger.error("Erro ao listar dentistas públicos", e);
+            throw new RuntimeException("Erro interno do servidor", e);
+        }
+    }
+
+    /**
+     * Endpoint REST para agendamento público (para testes automatizados)
+     */
+    @PostMapping(value = "/public/api/agendar", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @ResponseBody
+    public Map<String, Object> agendarConsultaPublicaApi(
+            @RequestParam(required = false) String paciente,
+            @RequestParam(required = false) String dentista,
+            @RequestParam(required = false) String dataHora,
+            @RequestParam(required = false) String telefone,
+            @RequestParam(required = false) String email) {
+        Map<String, Object> resposta = new HashMap<>();
+        // Validação básica
+        if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
+            resposta.put("status", "erro");
+            resposta.put("mensagem", "Todos os campos obrigatórios devem ser preenchidos");
+            return resposta;
+        }
+        // Validação: impedir agendamento no passado
+        LocalDateTime dataHoraAgendamento = LocalDateTime.parse(dataHora);
+        if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
+            resposta.put("status", "erro");
+            resposta.put("mensagem", "Não é possível agendar consultas no passado");
+            return resposta;
+        }
+        // Validação: dentista ativo
+        List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
+        if (!dentistasAtivos.contains(dentista)) {
+            resposta.put("status", "erro");
+            resposta.put("mensagem", "Dentista não disponível para agendamento público");
+            return resposta;
+        }
+        // Criar agendamento
+        Agendamento agendamento = new Agendamento();
+        agendamento.setPaciente(paciente);
+        agendamento.setDentista(dentista);
+        agendamento.setDataHora(dataHoraAgendamento);
+        agendamento.setStatus("AGENDADO");
+        agendamento.setObservacao("Agendamento online");
+        agendamento.setTelefoneWhatsapp(telefone);
+        agendamento.setDuracaoMinutos(30);
+        agendamento = agendamentoService.salvar(agendamento);
+        resposta.put("status", "sucesso");
+        resposta.put("mensagem", "Agendamento realizado com sucesso!");
+        resposta.put("id", agendamento.getId());
+        return resposta;
+    }
+
+    /**
+     * Endpoint REST compatível com os testes automatizados (resposta texto)
+     */
+    @Operation(
+        summary = "Agendar consulta publicamente",
+        description = "Cria um novo agendamento de consulta sem necessidade de autenticação"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Agendamento realizado com sucesso",
+                    content = @Content(mediaType = "text/plain", schema = @Schema(type = "string", example = "Agendamento realizado com sucesso!"))),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos ou campos obrigatórios ausentes",
+                    content = @Content(mediaType = "text/plain", schema = @Schema(type = "string", example = "Todos os campos obrigatórios devem ser preenchidos"))),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PostMapping(value = "/public/agendar", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> agendarConsultaPublicaCompat(
+            @Parameter(description = "Nome do paciente", required = true, example = "João Silva")
+            @RequestParam(required = false) String paciente,
+            @Parameter(description = "Nome do dentista", required = true, example = "Dr. João Silva - Clínico Geral")
+            @RequestParam(required = false) String dentista,
+            @Parameter(description = "Data e hora do agendamento no formato ISO", required = true, example = "2025-07-10T10:00")
+            @RequestParam(required = false) String dataHora,
+            @Parameter(description = "Telefone para contato (WhatsApp)", required = false, example = "11999999999")
+            @RequestParam(required = false) String telefone) {
+        
+        logger.info("DEBUG: Iniciando agendarConsultaPublicaCompat - paciente: {}, dentista: {}, dataHora: {}", 
+                   paciente, dentista, dataHora);
+        
+        try {
+            // Validação básica
+            if (paciente == null || paciente.isEmpty() || dentista == null || dentista.isEmpty() || dataHora == null || dataHora.isEmpty()) {
+                logger.info("DEBUG: Validação básica falhou");
+                return ResponseEntity.badRequest().body("Todos os campos obrigatórios devem ser preenchidos");
+            }
+            
+            // Validação: impedir agendamento no passado
+            LocalDateTime dataHoraAgendamento;
+            try {
+                dataHoraAgendamento = LocalDateTime.parse(dataHora);
+                logger.info("DEBUG: Data parseada: {}, atual: {}", dataHoraAgendamento, LocalDateTime.now());
+            } catch (Exception e) {
+                logger.info("DEBUG: Erro de parsing de data: {}", e.getMessage());
+                return ResponseEntity.badRequest().body("Formato de data/hora inválido");
+            }
+            
+            if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
+                logger.info("DEBUG: Data no passado detectada");
+                return ResponseEntity.badRequest().body("Não é possível agendar consultas no passado");
+            }
+            
+            // Validação: dentista ativo
+            List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
+            logger.info("DEBUG: Dentistas ativos: {}", dentistasAtivos);
+            if (!dentistasAtivos.contains(dentista)) {
+                logger.info("DEBUG: Dentista não encontrado na lista de ativos");
+                return ResponseEntity.badRequest().body("Dentista não disponível para agendamento público");
+            }
+            
+            // Criar agendamento
+            Agendamento agendamento = new Agendamento();
+            agendamento.setPaciente(paciente);
+            agendamento.setDentista(dentista);
+            agendamento.setDataHora(dataHoraAgendamento);
+            agendamento.setStatus("AGENDADO");
+            agendamento.setObservacao("Agendamento online");
+            agendamento.setTelefoneWhatsapp(telefone);
+            agendamento.setDuracaoMinutos(30);
+            agendamento = agendamentoService.salvar(agendamento);
+            
+            logger.info("DEBUG: Agendamento salvo com sucesso, ID: {}", agendamento.getId());
+            return ResponseEntity.ok().body("Agendamento realizado com sucesso!");
+            
+        } catch (Exception e) {
+            logger.error("DEBUG: Erro interno ao processar agendamento", e);
+            return ResponseEntity.internalServerError().body("Erro interno do servidor");
+        }
     }
 }

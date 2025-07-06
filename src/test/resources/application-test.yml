@@ -1,20 +1,58 @@
+# Configurações para ambiente de TESTES
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
     username: sa
-    password:
+    password: 
+    driver-class-name: org.h2.Driver
+  
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: create-drop  # Recria o banco a cada execução de teste
+    show-sql: false  # Desabilitado para não poluir logs de teste
     properties:
       hibernate:
-        format_sql: true
+        '[format_sql]': false
+        '[use_sql_comments]': false
+        '[generate_statistics]': false
+    database-platform: org.hibernate.dialect.H2Dialect
+  
   h2:
     console:
-      enabled: false
+      enabled: false  # Desabilitado em testes automatizados
+  
+  # SQL initialization
   sql:
     init:
-      mode: never
-# Este profile garante que scripts data.sql não rodem nos testes e usa H2 em memória.
+      mode: never  # Evita execução dupla de scripts
+  
+  # Cache desabilitado para testes
+  cache:
+    type: none
+
+# Logging mínimo para testes
+logging:
+  level:
+    root: WARN
+    '[org.springframework.security]': WARN
+    '[org.springframework.web]': WARN
+    '[com.caracore.cca]': INFO
+    '[org.hibernate.SQL]': WARN
+    '[USER_ACTIVITY]': WARN
+  
+# Swagger desabilitado para testes
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+
+# Configurações do servidor para testes
+server:
+  port: 0  # Porta aleatória para evitar conflitos
+  servlet:
+    session:
+      timeout: 5m  # Timeout menor para testes
+  error:
+    include-message: always
+    include-binding-errors: always

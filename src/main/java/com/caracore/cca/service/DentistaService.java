@@ -28,6 +28,10 @@ public class DentistaService {
         return dentistaRepository.findByAtivoTrue();
     }
 
+    public List<Dentista> listarAtivosExpostosPublicamente() {
+        return dentistaRepository.findByAtivoTrueAndExpostoPublicamenteTrue();
+    }
+
     public Optional<Dentista> buscarPorId(Long id) {
         return dentistaRepository.findById(id);
     }
@@ -78,6 +82,26 @@ public class DentistaService {
                 principal != null ? principal.getName() : "sistema", 
                 id.toString(),
                 "Dentista desativado: " + dentista.getNome()
+            );
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public boolean alterarExposicaoPublica(Long id, Boolean exposto, Principal principal) {
+        Optional<Dentista> dentistaOpt = dentistaRepository.findById(id);
+        
+        if (dentistaOpt.isPresent()) {
+            Dentista dentista = dentistaOpt.get();
+            dentista.setExpostoPublicamente(exposto);
+            dentistaRepository.save(dentista);
+            
+            activityLogger.logActivity(
+                "ALTERAR_EXPOSICAO_DENTISTA", 
+                principal != null ? principal.getName() : "sistema", 
+                id.toString(),
+                "Exposição pública alterada para " + (exposto ? "ativo" : "inativo") + " - Dentista: " + dentista.getNome()
             );
             return true;
         }

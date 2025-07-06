@@ -1,6 +1,7 @@
 package com.caracore.cca.service;
 
 import com.caracore.cca.model.Agendamento;
+import com.caracore.cca.model.Dentista;
 import com.caracore.cca.repository.AgendamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +28,14 @@ public class AgendamentoServiceExposicaoPublicaTest {
     @Mock
     private AgendamentoRepository agendamentoRepository;
 
+    @Mock
+    private DentistaService dentistaService;
+
     @InjectMocks
     private AgendamentoService agendamentoService;
 
     private List<Agendamento> agendamentosMock;
+    private List<Dentista> dentistasMock;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +44,13 @@ public class AgendamentoServiceExposicaoPublicaTest {
             criarAgendamento(1L, "João Silva", "Dr. João Silva - Clínico Geral"),
             criarAgendamento(2L, "Maria Santos", "Dra. Maria Santos - Ortodontista"),
             criarAgendamento(3L, "Carlos Oliveira", "Dr. Carlos Oliveira - Periodontista")
+        );
+
+        // Criar dentistas mock para testes
+        dentistasMock = Arrays.asList(
+            criarDentista(1L, "Dr. João Silva", "Clínico Geral", true, true),
+            criarDentista(2L, "Dra. Maria Santos", "Ortodontista", true, true),
+            criarDentista(3L, "Dr. Carlos Oliveira", "Periodontista", true, true)
         );
     }
 
@@ -104,16 +116,19 @@ public class AgendamentoServiceExposicaoPublicaTest {
     @DisplayName("Deve listar dentistas ativos para exposição pública")
     void testListarDentistasAtivos() {
         // Arrange
-        when(agendamentoRepository.findAll()).thenReturn(agendamentosMock);
+        when(dentistaService.listarAtivosExpostosPublicamente()).thenReturn(dentistasMock);
 
         // Act
         List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
 
         // Assert
         assertNotNull(dentistasAtivos);
-        assertEquals(3, dentistasAtivos.size()); // Por enquanto retorna todos (placeholder)
+        assertEquals(3, dentistasAtivos.size());
+        assertTrue(dentistasAtivos.contains("Dr. João Silva - Clínico Geral"));
+        assertTrue(dentistasAtivos.contains("Dra. Maria Santos - Ortodontista"));
+        assertTrue(dentistasAtivos.contains("Dr. Carlos Oliveira - Periodontista"));
         
-        verify(agendamentoRepository, times(1)).findAll();
+        verify(dentistaService, times(1)).listarAtivosExpostosPublicamente();
     }
 
     @Test
@@ -224,9 +239,8 @@ public class AgendamentoServiceExposicaoPublicaTest {
         assertNotNull(horariosDisponiveis);
         assertTrue(horariosDisponiveis.contains("08:00"));
         assertTrue(horariosDisponiveis.contains("08:30"));
-        // O horário 09:00 deve estar disponível pois o método atual não implementa a verificação real
-        // TODO: Quando implementar verificação real, alterar para assertFalse
-        assertTrue(horariosDisponiveis.contains("09:00"));
+        // O horário 09:00 deve estar ocupado devido ao conflito
+        assertFalse(horariosDisponiveis.contains("09:00"));
         assertTrue(horariosDisponiveis.contains("09:30"));
     }
 
@@ -242,5 +256,15 @@ public class AgendamentoServiceExposicaoPublicaTest {
         agendamento.setObservacao("Teste");
         agendamento.setDuracaoMinutos(30);
         return agendamento;
+    }
+
+    private Dentista criarDentista(Long id, String nome, String especialidade, boolean ativo, boolean expostoPublicamente) {
+        Dentista dentista = new Dentista();
+        dentista.setId(id);
+        dentista.setNome(nome);
+        dentista.setEspecialidade(especialidade);
+        dentista.setAtivo(ativo);
+        dentista.setExpostoPublicamente(expostoPublicamente);
+        return dentista;
     }
 }

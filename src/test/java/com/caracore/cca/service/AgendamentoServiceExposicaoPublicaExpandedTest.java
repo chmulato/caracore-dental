@@ -34,6 +34,9 @@ public class AgendamentoServiceExposicaoPublicaExpandedTest {
     @Mock
     private DentistaRepository dentistaRepository;
 
+    @Mock
+    private DentistaService dentistaService;
+
     @InjectMocks
     private AgendamentoService agendamentoService;
 
@@ -154,45 +157,7 @@ public class AgendamentoServiceExposicaoPublicaExpandedTest {
         @DisplayName("Deve listar apenas dentistas ativos")
         void testListarDentistasAtivos() {
             // Arrange
-            when(agendamentoRepository.findAll()).thenReturn(agendamentosMock);
-
-            // Act
-            List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
-
-            // Assert
-            assertNotNull(dentistasAtivos);
-            // Por enquanto, o método retorna todos os dentistas (placeholder)
-            // Quando implementado, deve retornar apenas os ativos
-            assertEquals(4, dentistasAtivos.size());
-            
-            verify(agendamentoRepository, times(1)).findAll();
-        }
-
-        @Test
-        @DisplayName("Deve filtrar dentistas inativos quando funcionalidade for implementada")
-        void testListarDentistasAtivosFiltrando() {
-            // Este teste documenta o comportamento esperado quando a funcionalidade for implementada
-            // Arrange
-            when(agendamentoRepository.findAll()).thenReturn(agendamentosMock);
-
-            // Act
-            List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
-
-            // Assert
-            assertNotNull(dentistasAtivos);
-            
-            // TODO: Quando implementado, deve verificar se apenas dentistas ativos são retornados
-            // Por enquanto, aceita o comportamento atual (todos os dentistas)
-            assertFalse(dentistasAtivos.isEmpty());
-            
-            verify(agendamentoRepository, times(1)).findAll();
-        }
-
-        @Test
-        @DisplayName("Deve retornar lista vazia quando não há dentistas ativos")
-        void testListarDentistasAtivosVazio() {
-            // Arrange
-            when(agendamentoRepository.findAll()).thenReturn(Arrays.asList());
+            when(dentistaService.listarAtivosExpostosPublicamente()).thenReturn(Arrays.asList());
 
             // Act
             List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
@@ -201,7 +166,40 @@ public class AgendamentoServiceExposicaoPublicaExpandedTest {
             assertNotNull(dentistasAtivos);
             assertTrue(dentistasAtivos.isEmpty());
             
-            verify(agendamentoRepository, times(1)).findAll();
+            verify(dentistaService, times(1)).listarAtivosExpostosPublicamente();
+        }
+
+        @Test
+        @DisplayName("Deve filtrar dentistas inativos quando funcionalidade for implementada")
+        void testListarDentistasAtivosFiltrando() {
+            // Este teste documenta o comportamento esperado quando a funcionalidade for implementada
+            // Arrange
+            when(dentistaService.listarAtivosExpostosPublicamente()).thenReturn(Arrays.asList());
+
+            // Act
+            List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
+
+            // Assert
+            assertNotNull(dentistasAtivos);
+            assertTrue(dentistasAtivos.isEmpty());
+            
+            verify(dentistaService, times(1)).listarAtivosExpostosPublicamente();
+        }
+
+        @Test
+        @DisplayName("Deve retornar lista vazia quando não há dentistas ativos")
+        void testListarDentistasAtivosVazio() {
+            // Arrange
+            when(dentistaService.listarAtivosExpostosPublicamente()).thenReturn(Arrays.asList());
+
+            // Act
+            List<String> dentistasAtivos = agendamentoService.listarDentistasAtivos();
+
+            // Assert
+            assertNotNull(dentistasAtivos);
+            assertTrue(dentistasAtivos.isEmpty());
+            
+            verify(dentistaService, times(1)).listarAtivosExpostosPublicamente();
         }
     }
 
@@ -271,12 +269,15 @@ public class AgendamentoServiceExposicaoPublicaExpandedTest {
         void testExcluir() {
             // Arrange
             Long id = 1L;
+            when(agendamentoRepository.existsById(id)).thenReturn(true);
             doNothing().when(agendamentoRepository).deleteById(id);
 
             // Act
-            agendamentoService.excluir(id);
+            boolean resultado = agendamentoService.excluir(id);
 
             // Assert
+            assertTrue(resultado);
+            verify(agendamentoRepository, times(1)).existsById(id);
             verify(agendamentoRepository, times(1)).deleteById(id);
         }
     }

@@ -13,6 +13,8 @@ public interface DentistaRepository extends JpaRepository<Dentista, Long> {
 
     List<Dentista> findByAtivoTrue();
     
+    List<Dentista> findByAtivoTrueAndExpostoPublicamenteTrue();
+    
     List<Dentista> findByNomeContainingIgnoreCase(String nome);
 
     @Query("SELECT d FROM Dentista d WHERE " +

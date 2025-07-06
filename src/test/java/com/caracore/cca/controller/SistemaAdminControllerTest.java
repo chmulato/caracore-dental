@@ -9,7 +9,6 @@ import com.caracore.cca.util.UserActivityLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,14 +25,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.reset;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.reset;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -204,7 +201,7 @@ public class SistemaAdminControllerTest {
         
         // Nenhum log de auditoria deve ser registrado para senha não redefinida
         verify(userActivityLogger, times(0)).logActivity(
-            anyString(), anyString(), anyString(), anyString()
+            any(String.class), any(String.class), any(String.class), any(String.class)
         );
     }
     
@@ -310,6 +307,9 @@ public class SistemaAdminControllerTest {
     @DisplayName("Admin deve alterar exposição pública de dentista com sucesso")
     @WithMockUser(username = "admin@teste.com", roles = {"ADMIN"})
     public void testAlterarExposicaoPublica() throws Exception {
+        // Arrange
+        when(dentistaService.alterarExposicaoPublica(eq(1L), eq(true), isNull())).thenReturn(true);
+        
         // Act & Assert
         mockMvc.perform(post("/admin/sistema/dentista/1/exposicao-publica")
                 .param("exposto", "true")

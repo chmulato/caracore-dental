@@ -1,0 +1,144 @@
+# Configurações para ambiente de PRODUÇÃO
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:prod-db.caracore.com.br}:${DB_PORT:5432}/${DB_NAME:cca_prod}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate  # NUNCA permitir alterações automáticas em produção
+    show-sql: false  # SQL logs SEMPRE desabilitados em produção
+    properties:
+      hibernate:
+        '[format_sql]': false
+        '[use_sql_comments]': false
+        '[generate_statistics]': false
+        '[jdbc.batch_size]': 20
+        '[order_inserts]': true
+        '[order_updates]': true
+  
+  # Cache habilitado e otimizado
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=10m
+  
+  # DevTools DESABILITADO
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+# Logging mínimo e seguro para produção
+logging:
+  level:
+    root: WARN
+    '[org.springframework.security]': ERROR
+    '[org.springframework.web]': WARN
+    '[com.caracore.cca]': INFO
+    '[org.hibernate.SQL]': ERROR
+    '[USER_ACTIVITY]': INFO
+  file:
+    name: /var/log/cca/cca-application.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: /var/log/cca/archived/cca-application-%d{yyyy-MM-dd}.%i.log
+      max-file-size: 100MB
+      max-history: 90
+      total-size-cap: 10GB
+  
+# Swagger DESABILITADO em produção por segurança
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+
+# Configurações específicas da aplicação para produção
+cca:
+  ambiente: producao
+  debug-mode: false
+  mock-external-services: false
+  whatsapp:
+    api-url: ${WHATSAPP_API_URL}
+    api-key: ${WHATSAPP_API_KEY}
+    enabled: true
+    timeout: 30000
+  email:
+    smtp:
+      host: ${SMTP_HOST}
+      port: ${SMTP_PORT:587}
+      username: ${SMTP_USERNAME}
+      password: ${SMTP_PASSWORD}
+      auth: true
+      starttls: true
+    from: ${EMAIL_FROM:noreply@caracore.com.br}
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration: ${JWT_EXPIRATION:3600000}  # 1 hora
+    session:
+      timeout: ${SESSION_TIMEOUT:1800}  # 30 minutos
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"  # Todo dia às 2h
+    retention-days: 30
+
+# Configurações do servidor otimizadas para produção
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        secure: true  # HTTPS obrigatório
+        http-only: true
+        same-site: strict
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
+    min-response-size: 1024
+  http2:
+    enabled: true
+  error:
+    include-message: never  # Não expor detalhes de erro
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+# Monitoramento e métricas para produção
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: never  # Não expor detalhes internos
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  server:
+    port: 9090  # Porta separada para métricas
+    
+# Configurações de segurança adicionais para produção
+security:
+  headers:
+    frame: deny
+    content-type: nosniff
+    xss-protection: "1; mode=block"
+    referrer-policy: strict-origin-when-cross-origin

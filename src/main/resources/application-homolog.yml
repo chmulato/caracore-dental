@@ -1,0 +1,90 @@
+# Configurações para ambiente de HOMOLOGAÇÃO
+spring:
+  datasource:
+    url: jdbc:postgresql://homolog-db.caracore.com.br:5432/cca_homolog
+    username: ${DB_USERNAME:cca_homolog}
+    password: ${DB_PASSWORD:cca_homolog_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Não permite alterações automáticas - usar Flyway
+    show-sql: false  # SQL logs desabilitados em homologação
+    properties:
+      hibernate:
+        '[format_sql]': false
+        '[use_sql_comments]': false
+        '[generate_statistics]': false
+  
+  # Cache habilitado
+  cache:
+    type: caffeine
+  
+  # Security sem debug
+  security:
+    debug: false
+
+# Logging moderado para homologação
+logging:
+  level:
+    root: INFO
+    '[org.springframework.security]': WARN
+    '[org.springframework.web]': INFO
+    '[com.caracore.cca]': INFO
+    '[org.hibernate.SQL]': WARN
+    '[USER_ACTIVITY]': INFO
+  
+# Swagger limitado em homologação
+springdoc:
+  swagger-ui:
+    enabled: true  # Habilitado para testes da equipe
+    try-it-out-enabled: false  # Desabilitado para evitar execução acidental
+  api-docs:
+    enabled: true
+
+# Configurações específicas da aplicação para homologação
+cca:
+  ambiente: homologacao
+  debug-mode: false
+  mock-external-services: false
+  whatsapp:
+    api-url: ${WHATSAPP_API_URL:https://api-homolog.whatsapp.caracore.com.br}
+    api-key: ${WHATSAPP_API_KEY:your-homolog-api-key}
+    enabled: true
+  email:
+    smtp:
+      host: ${SMTP_HOST:smtp-homolog.caracore.com.br}
+      port: ${SMTP_PORT:587}
+      username: ${SMTP_USERNAME:noreply@caracore.com.br}
+      password: ${SMTP_PASSWORD:your-smtp-password}
+    from: noreply-homolog@caracore.com.br
+  security:
+    jwt:
+      secret: ${JWT_SECRET:your-homolog-jwt-secret-key}
+      expiration: 86400000  # 24 horas
+
+# Configurações do servidor para homologação
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      timeout: 30m  # 30 minutos
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
+  
+# Monitoramento básico
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

@@ -116,6 +116,19 @@
             <artifactId>webjars-locator-core</artifactId>
         </dependency>
         
+        <!-- Swagger/OpenAPI 3 para documentação da API -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        
         <!-- Dependências para Testes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -142,11 +155,11 @@
             <scope>test</scope>
         </dependency>
         
-        <!-- H2 Database para testes -->
+        <!-- H2 Database para testes e desenvolvimento -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
         
         <!-- MockMvc para testes web -->
