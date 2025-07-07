@@ -1,6 +1,7 @@
 /**
  * Funcionalidades avançadas para relatórios
  * Extensões para export, filtros e interatividade
+ * Versão 1.0.2 - Correção do bug "clone is not defined" e "Unsupported image type" na exportação PDF
  */
 
 class ReportManager {
@@ -44,113 +45,42 @@ class ReportManager {
             return;
         }
 
-        const configs = {
-            agendamentos: {
-                filename: `relatorio-agendamentos-${this.getCurrentDate()}.pdf`,
-                options: {
-                    margin: 0.5,
-                    jsPDF: { orientation: 'landscape', format: 'a4' },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        allowTaint: true,
-                        logging: false,
-                        removeContainer: true,
-                        imageTimeout: 0,
-                        ignoreElements: (element) => {
-                            // Ignorar elementos que podem causar problemas
-                            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
-                                return true;
-                            }
-                            // Ignorar TODAS as imagens (PNG, JPG, SVG, etc.)
-                            if (element.tagName === 'IMG') {
-                                return true;
-                            }
-                            // Ignorar ícones e elementos visuais
-                            if (element.classList.contains('bi') || 
-                                element.classList.contains('icon') || 
-                                element.className.includes('bi-') ||
-                                element.className.includes('icon-')) {
-                                return true;
-                            }
-                            // Ignorar elementos com background-image
-                            if (element.style.backgroundImage && element.style.backgroundImage !== 'none') {
-                                return true;
-                            }
-                            return false;
+        const config = {
+            filename: `relatorio-${reportType}-${this.getCurrentDate()}.pdf`,
+            options: {
+                margin: 0.5,
+                jsPDF: { 
+                    orientation: reportType === 'pacientes' ? 'portrait' : 'landscape', 
+                    format: 'a4',
+                    compress: true,
+                    precision: 16
+                },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    removeContainer: true,
+                    imageTimeout: 0,
+                    foreignObjectRendering: false,
+                    imageRendering: 'pixelated',
+                    ignoreElements: (element) => {
+                        // Ignorar elementos que podem causar problemas
+                        if (element.tagName === 'IMG' || element.tagName === 'SVG') {
+                            return true;
                         }
-                    }
-                }
-            },
-            pacientes: {
-                filename: `relatorio-pacientes-${this.getCurrentDate()}.pdf`,
-                options: {
-                    margin: 1,
-                    jsPDF: { orientation: 'portrait', format: 'a4' },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        allowTaint: true,
-                        logging: false,
-                        removeContainer: true,
-                        imageTimeout: 0,
-                        ignoreElements: (element) => {
-                            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
-                                return true;
-                            }
-                            if (element.tagName === 'IMG') {
-                                return true;
-                            }
-                            if (element.classList.contains('bi') || 
-                                element.classList.contains('icon') || 
-                                element.className.includes('bi-') ||
-                                element.className.includes('icon-')) {
-                                return true;
-                            }
-                            if (element.style.backgroundImage && element.style.backgroundImage !== 'none') {
-                                return true;
-                            }
-                            return false;
+                        // Ignorar ícones Bootstrap e FontAwesome
+                        if (element.tagName === 'I' || element.classList.contains('bi') || 
+                            element.classList.contains('icon') || element.classList.contains('fa')) {
+                            return true;
                         }
-                    }
-                }
-            },
-            desempenho: {
-                filename: `relatorio-desempenho-${this.getCurrentDate()}.pdf`,
-                options: {
-                    margin: 0.5,
-                    jsPDF: { orientation: 'landscape', format: 'a4' },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        allowTaint: true,
-                        logging: false,
-                        removeContainer: true,
-                        imageTimeout: 0,
-                        ignoreElements: (element) => {
-                            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
-                                return true;
-                            }
-                            if (element.tagName === 'IMG') {
-                                return true;
-                            }
-                            if (element.classList.contains('bi') || 
-                                element.classList.contains('icon') || 
-                                element.className.includes('bi-') ||
-                                element.className.includes('icon-')) {
-                                return true;
-                            }
-                            if (element.style.backgroundImage && element.style.backgroundImage !== 'none') {
-                                return true;
-                            }
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
         };
-
-        const config = configs[reportType] || configs.agendamentos;
+        
+        // Usar diretamente a configuração criada
         this.generatePDF(element, config.filename, config.options);
     }
 
@@ -158,97 +88,161 @@ class ReportManager {
      * Gera PDF com tratamento de erros aprimorado
      */
     generatePDF(element, filename, options) {
-        this.showLoading('Gerando PDF...');
-        
-        // Preparar elemento para exportação
-        this.prepareElementForExport(element);
+        try {
+            this.showLoading('Gerando PDF...');
+            
+            // Preparar elemento para exportação
+            this.prepareElementForExport(element);
+            
+            // Usar o elemento temporário para exportação
+            const tempElement = document.getElementById('tempPrintElement');
+            
+            if (!tempElement) {
+                throw new Error('Elemento temporário não encontrado');
+            }
 
-        html2pdf()
-            .from(element)
-            .set(options)
-            .toPdf()
-            .get('pdf')
-            .then((pdf) => {
-                // Adicionar metadados ao PDF
-                pdf.setProperties({
-                    title: `Relatório - ${filename}`,
-                    subject: 'Relatório gerado pelo sistema Cara Core',
-                    author: 'Sistema Cara Core',
-                    creator: 'Sistema Cara Core CCA',
-                    producer: 'html2pdf.js'
+            // Configurar opções avançadas para lidar com imagens problemáticas
+            const enhancedOptions = {
+                ...options,
+                imageTimeout: 0,
+                enableLinks: false,
+                html2canvas: {
+                    ...options.html2canvas,
+                    allowTaint: true,
+                    useCORS: true,
+                    removeContainer: true,
+                    scale: 2,
+                    logging: false,
+                    imageTimeout: 0,
+                    // Usar uma função de ignoreElements mais agressiva
+                    ignoreElements: (element) => {
+                        // Ignorar elementos que podem causar problemas
+                        const tagName = element.tagName?.toLowerCase();
+                        if (tagName === 'img' || tagName === 'svg' || tagName === 'canvas') {
+                            return true;
+                        }
+                        // Ignorar elementos com classes de ícones
+                        const className = element.className || '';
+                        if (typeof className === 'string' && 
+                            (className.includes('bi-') || className.includes('icon') || 
+                             className.includes('fa-') || className.includes('logo'))) {
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+            };
+
+            html2pdf()
+                .from(tempElement)
+                .set(enhancedOptions)
+                .toPdf()
+                .get('pdf')
+                .then((pdf) => {
+                    // Adicionar metadados ao PDF
+                    pdf.setProperties({
+                        title: `Relatório - ${filename}`,
+                        subject: 'Relatório gerado pelo sistema Cara Core',
+                        author: 'Sistema Cara Core',
+                        creator: 'Sistema Cara Core CCA',
+                        producer: 'html2pdf.js'
+                    });
+                    
+                    return pdf;
+                })
+                .save(filename)
+                .then(() => {
+                    this.hideLoading();
+                    this.restoreElementAfterExport(element);
+                    this.showNotification('PDF gerado com sucesso!', 'success');
+                })
+                .catch((error) => {
+                    console.error('Erro ao gerar PDF:', error);
+                    this.hideLoading();
+                    this.restoreElementAfterExport(element);
+                    this.showNotification('Erro ao gerar PDF: ' + error.message, 'error');
                 });
-                
-                return pdf;
-            })
-            .save(filename)
-            .then(() => {
-                this.hideLoading();
-                this.restoreElementAfterExport(element);
-                this.showNotification('PDF gerado com sucesso!', 'success');
-            })
-            .catch((error) => {
-                console.error('Erro ao gerar PDF:', error);
-                this.hideLoading();
-                this.restoreElementAfterExport(element);
-                this.showNotification('Erro ao gerar PDF: ' + error.message, 'error');
-            });
+        } catch (error) {
+            console.error('Erro ao iniciar geração de PDF:', error);
+            this.hideLoading();
+            this.restoreElementAfterExport(element);
+            this.showNotification('Erro ao gerar PDF: ' + error.message, 'error');
+        }
     }
 
     /**
      * Prepara elemento para exportação
      */
     prepareElementForExport(element) {
-        element.classList.add('printing');
+        let clone;
         
-        // Ocultar elementos não necessários
-        const hideElements = element.querySelectorAll('.no-print, .export-button, .btn:not(.badge)');
-        hideElements.forEach(el => {
-            el.dataset.originalDisplay = el.style.display;
-            el.style.display = 'none';
-        });
-
-        // REMOVER TODAS AS IMAGENS para evitar erro "Unsupported image type"
-        const images = element.querySelectorAll('img');
-        images.forEach(img => {
-            img.dataset.originalDisplay = img.style.display;
-            img.style.display = 'none';
-        });
-
-        // REMOVER ÍCONES Bootstrap e outros que podem causar problemas
-        const icons = element.querySelectorAll('i[class*="bi-"], .bi, [class*="icon"], svg, .fa, [class*="fa-"]');
-        icons.forEach(icon => {
-            icon.dataset.originalDisplay = icon.style.display;
-            icon.style.display = 'none';
-        });
-
-        // Remover logos e outros elementos visuais problemáticos
-        const logos = element.querySelectorAll('.logo, .brand, [src*="logo"], [src*="icon"], [class*="logo"], [class*="brand"]');
-        logos.forEach(logo => {
-            logo.dataset.originalDisplay = logo.style.display;
-            logo.style.display = 'none';
-        });
-
-        // Remover elementos com background-image
-        const elementsWithBg = element.querySelectorAll('[style*="background-image"]');
-        elementsWithBg.forEach(el => {
-            el.dataset.originalBackground = el.style.backgroundImage;
-            el.style.backgroundImage = 'none';
-        });
-
-        // Remover elementos com data-url ou src que podem conter imagens
-        const elementsWithSrc = element.querySelectorAll('[src], [data-src], [data-background]');
-        elementsWithSrc.forEach(el => {
-            if (el.tagName !== 'SCRIPT' && el.tagName !== 'LINK') {
-                el.dataset.originalDisplay = el.style.display;
-                el.style.display = 'none';
-            }
-        });
-
-        // Ajustar tabelas para impressão
-        const tables = element.querySelectorAll('.table-responsive');
-        tables.forEach(table => {
-            table.style.overflow = 'visible';
-        });
+        try {
+            // Criar um clone do elemento para não modificar o original
+            clone = element.cloneNode(true);
+            element.parentNode.insertBefore(clone, element);
+            element.style.display = 'none';
+            clone.id = 'tempPrintElement';
+            clone.classList.add('printing');
+            
+            // Ocultar elementos não necessários
+            const hideElements = clone.querySelectorAll('.no-print, .export-button, .btn:not(.badge)');
+            hideElements.forEach(el => {
+                if (el.parentNode) el.parentNode.removeChild(el);
+            });
+    
+            // REMOVER COMPLETAMENTE TODAS AS IMAGENS para evitar erro "Unsupported image type"
+            this._removeAllElementsOfType(clone, 'img');
+            
+            // REMOVER COMPLETAMENTE SVG para evitar erro "Unsupported image type"
+            this._removeAllElementsOfType(clone, 'svg');
+            
+            // REMOVER COMPLETAMENTE CANVAS para evitar erro "Unsupported image type"
+            this._removeAllElementsOfType(clone, 'canvas');
+            
+            // REMOVER COMPLETAMENTE ÍCONES Bootstrap e outros que podem causar problemas
+            const icons = clone.querySelectorAll('i[class*="bi-"], .bi, [class*="icon"], .fa, [class*="fa-"]');
+            icons.forEach(icon => {
+                if (icon.parentNode) icon.parentNode.removeChild(icon);
+            });
+    
+            // Remover logos e outros elementos visuais problemáticos
+            const logos = clone.querySelectorAll('.logo, .brand, [src*="logo"], [src*="icon"], [class*="logo"], [class*="brand"]');
+            logos.forEach(logo => {
+                if (logo.parentNode) logo.parentNode.removeChild(logo);
+            });
+    
+            // Remover elementos com background-image
+            const elementsWithBg = clone.querySelectorAll('*');
+            elementsWithBg.forEach(el => {
+                if (el.style && el.style.backgroundImage) {
+                    el.style.backgroundImage = 'none';
+                }
+                // Remover também através de getComputedStyle
+                const style = window.getComputedStyle(el);
+                if (style.backgroundImage && style.backgroundImage !== 'none') {
+                    el.style.backgroundImage = 'none';
+                }
+            });
+    
+            // Remover elementos com data-url ou src que podem conter imagens
+            const elementsWithSrc = clone.querySelectorAll('[src], [data-src], [data-background], [style*="url"]');
+            elementsWithSrc.forEach(el => {
+                if (el.tagName !== 'SCRIPT' && el.tagName !== 'LINK') {
+                    if (el.parentNode) {
+                        el.parentNode.removeChild(el);
+                    }
+                }
+            });
+            
+            // Ajustar tabelas para impressão
+            const tables = clone.querySelectorAll('.table-responsive');
+            tables.forEach(table => {
+                table.style.overflow = 'visible';
+            });
+        } catch (error) {
+            console.error('Erro ao preparar elemento para exportação:', error);
+            return; // Abortar se ocorrer um erro na preparação
+        }
 
         // Adicionar CSS específico para impressão
         const printStyles = document.createElement('style');
@@ -283,47 +277,20 @@ class ReportManager {
      * Restaura elemento após exportação
      */
     restoreElementAfterExport(element) {
-        element.classList.remove('printing');
+        // Remover o clone temporário
+        const tempElement = document.getElementById('tempPrintElement');
+        if (tempElement) {
+            tempElement.parentNode.removeChild(tempElement);
+        }
+        
+        // Exibir o elemento original novamente
+        element.style.display = '';
         
         // Remover estilos temporários
         const tempStyles = document.getElementById('temp-print-styles');
         if (tempStyles) {
             tempStyles.remove();
         }
-        
-        // Restaurar elementos ocultos
-        const hideElements = element.querySelectorAll('.no-print, .export-button, .btn:not(.badge)');
-        hideElements.forEach(el => {
-            el.style.display = el.dataset.originalDisplay || '';
-            delete el.dataset.originalDisplay;
-        });
-
-        // Restaurar todas as imagens
-        const images = element.querySelectorAll('img');
-        images.forEach(img => {
-            if (img.dataset.originalDisplay !== undefined) {
-                img.style.display = img.dataset.originalDisplay;
-                delete img.dataset.originalDisplay;
-            }
-        });
-
-        // Restaurar ícones Bootstrap e outros
-        const icons = element.querySelectorAll('i[class*="bi-"], .bi, [class*="icon"], svg, .fa, [class*="fa-"]');
-        icons.forEach(icon => {
-            if (icon.dataset.originalDisplay !== undefined) {
-                icon.style.display = icon.dataset.originalDisplay;
-                delete icon.dataset.originalDisplay;
-            }
-        });
-
-        // Restaurar logos
-        const logos = element.querySelectorAll('.logo, .brand, [src*="logo"], [src*="icon"], [class*="logo"], [class*="brand"]');
-        logos.forEach(logo => {
-            if (logo.dataset.originalDisplay !== undefined) {
-                logo.style.display = logo.dataset.originalDisplay;
-                delete logo.dataset.originalDisplay;
-            }
-        });
 
         // Restaurar elementos com src
         const elementsWithSrc = element.querySelectorAll('[src], [data-src], [data-background]');
@@ -643,6 +610,28 @@ class ReportManager {
         
         printWindow.document.close();
         printWindow.print();
+    }
+
+    /**
+     * Método auxiliar para remover todos os elementos de um tipo específico
+     */
+    _removeAllElementsOfType(parentElement, tagName) {
+        try {
+            const elements = parentElement.querySelectorAll(tagName);
+            elements.forEach(el => {
+                if (el.parentNode) el.parentNode.removeChild(el);
+            });
+            
+            // Segunda verificação para garantir que todos foram removidos
+            const remainingElements = parentElement.getElementsByTagName(tagName);
+            while (remainingElements.length > 0) {
+                if (remainingElements[0].parentNode) {
+                    remainingElements[0].parentNode.removeChild(remainingElements[0]);
+                }
+            }
+        } catch (error) {
+            console.error(`Erro ao remover elementos ${tagName}:`, error);
+        }
     }
 }
 
