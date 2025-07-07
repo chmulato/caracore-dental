@@ -1,0 +1,205 @@
+/*
+ * Estilos específicos para impressão e exportação PDF
+ * Otimizado para html2pdf.js sem imagens
+ */
+
+/* Estilos gerais para impressão */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    .no-print,
+    .export-button,
+    .btn:not(.badge) {
+        display: none !important;
+    }
+    
+    img,
+    svg,
+    i[class*="bi-"],
+    .bi,
+    [class*="icon"],
+    .fa,
+    [class*="fa-"] {
+        display: none !important;
+    }
+    
+    .container-fluid {
+        padding: 0 !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .table {
+        font-size: 12px !important;
+        border-collapse: collapse !important;
+    }
+    
+    .table th,
+    .table td {
+        padding: 4px !important;
+        border: 1px solid #000 !important;
+    }
+    
+    .table thead th {
+        background-color: #f8f9fa !important;
+        font-weight: bold !important;
+    }
+}
+
+/* Estilos específicos para a classe .printing (usado pelo html2pdf.js) */
+.printing {
+    background: white !important;
+    padding: 20px !important;
+}
+
+.printing * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+.printing .no-print,
+.printing .export-button,
+.printing .btn:not(.badge) {
+    display: none !important;
+}
+
+.printing img,
+.printing svg,
+.printing i[class*="bi-"],
+.printing .bi,
+.printing [class*="icon"],
+.printing .fa,
+.printing [class*="fa-"] {
+    display: none !important;
+}
+
+.printing .container-fluid {
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+
+.printing .card {
+    border: 2px solid #000 !important;
+    box-shadow: none !important;
+    margin-bottom: 20px !important;
+}
+
+.printing .card-header {
+    background-color: #f8f9fa !important;
+    border-bottom: 2px solid #000 !important;
+    padding: 10px !important;
+}
+
+.printing .card-title {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+    color: #000 !important;
+}
+
+.printing .table {
+    font-size: 11px !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+}
+
+.printing .table th,
+.printing .table td {
+    padding: 6px !important;
+    border: 1px solid #000 !important;
+    text-align: left !important;
+    vertical-align: top !important;
+}
+
+.printing .table thead th {
+    background-color: #e9ecef !important;
+    font-weight: bold !important;
+    color: #000 !important;
+}
+
+.printing .table tbody tr:nth-child(even) {
+    background-color: #f8f9fa !important;
+}
+
+.printing .badge {
+    color: #000 !important;
+    background-color: #f8f9fa !important;
+    border: 1px solid #000 !important;
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+}
+
+.printing .text-success {
+    color: #000 !important;
+}
+
+.printing .text-danger {
+    color: #000 !important;
+}
+
+.printing .text-warning {
+    color: #000 !important;
+}
+
+.printing .text-info {
+    color: #000 !important;
+}
+
+.printing .text-primary {
+    color: #000 !important;
+}
+
+/* Melhorar legibilidade de links */
+.printing a {
+    color: #000 !important;
+    text-decoration: underline !important;
+}
+
+/* Ocultar elementos que podem causar problemas */
+.printing [style*="background-image"] {
+    background-image: none !important;
+}
+
+/* Ajustar quebras de página */
+.printing .table {
+    page-break-inside: auto !important;
+}
+
+.printing .table tr {
+    page-break-inside: avoid !important;
+}
+
+.printing .table thead {
+    display: table-header-group !important;
+}
+
+.printing .card {
+    page-break-inside: avoid !important;
+}
+
+/* Título do relatório */
+.printing h1,
+.printing h2,
+.printing h3 {
+    color: #000 !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+}
+
+/* Informações adicionais */
+.printing .report-info {
+    margin-bottom: 20px !important;
+    padding: 10px !important;
+    border: 1px solid #000 !important;
+    background-color: #f8f9fa !important;
+}
+
+.printing .report-info strong {
+    color: #000 !important;
+}

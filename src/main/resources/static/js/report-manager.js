@@ -50,7 +50,36 @@ class ReportManager {
                 options: {
                     margin: 0.5,
                     jsPDF: { orientation: 'landscape', format: 'a4' },
-                    html2canvas: { scale: 2, useCORS: true }
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false,
+                        removeContainer: true,
+                        imageTimeout: 0,
+                        ignoreElements: (element) => {
+                            // Ignorar elementos que podem causar problemas
+                            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
+                                return true;
+                            }
+                            // Ignorar TODAS as imagens (PNG, JPG, SVG, etc.)
+                            if (element.tagName === 'IMG') {
+                                return true;
+                            }
+                            // Ignorar ícones e elementos visuais
+                            if (element.classList.contains('bi') || 
+                                element.classList.contains('icon') || 
+                                element.className.includes('bi-') ||
+                                element.className.includes('icon-')) {
+                                return true;
+                            }
+                            // Ignorar elementos com background-image
+                            if (element.style.backgroundImage && element.style.backgroundImage !== 'none') {
+                                return true;
+                            }
+                            return false;
+                        }
+                    }
                 }
             },
             pacientes: {
@@ -58,7 +87,32 @@ class ReportManager {
                 options: {
                     margin: 1,
                     jsPDF: { orientation: 'portrait', format: 'a4' },
-                    html2canvas: { scale: 2, useCORS: true }
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false,
+                        removeContainer: true,
+                        imageTimeout: 0,
+                        ignoreElements: (element) => {
+                            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
+                                return true;
+                            }
+                            if (element.tagName === 'IMG') {
+                                return true;
+                            }
+                            if (element.classList.contains('bi') || 
+                                element.classList.contains('icon') || 
+                                element.className.includes('bi-') ||
+                                element.className.includes('icon-')) {
+                                return true;
+                            }
+                            if (element.style.backgroundImage && element.style.backgroundImage !== 'none') {
+                                return true;
+                            }
+                            return false;
+                        }
+                    }
                 }
             },
             desempenho: {
@@ -66,7 +120,32 @@ class ReportManager {
                 options: {
                     margin: 0.5,
                     jsPDF: { orientation: 'landscape', format: 'a4' },
-                    html2canvas: { scale: 2, useCORS: true }
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false,
+                        removeContainer: true,
+                        imageTimeout: 0,
+                        ignoreElements: (element) => {
+                            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
+                                return true;
+                            }
+                            if (element.tagName === 'IMG') {
+                                return true;
+                            }
+                            if (element.classList.contains('bi') || 
+                                element.classList.contains('icon') || 
+                                element.className.includes('bi-') ||
+                                element.className.includes('icon-')) {
+                                return true;
+                            }
+                            if (element.style.backgroundImage && element.style.backgroundImage !== 'none') {
+                                return true;
+                            }
+                            return false;
+                        }
+                    }
                 }
             }
         };
@@ -128,11 +207,76 @@ class ReportManager {
             el.style.display = 'none';
         });
 
+        // REMOVER TODAS AS IMAGENS para evitar erro "Unsupported image type"
+        const images = element.querySelectorAll('img');
+        images.forEach(img => {
+            img.dataset.originalDisplay = img.style.display;
+            img.style.display = 'none';
+        });
+
+        // REMOVER ÍCONES Bootstrap e outros que podem causar problemas
+        const icons = element.querySelectorAll('i[class*="bi-"], .bi, [class*="icon"], svg, .fa, [class*="fa-"]');
+        icons.forEach(icon => {
+            icon.dataset.originalDisplay = icon.style.display;
+            icon.style.display = 'none';
+        });
+
+        // Remover logos e outros elementos visuais problemáticos
+        const logos = element.querySelectorAll('.logo, .brand, [src*="logo"], [src*="icon"], [class*="logo"], [class*="brand"]');
+        logos.forEach(logo => {
+            logo.dataset.originalDisplay = logo.style.display;
+            logo.style.display = 'none';
+        });
+
+        // Remover elementos com background-image
+        const elementsWithBg = element.querySelectorAll('[style*="background-image"]');
+        elementsWithBg.forEach(el => {
+            el.dataset.originalBackground = el.style.backgroundImage;
+            el.style.backgroundImage = 'none';
+        });
+
+        // Remover elementos com data-url ou src que podem conter imagens
+        const elementsWithSrc = element.querySelectorAll('[src], [data-src], [data-background]');
+        elementsWithSrc.forEach(el => {
+            if (el.tagName !== 'SCRIPT' && el.tagName !== 'LINK') {
+                el.dataset.originalDisplay = el.style.display;
+                el.style.display = 'none';
+            }
+        });
+
         // Ajustar tabelas para impressão
         const tables = element.querySelectorAll('.table-responsive');
         tables.forEach(table => {
             table.style.overflow = 'visible';
         });
+
+        // Adicionar CSS específico para impressão
+        const printStyles = document.createElement('style');
+        printStyles.id = 'temp-print-styles';
+        printStyles.textContent = `
+            .printing * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .printing img,
+            .printing svg,
+            .printing i[class*="bi-"],
+            .printing .bi,
+            .printing [class*="icon"],
+            .printing .fa,
+            .printing [class*="fa-"] {
+                display: none !important;
+            }
+            .printing .table {
+                font-size: 12px !important;
+            }
+            .printing .table th,
+            .printing .table td {
+                padding: 4px !important;
+                border: 1px solid #000 !important;
+            }
+        `;
+        document.head.appendChild(printStyles);
     }
 
     /**
@@ -141,17 +285,68 @@ class ReportManager {
     restoreElementAfterExport(element) {
         element.classList.remove('printing');
         
-        // Restaurar elementos
+        // Remover estilos temporários
+        const tempStyles = document.getElementById('temp-print-styles');
+        if (tempStyles) {
+            tempStyles.remove();
+        }
+        
+        // Restaurar elementos ocultos
         const hideElements = element.querySelectorAll('.no-print, .export-button, .btn:not(.badge)');
         hideElements.forEach(el => {
             el.style.display = el.dataset.originalDisplay || '';
             delete el.dataset.originalDisplay;
         });
 
+        // Restaurar todas as imagens
+        const images = element.querySelectorAll('img');
+        images.forEach(img => {
+            if (img.dataset.originalDisplay !== undefined) {
+                img.style.display = img.dataset.originalDisplay;
+                delete img.dataset.originalDisplay;
+            }
+        });
+
+        // Restaurar ícones Bootstrap e outros
+        const icons = element.querySelectorAll('i[class*="bi-"], .bi, [class*="icon"], svg, .fa, [class*="fa-"]');
+        icons.forEach(icon => {
+            if (icon.dataset.originalDisplay !== undefined) {
+                icon.style.display = icon.dataset.originalDisplay;
+                delete icon.dataset.originalDisplay;
+            }
+        });
+
+        // Restaurar logos
+        const logos = element.querySelectorAll('.logo, .brand, [src*="logo"], [src*="icon"], [class*="logo"], [class*="brand"]');
+        logos.forEach(logo => {
+            if (logo.dataset.originalDisplay !== undefined) {
+                logo.style.display = logo.dataset.originalDisplay;
+                delete logo.dataset.originalDisplay;
+            }
+        });
+
+        // Restaurar elementos com src
+        const elementsWithSrc = element.querySelectorAll('[src], [data-src], [data-background]');
+        elementsWithSrc.forEach(el => {
+            if (el.tagName !== 'SCRIPT' && el.tagName !== 'LINK' && el.dataset.originalDisplay !== undefined) {
+                el.style.display = el.dataset.originalDisplay;
+                delete el.dataset.originalDisplay;
+            }
+        });
+
         // Restaurar tabelas
         const tables = element.querySelectorAll('.table-responsive');
         tables.forEach(table => {
             table.style.overflow = '';
+        });
+
+        // Restaurar backgrounds
+        const elementsWithBg = element.querySelectorAll('[style*="background-image"]');
+        elementsWithBg.forEach(el => {
+            if (el.dataset.originalBackground) {
+                el.style.backgroundImage = el.dataset.originalBackground;
+                delete el.dataset.originalBackground;
+            }
         });
     }
 
@@ -518,7 +713,10 @@ const reportStyles = `
     }
 `;
 
-// Adicionar estilos ao documento
-const styleSheet = document.createElement('style');
-styleSheet.textContent = reportStyles;
-document.head.appendChild(styleSheet);
+// Adicionar estilos ao documento apenas se não existir
+if (!document.getElementById('report-manager-styles')) {
+    const styleSheet = document.createElement('style');
+    styleSheet.id = 'report-manager-styles';
+    styleSheet.textContent = reportStyles;
+    document.head.appendChild(styleSheet);
+}
