@@ -84,7 +84,8 @@ src/build/
 !**/src/test/**/build/
 
 # Visual Studio Code
-.vscode/
+.vscode/*
+!.vscode/settings.json
 *.code-workspace
 
 # ===== SISTEMAS OPERACIONAIS =====

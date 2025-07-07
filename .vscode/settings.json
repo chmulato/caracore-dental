@@ -1,0 +1,20 @@
+// Configuração para garantir UTF-8 na compilação e execução Java no VS Code
+{
+    "files.encoding": "utf8",
+    "java.encoding": "UTF-8",
+    "java.debug.settings.vmArgs": "-Dfile.encoding=UTF-8",
+    "maven.terminal.useJavaHome": true,
+    "maven.terminal.customEnv": [
+        {
+            "environmentVariable": "JAVA_TOOL_OPTIONS",
+            "value": "-Dfile.encoding=UTF-8"
+        }
+    ],
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "${env:JAVA_HOME}",
+            "default": true
+        }
+    ]
+}
