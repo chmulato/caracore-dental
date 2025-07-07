@@ -14,6 +14,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/reports.css}">
     <!-- Chart.js -->
     <script th:src="@{/webjars/chart.js/4.3.0/dist/chart.umd.js}"></script>
     <!-- html2pdf -->
@@ -315,20 +316,14 @@
             }
         });
         
-        // Obter datas para nomes de arquivo
-        var periodoInicio = /*[[${#temporals.format(dataInicio, 'dd-MM-yyyy')}]]*/ 'data-inicio';
-        var periodoFim = /*[[${#temporals.format(dataFim, 'dd-MM-yyyy')}]]*/ 'data-fim';
-        
-        // Configurar botão de exportação para PDF
+        // Configurar botão de exportação para PDF usando o novo sistema
         $('#btnExportPDF').click(function() {
-            // Preparar o nome do arquivo
-            var filename = 'relatorio-desempenho-' + periodoInicio + '-a-' + periodoFim + '.pdf';
-            
-            // Exportar conteúdo do relatório para PDF
-            exportToPdf('relatorioContent', filename, {
-                jsPDF: { orientation: 'portrait' }
-            });
+            reportManager.exportToPDF('desempenho');
         });
     </script>
+    
+    <!-- Scripts adicionais para relatórios -->
+    <script th:src="@{/js/report-exporter.js}"></script>
+    <script th:src="@{/js/report-manager.js}"></script>
 </body>
 </html>

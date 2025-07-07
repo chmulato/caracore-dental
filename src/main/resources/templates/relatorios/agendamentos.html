@@ -14,8 +14,9 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.13.1/font/bootstrap-icons.css}">
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/reports.css}">
     <!-- DataTables -->
-    <link rel="stylesheet" th:href="@{/webjars/datatables/1.13.6/css/dataTables.bootstrap5.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/datatables/1.10.25/css/dataTables.bootstrap5.min.css}">
     <style>
         .status-agendado { color: #fd7e14; }
         .status-confirmado { color: #0d6efd; }
@@ -247,10 +248,11 @@
     <!-- Scripts -->
     <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
-    <script th:src="@{/webjars/datatables/1.13.6/js/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/webjars/datatables/1.13.6/js/dataTables.bootstrap5.min.js}"></script>
+    <script th:src="@{/webjars/datatables/1.10.25/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/webjars/datatables/1.10.25/js/dataTables.bootstrap5.min.js}"></script>
     <script th:src="@{/js/html2pdf.bundle.min.js}"></script>
     <script th:src="@{/js/report-exporter.js}"></script>
+    <script th:src="@{/js/report-manager.js}"></script>
     
     <script th:inline="javascript">
         $(document).ready(function() {
@@ -267,24 +269,15 @@
             var periodoInicio = /*[[${#temporals.format(dataInicio, 'dd-MM-yyyy')}]]*/ 'data-inicio';
             var periodoFim = /*[[${#temporals.format(dataFim, 'dd-MM-yyyy')}]]*/ 'data-fim';
             
-            // Configurar botão de exportação para PDF
+            // Configurar botão de exportação para PDF usando o novo sistema
             $('#btnExportPDF').click(function() {
-                // Preparar o nome do arquivo
                 var filename = 'relatorio-agendamentos-' + periodoInicio + '-a-' + periodoFim + '.pdf';
-                
-                // Exportar conteúdo do relatório para PDF
-                exportToPdf('relatorioContent', filename, {
-                    jsPDF: { orientation: 'landscape' }
-                });
+                reportManager.exportToPDF('agendamentos');
             });
             
-            // Configurar botão de exportação para CSV
+            // Configurar botão de exportação para CSV usando o novo sistema
             $('#btnExportCSV').click(function() {
-                // Preparar o nome do arquivo
-                var filename = 'relatorio-agendamentos-' + periodoInicio + '-a-' + periodoFim + '.csv';
-                
-                // Exportar tabela para CSV
-                exportTableToCSV('tabelaAgendamentos', filename);
+                reportManager.exportToCSV('tabelaAgendamentos');
             });
         });
     </script>
