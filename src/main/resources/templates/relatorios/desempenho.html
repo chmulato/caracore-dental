@@ -16,10 +16,8 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/reports.css}">
     <link rel="stylesheet" th:href="@{/css/print-styles.css}">
-    <!-- Chart.js -->
-    <script th:src="@{/webjars/chart.js/4.3.0/dist/chart.umd.js}"></script>
-    <!-- html2pdf -->
-    <script th:src="@{/js/html2pdf.bundle.min.js}"></script>
+    <!-- DataTables -->
+    <link rel="stylesheet" th:href="@{/webjars/datatables/1.10.25/css/dataTables.bootstrap5.min.css}">
     <style>
         .performance-card {
             border-left: 4px solid #0d6efd;
@@ -218,25 +216,94 @@
     <!-- Scripts -->
     <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/webjars/chart.js/3.7.1/chart.min.js}"></script>
+    <script th:src="@{/js/lib/chart.umd.js}"></script>
+    <script>
+        // Verificar se Chart.js foi carregado
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js não foi carregado corretamente. Tentando carregar novamente...');
+            
+            // Função para carregar script com tipo MIME correto
+            function loadJsWithCorrectMIME(url, callback) {
+                console.log('Carregando script com tipo MIME correto:', url);
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            // Criar script element e executá-lo
+                            var script = document.createElement('script');
+                            script.type = 'text/javascript';
+                            script.text = xhr.responseText;
+                            document.head.appendChild(script);
+                            console.log('Script carregado e executado com sucesso');
+                            if (callback) callback();
+                        } else {
+                            console.error('Falha ao carregar script. Status:', xhr.status);
+                        }
+                    }
+                };
+                xhr.send();
+            }
+            
+            // Tentar carregar Chart.js novamente
+            loadJsWithCorrectMIME(/*[[@{/js/lib/chart.umd.js}]]*/ '/js/lib/chart.umd.js', function() {
+                console.log('Chart.js carregado dinamicamente');
+                // Inicializar gráficos se houver funções para isso
+                if (typeof initializeCharts === 'function') {
+                    initializeCharts();
+                }
+            });
+        }
+    </script>
+    <script th:src="@{/js/html2pdf.bundle.min.js}"></script>
     <script th:src="@{/js/report-manager.js}"></script>
     <script th:src="@{/js/report-exporter.js}"></script>
     
     <script th:inline="javascript">
-        // Dados do relatório
-        const resumoDesempenho = /*[[${resumoDesempenho}]]*/ [];
-        
-        // Extrair dados para os gráficos
-        const dentistaNomes = resumoDesempenho.map(item => item.dentista.nome);
-        const taxasRealizacao = resumoDesempenho.map(item => item.taxaRealizacao);
-        const totaisAgendamentos = resumoDesempenho.map(item => item.totalAgendamentos);
-        const realizados = resumoDesempenho.map(item => item.realizados);
-        const cancelados = resumoDesempenho.map(item => item.cancelados);
-        const pendentes = resumoDesempenho.map(item => item.pendentes);
-        
-        // Configurar gráfico de taxa de realização
-        const taxaCtx = document.getElementById('taxaRealizacaoChart').getContext('2d');
-        new Chart(taxaCtx, {
+        // Função global para inicialização dos gráficos
+        window.initializeCharts = function() {
+            // Verificar se os gráficos já foram inicializados
+            if (window.chartsInitialized === true) {
+                console.log('Gráficos já foram inicializados anteriormente, ignorando chamada.');
+                return;
+            }
+            
+            try {
+                console.log('Inicializando gráficos de desempenho...');
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js não está disponível!');
+                    return;
+                }
+                
+                // Marcar que os gráficos estão sendo inicializados
+                window.chartsInitialized = true;
+                
+                // Dados do relatório
+                const resumoDesempenho = /*[[${resumoDesempenho}]]*/ [];
+                
+                // Extrair dados para os gráficos
+                const dentistaNomes = resumoDesempenho.map(item => item.dentista.nome);
+                const taxasRealizacao = resumoDesempenho.map(item => item.taxaRealizacao);
+                const totaisAgendamentos = resumoDesempenho.map(item => item.totalAgendamentos);
+                const realizados = resumoDesempenho.map(item => item.realizados);
+                const cancelados = resumoDesempenho.map(item => item.cancelados);
+                const pendentes = resumoDesempenho.map(item => item.pendentes);
+                
+                console.log('Dados para gráficos:', {
+                    dentistaNomes,
+                    taxasRealizacao,
+                    totaisAgendamentos
+                });
+                
+                // Configurar gráfico de taxa de realização
+                const taxaCtx = document.getElementById('taxaRealizacaoChart');
+                if (!taxaCtx) {
+                    console.error('Canvas para gráfico de taxa de realização não encontrado!');
+                    return;
+                }
+                
+                new Chart(taxaCtx.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: dentistaNomes,
@@ -270,8 +337,14 @@
         });
         
         // Configurar gráfico de agendamentos
-        const agendamentosCtx = document.getElementById('agendamentosChart').getContext('2d');
-        new Chart(agendamentosCtx, {
+                // Configurar gráfico de agendamentos
+                const agendamentosCtx = document.getElementById('agendamentosChart');
+                if (!agendamentosCtx) {
+                    console.error('Canvas para gráfico de agendamentos não encontrado!');
+                    return;
+                }
+                
+                new Chart(agendamentosCtx.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: dentistaNomes,
@@ -319,12 +392,21 @@
                 }
             }
         });
+            } catch (error) {
+                console.error('Erro ao inicializar gráficos de desempenho:', error);
+            }
+        };
         
-        // Configurar botão de exportação para PDF usando o novo sistema
-        $('#btnExportPDF').click(function() {
-            reportManager.exportToPDF('desempenho');
-        });
+        // Inicializar os gráficos se Chart.js estiver disponível
+        if (typeof Chart !== 'undefined') {
+            console.log('Chart.js está disponível, inicializando gráficos');
+            initializeCharts();
+        } else {
+            console.warn('Chart.js não está disponível, os gráficos serão inicializados posteriormente');
+        }
+        
+        // O botão de exportação será configurado pelo script report-exporter.js
+        // quando o documento estiver pronto
     </script>
-    <script th:src="@{/js/report-manager.js}"></script>
 </body>
 </html>

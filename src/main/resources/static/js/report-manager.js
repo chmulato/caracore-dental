@@ -1,7 +1,7 @@
 /**
  * Funcionalidades avançadas para relatórios
  * Extensões para export, filtros e interatividade
- * Versão 1.0.2 - Correção do bug "clone is not defined" e "Unsupported image type" na exportação PDF
+ * Versão 1.0.8 - Prevenção de inicialização múltipla dos gráficos
  */
 
 class ReportManager {
@@ -133,35 +133,61 @@ class ReportManager {
                 }
             };
 
-            html2pdf()
-                .from(tempElement)
-                .set(enhancedOptions)
-                .toPdf()
-                .get('pdf')
-                .then((pdf) => {
-                    // Adicionar metadados ao PDF
-                    pdf.setProperties({
-                        title: `Relatório - ${filename}`,
-                        subject: 'Relatório gerado pelo sistema Cara Core',
-                        author: 'Sistema Cara Core',
-                        creator: 'Sistema Cara Core CCA',
-                        producer: 'html2pdf.js'
-                    });
+            // Adicionar pequeno atraso para garantir que as imagens dos gráficos foram renderizadas
+            setTimeout(() => {
+                // Remover opções que podem estar causando problemas com imagens
+                enhancedOptions.html2canvas.ignoreElements = (element) => {
+                    // Manter imagens que foram criadas a partir de gráficos
+                    if (element.tagName?.toLowerCase() === 'img' && element.className?.includes('chart-image')) {
+                        return false;
+                    }
                     
-                    return pdf;
-                })
-                .save(filename)
-                .then(() => {
-                    this.hideLoading();
-                    this.restoreElementAfterExport(element);
-                    this.showNotification('PDF gerado com sucesso!', 'success');
-                })
-                .catch((error) => {
-                    console.error('Erro ao gerar PDF:', error);
-                    this.hideLoading();
-                    this.restoreElementAfterExport(element);
-                    this.showNotification('Erro ao gerar PDF: ' + error.message, 'error');
-                });
+                    // Ignorar elementos que podem causar problemas
+                    const tagName = element.tagName?.toLowerCase();
+                    if (tagName === 'canvas' || tagName === 'svg') {
+                        return true;
+                    }
+                    
+                    // Ignorar elementos com classes de ícones
+                    const className = element.className || '';
+                    if (typeof className === 'string' && 
+                        (className.includes('bi-') || className.includes('icon') || 
+                         className.includes('fa-') || className.includes('logo'))) {
+                        return true;
+                    }
+                    return false;
+                };
+                
+                html2pdf()
+                    .from(tempElement)
+                    .set(enhancedOptions)
+                    .toPdf()
+                    .get('pdf')
+                    .then((pdf) => {
+                        // Adicionar metadados ao PDF
+                        pdf.setProperties({
+                            title: `Relatório - ${filename}`,
+                            subject: 'Relatório gerado pelo sistema Cara Core',
+                            author: 'Sistema Cara Core',
+                            creator: 'Sistema Cara Core CCA',
+                            producer: 'html2pdf.js'
+                        });
+                        
+                        return pdf;
+                    })
+                    .save(filename)
+                    .then(() => {
+                        this.hideLoading();
+                        this.restoreElementAfterExport(element);
+                        this.showNotification('PDF gerado com sucesso!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao gerar PDF:', error);
+                        this.hideLoading();
+                        this.restoreElementAfterExport(element);
+                        this.showNotification('Erro ao gerar PDF: ' + error.message, 'error');
+                    });
+            }, 200); // Um pequeno atraso para garantir que tudo está renderizado
         } catch (error) {
             console.error('Erro ao iniciar geração de PDF:', error);
             this.hideLoading();
@@ -189,15 +215,19 @@ class ReportManager {
             hideElements.forEach(el => {
                 if (el.parentNode) el.parentNode.removeChild(el);
             });
+            
+            // Converter gráficos Chart.js em imagens para preservar na exportação
+            this._convertChartsToImages(clone);
     
             // REMOVER COMPLETAMENTE TODAS AS IMAGENS para evitar erro "Unsupported image type"
-            this._removeAllElementsOfType(clone, 'img');
+            // EXCETO as imagens que foram criadas para substituir os gráficos
+            this._removeAllElementsOfType(clone, 'img:not(.chart-image)');
             
             // REMOVER COMPLETAMENTE SVG para evitar erro "Unsupported image type"
             this._removeAllElementsOfType(clone, 'svg');
             
-            // REMOVER COMPLETAMENTE CANVAS para evitar erro "Unsupported image type"
-            this._removeAllElementsOfType(clone, 'canvas');
+            // REMOVER COMPLETAMENTE CANVAS que não sejam gráficos para evitar erro "Unsupported image type"
+            this._removeAllElementsOfType(clone, 'canvas:not([id*="Chart"])');
             
             // REMOVER COMPLETAMENTE ÍCONES Bootstrap e outros que podem causar problemas
             const icons = clone.querySelectorAll('i[class*="bi-"], .bi, [class*="icon"], .fa, [class*="fa-"]');
@@ -251,8 +281,9 @@ class ReportManager {
             .printing * {
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
-            .printing img,
+            .printing img:not(.chart-image),
             .printing svg,
             .printing i[class*="bi-"],
             .printing .bi,
@@ -260,6 +291,12 @@ class ReportManager {
             .printing .fa,
             .printing [class*="fa-"] {
                 display: none !important;
+            }
+            .printing img.chart-image {
+                display: block !important;
+                max-width: 100% !important;
+                height: auto !important;
+                margin: 0 auto !important;
             }
             .printing .table {
                 font-size: 12px !important;
@@ -615,22 +652,60 @@ class ReportManager {
     /**
      * Método auxiliar para remover todos os elementos de um tipo específico
      */
-    _removeAllElementsOfType(parentElement, tagName) {
+    _removeAllElementsOfType(parentElement, selector) {
         try {
-            const elements = parentElement.querySelectorAll(tagName);
+            const elements = parentElement.querySelectorAll(selector);
             elements.forEach(el => {
                 if (el.parentNode) el.parentNode.removeChild(el);
             });
             
-            // Segunda verificação para garantir que todos foram removidos
-            const remainingElements = parentElement.getElementsByTagName(tagName);
-            while (remainingElements.length > 0) {
-                if (remainingElements[0].parentNode) {
-                    remainingElements[0].parentNode.removeChild(remainingElements[0]);
+            // Se o seletor for simples (como 'img', 'svg', 'canvas'), faz uma segunda verificação
+            if (selector.indexOf(':') === -1 && selector.indexOf('[') === -1) {
+                // Segunda verificação para garantir que todos foram removidos
+                const remainingElements = parentElement.getElementsByTagName(selector);
+                while (remainingElements.length > 0) {
+                    if (remainingElements[0].parentNode) {
+                        remainingElements[0].parentNode.removeChild(remainingElements[0]);
+                    }
                 }
             }
         } catch (error) {
-            console.error(`Erro ao remover elementos ${tagName}:`, error);
+            console.error(`Erro ao remover elementos ${selector}:`, error);
+        }
+    }
+    
+    /**
+     * Converte gráficos Chart.js em imagens estáticas para preservar na exportação
+     */
+    _convertChartsToImages(parentElement) {
+        try {
+            // Procurar por todos os canvas que parecem ser gráficos Chart.js
+            const canvasElements = parentElement.querySelectorAll('canvas[id*="Chart"]');
+            
+            canvasElements.forEach(canvas => {
+                try {
+                    // Garantir que o canvas está visível e tem dimensões
+                    if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
+                        // Criar uma imagem a partir do canvas
+                        const chartImg = document.createElement('img');
+                        chartImg.src = canvas.toDataURL('image/png');
+                        chartImg.className = 'chart-image';
+                        chartImg.style.maxWidth = '100%';
+                        chartImg.style.height = 'auto';
+                        chartImg.alt = 'Gráfico ' + (canvas.id || '');
+                        
+                        // Substituir o canvas pela imagem
+                        if (canvas.parentNode) {
+                            canvas.parentNode.insertBefore(chartImg, canvas);
+                            canvas.style.display = 'none';
+                        }
+                    }
+                } catch (canvasError) {
+                    console.warn(`Erro ao converter gráfico ${canvas.id} em imagem:`, canvasError);
+                }
+            });
+        } catch (error) {
+            console.error('Erro ao converter gráficos em imagens:', error);
         }
     }
 }

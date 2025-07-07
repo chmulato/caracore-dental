@@ -18,6 +18,44 @@
     <link rel="stylesheet" th:href="@{/css/print-styles.css}">
     <!-- DataTables -->
     <link rel="stylesheet" th:href="@{/webjars/datatables/1.10.25/css/dataTables.bootstrap5.min.css}">
+    <!-- jQuery (antes de qualquer outro script) -->
+    <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
+    <!-- Chart.js -->
+    <script>
+        // Carregar Chart.js de forma inline para evitar problemas de MIME type
+        document.addEventListener('DOMContentLoaded', function() {
+            // Função para carregar script com tipo MIME correto
+            function loadJsWithCorrectMIME(url, callback) {
+                console.log('Carregando script com tipo MIME correto:', url);
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            // Criar script element e executá-lo
+                            var script = document.createElement('script');
+                            script.type = 'text/javascript';
+                            script.text = xhr.responseText;
+                            document.head.appendChild(script);
+                            console.log('Script carregado e executado com sucesso');
+                            if (callback) callback();
+                        } else {
+                            console.error('Falha ao carregar script. Status:', xhr.status);
+                        }
+                    }
+                };
+                xhr.send();
+            }
+            
+            // Carregar Chart.js
+            if (typeof Chart === 'undefined') {
+                loadJsWithCorrectMIME(/*[[@{/js/lib/chart.umd.js}]]*/ '/js/lib/chart.umd.js', function() {
+                    console.log('Chart.js carregado dinamicamente do caminho local');
+                });
+            }
+        });
+    </script>
     <style>
         .status-agendado { color: #fd7e14; }
         .status-confirmado { color: #0d6efd; }
@@ -196,6 +234,51 @@
                             </div>
                         </div>
                         
+                        <!-- Gráfico de Status de Agendamentos -->
+                        <div class="row my-4">
+                            <div class="col-md-6">
+                                <div class="card shadow-sm">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Distribuição de Status</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="statusChartAgendamentos" width="400" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card shadow-sm">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Resumo do Período</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Total de Agendamentos
+                                                <span class="badge bg-primary rounded-pill" th:text="${totalAgendamentos}">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Agendados
+                                                <span class="badge status-agendado rounded-pill" th:text="${resumoStatus['AGENDADO'] ?: 0}">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Confirmados
+                                                <span class="badge status-confirmado rounded-pill" th:text="${resumoStatus['CONFIRMADO'] ?: 0}">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Realizados
+                                                <span class="badge status-realizado rounded-pill" th:text="${resumoStatus['REALIZADO'] ?: 0}">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Cancelados
+                                                <span class="badge status-cancelado rounded-pill" th:text="${resumoStatus['CANCELADO'] ?: 0}">0</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <h5 class="mb-3">Lista de Agendamentos</h5>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="tabelaAgendamentos">
@@ -251,12 +334,47 @@
     <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/webjars/datatables/1.10.25/js/jquery.dataTables.min.js}"></script>
     <script th:src="@{/webjars/datatables/1.10.25/js/dataTables.bootstrap5.min.js}"></script>
+    <script th:src="@{/webjars/chart.js/4.3.0/chart.umd.js}"></script>
+    <!-- Bootstrap JS Bundle e Popper.js -->
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+    <!-- DataTables -->
+    <script th:src="@{/webjars/datatables/1.10.25/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/webjars/datatables/1.10.25/js/dataTables.bootstrap5.min.js}"></script>
+    <!-- HTML2PDF -->
     <script th:src="@{/js/html2pdf.bundle.min.js}"></script>
+    <!-- Report Manager (antes do exporter) -->
     <script th:src="@{/js/report-manager.js}"></script>
+    <!-- Report Exporter -->
     <script th:src="@{/js/report-exporter.js}"></script>
     
     <script th:inline="javascript">
         $(document).ready(function() {
+            console.log('Document ready - Inicializando componentes');
+            
+            // Verifica se jQuery está disponível
+            if (typeof $ === 'undefined') {
+                console.error('jQuery não está disponível!');
+                return;
+            }
+            
+            // Verifica se Chart.js está disponível
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js não está disponível!');
+                // Tenta carregar Chart.js se a função loadScript estiver disponível
+                if (typeof loadScript === 'function') {
+                    loadScript('/webjars/chart.js/4.3.0/dist/chart.umd.js', function() {
+                        console.log('Chart.js carregado com sucesso, agora inicializando componentes');
+                        initializeComponents();
+                    });
+                }
+                return;
+            }
+            
+            // Se tudo estiver OK, inicializa os componentes
+            initializeComponents();
+        });
+        
+        function initializeComponents() {
             // Inicializa DataTables
             $('#tabelaAgendamentos').DataTable({
                 "language": {
@@ -270,17 +388,172 @@
             var periodoInicio = /*[[${#temporals.format(dataInicio, 'dd-MM-yyyy')}]]*/ 'data-inicio';
             var periodoFim = /*[[${#temporals.format(dataFim, 'dd-MM-yyyy')}]]*/ 'data-fim';
             
-            // Configurar botão de exportação para PDF usando o novo sistema
-            $('#btnExportPDF').click(function() {
-                var filename = 'relatorio-agendamentos-' + periodoInicio + '-a-' + periodoFim + '.pdf';
-                reportManager.exportToPDF('agendamentos');
-            });
+            // Configura botões de exportação
+            if (typeof reportManager !== 'undefined') {
+                console.log('Configurando botões de exportação');
+                
+                // Configura botão de exportar para CSV
+                $('.export-csv-btn').on('click', function() {
+                    reportManager.exportToCSV('tabelaAgendamentos');
+                });
+                
+                // Configura botão de exportar para PDF
+                $('.export-pdf-btn').on('click', function() {
+                    reportManager.exportToPDF('agendamentos');
+                });
+            } else {
+                console.error('reportManager não está definido!');
+            }
             
-            // Configurar botão de exportação para CSV usando o novo sistema
-            $('#btnExportCSV').click(function() {
-                reportManager.exportToCSV('tabelaAgendamentos');
+            // Inicializar gráfico de status
+            if (typeof initializeStatusChart === 'function') {
+                console.log('Inicializando gráfico de status');
+                initializeStatusChart();
+            } else {
+                console.error('Função initializeStatusChart não está definida!');
+            }
+        }
+        
+        // Função para inicializar o gráfico de status (definida no escopo global)
+        window.initializeStatusChart = function() {
+            try {
+                const canvas = document.getElementById('statusChartAgendamentos');
+                if (!canvas) {
+                    console.error('Elemento canvas para gráfico de status não encontrado!');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Verificar se Chart.js está disponível
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js não está disponível!');
+                    
+                    // Função para carregar script com tipo MIME correto
+                    function loadJsWithCorrectMIME(url, callback) {
+                        console.log('Carregando Chart.js com tipo MIME correto:', url);
+                        
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', url, true);
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    // Criar script element e executá-lo
+                                    var script = document.createElement('script');
+                                    script.type = 'text/javascript';
+                                    script.text = xhr.responseText;
+                                    document.head.appendChild(script);
+                                    console.log('Chart.js carregado e executado com sucesso');
+                                    if (callback) setTimeout(callback, 100);
+                                } else {
+                                    console.error('Falha ao carregar Chart.js. Status:', xhr.status);
+                                }
+                            }
+                        };
+                        xhr.send();
+                    }
+                    
+                    // Tentar carregar o Chart.js dinamicamente
+                    loadJsWithCorrectMIME(/*[[@{/js/lib/chart.umd.js}]]*/ '/js/lib/chart.umd.js', function() {
+                        console.log('Chart.js carregado dinamicamente do caminho local, tentando inicializar gráfico novamente');
+                        window.initializeStatusChart();
+                    });
+                    return;
+                }
+                
+                // Obter dados do modelo
+                const resumoStatus = /*[[${resumoStatus}]]*/ {};
+                console.log('Dados do gráfico:', resumoStatus);
+                
+                // Preparar dados para o gráfico
+                const labels = [];
+                const data = [];
+                const backgroundColors = [];
+                
+                // Mapear cores para os status
+                const statusColors = {
+                    'AGENDADO': 'rgba(253, 126, 20, 0.8)', // fd7e14 (laranja)
+                    'CONFIRMADO': 'rgba(13, 110, 253, 0.8)', // 0d6efd (azul)
+                    'REALIZADO': 'rgba(25, 135, 84, 0.8)', // 198754 (verde)
+                    'CANCELADO': 'rgba(220, 53, 69, 0.8)', // dc3545 (vermelho)
+                    'REAGENDADO': 'rgba(111, 66, 193, 0.8)', // 6f42c1 (roxo)
+                    'NAO_COMPARECEU': 'rgba(108, 117, 125, 0.8)' // 6c757d (cinza)
+                };
+                
+                // Ordenar os status para exibição no gráfico
+                const orderPriority = {
+                    'AGENDADO': 1,
+                    'CONFIRMADO': 2,
+                    'REALIZADO': 3,
+                    'CANCELADO': 4,
+                    'REAGENDADO': 5,
+                    'NAO_COMPARECEU': 6
+                };
+                
+                const sortedStatus = Object.keys(resumoStatus || {}).sort((a, b) => {
+                    return (orderPriority[a] || 99) - (orderPriority[b] || 99);
+                });
+                
+                // Preencher os arrays para o gráfico
+                sortedStatus.forEach(status => {
+                    // Formatar nome do status para exibição
+                    const formattedStatus = status.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+                    labels.push(formattedStatus);
+                    data.push(resumoStatus[status] || 0);
+                    backgroundColors.push(statusColors[status] || 'rgba(108, 117, 125, 0.8)');
+                });
+                
+                // Se não houver dados, adicionar um placeholder
+                if (labels.length === 0) {
+                    labels.push('Sem dados');
+                    data.push(1);
+                    backgroundColors.push('rgba(200, 200, 200, 0.5)');
+                }
+                
+                // Verificar se existe um gráfico anterior e destruí-lo
+                if (window.agendamentosChart instanceof Chart) {
+                    window.agendamentosChart.destroy();
+                }
+                
+                // Criar o gráfico
+                window.agendamentosChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderColor: backgroundColors.map(color => color.replace('0.8', '1')),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 15
+                                }
+                            },
+                            tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total ? Math.round((value / total) * 100) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
-        });
+            } catch (error) {
+                console.error('Erro ao inicializar gráfico de status:', error);
+            }
+        }
     </script>
 </body>
 </html>

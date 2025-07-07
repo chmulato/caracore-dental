@@ -250,16 +250,7 @@
                 "order": [1, 'asc'],
                 "pageLength": 10
             });
-            
-            // Configurar botão de exportação para PDF usando o novo sistema
-            $('#btnExportPDF').click(function() {
-                reportManager.exportToPDF('pacientes');
-            });
-            
-            // Configurar botão de exportação para CSV usando o novo sistema
-            $('#btnExportCSV').click(function() {
-                reportManager.exportToCSV('tabelaPacientes');
-            });
+            // Os botões de exportação são configurados pelo script report-exporter.js
         });
     </script>
 </body>
