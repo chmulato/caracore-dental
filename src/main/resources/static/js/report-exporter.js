@@ -1,7 +1,7 @@
 /**
  * Funcionalidades para exportação de relatórios
  * Compatibilidade com report-manager.js
- * Versão 1.0.8 - Detecção inteligente de gráficos na página para evitar carregamento desnecessário do Chart.js
+ * Versão 1.0.9 - Correção de carregamento do Chart.js com MIME type correto e prevenção de inicialização duplicada de gráficos
  */
 
 // Função global para carregar script dinamicamente
@@ -14,10 +14,40 @@ function loadScript(url, callback) {
         console.log('Script carregado com sucesso:', url);
         if (callback) callback();
     };
-    script.onerror = function() {
-        console.error('Erro ao carregar script:', url);
+    script.onerror = function(e) {
+        console.error('Erro ao carregar script:', url, e);
+        // Tentar fallback para Chart.js se for o caso
+        if (url.includes('chart.js') || url.includes('Chart.js')) {
+            var fallbackUrl = '/js/lib/chart.umd.js';
+            console.log('Tentando fallback para:', fallbackUrl);
+            loadJsWithCorrectMIME(fallbackUrl, callback);
+        }
     };
     document.head.appendChild(script);
+}
+
+// Função para carregar script com tipo MIME correto
+function loadJsWithCorrectMIME(url, callback) {
+    console.log('Carregando script com tipo MIME correto:', url);
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // Criar script element e executá-lo
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.text = xhr.responseText;
+                document.head.appendChild(script);
+                console.log('Script carregado e executado com sucesso');
+                if (callback) callback();
+            } else {
+                console.error('Falha ao carregar script. Status:', xhr.status);
+            }
+        }
+    };
+    xhr.send();
 }
 
 // Verificar se jQuery está disponível e carregá-lo se não estiver
@@ -39,14 +69,22 @@ if (typeof $ === 'undefined') {
         // Verificar se precisamos do Chart.js para os gráficos
         if (typeof Chart === 'undefined') {
             console.log('Gráficos encontrados na página, carregando Chart.js');
-            loadScript('/webjars/chart.js/4.3.0/dist/chart.umd.js', function() {
+            // Usar caminho local para evitar problemas de MIME type e 404
+            loadJsWithCorrectMIME('/js/lib/chart.umd.js', function() {
                 console.log('Chart.js carregado com sucesso');
-                initializeCharts();
+                // Verificar se os gráficos já foram inicializados
+                if (!window.chartsInitialized) {
+                    initializeCharts();
+                }
             });
         } else {
-            // Inicializar gráficos se Chart.js já estiver disponível
-            console.log('Chart.js já está disponível, inicializando gráficos');
-            initializeCharts();
+            // Inicializar gráficos se Chart.js já estiver disponível e não inicializado ainda
+            console.log('Chart.js já está disponível, verificando inicialização');
+            if (!window.chartsInitialized) {
+                initializeCharts();
+            } else {
+                console.log('Gráficos já inicializados, ignorando.');
+            }
         }
     });
 } else {
@@ -90,6 +128,15 @@ function exportToPDF(reportType) {
 
 // Inicializar gráficos de desempenho e agendamentos se estiverem presentes na página
 function initializeCharts() {
+    // Verificar se os gráficos já foram inicializados
+    if (window.chartsInitialized === true) {
+        console.log('Gráficos já inicializados anteriormente. Ignorando inicialização duplicada.');
+        return;
+    }
+    
+    // Marcar que os gráficos estão sendo inicializados
+    window.chartsInitialized = true;
+    
     // Inicializar gráfico de status de agendamentos, se estiver presente
     if (document.getElementById('statusChartAgendamentos')) {
         try {
@@ -230,21 +277,38 @@ $(document).ready(function() {
     if (!hasCharts) {
         console.log('Não foram encontrados gráficos nesta página. Ignorando inicialização de Chart.js.');
     } 
-    // Se há gráficos, então verificamos e inicializamos Chart.js conforme necessário
+    // Se já inicializamos os gráficos, não fazer nada
+    else if (window.chartsInitialized === true) {
+        console.log('Gráficos já foram inicializados anteriormente. Nada a fazer.');
+    }
+    // Se há gráficos e Chart.js já está disponível
     else if (typeof Chart !== 'undefined') {
         console.log('Chart.js está disponível no document ready');
-        // Inicializar gráficos se a função estiver disponível e não tiverem sido inicializados ainda
-        if (typeof window.initializeCharts === 'function' && window.chartsInitialized !== true) {
+        // Inicializar gráficos se a função estiver disponível
+        if (typeof window.initializeCharts === 'function') {
             console.log('Chamando initializeCharts da função document ready');
             // Adiar a chamada para garantir que todos os scripts foram carregados
             setTimeout(function() {
                 window.initializeCharts();
             }, 100);
         } else {
-            console.log('Gráficos já foram inicializados ou função não está disponível');
+            console.log('Função initializeCharts não está disponível');
         }
     } else {
-        console.warn('Chart.js não está disponível para inicialização dos gráficos');
+        console.log('Chart.js não está disponível, carregando a biblioteca...');
+        
+        // Carregar Chart.js do caminho local para evitar problemas de MIME
+        loadJsWithCorrectMIME('/js/lib/chart.umd.js', function() {
+            console.log('Chart.js carregado com sucesso no document ready');
+            
+            // Esperar um pouco para garantir que o objeto Chart está disponível
+            setTimeout(function() {
+                if (typeof window.initializeCharts === 'function' && !window.chartsInitialized) {
+                    console.log('Inicializando gráficos após carregamento bem-sucedido de Chart.js');
+                    window.initializeCharts();
+                }
+            }, 200);
+        });
     }
     
     // Configurar botões de exportação

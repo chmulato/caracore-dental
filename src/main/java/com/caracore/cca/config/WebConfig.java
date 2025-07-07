@@ -25,9 +25,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCachePeriod(31556926)
                 .resourceChain(false);
         
-        // Outros handlers de recursos
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
+        // Configuração para arquivos JavaScript na pasta lib
+        registry.addResourceHandler("/js/lib/**")
+                .addResourceLocations("classpath:/static/js/lib/")
+                .setCachePeriod(31556926);
+        
+        // Outros handlers de recursos estáticos
+        registry.addResourceHandler("/static/**", "/js/**", "/css/**", "/img/**")
+                .addResourceLocations("classpath:/static/", "classpath:/static/js/", "classpath:/static/css/", "classpath:/static/img/");
     }
     
     @Override
