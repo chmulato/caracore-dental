@@ -8,6 +8,10 @@ server:
     context-path: /
     session:
       timeout: 60m  # 1 hora para desenvolvimento
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   error:
     include-message: always
     include-binding-errors: always
@@ -18,9 +22,27 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
-  
+  # Forçar encoding UTF-8 para mensagens HTTP e JSON
+  mvc:
+    locale: pt_BR
+    locale-resolver: fixed
+    charset: UTF-8
+    log-resolved-exception: true
+    format:
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+      date-time: yyyy-MM-dd'T'HH:mm:ss
+    message-codes-resolver-format: POSTFIX_ERROR_CODE
+    contentnegotiation:
+      favor-parameter: false
+      favor-path-extension: false
+      media-types:
+        json: application/json;charset=UTF-8
+        html: text/html;charset=UTF-8
+        plain: text/plain;charset=UTF-8
+  # JDBC encoding para PostgreSQL
   datasource:
-    url: jdbc:postgresql://localhost:5432/cca_db
+    url: jdbc:postgresql://localhost:5432/cca_db?charSet=UTF8
     username: cca_user
     password: cca_password
     driver-class-name: org.postgresql.Driver
@@ -100,6 +122,10 @@ logging:
     '[org.hibernate.SQL]': DEBUG
     '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
     '[USER_ACTIVITY]': INFO
+  # Forçar encoding UTF-8 nos logs
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
   
 # Swagger habilitado para desenvolvimento local
 springdoc:

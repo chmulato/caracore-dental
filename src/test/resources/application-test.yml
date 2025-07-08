@@ -30,6 +30,23 @@ spring:
   cache:
     type: none
 
+  web:
+    locale: pt_BR
+    locale-resolver: fixed
+  mvc:
+    log-resolved-exception: true
+    format:
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+      date-time: yyyy-MM-dd'T'HH:mm:ss
+    message-codes-resolver-format: POSTFIX_ERROR_CODE
+    contentnegotiation:
+      favor-parameter: false
+      media-types:
+        json: application/json;charset=UTF-8
+        html: text/html;charset=UTF-8
+        plain: text/plain;charset=UTF-8
+
 # Logging mínimo para testes
 logging:
   level:
@@ -39,7 +56,10 @@ logging:
     '[com.caracore.cca]': INFO
     '[org.hibernate.SQL]': WARN
     '[USER_ACTIVITY]': INFO
-  
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
 # Swagger desabilitado para testes
 springdoc:
   swagger-ui:
@@ -53,6 +73,10 @@ server:
   servlet:
     session:
       timeout: 5m  # Timeout menor para testes
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   error:
     include-message: always
     include-binding-errors: always

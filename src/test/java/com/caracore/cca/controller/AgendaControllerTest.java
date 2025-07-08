@@ -93,7 +93,7 @@ class AgendaControllerTest {
         mockMvc.perform(get("/agenda/api/eventos")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1));
 
@@ -113,7 +113,7 @@ class AgendaControllerTest {
                 .param("status", "AGENDADO")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray());
 
         verify(agendamentoService).buscarPorDentista("Dr. Maria Santos");
@@ -131,7 +131,7 @@ class AgendaControllerTest {
         mockMvc.perform(get("/agenda/api/profissional/{dentista}", dentista)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.dentista").value(dentista))
                 .andExpect(jsonPath("$.agendamentos").isArray());
 
@@ -151,7 +151,7 @@ class AgendaControllerTest {
                 .param("data", data)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.horarios").isArray())
                 .andExpect(jsonPath("$.horarios.length()").value(3));
 
@@ -208,7 +208,7 @@ class AgendaControllerTest {
         mockMvc.perform(get("/agenda/api/profissional/{dentista}", dentista)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.dentista").value(dentista))
                 .andExpect(jsonPath("$.agendamentos").isEmpty());
     }

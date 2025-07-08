@@ -260,7 +260,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
+                <spring.profiles.active>local</spring.profiles.active>
             </properties>
         </profile>
         
