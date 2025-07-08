@@ -140,7 +140,8 @@ public class SistemaAdminControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Verificação de usuários padrões concluída")));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.mensagem").value("Verificação de usuários padrões concluída"));
         // Verifica se o método foi chamado
         verify(initService, times(1)).verificarEAtualizarUsuariosPadrao();
         
@@ -169,7 +170,8 @@ public class SistemaAdminControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Senha redefinida com sucesso para o usuário: " + emailTeste)));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.mensagem").value("Senha redefinida com sucesso para o usuário: " + emailTeste));
         
         // Verificar
         verify(initService, times(1)).redefinirSenhaUsuarioPadrao(emailTeste);
