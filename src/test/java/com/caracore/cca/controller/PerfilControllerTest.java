@@ -65,7 +65,8 @@ public class PerfilControllerTest {
     @DisplayName("Deve negar acesso ao perfil para usuário não autenticado")
     public void deveNegarAcessoAoPerfilParaUsuarioNaoAutenticado() throws Exception {
         mockMvc.perform(get("/perfil"))
-                .andExpect(status().isUnauthorized()); // Status 401 Unauthorized
+                .andExpect(status().isFound()) // 302 redirect to login page
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 
     @Test
