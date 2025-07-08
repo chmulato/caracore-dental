@@ -473,7 +473,8 @@ public class PacienteControllerTest {
         when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
 
         mockMvc.perform(post("/pacientes/1/confirmar-lgpd")
-                .with(csrf()))
+                .with(csrf())
+                .accept(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Consentimento LGPD confirmado com sucesso!"));
@@ -489,7 +490,8 @@ public class PacienteControllerTest {
         when(pacienteRepository.save(any(Paciente.class))).thenReturn(pacienteTeste);
 
         mockMvc.perform(post("/pacientes/1/confirmar-lgpd")
-                .with(csrf()))
+                .with(csrf())
+                .accept(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
     }
@@ -510,7 +512,8 @@ public class PacienteControllerTest {
         when(pacienteRepository.findById(999L)).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/pacientes/999/confirmar-lgpd")
-                .with(csrf()))
+                .with(csrf())
+                .accept(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Paciente não encontrado"));
