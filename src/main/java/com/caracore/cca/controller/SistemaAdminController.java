@@ -48,15 +48,17 @@ public class SistemaAdminController {
     @PostMapping("/verificar-usuarios")
     public ResponseEntity<String> verificarUsuarios() {
         initService.verificarEAtualizarUsuariosPadrao();
-        
+
         userActivityLogger.logActivity(
-            "SISTEMA_ADMIN", 
+            "SISTEMA_ADMIN",
             "Verificação de usuários padrões",
             null,
             "Verificação de usuários padrões executada por administrador"
         );
-        
-        return ResponseEntity.ok("Verificação de usuários padrões concluída");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
+                .body("Verificação de usuários padrões concluída");
     }
     
     /**
@@ -65,16 +67,18 @@ public class SistemaAdminController {
     @PostMapping("/resetar-senha/{email}")
     public ResponseEntity<String> resetarSenha(@PathVariable String email) {
         boolean sucesso = initService.redefinirSenhaUsuarioPadrao(email);
-        
+
         if (sucesso) {
             userActivityLogger.logActivity(
-                "RESET_SENHA", 
+                "RESET_SENHA",
                 "Redefinição de senha para valor padrão",
                 "Usuário: " + email,
                 "Redefinição executada por administrador"
             );
-            
-            return ResponseEntity.ok("Senha redefinida com sucesso para o usuário: " + email);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
+                    .body("Senha redefinida com sucesso para o usuário: " + email);
         } else {
             return ResponseEntity.notFound().build();
         }

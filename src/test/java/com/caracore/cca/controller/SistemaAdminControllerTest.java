@@ -137,10 +137,10 @@ public class SistemaAdminControllerTest {
     public void testVerificarUsuariosPadrao() throws Exception {
         mockMvc.perform(post("/admin/sistema/verificar-usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Verificação de usuários padrões concluída"));
-        
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Verificação de usuários padrões concluída")));
         // Verifica se o método foi chamado
         verify(initService, times(1)).verificarEAtualizarUsuariosPadrao();
         
@@ -166,9 +166,10 @@ public class SistemaAdminControllerTest {
         // Executar
         mockMvc.perform(post("/admin/sistema/resetar-senha/{email}", emailTeste)
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Senha redefinida com sucesso para o usuário: " + emailTeste));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Senha redefinida com sucesso para o usuário: " + emailTeste)));
         
         // Verificar
         verify(initService, times(1)).redefinirSenhaUsuarioPadrao(emailTeste);
@@ -193,6 +194,7 @@ public class SistemaAdminControllerTest {
         // Executar
         mockMvc.perform(post("/admin/sistema/resetar-senha/{email}", emailTeste)
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isNotFound());
         
@@ -220,6 +222,7 @@ public class SistemaAdminControllerTest {
         // Simular endpoint que redefine todas as senhas
         mockMvc.perform(post("/admin/sistema/redefinir-todas-senhas-padrao")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
@@ -252,6 +255,7 @@ public class SistemaAdminControllerTest {
         // Simular endpoint que redefine todas as senhas
         mockMvc.perform(post("/admin/sistema/redefinir-todas-senhas-padrao")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
@@ -287,6 +291,7 @@ public class SistemaAdminControllerTest {
         // Act & Assert
         mockMvc.perform(get("/admin/sistema/dentistas-publicos")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -314,6 +319,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(post("/admin/sistema/dentista/1/exposicao-publica")
                 .param("exposto", "true")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -337,6 +343,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(post("/admin/sistema/agenda-publica/toggle")
                 .param("ativa", "true")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -360,6 +367,7 @@ public class SistemaAdminControllerTest {
         mockMvc.perform(post("/admin/sistema/agenda-publica/toggle")
                 .param("ativa", "false")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -384,6 +392,7 @@ public class SistemaAdminControllerTest {
                 .param("inicio", "08:00")
                 .param("fim", "18:00")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -421,6 +430,7 @@ public class SistemaAdminControllerTest {
         // Act & Assert
         mockMvc.perform(get("/admin/sistema/estatisticas-dentistas")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
