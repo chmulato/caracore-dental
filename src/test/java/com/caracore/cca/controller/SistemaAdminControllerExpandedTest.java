@@ -152,7 +152,8 @@ public class SistemaAdminControllerExpandedTest {
                     .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Verificação de usuários padrões concluída"));
+                    .andExpect(jsonPath("$.status").value("sucesso"))
+                    .andExpect(jsonPath("$.mensagem").value("Verificação de usuários padrões concluída"));
             
             verify(initService, times(1)).verificarEAtualizarUsuariosPadrao();
             verify(userActivityLogger, times(1)).logActivity(
