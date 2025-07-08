@@ -90,7 +90,8 @@ class AgendaControllerTest {
         when(agendamentoService.listarTodos()).thenReturn(agendamentos);
 
         // Act & Assert
-        mockMvc.perform(get("/agenda/api/eventos"))
+        mockMvc.perform(get("/agenda/api/eventos")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -109,7 +110,8 @@ class AgendaControllerTest {
         // Act & Assert
         mockMvc.perform(get("/agenda/api/eventos")
                 .param("dentista", "Dr. Maria Santos")
-                .param("status", "AGENDADO"))
+                .param("status", "AGENDADO")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray());
@@ -126,7 +128,8 @@ class AgendaControllerTest {
         when(agendamentoService.buscarPorDentista(dentista)).thenReturn(agendamentos);
 
         // Act & Assert
-        mockMvc.perform(get("/agenda/api/profissional/{dentista}", dentista))
+        mockMvc.perform(get("/agenda/api/profissional/{dentista}", dentista)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.dentista").value(dentista))
@@ -145,7 +148,8 @@ class AgendaControllerTest {
         // Act & Assert
         mockMvc.perform(get("/agenda/api/horarios-disponiveis")
                 .param("dentista", dentista)
-                .param("data", data))
+                .param("data", data)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.horarios").isArray())
@@ -160,7 +164,8 @@ class AgendaControllerTest {
         // Act & Assert
         mockMvc.perform(get("/agenda/api/horarios-disponiveis")
                 .param("dentista", "")
-                .param("data", "data-invalida"))
+                .param("data", "data-invalida")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -187,7 +192,8 @@ class AgendaControllerTest {
         when(agendamentoService.listarTodos()).thenThrow(new RuntimeException("Erro de conexão"));
 
         // Act & Assert
-        mockMvc.perform(get("/agenda/api/eventos"))
+        mockMvc.perform(get("/agenda/api/eventos")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -199,7 +205,8 @@ class AgendaControllerTest {
         when(agendamentoService.buscarPorDentista(dentista)).thenReturn(new ArrayList<>());
 
         // Act & Assert
-        mockMvc.perform(get("/agenda/api/profissional/{dentista}", dentista))
+        mockMvc.perform(get("/agenda/api/profissional/{dentista}", dentista)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.dentista").value(dentista))

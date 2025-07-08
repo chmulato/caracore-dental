@@ -16,6 +16,5 @@
             "path": "${env:JAVA_HOME}",
             "default": true
         }
-    ],
-    "java.compile.nullAnalysis.mode": "automatic"
+    ]
 }

@@ -3,6 +3,7 @@ package com.caracore.cca.controller;
 import com.caracore.cca.service.InitService;
 import com.caracore.cca.service.DentistaService;
 import com.caracore.cca.util.UserActivityLogger;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ import java.util.Map;
  * para permitir acesso apenas por usuários com o papel ADMIN.
  */
 @RestController
-@RequestMapping("/admin/sistema")
+@RequestMapping(value = "/admin/sistema", produces = MediaType.APPLICATION_JSON_VALUE)
 @PreAuthorize("hasRole('ADMIN')")
 public class SistemaAdminController {
 
