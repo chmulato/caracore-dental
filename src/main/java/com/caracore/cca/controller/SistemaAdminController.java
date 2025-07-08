@@ -45,8 +45,8 @@ public class SistemaAdminController {
     /**
      * Verifica e recria usuários padrões que possam estar faltando
      */
-    @PostMapping("/verificar-usuarios")
-    public ResponseEntity<String> verificarUsuarios() {
+    @PostMapping(value = "/verificar-usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> verificarUsuarios() {
         initService.verificarEAtualizarUsuariosPadrao();
 
         userActivityLogger.logActivity(
@@ -56,16 +56,17 @@ public class SistemaAdminController {
             "Verificação de usuários padrões executada por administrador"
         );
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
-                .body("Verificação de usuários padrões concluída");
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("status", "sucesso");
+        resposta.put("mensagem", "Verificação de usuários padrões concluída");
+        return ResponseEntity.ok(resposta);
     }
     
     /**
      * Redefine a senha de um usuário para o valor padrão
      */
-    @PostMapping("/resetar-senha/{email}")
-    public ResponseEntity<String> resetarSenha(@PathVariable String email) {
+    @PostMapping(value = "/resetar-senha/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> resetarSenha(@PathVariable String email) {
         boolean sucesso = initService.redefinirSenhaUsuarioPadrao(email);
 
         if (sucesso) {
@@ -76,11 +77,15 @@ public class SistemaAdminController {
                 "Redefinição executada por administrador"
             );
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
-                    .body("Senha redefinida com sucesso para o usuário: " + email);
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("status", "sucesso");
+            resposta.put("mensagem", "Senha redefinida com sucesso para o usuário: " + email);
+            return ResponseEntity.ok(resposta);
         } else {
-            return ResponseEntity.notFound().build();
+            Map<String, Object> erro = new HashMap<>();
+            erro.put("status", "erro");
+            erro.put("mensagem", "Usuário não encontrado: " + email);
+            return ResponseEntity.status(404).body(erro);
         }
     }
     
@@ -181,34 +186,33 @@ public class SistemaAdminController {
     /**
      * Obtém lista de dentistas com status de exposição pública
      */
-    @GetMapping("/dentistas-publicos")
+    @GetMapping(value = "/dentistas-publicos", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> obterDentistasPublicos() {
         try {
             var dentistasAtivos = dentistaService.listarAtivos();
             Map<String, Object> resposta = new HashMap<>();
-            
             resposta.put("status", "sucesso");
             resposta.put("dentistas", dentistasAtivos);
             resposta.put("total", dentistasAtivos.size());
-            
             userActivityLogger.logActivity(
                 "LISTAR_DENTISTAS_PUBLICOS", 
                 "Consulta de dentistas para exposição pública",
                 null,
                 "Administrador consultou lista de dentistas públicos"
             );
-            
-            return ResponseEntity.ok(resposta);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(resposta);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(Map.of("status", "erro", "mensagem", "Erro interno do servidor"));
+            Map<String, Object> erro = new HashMap<>();
+            erro.put("status", "erro");
+            erro.put("mensagem", "Erro interno do servidor");
+            return ResponseEntity.internalServerError().contentType(MediaType.APPLICATION_JSON).body(erro);
         }
     }
 
     /**
      * Controla exposição pública de um dentista específico
      */
-    @PostMapping("/dentista/{id}/exposicao-publica")
+    @PostMapping(value = "/dentista/{id}/exposicao-publica", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> alterarExposicaoPublica(@PathVariable Long id, @RequestParam Boolean exposto) {
         try {
             // Usar o DentistaService para alterar a exposição pública
@@ -241,7 +245,7 @@ public class SistemaAdminController {
     /**
      * Controla status global da agenda pública
      */
-    @PostMapping("/agenda-publica/toggle")
+    @PostMapping(value = "/agenda-publica/toggle", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> toggleAgendaPublica(@RequestParam Boolean ativa) {
         try {
             // Implementar lógica para ativar/desativar agenda pública globalmente
@@ -269,7 +273,7 @@ public class SistemaAdminController {
     /**
      * Configura horários de funcionamento para agenda pública
      */
-    @PostMapping("/agenda-publica/horarios")
+    @PostMapping(value = "/agenda-publica/horarios", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> configurarHorariosPublicos(@RequestParam String inicio, @RequestParam String fim) {
         try {
             // Validação de parâmetros obrigatórios
@@ -277,9 +281,8 @@ public class SistemaAdminController {
                 Map<String, Object> erro = new java.util.HashMap<>();
                 erro.put("status", "erro");
                 erro.put("mensagem", "Parâmetros obrigatórios não informados");
-                return ResponseEntity.badRequest().body(erro);
+                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(erro);
             }
-            
             // Validação: início deve ser anterior ao fim
             java.time.LocalTime horaInicio = java.time.LocalTime.parse(inicio);
             java.time.LocalTime horaFim = java.time.LocalTime.parse(fim);
@@ -287,70 +290,66 @@ public class SistemaAdminController {
                 Map<String, Object> erro = new java.util.HashMap<>();
                 erro.put("status", "erro");
                 erro.put("mensagem", "Horário de início deve ser anterior ao horário de fim");
-                return ResponseEntity.badRequest().body(erro);
+                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(erro);
             }
             // Implementar lógica para salvar horários de funcionamento público
             // Por enquanto, apenas log da ação
-            
             userActivityLogger.logActivity(
                 "CONFIGURAR_HORARIOS_PUBLICOS", 
                 "Configuração de horários públicos",
                 "Início: " + inicio + ", Fim: " + fim,
                 "Administrador configurou horários públicos"
             );
-            
             Map<String, Object> resposta = new java.util.HashMap<>();
             resposta.put("status", "sucesso");
             resposta.put("mensagem", "Horários públicos configurados com sucesso");
             resposta.put("horarioInicio", inicio);
             resposta.put("horarioFim", fim);
-            
-            return ResponseEntity.ok(resposta);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(resposta);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(Map.of("status", "erro", "mensagem", "Erro ao configurar horários públicos"));
+            Map<String, Object> erro = new java.util.HashMap<>();
+            erro.put("status", "erro");
+            erro.put("mensagem", "Erro ao configurar horários públicos");
+            return ResponseEntity.internalServerError().contentType(MediaType.APPLICATION_JSON).body(erro);
         }
     }
 
     /**
      * Obtém estatísticas de dentistas para dashboard administrativo
      */
-    @GetMapping("/estatisticas-dentistas")
+    @GetMapping(value = "/estatisticas-dentistas", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> obterEstatisticasDentistas() {
         try {
             var todosDentistas = dentistaService.listarTodos();
             var dentistasAtivos = dentistaService.listarAtivos();
-            
             Map<String, Object> resposta = new HashMap<>();
             Map<String, Integer> estatisticas = new HashMap<>();
-            
             estatisticas.put("total", todosDentistas.size());
             estatisticas.put("ativos", dentistasAtivos.size());
             estatisticas.put("inativos", todosDentistas.size() - dentistasAtivos.size());
             // Implementar contagem de dentistas expostos publicamente
             estatisticas.put("expostos", dentistasAtivos.size()); // Placeholder
-            
             resposta.put("status", "sucesso");
             resposta.put("estatisticas", estatisticas);
-            
             userActivityLogger.logActivity(
                 "CONSULTAR_ESTATISTICAS_DENTISTAS", 
                 "Consulta de estatísticas de dentistas",
                 null,
                 "Administrador consultou estatísticas de dentistas"
             );
-            
-            return ResponseEntity.ok(resposta);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(resposta);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(Map.of("status", "erro", "mensagem", "Erro ao carregar estatísticas"));
+            Map<String, Object> erro = new HashMap<>();
+            erro.put("status", "erro");
+            erro.put("mensagem", "Erro ao carregar estatísticas");
+            return ResponseEntity.internalServerError().contentType(MediaType.APPLICATION_JSON).body(erro);
         }
     }
 
     /**
      * Endpoint principal da área administrativa
      */
-    @GetMapping("/api")
+    @GetMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> homeAdmin() {
         Map<String, Object> resposta = new HashMap<>();
         resposta.put("status", "sucesso");

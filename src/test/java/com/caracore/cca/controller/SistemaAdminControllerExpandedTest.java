@@ -101,7 +101,8 @@ public class SistemaAdminControllerExpandedTest {
         @WithMockUser(username = "admin@teste.com", roles = {"ADMIN"})
         public void testAcessoPermitidoAdmin() throws Exception {
             mockMvc.perform(get("/admin/sistema/api")
-                    .contentType(MediaType.APPLICATION_JSON))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value("sucesso"))
@@ -148,6 +149,7 @@ public class SistemaAdminControllerExpandedTest {
         public void testVerificarUsuariosPadrao() throws Exception {
             mockMvc.perform(post("/admin/sistema/verificar-usuarios")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().string("Verificação de usuários padrões concluída"));
@@ -170,6 +172,7 @@ public class SistemaAdminControllerExpandedTest {
             
             mockMvc.perform(post("/admin/sistema/resetar-senha/{email}", email)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().string("Senha redefinida com sucesso para o usuário: " + email));
@@ -192,6 +195,7 @@ public class SistemaAdminControllerExpandedTest {
             
             mockMvc.perform(post("/admin/sistema/resetar-senha/{email}", email)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isNotFound());
             
@@ -208,6 +212,7 @@ public class SistemaAdminControllerExpandedTest {
             
             mockMvc.perform(post("/admin/sistema/redefinir-todas-senhas-padrao")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -236,6 +241,7 @@ public class SistemaAdminControllerExpandedTest {
         public void testObterStatusUsuariosPadrao() throws Exception {
             mockMvc.perform(post("/admin/sistema/status-usuarios-padrao")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.usuarios").isMap())
@@ -267,6 +273,7 @@ public class SistemaAdminControllerExpandedTest {
             mockMvc.perform(post("/admin/sistema/agenda-publica/toggle")
                     .param("ativa", "true")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -289,6 +296,7 @@ public class SistemaAdminControllerExpandedTest {
             mockMvc.perform(post("/admin/sistema/agenda-publica/toggle")
                     .param("ativa", "false")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -312,6 +320,7 @@ public class SistemaAdminControllerExpandedTest {
                     .param("inicio", "08:00")
                     .param("fim", "18:00")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -336,6 +345,7 @@ public class SistemaAdminControllerExpandedTest {
                     .param("inicio", "18:00")
                     .param("fim", "08:00") // Horário de fim anterior ao início
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -367,6 +377,7 @@ public class SistemaAdminControllerExpandedTest {
 
             mockMvc.perform(get("/admin/sistema/dentistas-publicos")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -396,6 +407,7 @@ public class SistemaAdminControllerExpandedTest {
             mockMvc.perform(post("/admin/sistema/dentista/{id}/exposicao-publica", dentistaId)
                     .param("exposto", "true")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -423,6 +435,7 @@ public class SistemaAdminControllerExpandedTest {
             mockMvc.perform(post("/admin/sistema/dentista/{id}/exposicao-publica", dentistaId)
                     .param("exposto", "false")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -544,6 +557,7 @@ public class SistemaAdminControllerExpandedTest {
                     .param("inicio", "") // Parâmetro vazio
                     .param("fim", "18:00")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
