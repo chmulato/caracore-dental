@@ -540,6 +540,7 @@ public class SistemaAdminControllerExpandedTest {
 
             mockMvc.perform(get("/admin/sistema/dentistas-publicos")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isInternalServerError())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -570,17 +571,21 @@ public class SistemaAdminControllerExpandedTest {
         @WithMockUser(username = "admin@teste.com", roles = {"ADMIN"})
         public void testRegistroAtividadesAdministrativas() throws Exception {
             // Executar várias operações administrativas
+
             mockMvc.perform(post("/admin/sistema/verificar-usuarios")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()));
 
             mockMvc.perform(post("/admin/sistema/agenda-publica/toggle")
                     .param("ativa", "true")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()));
 
             mockMvc.perform(get("/admin/sistema/estatisticas-dentistas")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()));
 
             // Verificar se as atividades foram registradas (pode haver mais por causa do interceptor)
