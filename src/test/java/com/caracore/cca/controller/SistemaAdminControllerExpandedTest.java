@@ -176,7 +176,8 @@ public class SistemaAdminControllerExpandedTest {
                     .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Senha redefinida com sucesso para o usuário: " + email));
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.mensagem").value("Senha redefinida com sucesso para o usuário: " + email));
             
             verify(initService, times(1)).redefinirSenhaUsuarioPadrao(email);
             verify(userActivityLogger, times(1)).logActivity(
