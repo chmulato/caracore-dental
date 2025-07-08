@@ -159,7 +159,8 @@ class AgendamentoPublicoControllerTest {
         // Act & Assert
         mockMvc.perform(get("/public/api/horarios-disponiveis")
                 .param("dentista", dentista)
-                .param("data", data))
+                .param("data", data)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -173,7 +174,8 @@ class AgendamentoPublicoControllerTest {
         // Act & Assert
         mockMvc.perform(get("/public/api/horarios-disponiveis")
                 .param("dentista", "")
-                .param("data", "data-invalida"))
+                .param("data", "data-invalida")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -188,7 +190,8 @@ class AgendamentoPublicoControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/public/verificar-disponibilidade")
                 .param("dentista", dentista)
-                .param("dataHora", dataHora))
+                .param("dataHora", dataHora)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.disponivel").value(true));
@@ -207,7 +210,8 @@ class AgendamentoPublicoControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/public/verificar-disponibilidade")
                 .param("dentista", dentista)
-                .param("dataHora", dataHora))
+                .param("dataHora", dataHora)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.disponivel").value(false));
@@ -238,7 +242,8 @@ class AgendamentoPublicoControllerTest {
         when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistas);
 
         // Act & Assert
-        mockMvc.perform(get("/public/api/dentistas"))
+        mockMvc.perform(get("/public/api/dentistas")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -282,7 +287,8 @@ class AgendamentoPublicoControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/public/api/dentistas")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -358,7 +364,8 @@ class AgendamentoPublicoControllerTest {
         mockMvc.perform(get("/public/api/horarios-disponiveis")
                 .param("dentista", dentista)
                 .param("data", data)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -383,7 +390,8 @@ class AgendamentoPublicoControllerTest {
         mockMvc.perform(get("/api/public/verificar-disponibilidade")
                 .param("dentista", dentista)
                 .param("dataHora", dataHora)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.disponivel").value(true));
@@ -406,7 +414,8 @@ class AgendamentoPublicoControllerTest {
         mockMvc.perform(get("/api/public/verificar-disponibilidade")
                 .param("dentista", dentista)
                 .param("dataHora", dataHora)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.disponivel").value(false));
@@ -421,7 +430,8 @@ class AgendamentoPublicoControllerTest {
         when(captchaService.getSiteKey()).thenReturn("test-site-key");
 
         // Act & Assert
-        mockMvc.perform(get("/public/api/recaptcha-config"))
+        mockMvc.perform(get("/public/api/recaptcha-config")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.enabled").value(true))
@@ -435,7 +445,8 @@ class AgendamentoPublicoControllerTest {
         when(captchaService.getSiteKey()).thenReturn("");
 
         // Act & Assert
-        mockMvc.perform(get("/public/api/recaptcha-config"))
+        mockMvc.perform(get("/public/api/recaptcha-config")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.enabled").value(false))
