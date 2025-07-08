@@ -483,6 +483,7 @@ public class SistemaAdminControllerExpandedTest {
 
             mockMvc.perform(get("/admin/sistema/estatisticas-dentistas")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -511,6 +512,7 @@ public class SistemaAdminControllerExpandedTest {
 
             mockMvc.perform(get("/admin/sistema/estatisticas-dentistas")
                     .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
