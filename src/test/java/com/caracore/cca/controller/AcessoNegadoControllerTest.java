@@ -64,7 +64,8 @@ public class AcessoNegadoControllerTest {
     @WithAnonymousUser
     public void testAcessoNegadoParaUsuarioAnonimo() throws Exception {
         mockMvc.perform(get("/acesso-negado"))
-                .andExpect(status().isUnauthorized()); // 401 Unauthorized é o comportamento esperado para usuário anônimo
+                .andExpect(status().isFound()) // 302 redirect to login page
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 
     @Test
