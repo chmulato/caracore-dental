@@ -7,8 +7,15 @@ CREATE TABLE agendamento (
     data_hora TIMESTAMP NOT NULL,
     paciente VARCHAR(255) NOT NULL,
     dentista VARCHAR(255) NOT NULL,
-    procedimento VARCHAR(255),
-    observacoes TEXT
+    observacao VARCHAR(1000),
+    status VARCHAR(20) NOT NULL DEFAULT 'AGENDADO',
+    data_criacao TIMESTAMP,
+    data_atualizacao TIMESTAMP,
+    duracao_minutos INT,
+    telefone_whatsapp VARCHAR(20),
+    paciente_id BIGINT,
+    profissional_id BIGINT,
+    descricao VARCHAR(255)
 );
 
 
