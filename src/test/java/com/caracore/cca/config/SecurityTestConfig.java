@@ -26,21 +26,21 @@ public class SecurityTestConfig {
     
     /**
      * Cria uma instância de BCryptPasswordEncoder para testes de segurança
-     * Este bean tem prioridade mais alta que o da SecurityConfig
+     * Removida a anotação @Primary para evitar conflito
      */
     @Bean
-    @Primary
     public BCryptPasswordEncoder testPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
     /**
-     * Fornece o bean mvcHandlerMappingIntrospector necessário para Spring Security 6+
+     * Fornece o bean para testes de segurança necessário para Spring Security 6+
      * Este bean é necessário quando usamos requestMatchers() em configurações de segurança
+     * Nome alterado para evitar conflito com o bean padrão do Spring
      */
     @Bean
     @Primary
-    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+    public HandlerMappingIntrospector testMvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
     }
     

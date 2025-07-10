@@ -58,6 +58,12 @@ public class DataSourceConfig {
     }
 
     private void configureByEnvironment(HikariConfig config, String profile) {
+        // Se estiver usando H2, configure de forma mais simples
+        if (isH2Database()) {
+            configureForH2(config);
+            return;
+        }
+        
         switch (profile) {
             case "local":
                 configureLocal(config);
@@ -71,9 +77,32 @@ public class DataSourceConfig {
             case "prod":
                 configureProd(config);
                 break;
+            case "test":
+                configureTest(config);
+                break;
             default:
                 configureDefault(config);
         }
+    }
+    
+    private void configureForH2(HikariConfig config) {
+        config.setPoolName("CCA-H2-Test-Pool");
+        config.setMaximumPoolSize(5);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(10000);
+        config.setIdleTimeout(300000);
+        config.setMaxLifetime(900000);
+        logger.info("Configuração para H2 aplicada - Pool simplificado para testes");
+    }
+    
+    private void configureTest(HikariConfig config) {
+        config.setPoolName("CCA-Test-Pool");
+        config.setMaximumPoolSize(5);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(10000);
+        config.setIdleTimeout(300000);
+        config.setMaxLifetime(900000);
+        logger.info("Configuração TEST aplicada - Pool simplificado para testes unitários");
     }
 
     private void configureLocal(HikariConfig config) {
@@ -135,17 +164,25 @@ public class DataSourceConfig {
         config.setConnectionTestQuery("SELECT 1");
         config.setValidationTimeout(5000);
         config.setAutoCommit(false);
-        config.setConnectionInitSql("SET search_path TO public");
         config.setAllowPoolSuspension(false);
         
-        // Configurações específicas do PostgreSQL
-        config.addDataSourceProperty("ApplicationName", "CCA-Application");
-        config.addDataSourceProperty("connectTimeout", "30");
-        config.addDataSourceProperty("socketTimeout", "30");
-        config.addDataSourceProperty("tcpKeepAlive", "true");
-        config.addDataSourceProperty("logUnclosedConnections", "true");
+        // Verifica se é H2 antes de definir comandos específicos do PostgreSQL
+        if (!isH2Database()) {
+            // Configurações específicas do PostgreSQL
+            config.setConnectionInitSql("SET search_path TO public");
+            config.addDataSourceProperty("ApplicationName", "CCA-Application");
+            config.addDataSourceProperty("connectTimeout", "30");
+            config.addDataSourceProperty("socketTimeout", "30");
+            config.addDataSourceProperty("tcpKeepAlive", "true");
+            config.addDataSourceProperty("logUnclosedConnections", "true");
+        }
         
         logger.debug("Configurações gerais aplicadas");
+    }
+    
+    private boolean isH2Database() {
+        String url = env.getProperty("spring.datasource.url", "");
+        return url.contains("h2") || url.contains("jdbc:h2:");
     }
 
     private void configureMonitoring(HikariConfig config, String profile) {

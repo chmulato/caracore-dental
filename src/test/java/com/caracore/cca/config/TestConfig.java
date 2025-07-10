@@ -27,12 +27,12 @@ public class TestConfig implements WebMvcConfigurer {
     }
     
     /**
-     * Fornece um encoder BCrypt para testes
+     * Fornece um encoder BCrypt para testes básicos não relacionados à segurança
+     * Nome alterado para evitar conflito com o bean em SecurityTestConfig
      */
     @Bean
     @Primary
-    public BCryptPasswordEncoder testPasswordEncoder() {
-        // Nome alterado para evitar conflito com o bean em SecurityConfig
+    public BCryptPasswordEncoder basicTestPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
