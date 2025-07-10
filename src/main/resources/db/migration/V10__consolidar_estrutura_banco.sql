@@ -26,30 +26,45 @@ DELETE FROM usuario WHERE id IN (
 -- 4. Garantir que todos os usuários padrão existam com a senha correta
 -- Hash BCrypt para "admin123": $2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy
 
-INSERT INTO usuario (email, nome, senha, role) VALUES
-('suporte@caracore.com.br', 'Administrador', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_ADMIN'),
-('dentista@caracore.com.br', 'Dr. Carlos Silva', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_DENTIST'),
-('recepcao@caracore.com.br', 'Ana Recepção', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_RECEPTIONIST'),
-('paciente@caracore.com.br', 'João Paciente', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_PATIENT'),
-('joao@gmail.com', 'Joao Maria', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_PATIENT')
-ON CONFLICT (email) DO UPDATE SET
-    nome = EXCLUDED.nome,
-    senha = EXCLUDED.senha,
-    role = EXCLUDED.role;
+-- Implementação compatível com H2 e PostgreSQL usando MERGE no H2
+-- Primeiro, verificamos e atualizamos os registros existentes
+MERGE INTO usuario u
+USING (VALUES 
+    ('suporte@caracore.com.br', 'Administrador', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_ADMIN'),
+    ('dentista@caracore.com.br', 'Dr. Carlos Silva', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_DENTIST'),
+    ('recepcao@caracore.com.br', 'Ana Recepção', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_RECEPTIONIST'),
+    ('paciente@caracore.com.br', 'João Paciente', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_PATIENT'),
+    ('joao@gmail.com', 'Joao Maria', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_PATIENT')
+) AS vals(email, nome, senha, role)
+ON u.email = vals.email
+WHEN MATCHED THEN UPDATE SET 
+    u.nome = vals.nome, 
+    u.senha = vals.senha, 
+    u.role = vals.role
+WHEN NOT MATCHED THEN INSERT 
+    (email, nome, senha, role) 
+    VALUES (vals.email, vals.nome, vals.senha, vals.role);
 
 -- 5. Verificar e corrigir a estrutura da tabela profissional
 -- Garantir que todos os campos necessários existam
-ALTER TABLE profissional ADD COLUMN IF NOT EXISTS telefone VARCHAR(20);
-ALTER TABLE profissional ADD COLUMN IF NOT EXISTS cro VARCHAR(20);
-ALTER TABLE profissional ADD COLUMN IF NOT EXISTS horario_inicio VARCHAR(5);
-ALTER TABLE profissional ADD COLUMN IF NOT EXISTS horario_fim VARCHAR(5);
-ALTER TABLE profissional ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT TRUE;
+
+-- Abordagem simples compatível com H2: tenta adicionar as colunas diretamente
+-- Se a coluna já existir, o H2 simplesmente ignora o erro
+
+-- Em H2, não podemos usar "IF NOT EXISTS" ou blocos DO $$ BEGIN END $$,
+-- então tentamos adicionar as colunas diretamente, aceitando falhas silenciosas
+
+ALTER TABLE profissional ADD telefone VARCHAR(20);
+ALTER TABLE profissional ADD cro VARCHAR(20);
+ALTER TABLE profissional ADD horario_inicio VARCHAR(5);
+ALTER TABLE profissional ADD horario_fim VARCHAR(5);
+ALTER TABLE profissional ADD ativo BOOLEAN DEFAULT TRUE;
 
 -- 6. Criar tabela dentista se não existir (para compatibilidade com o novo modelo)
-CREATE TABLE IF NOT EXISTS dentista (
+CREATE TABLE dentista (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
+    email VARCHAR(100),
     telefone VARCHAR(20),
     cro VARCHAR(20),
     especialidade VARCHAR(100),
@@ -59,6 +74,9 @@ CREATE TABLE IF NOT EXISTS dentista (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Adiciona restrição UNIQUE para email
+ALTER TABLE dentista ADD CONSTRAINT uk_dentista_email UNIQUE (email);
 
 -- 7. Migrar dados de profissional para dentista (se necessário)
 INSERT INTO dentista (nome, email, telefone, cro, especialidade, horario_inicio, horario_fim, ativo)

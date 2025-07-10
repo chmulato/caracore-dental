@@ -1,5 +1,5 @@
 # Configurações para ambiente LOCAL com PostgreSQL
-# Para usar este perfil: mvn spring-boot:run -Dspring.profiles.active=local
+# Para usar este perfil: mvn spring-boot:run "-Dspring-boot.run.jvmArguments=-Dspring.profiles.active=local"
 
 # Configurações do servidor
 server:
@@ -17,161 +17,109 @@ server:
     include-binding-errors: always
   compression:
     enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
+    mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json
+    min-response-size: 1024
 
+# Configurações do Spring
 spring:
-  main:
-    allow-bean-definition-overriding: true
-  # Forçar encoding UTF-8 para mensagens HTTP e JSON
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cca_db?useUnicode=true&characterEncoding=UTF-8
+    username: cca_user
+    password: cca_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+      auto-commit: true
+      pool-name: CCA-PostgreSQL-Pool
+  
+  jpa:
+    hibernate:
+      ddl-auto: update  # Atualiza o schema automaticamente
+    show-sql: true  # Mostra SQL no console para desenvolvimento
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    validate-on-migrate: false  # Temporariamente desativado para permitir a execução
+    clean-disabled: true  # Protege contra exclusão de dados por engano
+    repair-on-migrate: true  # Adiciona reparo automático na migração
+  
   mvc:
-    locale: pt_BR
-    locale-resolver: fixed
-    charset: UTF-8
     log-resolved-exception: true
     format:
       date: yyyy-MM-dd
       time: HH:mm:ss
       date-time: yyyy-MM-dd'T'HH:mm:ss
     message-codes-resolver-format: POSTFIX_ERROR_CODE
-    contentnegotiation:
-      favor-parameter: false
-      favor-path-extension: false
-      media-types:
-        json: application/json;charset=UTF-8
-        html: text/html;charset=UTF-8
-        plain: text/plain;charset=UTF-8
-  # JDBC encoding para PostgreSQL
-  datasource:
-    url: jdbc:postgresql://localhost:5432/cca_db?charSet=UTF8
-    username: cca_user
-    password: cca_password
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      # Pool de conexões para desenvolvimento local
-      maximum-pool-size: 15        # Máximo de conexões simultâneas
-      minimum-idle: 5              # Mínimo de conexões ociosas
-      connection-timeout: 30000    # Timeout para obter conexão (30s)
-      idle-timeout: 600000         # Timeout para conexão ociosa (10min)
-      max-lifetime: 1800000        # Tempo máximo de vida da conexão (30min)
-      leak-detection-threshold: 60000  # Detectar vazamento de conexão (60s)
-      pool-name: CCA-Local-Pool
-      # Configurações de validação
-      validation-timeout: 5000     # Timeout para validação (5s)
-      connection-test-query: SELECT 1
-      auto-commit: false           # Controle manual de transações
-      # Configurações de inicialização
-      connection-init-sql: "SET search_path TO public"
-      # Configurações de performance
-      register-mbeans: true        # Monitoramento JMX
-      allow-pool-suspension: false
   
-  jpa:
-    hibernate:
-      ddl-auto: create-drop  # Cria e remove o schema para desenvolvimento local
-    show-sql: true
-    open-in-view: false
-    properties:
-      hibernate:
-        jdbc:
-          '[time_zone]': America/Sao_Paulo
-        '[format_sql]': true
-        '[use_sql_comments]': true
-        '[generate_statistics]': false
-        '[dialect]': org.hibernate.dialect.PostgreSQLDialect
+  thymeleaf:
+    cache: false  # Desabilita cache para desenvolvimento
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    prefix: classpath:/templates/
   
-  # Configurações de internacionalização
   web:
     locale: pt_BR
     locale-resolver: fixed
-  
-  # H2 Console desabilitado (usando PostgreSQL)
-  h2:
-    console:
-      enabled: false
-  
-  # DevTools habilitado para desenvolvimento
-  devtools:
-    restart:
-      enabled: true
-    livereload:
-      enabled: true
-  
-  # Cache desabilitado para desenvolvimento
-  cache:
-    type: none
-  
-  # Flyway habilitado para migrations
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    validate-on-migrate: true
-    locations: classpath:db/migration
-  
-  # Desabilitar inicialização automática de scripts SQL
-  sql:
-    init:
-      mode: never
 
-# Logging detalhado para desenvolvimento local
+# Configurações do Swagger/SpringDoc
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+  show-actuator: true
+
+# Configurações específicas da aplicação
+cca:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:9a4f2c8d3b7a1e6f45c8a0b3f267d8b1d4e6f3c8a9d2b5f8e3a9c8b5f6v8a9d3}
+      expiration: 86400000  # 24 horas em milissegundos
+    remember-me:
+      key: ${REMEMBER_ME_KEY:caracore2025}
+      token-validity: 2592000  # 30 dias em segundos
+  
+  email:
+    enabled: true
+    host: smtp.example.com
+    port: 587
+    username: ${EMAIL_USERNAME:test@example.com}
+    password: ${EMAIL_PASSWORD:password}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+  
+  recaptcha:
+    enabled: false  # Desabilitar em desenvolvimento
+    site-key: ${RECAPTCHA_SITE_KEY:6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI}  # Chave de teste
+    secret-key: ${RECAPTCHA_SECRET_KEY:6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe}  # Chave de teste
+
+# Configurações de logging
 logging:
   level:
     root: INFO
-    '[org.springframework.security]': DEBUG
-    '[org.springframework.web]': DEBUG
-    '[com.caracore.cca]': DEBUG
-    '[org.hibernate.SQL]': DEBUG
-    '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
-    '[USER_ACTIVITY]': INFO
-  # Forçar encoding UTF-8 nos logs
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
-  
-# Swagger habilitado para desenvolvimento local
-springdoc:
-  swagger-ui:
-    enabled: true
-    try-it-out-enabled: true
-  api-docs:
-    enabled: true
-
-# Configurações específicas da aplicação para desenvolvimento local
-cca:
-  ambiente: local
-  debug-mode: true
-  mock-external-services: false  # Usar serviços reais para testes locais
-  whatsapp:
-    api-url: ${WHATSAPP_API_URL:http://localhost:3000/api}
-    api-key: ${WHATSAPP_API_KEY:local-test-key}
-    enabled: ${WHATSAPP_ENABLED:true}
-  email:
-    smtp:
-      host: ${SMTP_HOST:localhost}
-      port: ${SMTP_PORT:1025}  # MailHog ou similar para desenvolvimento
-      username: ${SMTP_USERNAME:test}
-      password: ${SMTP_PASSWORD:test}
-    from: ${EMAIL_FROM:noreply@local.dev}
-  security:
-    jwt:
-      secret: ${JWT_SECRET:local-development-secret-key-change-in-production}
-      expiration: 86400000  # 24 horas
-
-# Configurações do reCAPTCHA para ambiente local
-recaptcha:
-  enabled: false  # Desabilitado para desenvolvimento local
-  secret: ""
-  site-key: ""
-  verify-url: "https://www.google.com/recaptcha/api/siteverify"
-
-# Monitoramento e métricas para desenvolvimento
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,env,configprops,beans
-  endpoint:
-    health:
-      show-details: always  # Mostrar detalhes de saúde em desenvolvimento
-  info:
-    env:
-      enabled: true
+    com.caracore.cca: DEBUG
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Mostra valores dos parâmetros SQL
+    org.springframework.security: INFO

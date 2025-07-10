@@ -3,20 +3,20 @@
 
 -- Usuário ADMIN já criado no V3, apenas garantir que existe
 INSERT INTO usuario (email, nome, senha, role)
-VALUES ('suporte@caracore.com.br', 'Administrador', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_ADMIN')
-ON CONFLICT (email) DO NOTHING;
+SELECT 'suporte@caracore.com.br', 'Administrador', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_ADMIN'
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'suporte@caracore.com.br');
 
 -- Usuário DENTIST
 INSERT INTO usuario (email, nome, senha, role)
-VALUES ('dentista@caracore.com.br', 'Dr. Carlos Silva', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_DENTIST')
-ON CONFLICT (email) DO NOTHING;
+SELECT 'dentista@caracore.com.br', 'Dr. Carlos Silva', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_DENTIST'
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'dentista@caracore.com.br');
 
 -- Usuário RECEPTIONIST
 INSERT INTO usuario (email, nome, senha, role)
-VALUES ('recepcao@caracore.com.br', 'Ana Recepção', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_RECEPTIONIST')
-ON CONFLICT (email) DO NOTHING;
+SELECT 'recepcao@caracore.com.br', 'Ana Recepção', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_RECEPTIONIST'
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'recepcao@caracore.com.br');
 
 -- Usuário PATIENT
 INSERT INTO usuario (email, nome, senha, role)
-VALUES ('paciente@caracore.com.br', 'João Paciente', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_PATIENT')
-ON CONFLICT (email) DO NOTHING;
+SELECT 'paciente@caracore.com.br', 'João Paciente', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ROLE_PATIENT'
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'paciente@caracore.com.br');
