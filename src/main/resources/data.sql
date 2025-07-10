@@ -1,3 +1,0 @@
--- Placeholder data script for main resources
--- This is needed because SpringBoot is trying to load this file
--- Actual test data is loaded from src/test/resources/data.sql
