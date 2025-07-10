@@ -94,6 +94,9 @@ public class DataSourceConfig {
             return;
         }
         
+        // As configurações específicas para PostgreSQL (como connectionInitSql) 
+        // já são aplicadas no método configureGeneral condicional ao driver PostgreSQL
+        
         switch (profile) {
             case "local":
                 configureLocal(config);
@@ -195,10 +198,10 @@ public class DataSourceConfig {
         config.setValidationTimeout(5000);
         config.setAutoCommit(false);
         config.setAllowPoolSuspension(false);
-        
-        // Verifica se é H2 antes de definir comandos específicos do PostgreSQL
-        if (!isH2Database()) {
-            // Configurações específicas do PostgreSQL
+
+        // Só aplica comandos do PostgreSQL se o driver for PostgreSQL
+        String driverClassName = env.getProperty("spring.datasource.driver-class-name", "");
+        if (driverClassName.contains("postgresql")) {
             config.setConnectionInitSql("SET search_path TO public");
             config.addDataSourceProperty("ApplicationName", "CCA-Application");
             config.addDataSourceProperty("connectTimeout", "30");
@@ -206,7 +209,7 @@ public class DataSourceConfig {
             config.addDataSourceProperty("tcpKeepAlive", "true");
             config.addDataSourceProperty("logUnclosedConnections", "true");
         }
-        
+
         logger.debug("Configurações gerais aplicadas");
     }
     
