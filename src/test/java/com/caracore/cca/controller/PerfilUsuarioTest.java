@@ -7,6 +7,7 @@ import com.caracore.cca.repository.PacienteRepository;
 import com.caracore.cca.repository.UsuarioRepository;
 import com.caracore.cca.model.Paciente;
 import com.caracore.cca.model.Usuario;
+import com.caracore.cca.util.UserActivityLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,9 @@ public class PerfilUsuarioTest {
     
     @MockBean
     private UsuarioRepository usuarioRepository;
+
+    @MockBean
+    private UserActivityLogger userActivityLogger;
 
     private Paciente pacienteTeste;
     private Usuario usuarioTeste;
