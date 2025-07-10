@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -30,31 +30,61 @@ public class DataSourceConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
-        String activeProfile = getActiveProfile();
-        logger.info("Configurando DataSource para perfil: {}", activeProfile);
+        try {
+            String activeProfile = getActiveProfile();
+            logger.info("Configurando DataSource para perfil: {}", activeProfile);
 
-        HikariConfig config = new HikariConfig();
-        
-        // Configurações básicas
-        config.setJdbcUrl(env.getProperty("spring.datasource.url"));
-        config.setUsername(env.getProperty("spring.datasource.username"));
-        config.setPassword(env.getProperty("spring.datasource.password"));
-        config.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
+            HikariConfig config = new HikariConfig();
 
-        // Configurações específicas por ambiente
-        configureByEnvironment(config, activeProfile);
+            // Configurações básicas com verificação de nulos
+            String jdbcUrl = env.getProperty("spring.datasource.url");
+            String username = env.getProperty("spring.datasource.username");
+            String password = env.getProperty("spring.datasource.password");
+            String driverClassName = env.getProperty("spring.datasource.driver-class-name");
 
-        // Configurações gerais de otimização
-        configureGeneral(config);
+            if (jdbcUrl == null) {
+                // Se não houver URL configurada, use H2 em memória como fallback
+                jdbcUrl = "jdbc:h2:mem:cca_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
+                username = "sa";
+                password = "";
+                driverClassName = "org.h2.Driver";
+                logger.warn("URL do banco de dados não configurada! Usando H2 em memória como fallback");
+            }
 
-        // Configurações de monitoramento
-        configureMonitoring(config, activeProfile);
+            // Aplicar as configurações
+            config.setJdbcUrl(jdbcUrl);
+            config.setUsername(username != null ? username : "");
+            config.setPassword(password != null ? password : "");
 
-        HikariDataSource dataSource = new HikariDataSource(config);
-        logger.info("DataSource configurado com sucesso - Pool: {}, Max: {}, Min: {}", 
-                   config.getPoolName(), config.getMaximumPoolSize(), config.getMinimumIdle());
-        
-        return dataSource;
+            // Verificar se o driver está disponível antes de configurá-lo
+            if (driverClassName != null && !driverClassName.isEmpty()) {
+                try {
+                    Class.forName(driverClassName);
+                    config.setDriverClassName(driverClassName);
+                } catch (ClassNotFoundException e) {
+                    logger.warn("Driver JDBC não encontrado: {}. Tentando usar driver automático.", driverClassName);
+                    // HikariCP tentará determinar o driver automaticamente pela URL
+                }
+            }
+
+            // Configurações específicas por ambiente
+            configureByEnvironment(config, activeProfile);
+
+            // Configurações gerais de otimização
+            configureGeneral(config);
+
+            // Configurações de monitoramento
+            configureMonitoring(config, activeProfile);
+
+            HikariDataSource dataSource = new HikariDataSource(config);
+            logger.info("DataSource configurado com sucesso - Pool: {}, Max: {}, Min: {}", 
+                    config.getPoolName(), config.getMaximumPoolSize(), config.getMinimumIdle());
+
+            return dataSource;
+        } catch (Exception e) {
+            logger.error("Erro ao configurar DataSource: {}", e.getMessage(), e);
+            throw new RuntimeException("Falha ao configurar o DataSource: " + e.getMessage(), e);
+        }
     }
 
     private void configureByEnvironment(HikariConfig config, String profile) {
