@@ -86,6 +86,7 @@ src/build/
 # Visual Studio Code
 .vscode/
 *.code-workspace
+*.settings.json
 
 # ===== SISTEMAS OPERACIONAIS =====
 # Windows
@@ -259,3 +260,5 @@ test-data/dentistas-reais/
 # Arquivos de profiling
 *.prof
 *.pprof
+
+err/

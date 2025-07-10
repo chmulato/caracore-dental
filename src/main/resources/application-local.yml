@@ -47,15 +47,16 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
-  
+            
+  # Configuração do Flyway para ambiente de desenvolvimento
   flyway:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0
     locations: classpath:db/migration
     validate-on-migrate: false  # Temporariamente desativado para permitir a execução
-    clean-disabled: true  # Protege contra exclusão de dados por engano
-    repair-on-migrate: true  # Adiciona reparo automático na migração
+    clean-disabled: false  # Permitir limpeza em desenvolvimento (apenas se necessário)
+    clean-on-validation-error: true  # Limpa e recria se houver erro de validação
   
   mvc:
     log-resolved-exception: true

@@ -17,9 +17,9 @@ spring:
         html: text/html;charset=UTF-8
         plain: text/plain;charset=UTF-8
   datasource:
-    url: jdbc:postgresql://${DB_HOST:prod-db.caracore.com.br}:${DB_PORT:5432}/${DB_NAME:cca_prod}?charSet=UTF8
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST:prod-db.caracore.com.br}:${DB_PORT:5432}/${DB_NAME:cca_prod}?useUnicode=true&characterEncoding=UTF8
+    username: ${DB_USERNAME:cca_user}
+    password: ${DB_PASSWORD:cca_password}
     driver-class-name: org.postgresql.Driver
     hikari:
       # Pool de conexões otimizado para produção
@@ -54,6 +54,18 @@ spring:
         '[jdbc.batch_size]': 20
         '[order_inserts]': true
         '[order_updates]': true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            '[non_contextual_creation]': true
+  
+  # Configuração do Flyway para migrações de banco
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    clean-disabled: true  # NUNCA permitir limpeza em produção
   
   # Cache habilitado e otimizado
   cache:
@@ -173,16 +185,20 @@ management:
     metrics:
       enabled: true
   metrics:
-    export:
-      prometheus:
+    enable:
+      all: true
+  prometheus:
+    metrics:
+      export:
         enabled: true
   server:
     port: 9090  # Porta separada para métricas
     
 # Configurações de segurança adicionais para produção
-security:
-  headers:
-    frame: deny
-    content-type: nosniff
-    xss-protection: "1; mode=block"
-    referrer-policy: strict-origin-when-cross-origin
+spring:
+  security:
+    headers:
+      frame: deny
+      content-type: nosniff
+      xss-protection: "1; mode=block"
+      referrer-policy: strict-origin-when-cross-origin
