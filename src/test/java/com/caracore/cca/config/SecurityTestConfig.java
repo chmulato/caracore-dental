@@ -12,8 +12,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import org.mockito.Mockito;
-
 /**
  * Configuração específica para testes de segurança
  * Esta configuração é utilizada nos testes de controladores que dependem de autenticação
@@ -25,12 +23,6 @@ public class SecurityTestConfig {
     
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
-
-    @Bean
-    @Primary
-    public AccessDeniedHandler accessDeniedHandler() {
-        return Mockito.mock(AccessDeniedHandler.class);
-    }
     
     /**
      * Cria uma instância de BCryptPasswordEncoder para testes de segurança

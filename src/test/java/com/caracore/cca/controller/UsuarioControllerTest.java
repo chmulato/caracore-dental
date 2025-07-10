@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest({UsuarioController.class, AcessoNegadoController.class})
 @Import({TestConfig.class, SecurityTestConfig.class, UsuarioTestConfig.class})
+@ActiveProfiles("test")
 public class UsuarioControllerTest {
 
     @Autowired
@@ -44,10 +46,10 @@ public class UsuarioControllerTest {
     @MockBean
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
+    @MockBean
     private UserActivityLogger userActivityLogger;
 
-    @Autowired
+    @MockBean
     private InitService initService;
 
     private Usuario usuarioAdmin;
