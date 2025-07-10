@@ -48,6 +48,72 @@ http://localhost:8080/swagger-ui.html
 http://localhost:8080/h2-console
 ```
 
+### **Ambientes de Execução**
+
+#### Executando com H2 (para testes e desenvolvimento rápido)
+
+O sistema utiliza o banco de dados H2 em memória quando:
+
+- O perfil "test" está ativo
+- A URL do banco de dados contém "h2" ou "jdbc:h2:"
+
+Para executar com H2:
+
+```bash
+# Executar testes unitários (usa H2 automaticamente)
+mvn test
+
+# Executar aplicação com perfil "test" (H2 em memória)
+mvn spring-boot:run -Dspring.profiles.active=test
+```
+
+Configurações do H2 (perfil "test"):
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+```
+
+#### Executando com PostgreSQL (desenvolvimento e produção)
+
+Para desenvolvimento local com PostgreSQL:
+
+1. **Criar o banco e usuário no PostgreSQL**:
+
+```sql
+CREATE DATABASE cca_db;
+CREATE USER cca_user WITH PASSWORD 'cca_password';
+GRANT ALL PRIVILEGES ON DATABASE cca_db TO cca_user;
+```
+
+1. **Executar com o perfil "local"**:
+
+```bash
+mvn spring-boot:run -Dspring.profiles.active=local
+```
+
+Configurações do PostgreSQL (perfil "local"):
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cca_db?charSet=UTF8
+    username: cca_user
+    password: cca_password
+    driver-class-name: org.postgresql.Driver
+```
+
+O sistema detecta automaticamente qual banco de dados está sendo usado através da classe `DataSourceConfig` e aplica as configurações de conexão adequadas para cada tipo de banco.
+
 ### 👥 **Usuários de Teste Criados**
 
 - **Admin**: `suporte@caracore.com.br` / `admin123`
