@@ -21,8 +21,9 @@ git clone https://github.com/chmulato/cara-core_cca.git
 cd cara-core_cca
 
 # Opção 1: Usar script de inicialização (Recomendado)
-.\start-environment.ps1    # Windows PowerShell
-./start-environment.sh     # Linux/macOS
+.\scr\start-environment.ps1    # Windows PowerShell
+./scr/start-environment.sh     # Linux/macOS
+.\scr\start-environment.bat    # Windows Batch (compatibilidade)
 
 # Opção 2: Comando direto
 mvn spring-boot:run
