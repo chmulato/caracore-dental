@@ -48,20 +48,18 @@ WHEN NOT MATCHED THEN INSERT
 -- 5. Verificar e corrigir a estrutura da tabela profissional
 -- Garantir que todos os campos necessários existam
 
--- Abordagem simples compatível com H2: tenta adicionar as colunas diretamente
--- Se a coluna já existir, o H2 simplesmente ignora o erro
+-- NOTA: As colunas telefone, cro, horario_inicio, horario_fim e ativo 
+-- já foram adicionadas nas migrações V8 e V9, então não precisamos readicioná-las aqui.
+-- Comentando as linhas para evitar erro de coluna duplicada.
 
--- Em H2, não podemos usar "IF NOT EXISTS" ou blocos DO $$ BEGIN END $$,
--- então tentamos adicionar as colunas diretamente, aceitando falhas silenciosas
-
-ALTER TABLE profissional ADD telefone VARCHAR(20);
-ALTER TABLE profissional ADD cro VARCHAR(20);
-ALTER TABLE profissional ADD horario_inicio VARCHAR(5);
-ALTER TABLE profissional ADD horario_fim VARCHAR(5);
-ALTER TABLE profissional ADD ativo BOOLEAN DEFAULT TRUE;
+-- ALTER TABLE profissional ADD COLUMN telefone VARCHAR(20);  -- Já existe em V8
+-- ALTER TABLE profissional ADD COLUMN cro VARCHAR(20);       -- Já existe em V8  
+-- ALTER TABLE profissional ADD COLUMN horario_inicio VARCHAR(5); -- Já existe em V8
+-- ALTER TABLE profissional ADD COLUMN horario_fim VARCHAR(5);    -- Já existe em V8
+-- ALTER TABLE profissional ADD COLUMN ativo BOOLEAN DEFAULT TRUE; -- Já existe em V8
 
 -- 6. Criar tabela dentista se não existir (para compatibilidade com o novo modelo)
-CREATE TABLE dentista (
+CREATE TABLE IF NOT EXISTS dentista (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100),
@@ -75,8 +73,13 @@ CREATE TABLE dentista (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Adiciona restrição UNIQUE para email
-ALTER TABLE dentista ADD CONSTRAINT uk_dentista_email UNIQUE (email);
+-- Adiciona restrição UNIQUE para email apenas se não existir
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'uk_dentista_email') THEN
+        ALTER TABLE dentista ADD CONSTRAINT uk_dentista_email UNIQUE (email);
+    END IF;
+END $$;
 
 -- 7. Migrar dados de profissional para dentista (se necessário)
 INSERT INTO dentista (nome, email, telefone, cro, especialidade, horario_inicio, horario_fim, ativo)
