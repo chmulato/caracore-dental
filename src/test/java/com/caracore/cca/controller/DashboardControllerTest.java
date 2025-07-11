@@ -13,6 +13,7 @@ import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfig
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.caracore.cca.config.DashboardTestConfig;
 import com.caracore.cca.service.UsuarioDetailsService;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(controllers = DashboardController.class)
 @Import(DashboardTestConfig.class)
+@ActiveProfiles("test")
 public class DashboardControllerTest {
 
     @Autowired
