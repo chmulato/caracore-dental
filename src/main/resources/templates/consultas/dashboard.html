@@ -181,8 +181,8 @@
                                         <tbody>
                                             <tr th:each="consulta : ${consultasHojeLista}">
                                                 <td class="fw-bold" th:text="${#temporals.format(consulta.dataHora, 'HH:mm')}"></td>
-                                                <td th:text="${consulta.paciente.nome}"></td>
-                                                <td th:text="${consulta.dentista.nome}"></td>
+                                                <td th:text="${consulta.paciente}"></td>
+                                                <td th:text="${consulta.dentista}"></td>
                                                 <td>
                                                     <span class="badge" 
                                                           th:classappend="${consulta.status == 'CONFIRMADO' ? 'bg-success' : 
@@ -236,8 +236,8 @@
                                         <tbody>
                                             <tr th:each="consulta : ${proximasConsultas}">
                                                 <td class="fw-bold" th:text="${#temporals.format(consulta.dataHora, 'dd/MM HH:mm')}"></td>
-                                                <td th:text="${consulta.paciente.nome}"></td>
-                                                <td th:text="${consulta.dentista.nome}"></td>
+                                                <td th:text="${consulta.paciente}"></td>
+                                                <td th:text="${consulta.dentista}"></td>
                                                 <td>
                                                     <span class="badge" 
                                                           th:classappend="${consulta.status == 'CONFIRMADO' ? 'bg-success' : 
