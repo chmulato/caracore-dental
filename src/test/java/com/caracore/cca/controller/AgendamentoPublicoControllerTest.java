@@ -142,13 +142,15 @@ class AgendamentoPublicoControllerTest {
     void testVisualizarConfirmacaoAgendamento() throws Exception {
         // Arrange
         when(agendamentoService.buscarPorId(1L)).thenReturn(Optional.of(agendamentoTeste));
-
-        // Act & Assert
+        
+        // Use o mock do Thymeleaf para evitar o erro de renderização
         mockMvc.perform(get("/public/agendamento-confirmado")
                 .param("id", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("public/agendamento-confirmado"))
-                .andExpect(model().attributeExists("agendamento"));
+                .andExpect(model().attributeExists("agendamento"))
+                // Apenas verificamos se o model possui o atributo, não testamos a renderização
+                .andExpect(model().attribute("agendamento", agendamentoTeste));
     }
 
     @Test
