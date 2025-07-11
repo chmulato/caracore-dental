@@ -7,6 +7,18 @@
         </encoder>
     </appender>
 
+    <!-- Appender de arquivo para gerar logs em logs/cca-application.log durante os testes -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/cca-application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/cca-application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Logger específico para atividades de usuário nos testes -->
     <!-- Durante os testes, queremos que os logs apareçam no console para serem capturados -->
     <!-- Adicionamos additivity="true" para garantir que os logs também vão para o root logger -->
@@ -22,5 +34,6 @@
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>
