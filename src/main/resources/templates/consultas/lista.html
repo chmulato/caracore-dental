@@ -139,8 +139,8 @@
                                 <tbody>
                                     <tr th:each="agendamento : ${consultasHoje}">
                                         <td th:text="${#temporals.format(agendamento.dataHora, 'HH:mm')}"></td>
-                                        <td th:text="${agendamento.paciente.nome}"></td>
-                                        <td th:text="${agendamento.dentista.nome}"></td>
+                                        <td th:text="${agendamento.paciente}"></td>
+                                        <td th:text="${agendamento.dentista}"></td>
                                         <td>
                                             <span class="status-badge" th:classappend="'status-' + ${agendamento.status.toLowerCase()}" 
                                                   th:text="${agendamento.status}"></span>
@@ -184,12 +184,12 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <strong th:text="${agendamento.paciente.nome}"></strong>
+                                                <strong th:text="${agendamento.paciente}"></strong>
                                                 <br>
-                                                <small class="text-muted" th:text="${agendamento.paciente.telefone}"></small>
+                                                <small class="text-muted" th:text="${agendamento.telefoneWhatsapp}"></small>
                                             </div>
                                         </td>
-                                        <td th:text="${agendamento.dentista.nome}"></td>
+                                        <td th:text="${agendamento.dentista}"></td>
                                         <td th:text="${agendamento.duracaoMinutos != null ? agendamento.duracaoMinutos + ' min' : '30 min'}"></td>
                                         <td>
                                             <span class="status-badge" th:classappend="'status-' + ${agendamento.status.toLowerCase()}" 
