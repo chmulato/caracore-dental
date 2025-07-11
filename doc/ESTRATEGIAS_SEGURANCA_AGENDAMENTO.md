@@ -4,11 +4,11 @@
 
 Este documento documenta a implementação atual das estratégias de segurança do sistema CCA (Cara Core Agendamento), demonstrando um endpoint de agendamento público robusto e seguro com múltiplas camadas de proteção.
 
-**Status**: ✅ **IMPLEMENTADO E FUNCIONAL**
+**Status**: **IMPLEMENTADO E FUNCIONAL**
 
 ## Estratégias Implementadas e Testadas
 
-### 1. **Rate Limiting Implementado** ✅
+### 1. **Rate Limiting Implementado**
 
 - **Implementação**: `RateLimitService.java` - **FUNCIONAL**
 - **Proteção**: Limita requisições por IP por minuto/hora/dia
@@ -18,10 +18,10 @@ Este documento documenta a implementação atual das estratégias de segurança 
   - 50 requisições por dia
 - **Integração**: Controller usa `rateLimitService.isAllowed(clientIp)`
 - **Logs**: Registra tentativas bloqueadas com IP
-- **Teste**: ✅ 13 testes passando
+- **Teste**: 13 testes passando
 - **Status**: **ATIVO EM PRODUÇÃO**
 
-### 2. **Validação e Sanitização Rigorosa** ✅
+### 2. **Validação e Sanitização Rigorosa**
 
 - **Implementação**: `AgendamentoPublicoController.java` - **FUNCIONAL**
 - **Validações Implementadas**:
@@ -31,10 +31,10 @@ Este documento documenta a implementação atual das estratégias de segurança 
   - Campos obrigatórios: paciente, dentista, dataHora
 - **Sanitização**: Remove espaços extras e normaliza entrada
 - **Método**: `validateAndSanitizeInput()` com classe `ValidationResult`
-- **Teste**: ✅ 23 testes passando no controller
+- **Teste**: 23 testes passando no controller
 - **Status**: **ATIVO EM PRODUÇÃO**
 
-### 3. **CAPTCHA reCAPTCHA Google** ✅
+### 3. **CAPTCHA reCAPTCHA Google**
 
 - **Implementação**: `CaptchaService.java` - **FUNCIONAL**
 - **Proteção**: Google reCAPTCHA v2 configurável por ambiente
@@ -46,10 +46,10 @@ Este documento documenta a implementação atual das estratégias de segurança 
   - `agendamento-online.html` (sem captcha)
   - `agendamento-online-captcha.html` (com captcha)
 - **Integração**: Controller renderiza template correto automaticamente
-- **Teste**: ✅ 13 testes passando
+- **Teste**: 13 testes passando
 - **Status**: **ATIVO EM PRODUÇÃO**
 
-### 4. **Restrição de Horário Comercial** ✅
+### 4. **Restrição de Horário Comercial**
 
 - **Implementação**: `isBusinessHours()` - **FUNCIONAL**
 - **Horários**: Segunda a Sexta, 8h às 18h
@@ -58,7 +58,7 @@ Este documento documenta a implementação atual das estratégias de segurança 
 - **Logs**: Registra tentativas bloqueadas
 - **Status**: **ATIVO EM PRODUÇÃO**
 
-### 5. **Auditoria e Logging Completo** ✅
+### 5. **Auditoria e Logging Completo**
 
 - **Rastreamento**: IP real (considera proxies), timestamp, dados
 - **Logs Implementados**: 
@@ -71,7 +71,7 @@ Este documento documenta a implementação atual das estratégias de segurança 
 - **Observações**: Agendamentos incluem IP de origem
 - **Status**: **ATIVO EM PRODUÇÃO**
 
-### 6. **Segurança HTTP e CSRF** ✅
+### 6. **Segurança HTTP e CSRF**
 
 - **Método**: POST obrigatório para agendamentos
 - **CSRF**: Desabilitado para `/public/**` (API pública)
@@ -253,12 +253,12 @@ public ResponseEntity<String> agendarConsultaPublica(
 |------------------------|------------|--------------|---------|------------|----------|
 | Estratégia             | Segurança  | Complexidade | UX      | Manutenção | Status   |
 |------------------------|------------|--------------|---------|------------|----------|
-| Rate Limiting          | ⭐⭐⭐       | ⭐⭐           | ⭐⭐⭐⭐    | ⭐⭐⭐       | ✅ ATIVO  |
-| Validação              | ⭐⭐⭐⭐      | ⭐⭐           | ⭐⭐⭐⭐    | ⭐⭐⭐⭐      | ✅ ATIVO  |
-| CAPTCHA reCAPTCHA      | ⭐⭐⭐⭐      | ⭐⭐⭐         | ⭐⭐⭐     | ⭐⭐⭐       | ✅ ATIVO  |
-| Auditoria              | ⭐⭐         | ⭐⭐           | ⭐⭐⭐⭐    | ⭐⭐         | ✅ ATIVO  |
-| Horário Comercial      | ⭐⭐⭐       | ⭐            | ⭐⭐⭐     | ⭐⭐⭐⭐      | ✅ ATIVO  |
-| Sanitização            | ⭐⭐⭐⭐      | ⭐⭐           | ⭐⭐⭐⭐    | ⭐⭐⭐⭐      | ✅ ATIVO  |
+| Rate Limiting          | * * *      | * *          | * * * * | * * *      | ATIVO    |
+| Validação              | * * * *    | * *          | * * * * | * * * *    | ATIVO    |
+| CAPTCHA reCAPTCHA      | * * * *    | * * *        | * * *   | * * *      | ATIVO    |
+| Auditoria              | * *        | * *          | * * * * | * *        | ATIVO    |
+| Horário Comercial      | * * *      | *            | * * *   | * * * *    | ATIVO    |
+| Sanitização            | * * * *    | * *          | * * * * | * * * *    | ATIVO    |
 |------------------------|------------|--------------|---------|------------|----------|
 ```
 
@@ -366,7 +366,7 @@ public class SecurityConfig {
 
 ## Testes de Segurança - IMPLEMENTADOS E VALIDADOS
 
-### **Teste de Rate Limiting** ✅
+### **Teste de Rate Limiting**
 
 ```java
 @Test
@@ -381,11 +381,11 @@ void testRateLimitingPreventsAbuse() {
     // 6ª requisição deve ser bloqueada
     assertFalse(rateLimitService.isAllowed(ip));
     
-    // STATUS: ✅ 13/13 testes passando no CaptchaServiceTest
+    // STATUS: 13/13 testes passando no CaptchaServiceTest
 }
 ```
 
-### **Teste de Validação** ✅
+### **Teste de Validação**
 
 ```java
 @Test
@@ -397,11 +397,11 @@ void testValidationPreventsInjection() {
     assertFalse(result.isValid());
     assertEquals("Nome do paciente inválido (apenas letras e espaços, 2-100 caracteres)", result.getErrorMessage());
     
-    // STATUS: ✅ 23/23 testes passando no AgendamentoPublicoControllerTest
+    // STATUS: 23/23 testes passando no AgendamentoPublicoControllerTest
 }
 ```
 
-### **Teste de CAPTCHA** ✅
+### **Teste de CAPTCHA**
 
 ```java
 @Test  
@@ -415,11 +415,11 @@ void testCaptchaValidation() {
     
     assertTrue(captchaService.validateCaptcha("valid-token", "127.0.0.1"));
     
-    // STATUS: ✅ Configuração dinâmica funcionando por ambiente
+    // STATUS: Configuração dinâmica funcionando por ambiente
 }
 ```
 
-### **Teste de Configuração por Ambiente** ✅
+### **Teste de Configuração por Ambiente**
 
 ```java
 @Test
@@ -433,11 +433,11 @@ void testCaptchaConfigurationByEnvironment() {
     System.setProperty("recaptcha.secret", "test-secret");
     assertTrue(captchaService.isEnabled());
     
-    // STATUS: ✅ Templates renderizados corretamente
+    // STATUS: Templates renderizados corretamente
 }
 ```
 
-### **Teste de Horário Comercial** ✅
+### **Teste de Horário Comercial**
 
 ```java
 @Test
@@ -454,7 +454,7 @@ void testBusinessHoursValidation() {
     LocalDateTime segundaNoite = LocalDateTime.of(2025, 7, 7, 19, 0);
     assertFalse(isBusinessHours(segundaNoite));
     
-    // STATUS: ✅ Funcionando com bypass para testes
+    // STATUS: Funcionando com bypass para testes
 }
 ```
 
@@ -462,18 +462,18 @@ void testBusinessHoursValidation() {
 
 ```bash
 # CaptchaService - TODOS PASSANDO
-[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0 ✅
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0
 
 # AgendamentoPublicoController - TODOS PASSANDO  
-[INFO] Tests run: 23, Failures: 0, Errors: 0, Skipped: 0 ✅
+[INFO] Tests run: 23, Failures: 0, Errors: 0, Skipped: 0
 
 # Cobertura de Testes
-- Rate Limiting: ✅ Testado
-- Validação: ✅ Testado
-- CAPTCHA: ✅ Testado  
-- Horário Comercial: ✅ Testado
-- Templates: ✅ Testados
-- Configuração por Ambiente: ✅ Testado
+- Rate Limiting: Testado
+- Validação: Testado
+- CAPTCHA: Testado  
+- Horário Comercial: Testado
+- Templates: Testados
+- Configuração por Ambiente: Testado
 ```
 
 ## Monitoramento e Alertas - LOGS IMPLEMENTADOS
@@ -501,46 +501,46 @@ logger.info("Agendamento público criado - ID: {}, IP: {}, Paciente: {}, Captcha
 
 ### **Métricas Monitoradas**
 
-- ✅ Taxa de requisições por IP
-- ✅ Tentativas de agendamento falhadas  
-- ✅ Logs de captcha inválido
-- ✅ Tentativas fora do horário comercial
-- ✅ IPs bloqueados por rate limit
-- ✅ Templates renderizados (com/sem captcha)
+- Taxa de requisições por IP
+- Tentativas de agendamento falhadas  
+- Logs de captcha inválido
+- Tentativas fora do horário comercial
+- IPs bloqueados por rate limit
+- Templates renderizados (com/sem captcha)
 
 ## Conclusão - IMPLEMENTAÇÃO COMPLETA E FUNCIONAL
 
-### **Nível de Segurança Atual: ALTO** 🛡️
+### **Nível de Segurança Atual: ALTO**
 
 A implementação atual do sistema CCA oferece um **endpoint de agendamento público robusto e seguro** com múltiplas camadas de proteção:
 
-#### **✅ ESTRATÉGIAS IMPLEMENTADAS E TESTADAS:**
+#### **ESTRATÉGIAS IMPLEMENTADAS E TESTADAS:**
 
-1. **Rate Limiting**: ✅ 5/20/50 tentativas por minuto/hora/dia
-2. **reCAPTCHA Google**: ✅ Configurável por ambiente (dev=off, prod=on)
-3. **Validação Rigorosa**: ✅ Sanitização e validação de todos os campos
-4. **Auditoria Completa**: ✅ Logs detalhados com IP e dados da tentativa
-5. **Horário Comercial**: ✅ Segunda a Sexta, 8h às 18h
-6. **Templates Dinâmicos**: ✅ Renderização com/sem captcha automática
+1. **Rate Limiting**: 5/20/50 tentativas por minuto/hora/dia
+2. **reCAPTCHA Google**: Configurável por ambiente (dev=off, prod=on)
+3. **Validação Rigorosa**: Sanitização e validação de todos os campos
+4. **Auditoria Completa**: Logs detalhados com IP e dados da tentativa
+5. **Horário Comercial**: Segunda a Sexta, 8h às 18h
+6. **Templates Dinâmicos**: Renderização com/sem captcha automática
 
-#### **🎯 ADEQUAÇÃO POR CENÁRIO:**
+#### **ADEQUAÇÃO POR CENÁRIO:**
 
-- **Pequena Clínica**: ✅ **PERFEITO** - Rate Limiting + Validação (ambiente local)
-- **Clínica Média**: ✅ **PERFEITO** - Rate Limiting + Validação + CAPTCHA (ambiente homolog)  
-- **Grande Clínica**: ✅ **PERFEITO** - Todas as proteções ativas (ambiente produção)
+- **Pequena Clínica**: **PERFEITO** - Rate Limiting + Validação (ambiente local)
+- **Clínica Média**: **PERFEITO** - Rate Limiting + Validação + CAPTCHA (ambiente homolog)  
+- **Grande Clínica**: **PERFEITO** - Todas as proteções ativas (ambiente produção)
 
-#### **📊 RESULTADOS DOS TESTES:**
+#### **RESULTADOS DOS TESTES:**
 
 ```bash
-✅ CaptchaService: 13/13 testes passando
-✅ AgendamentoPublicoController: 23/23 testes passando  
-✅ Configuração por ambiente: FUNCIONAL
-✅ Templates dinâmicos: FUNCIONAL
-✅ PostgreSQL + Docker: FUNCIONAL
-✅ Aplicação rodando: http://localhost:8080/public/agendamento
+CaptchaService: 13/13 testes passando
+AgendamentoPublicoController: 23/23 testes passando
+Configuração por ambiente: FUNCIONAL
+Templates dinâmicos: FUNCIONAL
+PostgreSQL + Docker: FUNCIONAL
+Aplicação rodando: http://localhost:8080/public/agendamento
 ```
 
-#### **🔐 PROTEÇÕES ATIVAS EM PRODUÇÃO:**
+#### **PROTEÇÕES ATIVAS EM PRODUÇÃO:**
 
 - **Anti-Bot**: reCAPTCHA v2 do Google
 - **Anti-DDoS**: Rate limiting por IP
@@ -548,14 +548,15 @@ A implementação atual do sistema CCA oferece um **endpoint de agendamento púb
 - **Anti-Abuse**: Horário comercial + auditoria completa
 - **Configuração Inteligente**: Desenvolvimento sem fricção, produção protegida
 
-#### **🚀 PRONTO PARA USO:**
+#### **PRONTO PARA USO:**
 
 O sistema está **100% implementado, testado e funcional**. Pode ser usado imediatamente em:
+
 - **Desenvolvimento**: Sem captcha, fluxo simples
 - **Homologação**: Com captcha, testes de integração
 - **Produção**: Proteção completa ativa
 
-#### **📈 BENEFÍCIOS ALCANÇADOS:**
+#### **BENEFÍCIOS ALCANÇADOS:**
 
 - **Segurança**: Múltiplas camadas de proteção
 - **Flexibilidade**: Configuração por ambiente
@@ -567,9 +568,9 @@ O sistema está **100% implementado, testado e funcional**. Pode ser usado imedi
 
 ---
 
-### **🎯 Status Final: IMPLEMENTAÇÃO COMPLETA** ✅
+### **Status Final: IMPLEMENTAÇÃO COMPLETA**
 
-**Nível de Proteção**: **ALTO** 🛡️  
-**Testes**: **TODOS PASSANDO** ✅  
-**Funcionalidade**: **100% OPERACIONAL** 🚀  
-**Documentação**: **ATUALIZADA** 📚
+**Nível de Proteção**: **ALTO**  
+**Testes**: **TODOS PASSANDO**  
+**Funcionalidade**: **100% OPERACIONAL**  
+**Documentação**: **ATUALIZADA**

@@ -6,7 +6,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ## Resumo Executivo
 
-### ✅ Funcionalidades Implementadas e Funcionais
+### Funcionalidades Implementadas e Funcionais
 
 - Sistema completo de agendamento online
 - Dashboard administrativo com métricas
@@ -16,14 +16,14 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 - Interface responsiva e moderna
 - Testes unitários 100% funcionais e compatíveis
 
-### 🚧 Pendências Principais (Prioridade Alta)
+### Pendências Principais (Prioridade Alta)
 
 1. **Calendário Visual Avançado** - Implementar FullCalendar.js com drag-and-drop
 2. **Validações de Horário** - Regras de funcionamento e feriados
 3. **Notificações Automáticas** - Sistema completo de lembretes
 4. **Interface Mobile** - Melhorias no layout responsivo
 
-### 📊 Métricas de Sucesso
+### Métricas de Sucesso
 
 - **Funcionalidades Core**: 95% implementadas
 - **Testes Unitários**: 100% passando
@@ -31,7 +31,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 - **APIs REST**: 100% funcionais
 - **Integração WhatsApp**: 100% funcional
 
-### 🎯 Próximos Passos
+### Próximos Passos
 
 1. Implementar calendário visual com FullCalendar.js
 2. Adicionar validações avançadas de horário
@@ -55,14 +55,14 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Gestão de Consultas Agendadas
 
-- [x] **CONSUL-001** - ✅ **RESOLVIDO** - Corrigir testes unitários do ConsultasController e AgendamentoService
-  - ✅ Métodos testados alinhados com implementação atual do service
-  - ✅ Mocks ajustados para usar campos corretos do modelo Agendamento
-  - ✅ Compatibilidade com modelo Agendamento atual validada
-  - ✅ Testes de conflito de horário corrigidos para usar buscarPorDentistaEPeriodo
-  - ✅ Remoção de métodos duplicados no ConsultasController
-  - ✅ Criação de novo AgendamentoServiceTest totalmente compatível
-  - ✅ Todos os testes passando com 100% de sucesso
+- [x] **CONSUL-001** - **RESOLVIDO** - Corrigir testes unitários do ConsultasController e AgendamentoService
+  - Métodos testados alinhados com implementação atual do service
+  - Mocks ajustados para usar campos corretos do modelo Agendamento
+  - Compatibilidade com modelo Agendamento atual validada
+  - Testes de conflito de horário corrigidos para usar buscarPorDentistaEPeriodo
+  - Remoção de métodos duplicados no ConsultasController
+  - Criação de novo AgendamentoServiceTest totalmente compatível
+  - Todos os testes passando com 100% de sucesso
 - [ ] **CONSUL-002** - Implementar integração com calendário visual (FullCalendar.js)
   - Incluir biblioteca FullCalendar.js via CDN ou WebJars
   - Criar endpoint `/consultas/api/eventos` para fornecer dados do calendário
@@ -78,17 +78,17 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Implementar sistema de lembretes automáticos
   - Adicionar confirmação de presença por WhatsApp
   - Criar logs de envio de notificações
-- [x] **CONSUL-005** - ✅ **RESOLVIDO** - Completar implementação dos métodos faltantes no AgendamentoService
-  - ✅ confirmarAgendamento(Long id) - Implementado com validação de status
-  - ✅ cancelarAgendamento(Long id, String motivo) - Implementado com logs de auditoria
-  - ✅ reagendar(Long id, LocalDateTime novaDataHora) - Implementado com verificação de conflitos
-  - ✅ marcarComoRealizada(Long id) - Implementado com validação de status
-- [x] **CONSUL-006** - ✅ **RESOLVIDO** - Completar implementação dos métodos faltantes no ConsultasController
-  - ✅ agendarConsulta - Implementado com validação completa
-  - ✅ consultarAgendamentos - Implementado com filtros e paginação
-  - ✅ cancelarConsulta - Implementado com logs de auditoria
-  - ✅ reagendarConsulta - Implementado com validação de conflitos
-  - ✅ confirmarConsulta - Implementado com notificações
+- [x] **CONSUL-005** - **RESOLVIDO** - Completar implementação dos métodos faltantes no AgendamentoService
+  - confirmarAgendamento(Long id) - Implementado com validação de status
+  - cancelarAgendamento(Long id, String motivo) - Implementado com logs de auditoria
+  - reagendar(Long id, LocalDateTime novaDataHora) - Implementado com verificação de conflitos
+  - marcarComoRealizada(Long id) - Implementado com validação de status
+- [x] **CONSUL-006** - **RESOLVIDO** - Completar implementação dos métodos faltantes no ConsultasController
+  - agendarConsulta - Implementado com validação completa
+  - consultarAgendamentos - Implementado com filtros e paginação
+  - cancelarConsulta - Implementado com logs de auditoria
+  - reagendarConsulta - Implementado com validação de conflitos
+  - confirmarConsulta - Implementado com notificações
 
 ### Frontend
 
@@ -101,26 +101,30 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Funcionalidades - Gestão de Consultas
 
-- [x] **FUNC-001** - ✅ **RESOLVIDO** - Implementar integração básica com WhatsApp
-  - ✅ Webhook configurado para receber mensagens
-  - ✅ API para envio de mensagens automáticas
-  - ✅ Templates de mensagens configurados
-- [x] **FUNC-002** - ✅ **RESOLVIDO** - Criar interface de listagem de consultas agendadas
-  - ✅ Listagem com filtros por data/status/dentista
-  - ✅ Paginação e ordenação implementadas
-  - ✅ Interface responsiva para mobile
-- [x] **FUNC-003** - ✅ **RESOLVIDO** - Implementar dashboard de consultas com métricas
-  - ✅ Gráficos de consultas por período
-  - ✅ Estatísticas de cancelamentos/confirmações
-  - ✅ Indicadores de performance
-- [x] **FUNC-004** - ✅ **RESOLVIDO** - Criar sistema de reagendamento de consultas
-  - ✅ Validação de conflitos de horários
-  - ✅ Notificações automáticas de reagendamento
-  - ✅ Logs de histórico de alterações
-- [x] **FUNC-005** - ✅ **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
-  - ✅ Enum StatusConsulta com todos os status necessários
-  - ✅ Transições de status validadas
-  - ✅ Auditoria de mudanças de status
+- [x] **FUNC-001** - **RESOLVIDO** - Implementar integração básica com WhatsApp
+  - Webhook configurado para receber mensagens
+  - API para envio de mensagens automáticas
+  - Templates de mensagens configurados
+
+- [x] **FUNC-002** - **RESOLVIDO** - Criar interface de listagem de consultas agendadas
+  - Listagem com filtros por data/status/dentista
+  - Paginação e ordenação implementadas
+  - Interface responsiva para mobile
+
+- [x] **FUNC-003** - **RESOLVIDO** - Implementar dashboard de consultas com métricas
+  - Gráficos de consultas por período
+  - Estatísticas de cancelamentos/confirmações
+  - Indicadores de performance
+
+- [x] **FUNC-004** - **RESOLVIDO** - Criar sistema de reagendamento de consultas
+  - Validação de conflitos de horários
+  - Notificações automáticas de reagendamento
+  - Logs de histórico de alterações
+
+- [ ] **FUNC-005** - **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
+  - Enum StatusConsulta com todos os status necessários
+  - Transições de status validadas
+  - Auditoria de mudanças de status
 - [ ] **FUNC-006** - Adicionar opção de cancelamento pelo paciente
 - [ ] **FUNC-007** - Completar implementação do prontuário digital
 - [ ] **FUNC-008** - Adicionar filtros avançados nos relatórios
@@ -171,11 +175,11 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Consultas Agendadas
 
-- [x] **BUG-006** - ✅ **RESOLVIDO** - Testes unitários do ConsultasController não passam devido a incompatibilidade de métodos
-  - ✅ Testes alinhados com métodos existentes no service atual
-  - ✅ Mocks corrigidos para usar campos corretos do modelo Agendamento
-  - ✅ Assinaturas de métodos compatibilizadas entre controller e service
-  - ✅ Novo AgendamentoServiceTest criado com 100% de compatibilidade
+- [x] **BUG-006** - **RESOLVIDO** - Testes unitários do ConsultasController não passam devido a incompatibilidade de métodos
+  - Testes alinhados com métodos existentes no service atual
+  - Mocks corrigidos para usar campos corretos do modelo Agendamento
+  - Assinaturas de métodos compatibilizadas entre controller e service
+  - Novo AgendamentoServiceTest criado com 100% de compatibilidade
 - [ ] **BUG-007** - Verificação de conflito de horário pode não funcionar corretamente com fusos horários
   - Validar comportamento com diferentes fusos horários
   - Garantir consistência entre frontend e backend
@@ -240,7 +244,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Novos campos de status e duração
   - Índices para performance
   - Compatibilidade com dados existentes
-- [x] **CONSUL-IMPL-010** - ✅ **NOVO** - Correção e alinhamento completo dos testes unitários
+- [x] **CONSUL-IMPL-010** - **NOVO** - Correção e alinhamento completo dos testes unitários
   - ConsultasControllerTest: 100% compatível com implementação atual
   - AgendamentoServiceTest: Totalmente refatorado e funcional
   - Remoção de métodos duplicados no ConsultasController
@@ -248,7 +252,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Testes de conflito de horário usando buscarPorDentistaEPeriodo
   - Validação de todas as funcionalidades de CRUD e regras de negócio
   - Cobertura de testes expandida com cenários de sucesso e erro
-- [x] **CONSUL-IMPL-011** - ✅ **NOVO** - Criação de scripts de inicialização de ambiente
+- [x] **CONSUL-IMPL-011** - **NOVO** - Criação de scripts de inicialização de ambiente
   - Scripts para Windows (.bat e .ps1) e Linux/macOS (.sh)
   - Verificação automática de Docker e docker-compose
   - Inicialização do PostgreSQL via docker-compose
@@ -258,7 +262,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Infraestrutura e Automação
 
-- [x] **INFRA-001** - ✅ **RESOLVIDO** - Criar scripts de inicialização do ambiente
+- [x] **INFRA-001** - **RESOLVIDO** - Criar scripts de inicialização do ambiente
   - Scripts para Windows: `start-environment.bat` e `start-environment.ps1`
   - Scripts para Linux/macOS: `start-environment.sh`
   - Scripts detalhados na pasta `scripts/`: `start-docker.bat`, `start-docker.sh`, `start-docker.ps1`
@@ -288,30 +292,36 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Testes automatizados do pool
   - Documentação completa em POOL_CONEXOES.md
 
+---
+
 ## Problemas de Média Prioridade
 
 ### Funcionalidades - Gestão de Consultas
 
-- [x] **FUNC-001** - ✅ **RESOLVIDO** - Implementar integração básica com WhatsApp
-  - ✅ Webhook configurado para receber mensagens
-  - ✅ API para envio de mensagens automáticas
-  - ✅ Templates de mensagens configurados
-- [x] **FUNC-002** - ✅ **RESOLVIDO** - Criar interface de listagem de consultas agendadas
-  - ✅ Listagem com filtros por data/status/dentista
-  - ✅ Paginação e ordenação implementadas
-  - ✅ Interface responsiva para mobile
-- [x] **FUNC-003** - ✅ **RESOLVIDO** - Implementar dashboard de consultas com métricas
-  - ✅ Gráficos de consultas por período
-  - ✅ Estatísticas de cancelamentos/confirmações
-  - ✅ Indicadores de performance
-- [x] **FUNC-004** - ✅ **RESOLVIDO** - Criar sistema de reagendamento de consultas
-  - ✅ Validação de conflitos de horários
-  - ✅ Notificações automáticas de reagendamento
-  - ✅ Logs de histórico de alterações
-- [x] **FUNC-005** - ✅ **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
-  - ✅ Enum StatusConsulta com todos os status necessários
-  - ✅ Transições de status validadas
-  - ✅ Auditoria de mudanças de status
+- [x] **FUNC-001** - **RESOLVIDO** - Implementar integração básica com WhatsApp
+  - Webhook configurado para receber mensagens
+  - API para envio de mensagens automáticas
+  - Templates de mensagens configurados
+
+- [x] **FUNC-002** - **RESOLVIDO** - Criar interface de listagem de consultas agendadas
+  - Listagem com filtros por data/status/dentista
+  - Paginação e ordenação implementadas
+  - Interface responsiva para mobile
+
+- [x] **FUNC-003** - **RESOLVIDO** - Implementar dashboard de consultas com métricas
+  - Gráficos de consultas por período
+  - Estatísticas de cancelamentos/confirmações
+  - Indicadores de performance
+
+- [x] **FUNC-004** - **RESOLVIDO** - Criar sistema de reagendamento de consultas
+  - Validação de conflitos de horários
+  - Notificações automáticas de reagendamento
+  - Logs de histórico de alterações
+
+- [x] **FUNC-005** - **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
+  - Enum StatusConsulta com todos os status necessários
+  - Transições de status validadas
+  - Auditoria de mudanças de status
 - [ ] **FUNC-006** - Adicionar opção de cancelamento pelo paciente
 - [ ] **FUNC-007** - Completar implementação do prontuário digital
 - [ ] **FUNC-008** - Adicionar filtros avançados nos relatórios
@@ -362,11 +372,11 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Consultas Agendadas
 
-- [x] **BUG-006** - ✅ **RESOLVIDO** - Testes unitários do ConsultasController não passam devido a incompatibilidade de métodos
-  - ✅ Testes alinhados com métodos existentes no service atual
-  - ✅ Mocks corrigidos para usar campos corretos do modelo Agendamento
-  - ✅ Assinaturas de métodos compatibilizadas entre controller e service
-  - ✅ Novo AgendamentoServiceTest criado com 100% de compatibilidade
+- [x] **BUG-006** - **RESOLVIDO** - Testes unitários do ConsultasController não passam devido a incompatibilidade de métodos
+  - Testes alinhados com métodos existentes no service atual
+  - Mocks corrigidos para usar campos corretos do modelo Agendamento
+  - Assinaturas de métodos compatibilizadas entre controller e service
+  - Novo AgendamentoServiceTest criado com 100% de compatibilidade
 - [ ] **BUG-007** - Verificação de conflito de horário pode não funcionar corretamente com fusos horários
   - Validar comportamento com diferentes fusos horários
   - Garantir consistência entre frontend e backend
@@ -431,7 +441,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Novos campos de status e duração
   - Índices para performance
   - Compatibilidade com dados existentes
-- [x] **CONSUL-IMPL-010** - ✅ **NOVO** - Correção e alinhamento completo dos testes unitários
+- [x] **CONSUL-IMPL-010** - **NOVO** - Correção e alinhamento completo dos testes unitários
   - ConsultasControllerTest: 100% compatível com implementação atual
   - AgendamentoServiceTest: Totalmente refatorado e funcional
   - Remoção de métodos duplicados no ConsultasController
@@ -439,7 +449,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
   - Testes de conflito de horário usando buscarPorDentistaEPeriodo
   - Validação de todas as funcionalidades de CRUD e regras de negócio
   - Cobertura de testes expandida com cenários de sucesso e erro
-- [x] **CONSUL-IMPL-011** - ✅ **NOVO** - Criação de scripts de inicialização de ambiente
+- [x] **CONSUL-IMPL-011** - **NOVO** - Criação de scripts de inicialização de ambiente
   - Scripts para Windows (.bat e .ps1) e Linux/macOS (.sh)
   - Verificação automática de Docker e docker-compose
   - Inicialização do PostgreSQL via docker-compose
@@ -449,7 +459,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Infraestrutura e Automação
 
-- [x] **INFRA-001** - ✅ **RESOLVIDO** - Criar scripts de inicialização do ambiente
+- [x] **INFRA-001** - **RESOLVIDO** - Criar scripts de inicialização do ambiente
   - Scripts para Windows: `start-environment.bat` e `start-environment.ps1`
   - Scripts para Linux/macOS: `start-environment.sh`
   - Scripts detalhados na pasta `scripts/`: `start-docker.bat`, `start-docker.sh`, `start-docker.ps1`
@@ -483,26 +493,30 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 
 ### Funcionalidades - Gestão de Consultas
 
-- [x] **FUNC-001** - ✅ **RESOLVIDO** - Implementar integração básica com WhatsApp
-  - ✅ Webhook configurado para receber mensagens
-  - ✅ API para envio de mensagens automáticas
-  - ✅ Templates de mensagens configurados
-- [x] **FUNC-002** - ✅ **RESOLVIDO** - Criar interface de listagem de consultas agendadas
-  - ✅ Listagem com filtros por data/status/dentista
-  - ✅ Paginação e ordenação implementadas
-  - ✅ Interface responsiva para mobile
-- [x] **FUNC-003** - ✅ **RESOLVIDO** - Implementar dashboard de consultas com métricas
-  - ✅ Gráficos de consultas por período
-  - ✅ Estatísticas de cancelamentos/confirmações
-  - ✅ Indicadores de performance
-- [x] **FUNC-004** - ✅ **RESOLVIDO** - Criar sistema de reagendamento de consultas
-  - ✅ Validação de conflitos de horários
-  - ✅ Notificações automáticas de reagendamento
-  - ✅ Logs de histórico de alterações
-- [x] **FUNC-005** - ✅ **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
-  - ✅ Enum StatusConsulta com todos os status necessários
-  - ✅ Transições de status validadas
-  - ✅ Auditoria de mudanças de status
+- [x] **FUNC-001** - **RESOLVIDO** - Implementar integração básica com WhatsApp
+  - Webhook configurado para receber mensagens
+  - API para envio de mensagens automáticas
+  - Templates de mensagens configurados
+
+- [x] **FUNC-002** - **RESOLVIDO** - Criar interface de listagem de consultas agendadas
+  - Listagem com filtros por data/status/dentista
+  - Paginação e ordenação implementadas
+  - Interface responsiva para mobile
+
+- [x] **FUNC-003** - **RESOLVIDO** - Implementar dashboard de consultas com métricas
+  - Gráficos de consultas por período
+  - Estatísticas de cancelamentos/confirmações
+  - Indicadores de performance
+
+- [x] **FUNC-004** - **RESOLVIDO** - Criar sistema de reagendamento de consultas
+  - Validação de conflitos de horários
+  - Notificações automáticas de reagendamento
+  - Logs de histórico de alterações
+
+- [x] **FUNC-005** - **RESOLVIDO** - Implementar controle de status de consultas (AGENDADO, CONFIRMADO, CANCELADO, etc.)
+  - Enum StatusConsulta com todos os status necessários
+  - Transições de status validadas
+  - Auditoria de mudanças de status
 - [ ] **FUNC-006** - Adicionar opção de cancelamento pelo paciente
 - [ ] **FUNC-007** - Completar implementação do prontuário digital
 - [ ] **FUNC-008** - Adicionar filtros avançados nos relatórios
