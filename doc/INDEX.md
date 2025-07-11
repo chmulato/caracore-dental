@@ -13,8 +13,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | Documento                                                            | Descrição                                            | Responsabilidade |
 |----------------------------------------------------------------------|------------------------------------------------------|------------------|
 | [STATUS_ATUAL.md](../STATUS_ATUAL.md)                                | Status completo do desenvolvimento e funcionalidades | Gestão de Projeto           |
-| [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) | Lista detalhada de funcionalidades já implementadas  | Desenvolvimento  |
-| [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md)                     | Problemas conhecidos e suas soluções          | Suporte Técnico  |
+| [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) | Lista detalhada de funcionalidades já implementadas  | Desenvolvimento   |
+| [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md)                     | Problemas conhecidos e suas soluções                 | Suporte Técnico           |
 |----------------------------------------------------------------------|------------------------------------------------------|------------------|
 ```
 
