@@ -1,6 +1,7 @@
 package com.caracore.cca.controller;
 
 import com.caracore.cca.config.PacienteTestConfig;
+import com.caracore.cca.config.SecurityTestConfig;
 import com.caracore.cca.config.TestConfig;
 import com.caracore.cca.model.Paciente;
 import com.caracore.cca.repository.PacienteRepository;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -34,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(PacienteController.class)
-@Import({TestConfig.class, PacienteTestConfig.class})
+@Import({TestConfig.class, PacienteTestConfig.class, SecurityTestConfig.class})
+@ActiveProfiles("test")
 public class PacienteControllerTest {
 
     @Autowired
