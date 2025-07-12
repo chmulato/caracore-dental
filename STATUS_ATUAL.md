@@ -1,8 +1,8 @@
 # Status de Desenvolvimento - Sistema de Agendamento Cara Core
 
-**Data do Relatório:** 11 de Julho de 2025
-**Hora do Relatório:** 13:25
-**Versão Atual:** 0.0.1-SNAPSHOT
+**Data do Relatório:** 12 de Julho de 2025
+**Hora do Relatório:** 16:30
+**Versão Atual:** 0.1.0-SNAPSHOTPRONTUARIO_MEDICO
 **Equipe Responsável:** Cara Core Informática
 
 ## 1. Resumo Executivo
@@ -25,10 +25,10 @@ O sistema de agendamento Cara Core (CCA) alcançou um marco importante no desenv
 
 ### 2.2 Problemas Críticos Resolvidos Hoje
 
-- ✅ **Template Thymeleaf:** Correção de expressões SpEL incorretas em `consultas/lista.html` e `consultas/dashboard.html`
-- ✅ **Navegação Dashboard:** Endpoint `/consultas/dashboard` totalmente funcional
-- ✅ **Configuração de Perfil:** Aplicação rodando corretamente no perfil "local"
-- ✅ **Migrations Flyway:** Correção de compatibilidade PostgreSQL em V10__consolidar_estrutura_banco.sql
+- ✅ **Testes de Segurança:** Correção dos testes unitários do ProntuarioController
+- ✅ **Status HTTP:** Resolução do problema de status HTTP incorretos em `/prontuarios/imagem/{id}`
+- ✅ **Tratamento de Erros:** Implementação padronizada de códigos de resposta HTTP
+- ✅ **Controle de Acesso:** Correção do comportamento de negação de acesso entre dentistas
 
 ### 2.3 Infraestrutura de Desenvolvimento
 
@@ -43,6 +43,7 @@ O sistema de agendamento Cara Core (CCA) alcançou um marco importante no desenv
 - ✅ `UsuarioControllerTest` - 16/16 testes passando
 - ✅ `AgendamentoPublicoControllerTest` - 23/23 testes passando
 - ✅ `DashboardControllerTest` - Configurado com @ActiveProfiles("test")
+- ✅ `ProntuarioControllerSecurityTest` - 8/8 testes passando
 
 ### 3.2 Configuração de Testes
 
@@ -116,6 +117,7 @@ O sistema de agendamento Cara Core (CCA) alcançou um marco importante no desenv
 - ✅ **Configuração de Banco:** PostgreSQL estável em desenvolvimento
 - ✅ **Navegação:** Todos os links entre páginas funcionais
 - ✅ **Autenticação:** Spring Security configurado corretamente
+- ✅ **Segurança ProntuárioController:** Status de erro padronizados e testes corrigidos
 
 ### 6.2 Riscos Atuais em Monitoramento
 
@@ -145,6 +147,7 @@ O Sistema de Agendamento Cara Core atingiu um ponto de estabilidade significativ
 - Implementação de funcionalidades avançadas (WhatsApp, relatórios)
 - Preparação para ambiente de homologação
 - Otimização de performance e UX
+- Padronização completa dos códigos de status HTTP em todos os controladores
 
 ### 7.3 Status Geral
 
@@ -153,4 +156,4 @@ O Sistema de Agendamento Cara Core atingiu um ponto de estabilidade significativ
 ---
 
 **Documento gerado por:** Equipe de Desenvolvimento Cara Core Informática  
-**Última atualização:** 11/07/2025 às 13:25
+**Última atualização:** 12/07/2025 às 16:30
