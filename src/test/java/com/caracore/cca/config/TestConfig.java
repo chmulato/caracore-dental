@@ -2,6 +2,7 @@ package com.caracore.cca.config;
 
 import com.caracore.cca.util.UserActivityLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -49,12 +50,13 @@ public class TestConfig implements WebMvcConfigurer {
     }
     
     /**
-     * Fornece um ObjectMapper para testes para evitar problemas de configuração
-     * durante a inicialização do contexto Spring
+     * Cria uma instância de ObjectMapper para uso em testes
+     * Configurado para lidar corretamente com datas e horas
      */
     @Bean
-    @Primary
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
     }
 }
