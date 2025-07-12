@@ -162,6 +162,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 2. **Arquitetura:** [tech/tecnologia.md](tech/tecnologia.md) - Compreensão do stack tecnológico  
 3. **Requisitos:** [tech/requisitos.md](tech/requisitos.md) - Especificações funcionais
 4. **Status Atual:** [STATUS_ATUAL.md](../STATUS_ATUAL.md) - Estado atual do desenvolvimento
+5. **Sistema Prontuário:** [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md) - Funcionalidade implementada
+6. **Testes:** [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md) - Validação de qualidade
 
 ### Gestor de Projeto/Product Owner
 
@@ -189,6 +191,36 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 2. **APIs:** [SWAGGER_README.md](SWAGGER_README.md) - Documentação de interfaces
 3. **Segurança:** [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) - Políticas de segurança
 4. **Integrações:** [tech/whatsapp_integracao.md](tech/whatsapp_integracao.md) - Sistemas externos
+
+---
+
+## Desenvolvimento e Testes
+
+### Qualidade de Código e Validação
+
+```markdown
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+| Documento                                                                | Descrição                                   | Cobertura            |
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário  | 100% (42/42 testes)  |
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+```
+
+---
+
+## Sistema de Prontuário Médico
+
+### Funcionalidades Implementadas
+
+```markdown
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+| Documento                                                                | Descrição                                   | Status               |
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+| [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de gestão de prontuários  | Implementado         |
+| [PRONTUARIO_DOCUMENTACAO.md](PRONTUARIO_DOCUMENTACAO.md)                 | Documentação organizacional do sistema     | Completo             |
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Relatório completo dos testes unitários    | Implementado (100%)  |
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+```
 
 ---
 
@@ -224,8 +256,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 **Sistema:** Agendamento para Consultórios Odontológicos  
 **Tecnologia Principal:** Spring Boot 3.2.6 + Java 17  
 **Banco de Dados:** PostgreSQL 16.9  
-**Versão da Documentação:** 2.0  
-**Última Atualização:** 11/07/2025
+**Versão da Documentação:** 2.1  
+**Última Atualização:** 12/07/2025
 
 ---
 
