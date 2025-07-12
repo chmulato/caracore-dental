@@ -40,7 +40,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    locations: classpath:db/h2-migration
+    locations: classpath:db/migration/h2
     validate-on-migrate: false
   
   # Habilitar inicialização SQL para H2
