@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Primary;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * Registra informações detalhadas e redireciona para a página de acesso negado.
  */
 @Component
+@Primary
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
