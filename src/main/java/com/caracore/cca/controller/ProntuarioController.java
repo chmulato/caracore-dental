@@ -120,7 +120,19 @@ public class ProntuarioController {
                 logger.info("Encontrados {} prontuários para dentista ID: {}", prontuarios.size(), dentista.getId());
             }
             
+            // Calcular estatísticas de forma segura para evitar problemas de lazy loading
+            int totalImagens = 0;
+            int totalTratamentos = 0;
+            
+            for (Prontuario prontuario : prontuarios) {
+                // Usamos o método para buscar imagens que já existe no serviço, que faz o carregamento adequado
+                totalImagens += prontuarioService.buscarImagensProntuario(prontuario.getId()).size();
+                totalTratamentos += prontuarioService.buscarRegistrosTratamento(prontuario.getId()).size();
+            }
+            
             model.addAttribute("prontuarios", prontuarios);
+            model.addAttribute("totalImagens", totalImagens);
+            model.addAttribute("totalTratamentos", totalTratamentos);
             return VIEW_MEUS_PRONTUARIOS;
         } catch (Exception e) {
             logger.error("Erro ao listar prontuários para dentista: {}", principal.getName(), e);

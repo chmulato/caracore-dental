@@ -86,11 +86,11 @@
                 <div class="text-muted">Prontuários Ativos</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" th:text="${prontuarios.size() > 0 ? #aggregates.sum(prontuarios.![imagensRadiologicas.size()]) : 0}">0</div>
+                <div class="stat-number" th:text="${totalImagens ?: 0}">0</div>
                 <div class="text-muted">Imagens Radiológicas</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" th:text="${prontuarios.size() > 0 ? #aggregates.sum(prontuarios.![registrosTratamentos.size()]) : 0}">0</div>
+                <div class="stat-number" th:text="${totalTratamentos ?: 0}">0</div>
                 <div class="text-muted">Tratamentos Registrados</div>
             </div>
         </div>

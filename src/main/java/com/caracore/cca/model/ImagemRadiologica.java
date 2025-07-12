@@ -30,7 +30,7 @@ public class ImagemRadiologica {
     private String descricao;
 
     @Lob
-    @Column(name = "imagem_base64", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "imagem_base64", nullable = false, columnDefinition = "TEXT")
     private String imagemBase64;
 
     @Column(name = "formato_arquivo", nullable = false, length = 10)
