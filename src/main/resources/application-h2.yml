@@ -36,12 +36,10 @@ spring:
       settings:
         web-allow-others: false  # Change to true if you want remote access
   
-  # Para o H2, usamos o Flyway com localização específica
+  # Para o H2, desabilitamos o Flyway completamente
   flyway:
     enabled: false  # Desativando o Flyway para ambiente H2 para evitar conflitos
-    locations: classpath:db/migration/h2
-    baseline-on-migrate: true
-    validate-on-migrate: false
+    # Nenhuma outra configuração necessária já que está desabilitado
     
   # Desabilitar inicialização SQL para H2 (evitar conflito com InitService)
   sql:
