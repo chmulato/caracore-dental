@@ -240,6 +240,14 @@ public class ProntuarioService {
     public List<Prontuario> buscarProntuariosPorDentista(Long dentistaId) {
         return prontuarioRepository.findByDentistaIdOrderByDataUltimaAtualizacaoDesc(dentistaId);
     }
+    
+    /**
+     * Busca todos os prontuários do sistema
+     * Método para uso exclusivo de administradores
+     */
+    public List<Prontuario> buscarTodosProntuarios() {
+        return prontuarioRepository.findAll();
+    }
 
     /**
      * Calcula estatísticas do prontuário

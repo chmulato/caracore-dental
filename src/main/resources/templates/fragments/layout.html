@@ -75,6 +75,11 @@
                             <i class="bi bi-hospital me-1"></i> Dentistas
                         </a>
                     </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_DENTIST')">
+                        <a class="nav-link" th:classappend="${activeLink == 'prontuarios'} ? 'active' : ''" href="/prontuarios">
+                            <i class="bi bi-file-medical me-1"></i> Prontuários
+                        </a>
+                    </li>
                 </ul>
                 <div class="navbar-nav align-items-center">
                     <span class="nav-link text-light me-3" sec:authorize="isAuthenticated()">

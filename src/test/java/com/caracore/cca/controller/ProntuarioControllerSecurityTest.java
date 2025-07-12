@@ -208,14 +208,15 @@ class ProntuarioControllerSecurityTest {
         @DisplayName("Deve tratar erro quando paciente não existe")
         @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
         void deveTratarErroQuandoPacienteNaoExiste() throws Exception {
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
+            // Quando o paciente não existe, o controller retorna antes de chamar dentistaService.buscarPorEmail()
+            // Então não precisamos mockar esse método aqui
             when(pacienteService.buscarPorId(anyLong())).thenReturn(Optional.empty());
 
             mockMvc.perform(get("/prontuarios/paciente/999"))
                     .andExpect(status().isInternalServerError())
                     .andDo(print());
 
-            verify(dentistaService).buscarPorEmail("carlos@dentista.com");
+            // Não verificamos dentistaService.buscarPorEmail() porque não é chamado neste cenário
             verify(pacienteService).buscarPorId(999L);
         }
 

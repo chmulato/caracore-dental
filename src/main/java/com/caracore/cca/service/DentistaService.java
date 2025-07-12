@@ -23,6 +23,10 @@ public class DentistaService {
     public List<Dentista> listarTodos() {
         return dentistaRepository.findAll();
     }
+    
+    public List<Dentista> buscarTodosDentistas() {
+        return dentistaRepository.findAll();
+    }
 
     public List<Dentista> listarAtivos() {
         return dentistaRepository.findByAtivoTrue();

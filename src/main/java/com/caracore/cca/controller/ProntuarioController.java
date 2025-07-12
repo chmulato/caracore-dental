@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -89,19 +91,34 @@ public class ProntuarioController {
      */
     @GetMapping
     public String listarProntuarios(Model model, Principal principal, HttpServletResponse response) {
-        logger.info("Listando prontuários para dentista: {}", principal.getName());
+        String userEmail = principal.getName();
+        logger.info("Listando prontuários para usuário: {}", userEmail);
         
         try {
-            Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
-            if (dentistaOpt.isEmpty()) {
-                logger.warn("Dentista não encontrado para email: {}", principal.getName());
-                return "redirect:/acesso-negado";
+            // Verificar se o usuário tem a role ADMIN
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            
+            List<Prontuario> prontuarios;
+            
+            if (isAdmin) {
+                // Administradores veem todos os prontuários
+                logger.info("Usuário admin {} - carregando todos os prontuários", userEmail);
+                prontuarios = prontuarioService.buscarTodosProntuarios();
+                model.addAttribute("isAdmin", true);
+            } else {
+                // Dentistas veem apenas seus próprios prontuários
+                Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(userEmail);
+                if (dentistaOpt.isEmpty()) {
+                    logger.warn("Dentista não encontrado para email: {}", userEmail);
+                    return "redirect:/acesso-negado";
+                }
+                
+                Dentista dentista = dentistaOpt.get();
+                prontuarios = prontuarioService.buscarProntuariosPorDentista(dentista.getId());
+                logger.info("Encontrados {} prontuários para dentista ID: {}", prontuarios.size(), dentista.getId());
             }
-            
-            Dentista dentista = dentistaOpt.get();
-            List<Prontuario> prontuarios = prontuarioService.buscarProntuariosPorDentista(dentista.getId());
-            
-            logger.info("Encontrados {} prontuários para dentista ID: {}", prontuarios.size(), dentista.getId());
             
             model.addAttribute("prontuarios", prontuarios);
             return VIEW_MEUS_PRONTUARIOS;
@@ -123,15 +140,13 @@ public class ProntuarioController {
      */
     @GetMapping("/paciente/{id}")
     public String visualizarProntuario(@PathVariable Long id, Model model, Principal principal, HttpServletResponse response) {
-        logger.info("Visualizando prontuário do paciente ID: {} para dentista: {}", id, principal.getName());
+        String userEmail = principal.getName();
+        logger.info("Visualizando prontuário do paciente ID: {} para usuário: {}", id, userEmail);
         
-        Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
-        if (dentistaOpt.isEmpty()) {
-            logger.warn("Dentista não encontrado para email: {}", principal.getName());
-            model.addAttribute("erro", ERRO_DENTISTA_NAO_ENCONTRADO);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return VIEW_ERROR;
-        }
+        // Verificar se o usuário tem a role ADMIN
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         
         Optional<Paciente> pacienteOpt = pacienteService.buscarPorId(id);
         if (pacienteOpt.isEmpty()) {
@@ -141,8 +156,33 @@ public class ProntuarioController {
             return VIEW_ERROR;
         }
         
-        Dentista dentista = dentistaOpt.get();
         Paciente paciente = pacienteOpt.get();
+        Dentista dentista;
+        
+        if (isAdmin) {
+            // Administradores podem ver prontuários de qualquer dentista
+            // Para admins, usamos o primeiro dentista disponível para criar prontuário se necessário
+            dentista = dentistaService.buscarTodosDentistas().stream().findFirst()
+                    .orElseThrow(() -> {
+                        logger.error("Nenhum dentista encontrado no sistema para criar prontuário");
+                        model.addAttribute("erro", "Não há dentistas no sistema para criar prontuário");
+                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        return new RuntimeException("Nenhum dentista encontrado");
+                    });
+            
+            model.addAttribute("isAdmin", true);
+            logger.info("Admin {} visualizando prontuário do paciente ID: {}", userEmail, id);
+        } else {
+            // Dentistas só podem ver seus próprios prontuários
+            Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(userEmail);
+            if (dentistaOpt.isEmpty()) {
+                logger.warn("Dentista não encontrado para email: {}", userEmail);
+                model.addAttribute("erro", ERRO_DENTISTA_NAO_ENCONTRADO);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return VIEW_ERROR;
+            }
+            dentista = dentistaOpt.get();
+        }
         
         try {
             Prontuario prontuario = prontuarioService.buscarOuCriarProntuario(id, dentista.getId());

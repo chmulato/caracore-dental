@@ -22,6 +22,15 @@ server:
 
 # Configurações do Spring
 spring:
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java,src/main/resources/templates
+      exclude: static/**,public/**
+    livereload:
+      enabled: true
+      port: 35729
+  
   datasource:
     url: jdbc:postgresql://localhost:5432/cca_db?useUnicode=true&characterEncoding=UTF-8
     username: cca_user
