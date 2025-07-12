@@ -36,6 +36,10 @@ public class DentistaService {
         return dentistaRepository.findById(id);
     }
 
+    public Optional<Dentista> buscarPorEmail(String email) {
+        return dentistaRepository.findByEmail(email);
+    }
+
     public List<Dentista> buscarPorTermo(String termo) {
         if (termo == null || termo.trim().isEmpty()) {
             return listarTodos();

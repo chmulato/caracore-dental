@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Imagem | CCA</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+        }
+        
+        .image-viewer {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .image-container {
+            max-width: 95vw;
+            max-height: 90vh;
+            position: relative;
+        }
+        
+        .main-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        .image-controls {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 25px;
+            padding: 10px 20px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .image-info {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 15px 25px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            max-width: 90vw;
+            text-align: center;
+        }
+        
+        .zoom-controls {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 25px;
+            padding: 10px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn-viewer {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-viewer:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .image-zoomable {
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+        
+        .image-zoomable.zoomed {
+            cursor: zoom-out;
+        }
+        
+        @media (max-width: 768px) {
+            .image-controls, .image-info, .zoom-controls {
+                position: relative;
+                transform: none;
+                margin: 10px auto;
+            }
+            
+            .zoom-controls {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="image-viewer">
+        <!-- Controles Superiores -->
+        <div class="image-controls">
+            <div class="btn-group" role="group">
+                <a th:href="@{/prontuarios/paciente/{id}(id=${paciente.id})}" 
+                   class="btn btn-viewer btn-sm">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar ao Prontuário
+                </a>
+                
+                <button type="button" class="btn btn-viewer btn-sm" onclick="toggleFullscreen()" 
+                        title="Alternar tela cheia" aria-label="Alternar tela cheia">
+                    <i class="bi bi-fullscreen" id="fullscreenIcon"></i>
+                </button>
+                
+                <button type="button" class="btn btn-viewer btn-sm" onclick="downloadImage()">
+                    <i class="bi bi-download me-2"></i>Baixar
+                </button>
+            </div>
+        </div>
+
+        <!-- Controles de Zoom -->
+        <div class="zoom-controls">
+            <button type="button" class="btn btn-viewer btn-sm" onclick="zoomIn()" 
+                    title="Ampliar imagem" aria-label="Ampliar imagem">
+                <i class="bi bi-zoom-in"></i>
+            </button>
+            <button type="button" class="btn btn-viewer btn-sm" onclick="resetZoom()" 
+                    title="Tamanho original" aria-label="Restaurar tamanho original">
+                <i class="bi bi-aspect-ratio"></i>
+            </button>
+            <button type="button" class="btn btn-viewer btn-sm" onclick="zoomOut()" 
+                    title="Reduzir imagem" aria-label="Reduzir imagem">
+                <i class="bi bi-zoom-out"></i>
+            </button>
+            <button type="button" class="btn btn-viewer btn-sm" onclick="rotateImage()" 
+                    title="Rotacionar imagem" aria-label="Rotacionar imagem 90 graus">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+
+        <!-- Imagem Principal -->
+        <div class="image-container">
+            <img th:src="${imagem.dataUrl}" 
+                 th:alt="${imagem.nomeArquivo}"
+                 th:title="${imagem.tipoImagem + ' - ' + imagem.nomeArquivo}"
+                 class="main-image image-zoomable"
+                 id="mainImage"
+                 ondragstart="return false;"
+                 oncontextmenu="return false;">
+        </div>
+
+        <!-- Informações da Imagem -->
+        <div class="image-info">
+            <h6 class="mb-2" th:text="${imagem.nomeArquivo}">nome_arquivo.jpg</h6>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <small class="text-muted">Tipo:</small><br>
+                    <span th:text="${imagem.tipoImagem}">Radiografia Panorâmica</span>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">Tamanho:</small><br>
+                    <span th:text="${imagem.tamanhoFormatado}">1.2 MB</span>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">Data Upload:</small><br>
+                    <span th:text="${#temporals.format(imagem.dataUpload, 'dd/MM/yyyy')}">01/01/2024</span>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">Dentista:</small><br>
+                    <span th:text="${imagem.dentista.nome}">Dr. Nome</span>
+                </div>
+            </div>
+            <div class="mt-2" th:if="${imagem.descricao}">
+                <small class="text-muted">Descrição:</small><br>
+                <span th:text="${imagem.descricao}">Descrição da imagem</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentZoom = 1;
+        let currentRotation = 0;
+        const image = document.getElementById('mainImage');
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+
+        // Zoom functions
+        function zoomIn() {
+            currentZoom *= 1.2;
+            updateImageTransform();
+            image.classList.add('zoomed');
+        }
+
+        function zoomOut() {
+            currentZoom /= 1.2;
+            updateImageTransform();
+            if (currentZoom <= 1) {
+                image.classList.remove('zoomed');
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            currentRotation = 0;
+            translateX = 0;
+            translateY = 0;
+            updateImageTransform();
+            image.classList.remove('zoomed');
+        }
+
+        function rotateImage() {
+            currentRotation += 90;
+            if (currentRotation >= 360) currentRotation = 0;
+            updateImageTransform();
+        }
+
+        function updateImageTransform() {
+            image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom}) rotate(${currentRotation}deg)`;
+        }
+
+        // Click to zoom
+        image.addEventListener('click', function(e) {
+            if (currentZoom === 1) {
+                zoomIn();
+            } else {
+                resetZoom();
+            }
+        });
+
+        // Drag functionality for zoomed image
+        image.addEventListener('mousedown', function(e) {
+            if (currentZoom > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                image.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging && currentZoom > 1) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateImageTransform();
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                image.style.cursor = currentZoom > 1 ? 'zoom-out' : 'zoom-in';
+            }
+        });
+
+        // Wheel zoom
+        image.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            if (e.deltaY > 0) {
+                zoomOut();
+            } else {
+                zoomIn();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'Escape':
+                    history.back();
+                    break;
+                case '=':
+                case '+':
+                    zoomIn();
+                    break;
+                case '-':
+                    zoomOut();
+                    break;
+                case '0':
+                    resetZoom();
+                    break;
+                case 'r':
+                case 'R':
+                    rotateImage();
+                    break;
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+            }
+        });
+
+        // Fullscreen
+        function toggleFullscreen() {
+            const fullscreenIcon = document.getElementById('fullscreenIcon');
+            
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    fullscreenIcon.className = 'bi bi-fullscreen-exit';
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    fullscreenIcon.className = 'bi bi-fullscreen';
+                });
+            }
+        }
+
+        // Download image
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = image.src;
+            link.download = /*[[${imagem.nomeArquivo}]]*/ 'imagem.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Touch support for mobile
+        let touchStartDistance = 0;
+        let touchStartZoom = 1;
+
+        image.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                touchStartDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                touchStartZoom = currentZoom;
+            }
+        });
+
+        image.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const touchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                
+                currentZoom = touchStartZoom * (touchDistance / touchStartDistance);
+                currentZoom = Math.max(0.5, Math.min(currentZoom, 5));
+                updateImageTransform();
+                
+                if (currentZoom > 1) {
+                    image.classList.add('zoomed');
+                } else {
+                    image.classList.remove('zoomed');
+                }
+            }
+        });
+
+        // Instructions
+        window.addEventListener('load', function() {
+            if (window.innerWidth > 768) {
+                setTimeout(() => {
+                    alert('Dicas de navegação:\n' +
+                          '• Clique na imagem para ampliar/reduzir\n' +
+                          '• Use a roda do mouse para zoom\n' +
+                          '• Arraste a imagem quando ampliada\n' +
+                          '• Teclas: +/- (zoom), 0 (reset), R (rotacionar), F (tela cheia), ESC (voltar)');
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

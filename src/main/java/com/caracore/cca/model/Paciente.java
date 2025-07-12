@@ -42,6 +42,9 @@ public class Paciente {
     @Column(name = "data_consentimento")
     private java.time.LocalDateTime dataConsentimento; // Data/hora do envio do consentimento
 
+    @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Prontuario prontuario;
+
     public Paciente() {
     }
 
@@ -140,6 +143,14 @@ public class Paciente {
 
     public void setDataConsentimento(java.time.LocalDateTime dataConsentimento) {
         this.dataConsentimento = dataConsentimento;
+    }
+
+    public Prontuario getProntuario() {
+        return prontuario;
+    }
+
+    public void setProntuario(Prontuario prontuario) {
+        this.prontuario = prontuario;
     }
 
     @Override

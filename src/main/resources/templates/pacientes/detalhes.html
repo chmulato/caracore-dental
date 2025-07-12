@@ -200,25 +200,59 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Histórico</h5>
+                            <div class="card-header bg-success bg-opacity-10">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-clipboard-heart text-success me-2"></i>
+                                    Prontuário Odontológico
+                                </h5>
                             </div>
                             <div class="card-body">
-                                <p>Informações sobre o histórico do paciente serão exibidas aqui em uma versão futura.</p>
+                                <p class="mb-3">
+                                    <i class="bi bi-info-circle text-info me-2"></i>
+                                    Acesse o prontuário completo com histórico médico, imagens radiológicas e tratamentos.
+                                </p>
+                                
+                                <div class="d-grid gap-2">
+                                    <a th:href="@{/prontuarios/paciente/{id}(id=${paciente.id})}" 
+                                       class="btn btn-success" 
+                                       sec:authorize="hasAnyRole('ADMIN', 'DENTIST')">
+                                        <i class="bi bi-clipboard-data me-2"></i>
+                                        Visualizar Prontuário Completo
+                                    </a>
+                                    
+                                    <a th:href="@{/prontuarios/paciente/{id}(id=${paciente.id})}" 
+                                       class="btn btn-outline-success" 
+                                       sec:authorize="hasRole('RECEPTIONIST')">
+                                        <i class="bi bi-eye me-2"></i>
+                                        Visualizar Prontuário (Somente Leitura)
+                                    </a>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-shield-lock me-1"></i>
+                                        Informações protegidas pela LGPD
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">Agendamentos</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>Os agendamentos deste paciente serão exibidos aqui em uma versão futura.</p>
-                        <a th:href="@{/novo-agendamento}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-calendar-plus"></i> Novo Agendamento
-                        </a>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-primary bg-opacity-10">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                                    Agendamentos Recentes
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Os agendamentos recentes deste paciente serão exibidos aqui.</p>
+                                <a th:href="@{/novo-agendamento}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-calendar-plus"></i> Novo Agendamento
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

@@ -1,6 +1,7 @@
 package com.caracore.cca.config;
 
 import com.caracore.cca.util.UserActivityLogger;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -45,5 +46,15 @@ public class TestConfig implements WebMvcConfigurer {
     @Primary
     public AccessDeniedHandler accessDeniedHandler() {
         return new TestAccessDeniedHandler();
+    }
+    
+    /**
+     * Fornece um ObjectMapper para testes para evitar problemas de configuração
+     * durante a inicialização do contexto Spring
+     */
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

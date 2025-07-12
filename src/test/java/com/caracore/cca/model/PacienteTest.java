@@ -393,9 +393,126 @@ class PacienteTest {
 
         // Quando
         int idadeEsperada = java.time.Period.between(dataNascimento, java.time.LocalDate.now()).getYears();
-        Integer idadeCalculada = paciente.getIdade(); // Supondo que existe getIdade()
+        Integer idadeCalculada = paciente.getIdade();
 
         // Então
         assertThat(idadeCalculada).isEqualTo(idadeEsperada);
+        assertThat(idadeCalculada).isNotNull();
+        assertThat(idadeCalculada).isGreaterThanOrEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Deve retornar null quando data de nascimento for null")
+    void deveRetornarNullQuandoDataNascimentoForNull() {
+        // Dado
+        Paciente paciente = new Paciente("João Silva", "joao@teste.com", "(11) 98765-4321");
+        paciente.setDataNascimento(null);
+
+        // Quando
+        Integer idade = paciente.getIdade();
+
+        // Então
+        assertThat(idade).isNull();
+    }
+
+    @Test
+    @DisplayName("Deve calcular idade zero para recém-nascido")
+    void deveCalcularIdadeZeroParaRecemNascido() {
+        // Dado
+        Paciente paciente = new Paciente("Bebê Silva", "bebe@teste.com", "(11) 98765-4321");
+        java.time.LocalDate hoje = java.time.LocalDate.now();
+        paciente.setDataNascimento(hoje);
+
+        // Quando
+        Integer idade = paciente.getIdade();
+
+        // Então
+        assertThat(idade).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Deve calcular idade para data de nascimento no futuro próximo")
+    void deveCalcularIdadeParaDataNascimentoFuturoProximo() {
+        // Dado
+        Paciente paciente = new Paciente("Futuro Silva", "futuro@teste.com", "(11) 98765-4321");
+        java.time.LocalDate amanha = java.time.LocalDate.now().plusDays(1);
+        paciente.setDataNascimento(amanha);
+
+        // Quando
+        Integer idade = paciente.getIdade();
+
+        // Então
+        // Idade deve ser negativa ou zero, dependendo da implementação
+        assertThat(idade).isNotNull();
+        assertThat(idade).isLessThanOrEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Deve calcular idade para paciente centenário")
+    void deveCalcularIdadeParaPacienteCentenario() {
+        // Dado
+        Paciente paciente = new Paciente("Centenário Silva", "centenario@teste.com", "(11) 98765-4321");
+        java.time.LocalDate dataHa100Anos = java.time.LocalDate.now().minusYears(100);
+        paciente.setDataNascimento(dataHa100Anos);
+
+        // Quando
+        Integer idade = paciente.getIdade();
+
+        // Então
+        assertThat(idade).isEqualTo(100);
+    }
+
+    @Test
+    @DisplayName("Deve calcular idade considerando anos bissextos")
+    void deveCalcularIdadeConsiderandoAnosBissextos() {
+        // Dado - nascido em 29 de fevereiro de um ano bissexto
+        Paciente paciente = new Paciente("Bissexto Silva", "bissexto@teste.com", "(11) 98765-4321");
+        java.time.LocalDate dataNascimento = java.time.LocalDate.of(2000, 2, 29); // 29 de fevereiro de 2000
+        paciente.setDataNascimento(dataNascimento);
+
+        // Quando
+        Integer idade = paciente.getIdade();
+
+        // Então
+        int idadeEsperada = java.time.Period.between(dataNascimento, java.time.LocalDate.now()).getYears();
+        assertThat(idade).isEqualTo(idadeEsperada);
+        assertThat(idade).isGreaterThan(20); // Nascido em 2000, deve ter mais de 20 anos
+    }
+
+    @Test
+    @DisplayName("Deve permitir definir e obter data de nascimento")
+    void devePermitirDefinirEObterDataNascimento() {
+        // Dado
+        Paciente paciente = new Paciente("Teste Data", "data@teste.com", "(11) 98765-4321");
+        java.time.LocalDate dataNascimento = java.time.LocalDate.of(1985, 12, 25);
+
+        // Quando
+        paciente.setDataNascimento(dataNascimento);
+
+        // Então
+        assertThat(paciente.getDataNascimento()).isEqualTo(dataNascimento);
+        assertThat(paciente.getDataNascimento().getYear()).isEqualTo(1985);
+        assertThat(paciente.getDataNascimento().getMonthValue()).isEqualTo(12);
+        assertThat(paciente.getDataNascimento().getDayOfMonth()).isEqualTo(25);
+    }
+
+    @Test
+    @DisplayName("Deve permitir alterar data de nascimento")
+    void devePermitirAlterarDataNascimento() {
+        // Dado
+        Paciente paciente = new Paciente("Altera Data", "altera@teste.com", "(11) 98765-4321");
+        java.time.LocalDate dataOriginal = java.time.LocalDate.of(1990, 1, 1);
+        java.time.LocalDate novaData = java.time.LocalDate.of(1995, 6, 15);
+
+        // Quando - definir data inicial
+        paciente.setDataNascimento(dataOriginal);
+        assertThat(paciente.getDataNascimento()).isEqualTo(dataOriginal);
+
+        // Quando - alterar data
+        paciente.setDataNascimento(novaData);
+
+        // Então
+        assertThat(paciente.getDataNascimento()).isEqualTo(novaData);
+        assertThat(paciente.getDataNascimento()).isNotEqualTo(dataOriginal);
     }
 }

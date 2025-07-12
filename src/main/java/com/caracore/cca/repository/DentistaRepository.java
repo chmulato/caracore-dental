@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Optional;
 
 @Repository
 public interface DentistaRepository extends JpaRepository<Dentista, Long> {
@@ -18,6 +20,8 @@ public interface DentistaRepository extends JpaRepository<Dentista, Long> {
     List<Dentista> findByNomeContainingIgnoreCase(String nome);
     
     List<Dentista> findByAtivo(boolean ativo);
+
+    Optional<Dentista> findByEmail(String email);
 
     @Query("SELECT d FROM Dentista d WHERE " +
            "LOWER(d.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +

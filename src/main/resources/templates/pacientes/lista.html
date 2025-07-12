@@ -166,16 +166,24 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a th:href="@{/pacientes/{id}(id=${paciente.id})}" class="btn btn-sm btn-outline-info me-1">
+                                    <a th:href="@{/pacientes/{id}(id=${paciente.id})}" class="btn btn-sm btn-outline-info me-1" title="Ver detalhes">
                                         <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/prontuarios/paciente/{id}(id=${paciente.id})}" 
+                                       class="btn btn-sm btn-outline-success me-1" 
+                                       title="Prontuário odontológico"
+                                       sec:authorize="hasAnyRole('ADMIN', 'DENTIST')">
+                                        <i class="bi bi-clipboard-heart"></i>
                                     </a>
                                     <a th:href="@{/pacientes/{id}/editar(id=${paciente.id})}" 
                                        class="btn btn-sm btn-outline-primary me-1"
+                                       title="Editar paciente"
                                        sec:authorize="hasAnyRole('ADMIN', 'RECEPTIONIST')">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <a th:href="@{/pacientes/{id}/excluir(id=${paciente.id})}" 
                                        class="btn btn-sm btn-outline-danger"
+                                       title="Excluir paciente"
                                        onclick="return confirm('Tem certeza que deseja excluir este paciente?');"
                                        sec:authorize="hasRole('ADMIN')">
                                         <i class="bi bi-trash"></i>
