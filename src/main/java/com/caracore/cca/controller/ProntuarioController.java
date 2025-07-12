@@ -374,7 +374,7 @@ public class ProntuarioController {
             // Verificar se o dentista tem acesso à imagem
             if (imagem.getDentista() == null || !imagem.getDentista().getId().equals(dentista.getId())) {
                 logger.warn("Acesso negado à imagem ID: {} para dentista: {}", id, principal.getName());
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 model.addAttribute("erro", ERRO_ACESSO_NEGADO);
                 return VIEW_ERROR;
             }
