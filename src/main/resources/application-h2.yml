@@ -38,16 +38,15 @@ spring:
   
   # Para o H2, usamos o Flyway com localização específica
   flyway:
-    enabled: true
-    baseline-on-migrate: true
+    enabled: false  # Desativando o Flyway para ambiente H2 para evitar conflitos
     locations: classpath:db/migration/h2
+    baseline-on-migrate: true
     validate-on-migrate: false
-  
-  # Habilitar inicialização SQL para H2
+    
+  # Desabilitar inicialização SQL para H2 (evitar conflito com InitService)
   sql:
     init:
-      mode: embedded
-      data-locations: classpath:data-h2.sql
+      mode: never
   
   # JPA/Hibernate configuration para criar as tabelas automaticamente
   jpa:
@@ -77,9 +76,9 @@ logging:
     "[org.hibernate.type.descriptor.sql.BasicBinder]": TRACE
 
 # Application specific settings (based on existing application.yml)
-app:
+cca:
   security:
     jwt:
       secret: ${JWT_SECRET:mySecretKeyH2Development12345678901234567890}
-      expiration-ms: 3600000  # 1 hour
-      refresh-expiration-ms: 86400000  # 24 hours
+      expiration: 3600000  # 1 hour
+      refresh-expiration: 86400000  # 24 hours
