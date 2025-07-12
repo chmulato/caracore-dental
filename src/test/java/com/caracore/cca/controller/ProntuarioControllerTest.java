@@ -434,14 +434,22 @@ class ProntuarioControllerTest {
         void deveValidarTimeoutEmOperacoesDemoradas() throws Exception {
             // Given
             when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
+            when(pacienteService.buscarPorId(anyLong())).thenReturn(Optional.of(paciente));
+            
+            // Simulamos um atraso, mas não uma falha
             when(prontuarioService.buscarOuCriarProntuario(anyLong(), anyLong())).thenAnswer(invocation -> {
                 Thread.sleep(100); // Reduzido para 100ms para não atrasar os testes
                 return prontuario;
             });
+            
+            // Mock para os métodos adicionais necessários
+            when(prontuarioService.buscarImagensProntuario(anyLong())).thenReturn(List.of());
+            when(prontuarioService.buscarRegistrosTratamento(anyLong())).thenReturn(List.of());
 
-            // When & Then - Espera-se que o sistema não ultrapasse o timeout
+            // When & Then - Espera-se que o sistema não ultrapasse o timeout e retorne OK
             mockMvc.perform(get("/prontuarios/paciente/1"))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("prontuarios/visualizar"));
         }
     }
 
