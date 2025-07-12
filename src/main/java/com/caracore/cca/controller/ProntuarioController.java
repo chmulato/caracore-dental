@@ -82,8 +82,7 @@ public class ProntuarioController {
         Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
         if (dentistaOpt.isEmpty()) {
             logger.warn("Dentista não encontrado para email: {}", principal.getName());
-            model.addAttribute("erro", ERRO_DENTISTA_NAO_ENCONTRADO);
-            return VIEW_ERROR;
+            return "redirect:/acesso-negado";
         }
         
         Dentista dentista = dentistaOpt.get();
@@ -354,6 +353,12 @@ public class ProntuarioController {
                 logger.warn("Acesso negado à imagem ID: {} para dentista: {}", id, principal.getName());
                 model.addAttribute("erro", ERRO_ACESSO_NEGADO);
                 return VIEW_ERROR;
+            }
+            
+            // Carregar paciente para a visualização
+            Prontuario prontuario = prontuarioService.buscarOuCriarProntuario(id, dentista.getId());
+            if (prontuario != null && prontuario.getPaciente() != null) {
+                model.addAttribute("paciente", prontuario.getPaciente());
             }
             
             logger.info("Acesso autorizado à imagem ID: {} para dentista: {}", id, principal.getName());

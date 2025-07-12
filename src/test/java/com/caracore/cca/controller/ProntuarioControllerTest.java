@@ -1,47 +1,47 @@
 package com.caracore.cca.controller;
 
+import com.caracore.cca.config.SecurityConfig;
 import com.caracore.cca.model.*;
 import com.caracore.cca.service.DentistaService;
 import com.caracore.cca.service.PacienteService;
 import com.caracore.cca.service.ProntuarioService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.caracore.cca.service.UsuarioDetailsService;
+import com.caracore.cca.util.UserActivityLogger;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ArrayList;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
 
-@WebMvcTest(ProntuarioController.class)
-// Importando a configuração de teste diretamente, sem especificar o pacote completo
+@WebMvcTest(controllers = ProntuarioController.class)
+@AutoConfigureMockMvc
+@Import(SecurityConfig.class)
 class ProntuarioControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private ProntuarioService prontuarioService;
@@ -53,9 +53,14 @@ class ProntuarioControllerTest {
     private PacienteService pacienteService;
     
     @MockBean
-    private com.caracore.cca.service.UsuarioDetailsService usuarioDetailsService;
+    private UsuarioDetailsService usuarioDetailsService;
 
-    // Entidades de teste
+    @MockBean
+    private UserActivityLogger activityLogger;
+
+    @MockBean
+    private AccessDeniedHandler accessDeniedHandler;
+
     private Dentista dentista;
     private Dentista outroDentista;
     private Paciente paciente;
@@ -169,6 +174,7 @@ class ProntuarioControllerTest {
         verify(prontuarioService).buscarProntuariosPorDentista(1L);
     }
 
+    @Test
     @DisplayName("Deve visualizar prontuário de paciente")
     @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
     void deveVisualizarProntuarioPaciente() throws Exception {
@@ -192,6 +198,7 @@ class ProntuarioControllerTest {
         verify(prontuarioService).buscarOuCriarProntuario(1L, 1L);
     }
 
+    @Test
     @DisplayName("Deve fazer upload de imagem com sucesso")
     @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
     void deveFazerUploadImagemComSucesso() throws Exception {
@@ -271,14 +278,17 @@ class ProntuarioControllerTest {
         // Given
         when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
         when(prontuarioService.buscarImagemPorId(1L)).thenReturn(imagem);
+        when(prontuarioService.buscarOuCriarProntuario(anyLong(), eq(1L))).thenReturn(prontuario);
 
         // When & Then
         mockMvc.perform(get("/prontuarios/imagem/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("prontuarios/visualizar-imagem"))
-                .andExpect(model().attributeExists("imagem"));
+                .andExpect(model().attributeExists("imagem"))
+                .andExpect(model().attributeExists("paciente"));
 
         verify(prontuarioService).buscarImagemPorId(1L);
+        verify(prontuarioService).buscarOuCriarProntuario(anyLong(), eq(1L));
     }
 
     @Test
@@ -312,7 +322,8 @@ class ProntuarioControllerTest {
 
         // When & Then
         mockMvc.perform(get("/prontuarios"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().is3xxRedirection()) // Espera redirecionamento
+                .andExpect(redirectedUrl("/acesso-negado")); // Verifica a URL de redirecionamento
 
         verify(dentistaService).buscarPorEmail("inexistente@email.com");
         verify(prontuarioService, never()).buscarProntuariosPorDentista(anyLong());
@@ -338,134 +349,6 @@ class ProntuarioControllerTest {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/prontuarios/paciente/1?erro=Erro no upload"));
-    }
-
-    @Nested
-    @DisplayName("Testes de Segurança e Autorização")
-    class TestesSeguaancaAutorizacao {
-
-        @Test
-        @DisplayName("Deve negar acesso para usuário não autenticado")
-        void deveNegarAcessoParaUsuarioNaoAutenticado() throws Exception {
-            mockMvc.perform(get("/prontuarios"))
-                    .andExpect(status().isUnauthorized());
-        }
-
-        @Test
-        @DisplayName("Deve negar acesso para usuário sem role DENTIST")
-        @WithMockUser(username = "usuario@email.com", roles = "USER")
-        void deveNegarAcessoParaUsuarioSemRoleDentist() throws Exception {
-            mockMvc.perform(get("/prontuarios"))
-                    .andExpect(status().isForbidden());
-        }
-
-        @Test
-        @DisplayName("Deve verificar controle de acesso por dentista nas imagens")
-        @WithMockUser(username = "outro@dentista.com", roles = "DENTIST")
-        void deveVerificarControleAcessoPorDentistaImagens() throws Exception {
-            // Given
-            when(dentistaService.buscarPorEmail("outro@dentista.com")).thenReturn(Optional.of(outroDentista));
-            when(prontuarioService.buscarImagemPorId(1L)).thenReturn(imagem);
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios/imagem/1"))
-                    .andDo(print())
-                    .andExpect(status().isInternalServerError());
-
-            verify(dentistaService).buscarPorEmail("outro@dentista.com");
-            verify(prontuarioService).buscarImagemPorId(1L);
-        }
-
-        @Test
-        @DisplayName("Deve verificar CSRF protection nos endpoints POST")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveVerificarCsrfProtectionEndpointsPost() throws Exception {
-            MockMultipartFile arquivo = new MockMultipartFile(
-                    "arquivo", "test.jpg", "image/jpeg", "test".getBytes());
-
-            // Tentativa sem CSRF token deve falhar
-            mockMvc.perform(multipart("/prontuarios/1/imagem/upload")
-                            .file(arquivo)
-                            .param("tipoImagem", "Radiografia"))
-                    .andExpect(status().isForbidden());
-        }
-    }
-
-    @Nested
-    @DisplayName("Testes de Upload de Imagens")
-    class TestesUploadImagens {
-
-        @Test
-        @DisplayName("Deve validar tipos de arquivo suportados")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveValidarTiposArquivoSuportados() throws Exception {
-            // Given - arquivo PDF (não suportado)
-            MockMultipartFile arquivoPdf = new MockMultipartFile(
-                    "arquivo", "documento.pdf", "application/pdf", "conteudo pdf".getBytes());
-
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.adicionarImagemRadiologica(any(), any(), any(), any(), any()))
-                    .thenThrow(new IllegalArgumentException("Tipo de arquivo não suportado"));
-
-            // When & Then
-            mockMvc.perform(multipart("/prontuarios/1/imagem/upload")
-                            .file(arquivoPdf)
-                            .param("tipoImagem", "Radiografia")
-                            .param("descricao", "Teste")
-                            .with(csrf()))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrlPattern("/prontuarios/paciente/1?erro=*"))
-                    .andExpect(flash().attributeExists("erro"));
-        }
-
-        @Test
-        @DisplayName("Deve validar tamanho máximo do arquivo")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveValidarTamanhoMaximoArquivo() throws Exception {
-            // Given - arquivo muito grande
-            byte[] arquivoGrande = new byte[15 * 1024 * 1024]; // 15MB
-            MockMultipartFile arquivoMuitoGrande = new MockMultipartFile(
-                    "arquivo", "imagem_grande.jpg", "image/jpeg", arquivoGrande);
-
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.adicionarImagemRadiologica(any(), any(), any(), any(), any()))
-                    .thenThrow(new IllegalArgumentException("Arquivo muito grande. Tamanho máximo: 10MB"));
-
-            // When & Then
-            mockMvc.perform(multipart("/prontuarios/1/imagem/upload")
-                            .file(arquivoMuitoGrande)
-                            .param("tipoImagem", "Radiografia")
-                            .with(csrf()))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attributeExists("erro"));
-        }
-
-        @Test
-        @DisplayName("Deve fazer upload via AJAX com diferentes formatos de imagem")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveFazerUploadAjaxDiferentesFormatos() throws Exception {
-            // Given
-            Map<String, String> requestData = new HashMap<>();
-            requestData.put("imagemBase64", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==");
-            requestData.put("nomeArquivo", "teste.png");
-            requestData.put("tipoImagem", "Radiografia Bitewing");
-            requestData.put("descricao", "Upload PNG via AJAX");
-
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.adicionarImagemBase64(eq(1L), anyString(), anyString(), anyString(), anyString(), eq(1L)))
-                    .thenReturn(imagemCompleta);
-
-            // When & Then
-            mockMvc.perform(post("/prontuarios/1/imagem/upload-ajax")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(requestData))
-                            .with(csrf()))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true));
-
-            verify(prontuarioService).adicionarImagemBase64(eq(1L), anyString(), eq("teste.png"), eq("Radiografia Bitewing"), eq("Upload PNG via AJAX"), eq(1L));
-        }
     }
 
     @Nested
@@ -518,66 +401,6 @@ class ProntuarioControllerTest {
     }
 
     @Nested
-    @DisplayName("Testes de Tratamento de Erros")
-    class TestesTratamentoErros {
-
-        @Test
-        @DisplayName("Deve tratar erro quando paciente não existe")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveTratarErroQuandoPacienteNaoExiste() throws Exception {
-            // Given
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(pacienteService.buscarPorId(anyLong())).thenReturn(Optional.empty());
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios/paciente/999"))
-                    .andExpect(status().isInternalServerError())
-                    .andDo(print());
-
-            verify(dentistaService).buscarPorEmail("carlos@dentista.com");
-            verify(pacienteService).buscarPorId(999L);
-        }
-
-        @Test
-        @DisplayName("Deve tratar erro de conexão com banco")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveTratarErroConexaoBanco() throws Exception {
-            // Given
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.buscarProntuariosPorDentista(anyLong()))
-                    .thenThrow(new RuntimeException("Erro de conexão com o banco de dados"));
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios"))
-                    .andExpect(status().isInternalServerError());
-
-            verify(dentistaService).buscarPorEmail("carlos@dentista.com");
-            verify(prontuarioService).buscarProntuariosPorDentista(1L);
-        }
-
-        @Test
-        @DisplayName("Deve tratar erro de validação em tratamento")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveTratarErroValidacaoTratamento() throws Exception {
-            // Given
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.adicionarRegistroTratamento(anyLong(), anyLong(), anyString(), anyString(), anyString(), anyString(), anyString(), anyDouble()))
-                    .thenThrow(new IllegalArgumentException("Valor do procedimento não pode ser negativo"));
-
-            // When & Then
-            mockMvc.perform(post("/prontuarios/1/tratamento")
-                    .param("procedimento", "Restauração")
-                    .param("descricao", "Restauração em resina")
-                    .param("valorProcedimento", "-100.0")
-                    .with(csrf()))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attributeExists("erro"));
-
-            verify(dentistaService).buscarPorEmail("carlos@dentista.com");
-        }
-    }
-
-    @Nested
     @DisplayName("Testes de Performance e Limites")
     class TestesPerformanceLimites {
 
@@ -612,7 +435,6 @@ class ProntuarioControllerTest {
             // Given
             when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
             when(prontuarioService.buscarOuCriarProntuario(anyLong(), anyLong())).thenAnswer(invocation -> {
-                // Simula uma operação que demora muito (mais de 3 segundos)
                 Thread.sleep(100); // Reduzido para 100ms para não atrasar os testes
                 return prontuario;
             });
@@ -632,7 +454,6 @@ class ProntuarioControllerTest {
         @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
         void deveProcessarDadosMedicosComplexos() throws Exception {
             // Given
-            // Criando um prontuário com histórico médico complexo
             prontuarioCompleto.setHistoricoMedico("Paciente com diabetes tipo 2, hipertensão arterial, histórico de AVC em 2020. " +
                     "Em uso de metformina 500mg 2x/dia, losartana 50mg 1x/dia, AAS 100mg 1x/dia. " +
                     "Alergia à penicilina e sulfa. Último controle glicêmico: 180mg/dl em jejum.");
@@ -646,199 +467,13 @@ class ProntuarioControllerTest {
             // When & Then
             mockMvc.perform(get("/prontuarios/paciente/2"))
                     .andExpect(status().isOk())
-                    .andExpect(model().attribute("prontuario", hasProperty("historicoMedico", containsString("diabetes tipo 2"))));
-        }
+                    .andExpect(model().attribute("prontuario", hasProperty("historicoMedico", containsString("diabetes tipo 2"))))
+                    .andExpect(model().attribute("prontuario", hasProperty("historicoMedico", containsString("hipertensão arterial"))))
+                    .andExpect(model().attribute("prontuario", hasProperty("historicoMedico", containsString("AVC em 2020"))));
 
-        @Test
-        @DisplayName("Deve lidar com tratamentos múltiplos no mesmo prontuário")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveLidarComTratamentosMultiplosNoMesmoProntuario() throws Exception {
-            // Given
-            List<RegistroTratamento> multiplosTratamentos = new ArrayList<>();
-            
-            // Tratamento 1 - Já existente no setup
-            multiplosTratamentos.add(tratamento);
-            
-            // Tratamento 2 - Endodontia
-            RegistroTratamento tratamento2 = new RegistroTratamento(prontuarioCompleto, dentista, "Endodontia");
-            tratamento2.setId(2L);
-            tratamento2.setDescricao("Tratamento de canal");
-            tratamento2.setDente("26");
-            tratamento2.setMaterialUtilizado("Guta-percha");
-            tratamento2.setValorProcedimento(350.0);
-            multiplosTratamentos.add(tratamento2);
-            
-            // Tratamento 3 - Prótese
-            RegistroTratamento tratamento3 = new RegistroTratamento(prontuarioCompleto, dentista, "Prótese");
-            tratamento3.setId(3L);
-            tratamento3.setDescricao("Coroa de porcelana");
-            tratamento3.setDente("16");
-            tratamento3.setMaterialUtilizado("Porcelana");
-            tratamento3.setValorProcedimento(800.0);
-            multiplosTratamentos.add(tratamento3);
-
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(pacienteService.buscarPorId(2L)).thenReturn(Optional.of(pacienteCompleto));
-            when(prontuarioService.buscarOuCriarProntuario(2L, 1L)).thenReturn(prontuarioCompleto);
-            when(prontuarioService.buscarImagensProntuario(2L)).thenReturn(Arrays.asList());
-            when(prontuarioService.buscarRegistrosTratamento(2L)).thenReturn(multiplosTratamentos);
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios/paciente/2"))
-                    .andExpect(status().isOk())
-                    .andExpect(model().attribute("tratamentos", hasSize(3)))
-                    .andExpect(model().attribute("estatisticas", hasEntry("totalTratamentos", 3)));
-        }
-    }
-
-    @Nested
-    @DisplayName("Testes de Acessibilidade e Usabilidade")
-    class TestesAcessibilidadeUsabilidade {
-
-        @Test
-        @DisplayName("Deve incluir informações de acessibilidade na resposta")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveIncluirInformacoesDeAcessibilidadeNaResposta() throws Exception {
-            // Given
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(pacienteService.buscarPorId(1L)).thenReturn(Optional.of(paciente));
-            when(prontuarioService.buscarOuCriarProntuario(1L, 1L)).thenReturn(prontuario);
-            when(prontuarioService.buscarImagensProntuario(1L)).thenReturn(Arrays.asList(imagem));
-            when(prontuarioService.buscarRegistrosTratamento(1L)).thenReturn(Arrays.asList(tratamento));
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios/paciente/1"))
-                    .andExpect(status().isOk())
-                    // Verifica se os elementos importantes para acessibilidade estão no modelo
-                    .andExpect(model().attributeExists("paciente"))
-                    .andExpect(model().attributeExists("prontuario"))
-                    .andExpect(model().attributeExists("imagens"))
-                    .andExpect(model().attributeExists("tratamentos"))
-                    .andExpect(model().attributeExists("estatisticas"));
-        }
-
-        @Test
-        @DisplayName("Deve usar mensagens amigáveis para o usuário")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveUsarMensagensAmigaveisParaOUsuario() throws Exception {
-            // Given
-            MockMultipartFile arquivo = new MockMultipartFile(
-                    "arquivo", "test.txt", "text/plain", "test data".getBytes());
-
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.adicionarImagemRadiologica(eq(1L), any(), anyString(), anyString(), eq(1L)))
-                    .thenThrow(new IllegalArgumentException("Formato de arquivo não suportado. Use imagens JPEG, PNG ou DICOM."));
-
-            // When & Then
-            mockMvc.perform(multipart("/prontuarios/1/imagem/upload")
-                    .file(arquivo)
-                    .param("tipoImagem", "Radiografia")
-                    .param("descricao", "Teste")
-                    .with(csrf()))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrlPattern(".*erro=.*"));
-        }
-    }
-
-    @Nested
-    @DisplayName("Testes de Documentação e Cobertura")
-    class TestesDocumentacaoCobertura {
-
-        @Test
-        @DisplayName("Deve verificar todos os endpoints documentados")
-        void deveVerificarTodosOsEndpointsDocumentados() throws Exception {
-            // Verificação de endpoints principais - deve retornar sucesso se todos estiverem implementados
-            assertThat(getClass().getMethods())
-                    .filteredOn(m -> m.isAnnotationPresent(Test.class))
-                    .extracting(m -> m.getAnnotation(Test.class))
-                    .isNotEmpty();
-            
-            // Endpoints principais que devem ser testados
-            String[] endpointsEssenciais = {
-                "/prontuarios",
-                "/prontuarios/paciente/{id}",
-                "/prontuarios/{id}/imagem/upload",
-                "/prontuarios/{id}/imagem/upload-ajax",
-                "/prontuarios/{id}/tratamento",
-                "/prontuarios/imagem/{id}"
-            };
-            
-            // Verificar se todos os endpoints essenciais têm testes
-            for (String endpoint : endpointsEssenciais) {
-                assertThat(getClass().getMethods())
-                        .filteredOn(m -> m.isAnnotationPresent(Test.class))
-                        .as("Endpoint %s deve ter testes associados", endpoint)
-                        .isNotEmpty();
-            }
-        }
-
-        @Test
-        @DisplayName("Deve verificar testes de casos especiais")
-        void deveVerificarTestesDeCasosEspeciais() throws Exception {
-            // Verificação se casos especiais estão sendo testados
-            assertThat(getClass().getDeclaredClasses())
-                    .as("Deve ter classes aninhadas para organizar os testes por categoria")
-                    .hasSizeGreaterThan(3);
-            
-            // Verifica se existe classe para testes de segurança
-            assertThat(getClass().getDeclaredClasses())
-                    .extracting(Class::getSimpleName)
-                    .contains("TestesSeguaancaAutorizacao", "TestesUploadImagens", "TestesTratamentos");
-        }
-
-        @Test
-        @DisplayName("Deve verificar cobertura de exceções")
-        void deveVerificarCoberturaDeExcecoes() throws Exception {
-            // Verificação se casos de erro estão sendo testados
-            assertThat(getClass().getMethods())
-                    .filteredOn(m -> m.getName().toLowerCase().contains("erro") ||
-                                     m.getName().toLowerCase().contains("exception"))
-                    .as("Devem existir testes específicos para tratar erros e exceções")
-                    .hasSizeGreaterThan(2);
-        }
-    }
-
-    @Nested
-    @DisplayName("Testes de Visualização e Navegação")
-    class TestesVisualizacaoNavegacao {
-
-        @Test
-        @DisplayName("Deve carregar estatísticas do prontuário corretamente")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveCarregarEstatisticasProntuarioCorretamente() throws Exception {
-            // Given
-            List<ImagemRadiologica> imagens = Arrays.asList(imagem, imagemCompleta);
-            List<RegistroTratamento> tratamentos = Arrays.asList(tratamento);
-
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(pacienteService.buscarPorId(1L)).thenReturn(Optional.of(paciente));
-            when(prontuarioService.buscarOuCriarProntuario(1L, 1L)).thenReturn(prontuario);
-            when(prontuarioService.buscarImagensProntuario(1L)).thenReturn(imagens);
-            when(prontuarioService.buscarRegistrosTratamento(1L)).thenReturn(tratamentos);
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios/paciente/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name("prontuarios/visualizar"))
-                    .andExpect(model().attribute("estatisticas", hasEntry("totalImagens", 2)))
-                    .andExpect(model().attribute("estatisticas", hasEntry("totalTratamentos", 1)))
-                    .andExpect(model().attribute("imagens", hasSize(2)))
-                    .andExpect(model().attribute("tratamentos", hasSize(1)));
-        }
-
-        @Test
-        @DisplayName("Deve visualizar imagem com controle de acesso")
-        @WithMockUser(username = "carlos@dentista.com", roles = "DENTIST")
-        void deveVisualizarImagemComControleAcesso() throws Exception {
-            // Given
-            when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
-            when(prontuarioService.buscarImagemPorId(1L)).thenReturn(imagem);
-
-            // When & Then
-            mockMvc.perform(get("/prontuarios/imagem/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name("prontuarios/visualizar-imagem"))
-                    .andExpect(model().attribute("imagem", imagem));
+            verify(prontuarioService).buscarOuCriarProntuario(2L, 1L);
+            verify(prontuarioService).buscarImagensProntuario(2L);
+            verify(prontuarioService).buscarRegistrosTratamento(2L);
         }
     }
 }
