@@ -436,20 +436,20 @@ class ProntuarioControllerTest {
             when(dentistaService.buscarPorEmail("carlos@dentista.com")).thenReturn(Optional.of(dentista));
             when(pacienteService.buscarPorId(anyLong())).thenReturn(Optional.of(paciente));
             
-            // Simulamos um atraso, mas não uma falha
+            // Simulamos um atraso que causa timeout e lança exceção
             when(prontuarioService.buscarOuCriarProntuario(anyLong(), anyLong())).thenAnswer(invocation -> {
                 Thread.sleep(100); // Reduzido para 100ms para não atrasar os testes
-                return prontuario;
+                throw new RuntimeException("Timeout simulado na operação");
             });
             
             // Mock para os métodos adicionais necessários
             when(prontuarioService.buscarImagensProntuario(anyLong())).thenReturn(List.of());
             when(prontuarioService.buscarRegistrosTratamento(anyLong())).thenReturn(List.of());
 
-            // When & Then - Espera-se que o sistema não ultrapasse o timeout e retorne OK
+            // When & Then - Espera-se que o sistema retorne erro 500 quando há timeout
             mockMvc.perform(get("/prontuarios/paciente/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name("prontuarios/visualizar"));
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(view().name("error"));
         }
     }
 
