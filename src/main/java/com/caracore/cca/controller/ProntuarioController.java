@@ -88,22 +88,29 @@ public class ProntuarioController {
      * @return Nome da view ou página de erro
      */
     @GetMapping
-    public String listarProntuarios(Model model, Principal principal) {
+    public String listarProntuarios(Model model, Principal principal, HttpServletResponse response) {
         logger.info("Listando prontuários para dentista: {}", principal.getName());
         
-        Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
-        if (dentistaOpt.isEmpty()) {
-            logger.warn("Dentista não encontrado para email: {}", principal.getName());
-            return "redirect:/acesso-negado";
+        try {
+            Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
+            if (dentistaOpt.isEmpty()) {
+                logger.warn("Dentista não encontrado para email: {}", principal.getName());
+                return "redirect:/acesso-negado";
+            }
+            
+            Dentista dentista = dentistaOpt.get();
+            List<Prontuario> prontuarios = prontuarioService.buscarProntuariosPorDentista(dentista.getId());
+            
+            logger.info("Encontrados {} prontuários para dentista ID: {}", prontuarios.size(), dentista.getId());
+            
+            model.addAttribute("prontuarios", prontuarios);
+            return VIEW_MEUS_PRONTUARIOS;
+        } catch (Exception e) {
+            logger.error("Erro ao listar prontuários para dentista: {}", principal.getName(), e);
+            model.addAttribute("erro", "Erro ao carregar prontuários: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return VIEW_ERROR;
         }
-        
-        Dentista dentista = dentistaOpt.get();
-        List<Prontuario> prontuarios = prontuarioService.buscarProntuariosPorDentista(dentista.getId());
-        
-        logger.info("Encontrados {} prontuários para dentista ID: {}", prontuarios.size(), dentista.getId());
-        
-        model.addAttribute("prontuarios", prontuarios);
-        return VIEW_MEUS_PRONTUARIOS;
     }
 
     /**
@@ -115,13 +122,14 @@ public class ProntuarioController {
      * @return Nome da view ou página de erro
      */
     @GetMapping("/paciente/{id}")
-    public String visualizarProntuario(@PathVariable Long id, Model model, Principal principal) {
+    public String visualizarProntuario(@PathVariable Long id, Model model, Principal principal, HttpServletResponse response) {
         logger.info("Visualizando prontuário do paciente ID: {} para dentista: {}", id, principal.getName());
         
         Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
         if (dentistaOpt.isEmpty()) {
             logger.warn("Dentista não encontrado para email: {}", principal.getName());
             model.addAttribute("erro", ERRO_DENTISTA_NAO_ENCONTRADO);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return VIEW_ERROR;
         }
         
@@ -129,6 +137,7 @@ public class ProntuarioController {
         if (pacienteOpt.isEmpty()) {
             logger.warn("Paciente não encontrado para ID: {}", id);
             model.addAttribute("erro", ERRO_PACIENTE_NAO_ENCONTRADO);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return VIEW_ERROR;
         }
         
@@ -157,6 +166,7 @@ public class ProntuarioController {
         } catch (Exception e) {
             logger.error("Erro ao carregar prontuário para paciente ID: {}", id, e);
             model.addAttribute("erro", "Erro ao carregar prontuário: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return VIEW_ERROR;
         }
     }
