@@ -1,15 +1,21 @@
+
 package com.caracore.cca.controller;
 
-import com.caracore.cca.model.Dentista;
-import com.caracore.cca.model.ImagemRadiologica;
-import com.caracore.cca.model.Paciente;
-import com.caracore.cca.model.Prontuario;
-import com.caracore.cca.model.RegistroTratamento;
-import com.caracore.cca.service.DentistaService;
-import com.caracore.cca.service.PacienteService;
-import com.caracore.cca.service.ProntuarioService;
+// Imports Java
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+// Imports Jakarta
+import jakarta.servlet.http.HttpServletResponse;
+
+// Imports SLF4J
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// Imports Spring Framework
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +26,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+// Imports do projeto - modelos
+import com.caracore.cca.model.Dentista;
+import com.caracore.cca.model.ImagemRadiologica;
+import com.caracore.cca.model.Paciente;
+import com.caracore.cca.model.Prontuario;
+import com.caracore.cca.model.RegistroTratamento;
+
+// Imports do projeto - serviços
+import com.caracore.cca.service.DentistaService;
+import com.caracore.cca.service.PacienteService;
+import com.caracore.cca.service.ProntuarioService;
 
 /**
  * Controller responsável pelo gerenciamento de prontuários médicos.
@@ -328,7 +340,7 @@ public class ProntuarioController {
      * @return Nome da view ou página de erro
      */
     @GetMapping("/imagem/{id}")
-    public String visualizarImagem(@PathVariable Long id, Model model, Principal principal) {
+    public String visualizarImagem(@PathVariable Long id, Model model, Principal principal, HttpServletResponse response) {
         logger.info("Visualizando imagem ID: {} por dentista: {}", id, principal.getName());
         
         Optional<Dentista> dentistaOpt = dentistaService.buscarPorEmail(principal.getName());
@@ -344,6 +356,7 @@ public class ProntuarioController {
             
             if (imagem == null) {
                 logger.warn("Imagem não encontrada para ID: {}", id);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 model.addAttribute("erro", "Imagem não encontrada");
                 return VIEW_ERROR;
             }
@@ -351,6 +364,7 @@ public class ProntuarioController {
             // Verificar se o dentista tem acesso à imagem
             if (imagem.getDentista() == null || !imagem.getDentista().getId().equals(dentista.getId())) {
                 logger.warn("Acesso negado à imagem ID: {} para dentista: {}", id, principal.getName());
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 model.addAttribute("erro", ERRO_ACESSO_NEGADO);
                 return VIEW_ERROR;
             }
