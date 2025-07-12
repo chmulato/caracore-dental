@@ -36,16 +36,20 @@ spring:
       settings:
         web-allow-others: false  # Change to true if you want remote access
   
-  # Disable Flyway for H2 mode since migration scripts are optimized for PostgreSQL
+  # Para o H2, usamos o Flyway com localização específica
   flyway:
-    enabled: false
-    
-  # Disable SQL initialization since InitService handles it
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/h2-migration
+    validate-on-migrate: false
+  
+  # Habilitar inicialização SQL para H2
   sql:
     init:
-      mode: never
+      mode: embedded
+      data-locations: classpath:data-h2.sql
   
-  # JPA/Hibernate configuration
+  # JPA/Hibernate configuration para criar as tabelas automaticamente
   jpa:
     hibernate:
       ddl-auto: create-drop  # Creates schema on startup, drops on shutdown
