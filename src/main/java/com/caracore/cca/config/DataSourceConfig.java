@@ -215,7 +215,8 @@ public class DataSourceConfig {
     
     private boolean isH2Database() {
         String url = env.getProperty("spring.datasource.url", "");
-        return url.contains("h2") || url.contains("jdbc:h2:");
+        // Verificar se a URL não é nula antes de usar contains()
+        return url != null && (url.contains("h2") || url.contains("jdbc:h2:"));
     }
 
     private void configureMonitoring(HikariConfig config, String profile) {

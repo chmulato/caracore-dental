@@ -41,6 +41,12 @@ class DataSourceConfigTest {
         when(env.getProperty("spring.datasource.password")).thenReturn("");
         when(env.getProperty("spring.datasource.driver-class-name")).thenReturn("org.h2.Driver");
         
+        // Configurar o comportamento para quando for chamado com valores padrão
+        when(env.getProperty("spring.datasource.url", "")).thenReturn("jdbc:h2:mem:testdb");
+        when(env.getProperty("spring.datasource.username", "")).thenReturn("sa");
+        when(env.getProperty("spring.datasource.password", "")).thenReturn("");
+        when(env.getProperty("spring.datasource.driver-class-name", "")).thenReturn("org.h2.Driver");
+        
         // Cria uma instância real do DataSourceConfig com o ambiente mockado
         DataSourceConfig config = new DataSourceConfig(env);
         dataSource = config.dataSource();
