@@ -139,13 +139,13 @@
                         <div class="row text-center mb-3">
                             <div class="col-4">
                                 <div class="border-end">
-                                    <strong th:text="${#lists.size(prontuario.imagensRadiologicas)}">0</strong>
+                                    <strong th:text="${prontuario.metadados.totalImagens}">0</strong>
                                     <br><small class="text-muted">Imagens</small>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="border-end">
-                                    <strong th:text="${#lists.size(prontuario.registrosTratamentos)}">0</strong>
+                                    <strong th:text="${prontuario.metadados.totalTratamentos}">0</strong>
                                     <br><small class="text-muted">Tratamentos</small>
                                 </div>
                             </div>
@@ -155,20 +155,20 @@
                             </div>
                         </div>
 
-                        <!-- Últimas Atividades -->
-                        <div class="mb-3" th:if="${!#lists.isEmpty(prontuario.registrosTratamentos)}">
+                        <!-- Últimas Atividades - Usa a verificação segura com o contador de metadados -->
+                        <div class="mb-3" th:if="${prontuario.metadados.totalTratamentos > 0}">
                             <h6 class="mb-2">
                                 <i class="bi bi-clock-history me-2"></i>Último Tratamento
                             </h6>
-                            <div th:with="ultimoTratamento=${prontuario.registrosTratamentos[0]}">
+                            <div>
+                                <!-- Como não estamos carregando todos os tratamentos diretamente, vamos mostrar apenas uma mensagem -->
                                 <p class="mb-1">
-                                    <strong th:text="${ultimoTratamento.procedimento}">Procedimento</strong>
+                                    <a th:href="@{/prontuarios/paciente/{id}(id=${prontuario.paciente.id})}" 
+                                       class="text-decoration-none">
+                                       <strong>Ver detalhes do último tratamento</strong>
+                                    </a>
                                 </p>
-                                <small class="text-muted" th:text="${#temporals.format(ultimoTratamento.dataTratamento, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</small>
-                                <span class="badge ms-2"
-                                      th:classappend="${ultimoTratamento.status.name() == 'CONCLUIDO'} ? 'bg-success' : 
-                                                      (${ultimoTratamento.status.name() == 'EM_ANDAMENTO'} ? 'bg-primary' : 'bg-warning')"
-                                      th:text="${ultimoTratamento.status.descricao}">Status</span>
+                                <small class="text-muted">Clique para ver os tratamentos no prontuário</small>
                             </div>
                         </div>
 

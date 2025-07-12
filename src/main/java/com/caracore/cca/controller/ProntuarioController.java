@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 // Imports do projeto - modelos
+import com.caracore.cca.dto.ImagemRadiologicaResumo;
 import com.caracore.cca.model.Dentista;
 import com.caracore.cca.model.ImagemRadiologica;
 import com.caracore.cca.model.Paciente;
@@ -124,10 +125,19 @@ public class ProntuarioController {
             int totalImagens = 0;
             int totalTratamentos = 0;
             
+            // Pré-carregar as estatísticas para cada prontuário para evitar lazy loading na view
             for (Prontuario prontuario : prontuarios) {
-                // Usamos o método para buscar imagens que já existe no serviço, que faz o carregamento adequado
-                totalImagens += prontuarioService.buscarImagensProntuario(prontuario.getId()).size();
-                totalTratamentos += prontuarioService.buscarRegistrosTratamento(prontuario.getId()).size();
+                // Usamos o método que retorna DTOs em vez do método que retorna entidades completas com conteúdo base64
+                List<ImagemRadiologicaResumo> imagensResumo = prontuarioService.buscarImagensProntuarioResumo(prontuario.getId());
+                List<RegistroTratamento> tratamentos = prontuarioService.buscarRegistrosTratamento(prontuario.getId());
+                
+                // Adicionar o contador de imagens e tratamentos para estatísticas gerais
+                totalImagens += imagensResumo.size();
+                totalTratamentos += tratamentos.size();
+                
+                // Adicionar estatísticas específicas para cada prontuário
+                prontuario.getMetadados().put("totalImagens", imagensResumo.size());
+                prontuario.getMetadados().put("totalTratamentos", tratamentos.size());
             }
             
             model.addAttribute("prontuarios", prontuarios);
@@ -198,19 +208,27 @@ public class ProntuarioController {
         
         try {
             Prontuario prontuario = prontuarioService.buscarOuCriarProntuario(id, dentista.getId());
-            List<ImagemRadiologica> imagens = prontuarioService.buscarImagensProntuario(prontuario.getId());
+            
+            // Usamos o método que retorna DTOs em vez de entidades completas para evitar problemas com lazy loading
+            List<ImagemRadiologicaResumo> imagensResumo = prontuarioService.buscarImagensProntuarioResumo(prontuario.getId());
             List<RegistroTratamento> tratamentos = prontuarioService.buscarRegistrosTratamento(prontuario.getId());
+            
+            // Para a visualização completa do prontuário, ainda precisamos das imagens completas
+            // mas vamos usar o método padrão apenas quando o usuário acessar a aba de imagens
+            // ou quando solicitar uma imagem específica
+            List<ImagemRadiologica> imagens = prontuarioService.buscarImagensProntuario(prontuario.getId());
             
             // Calcular estatísticas do prontuário
             Map<String, Object> estatisticas = new HashMap<>();
-            estatisticas.put("totalImagens", imagens.size());
+            estatisticas.put("totalImagens", imagensResumo.size());
             estatisticas.put("totalTratamentos", tratamentos.size());
             
-            logger.info("Prontuário carregado - Imagens: {}, Tratamentos: {}", imagens.size(), tratamentos.size());
+            logger.info("Prontuário carregado - Imagens: {}, Tratamentos: {}", imagensResumo.size(), tratamentos.size());
             
             model.addAttribute("paciente", paciente);
             model.addAttribute("prontuario", prontuario);
             model.addAttribute("imagens", imagens);
+            model.addAttribute("imagensResumo", imagensResumo); // Adicionar os resumos de imagens
             model.addAttribute("tratamentos", tratamentos);
             model.addAttribute("estatisticas", estatisticas);
             

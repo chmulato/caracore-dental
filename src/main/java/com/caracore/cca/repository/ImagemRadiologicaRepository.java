@@ -26,6 +26,15 @@ public interface ImagemRadiologicaRepository extends JpaRepository<ImagemRadiolo
      */
     @Query("SELECT i FROM ImagemRadiologica i WHERE i.prontuario.id = :prontuarioId AND i.ativo = true ORDER BY i.dataUpload DESC")
     List<ImagemRadiologica> findByProntuarioIdAndAtivoTrue(@Param("prontuarioId") Long prontuarioId);
+    
+    /**
+     * Busca apenas os metadados das imagens, sem o conteúdo base64
+     * para evitar problemas de conversão de tipos e memória
+     */
+    @Query("SELECT new com.caracore.cca.dto.ImagemRadiologicaResumo(i.id, i.nomeArquivo, i.tipoImagem, " +
+           "i.descricao, i.formatoArquivo, i.tamanhoArquivo, i.dataUpload, i.dentista.id, i.dentista.nome) " +
+           "FROM ImagemRadiologica i WHERE i.prontuario.id = :prontuarioId AND i.ativo = true ORDER BY i.dataUpload DESC")
+    List<com.caracore.cca.dto.ImagemRadiologicaResumo> findResumoByProntuarioIdAndAtivoTrue(@Param("prontuarioId") Long prontuarioId);
 
     /**
      * Busca imagens por tipo

@@ -1,5 +1,6 @@
 package com.caracore.cca.service;
 
+import com.caracore.cca.dto.ImagemRadiologicaResumo;
 import com.caracore.cca.model.*;
 import com.caracore.cca.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,6 +218,14 @@ public class ProntuarioService {
      */
     public List<ImagemRadiologica> buscarImagensProntuario(Long prontuarioId) {
         return imagemRadiologicaRepository.findByProntuarioIdAndAtivoTrue(prontuarioId);
+    }
+
+    /**
+     * Busca imagens do prontuário sem carregar o conteúdo base64
+     * Usa um DTO para evitar problemas com PostgreSQL e sobrecarga de memória
+     */
+    public List<ImagemRadiologicaResumo> buscarImagensProntuarioResumo(Long prontuarioId) {
+        return imagemRadiologicaRepository.findResumoByProntuarioIdAndAtivoTrue(prontuarioId);
     }
 
     /**

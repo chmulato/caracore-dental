@@ -3,7 +3,9 @@ package com.caracore.cca.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -48,6 +50,9 @@ public class Prontuario {
 
     @OneToMany(mappedBy = "prontuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RegistroTratamento> registrosTratamentos = new ArrayList<>();
+
+    @Transient
+    private Map<String, Object> metadados = new HashMap<>();
 
     public Prontuario() {
         this.dataCriacao = LocalDateTime.now();
@@ -156,6 +161,15 @@ public class Prontuario {
 
     public void setRegistrosTratamentos(List<RegistroTratamento> registrosTratamentos) {
         this.registrosTratamentos = registrosTratamentos;
+    }
+
+    // Getter para metadados
+    public Map<String, Object> getMetadados() {
+        return metadados;
+    }
+
+    public void setMetadados(Map<String, Object> metadados) {
+        this.metadados = metadados;
     }
 
     // Métodos auxiliares
