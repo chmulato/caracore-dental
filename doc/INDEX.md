@@ -96,22 +96,22 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
 | [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de negócios da startup            | Investidores     |
 | [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md)                    | Framework de métricas e crescimento     | Gestão Executiva |
-| [plano_negocio_agenda.md](plan/plano_negocio_agenda.md)         | Modelagem de negócio para agendamentos  | Gestão Comercial |
-| [plano_negocios_automacao.md](plan/plano_negocios_automacao.md) | Estratégias de automação de processos   | Operações        |
-| [plano_vendas_agenda.md](plan/plano_vendas_agenda.md)           | Estratégias de comercialização          | Vendas           |
+| [PLANO_DE_NEGOCIO.md](plan/PLANO_DE_NEGOCIO.md)                 | Plano de negócio completo               | Gestão Comercial |
+| [VENDAS.md](plan/VENDAS.md)                                     | Plano de vendas e taxa de retorno       | Vendas           |
+| [ESTRATEGIA.md](plan/ESTRATEGIA.md)                             | Estratégia técnica e comercial          | Operações        |
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
 ```
 
 ### Roadmap e Desenvolvimento
 
 ```markdown
-|-------------------------------------------------------------------------|----------------------|-------------------------|
-| Documento                                                               | Fase do Projeto      | Aplicação               |
-|-------------------------------------------------------------------------|----------------------|-------------------------|
-| [plano_estrategico_divulgacao.md](plan/plano_estrategico_divulgacao.md) | Lançamento           | Marketing e Comunicação |
-| [plano_estrategico_prototipo.md](plan/plano_estrategico_prototipo.md)   | MVP                  | Validação de Conceito   |
-| [plano_estrategico_tecnologia.md](plan/plano_estrategico_tecnologia.md) | Evolução Tecnológica | Arquitetura de Software |
-|-------------------------------------------------------------------------|----------------------|-------------------------|
+|-----------------------------------------------|----------------------|-------------------------|
+| Documento                                     | Fase do Projeto      | Aplicação               |
+|-----------------------------------------------|----------------------|-------------------------|
+| [DIVULGACAO.md](plan/DIVULGACAO.md)           | Lançamento           | Marketing e Comunicação |
+| [PROTOTIPO.md](plan/PROTOTIPO.md)             | MVP                  | Validação de Conceito   |
+| [ROADMAP.md](tech/ROADMAP.md)                 | Evolução Tecnológica | Arquitetura de Software |
+|-----------------------------------------------|----------------------|-------------------------|
 ```
 
 ---
@@ -121,35 +121,35 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 ### Frontend e Interface
 
 ```markdown
-|-----------------------------------------------------|---------------------------------|-----------------------|
-| Documento                                           | Componente                      | Framework             |
-|-----------------------------------------------------|---------------------------------|-----------------------|
-| [checklist_frontend.md](tech/checklist_frontend.md) | Validação de desenvolvimento    | Thymeleaf + Bootstrap |
-| [telas_e_design.md](tech/telas_e_design.md)         | Especificação de interfaces     | UI/UX                 |
-| [cronograma_telas.md](tech/cronograma_telas.md)     | Planejamento de desenvolvimento | Gestão de Projeto     |
-|-----------------------------------------------------|---------------------------------|-----------------------|
+|----------------------------------------------------------|---------------------------------|-----------------------|
+| Documento                                                | Componente                      | Framework             |
+|----------------------------------------------------------|---------------------------------|-----------------------|
+| [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)    | Validação de desenvolvimento    | Thymeleaf + Bootstrap |
+| [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md)              | Especificação de interfaces     | UI/UX                 |
+| [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md)          | Planejamento de desenvolvimento | Gestão de Projeto     |
+|----------------------------------------------------------|---------------------------------|-----------------------|
 ```
 
 ### Arquitetura de Software
 
 ```markdown
-|-----------------------------------------------|-----------------------------------------|----------------------|
-| Documento                                     | Área Técnica                            | Framework/Tecnologia |
-|-----------------------------------------------|-----------------------------------------|----------------------|
-| [requisitos.md](tech/requisitos.md)           | Especificação funcional e não funcional | Spring Boot          |
-| [tecnologia.md](tech/tecnologia.md)           | Decisões arquiteturais                  | Java 17 + PostgreSQL |
-| [roadmap_upgrade.md](tech/roadmap_upgrade.md) | Evolução tecnológica                    | Stack Completo       |
-|-----------------------------------------------|-----------------------------------------|----------------------|
+|---------------------------------------|-----------------------------------------|----------------------|
+| Documento                             | Área Técnica                            | Framework/Tecnologia |
+|---------------------------------------|-----------------------------------------|----------------------|
+| [REQUISITOS.md](tech/REQUISITOS.md)   | Especificação funcional e não funcional | Spring Boot          |
+| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Decisões arquiteturais                  | Java 17 + PostgreSQL |
+| [ROADMAP.md](tech/ROADMAP.md)         | Evolução tecnológica                    | Stack Completo       |
+|---------------------------------------|-----------------------------------------|----------------------|
 ```
 
 ### Integrações Externas
 
 ```markdown
-|-------------------------------------------------------|-----------------------|-------------------------|
-| Documento                                             | Sistema Externo       | Status de Implementação |
-|-------------------------------------------------------|-----------------------|-------------------------|
-| [whatsapp_integracao.md](tech/whatsapp_integracao.md) | WhatsApp Business API | Em desenvolvimento      |
-|-------------------------------------------------------|-----------------------|-------------------------|
+|------------------------------------------------------------|-----------------------|-------------------------|
+| Documento                                                  | Sistema Externo       | Status de Implementação |
+|------------------------------------------------------------|-----------------------|-------------------------|
+| [INTEGRACAO_WHATSAPP.md](tech/INTEGRACAO_WHATSAPP.md)      | WhatsApp Business API | Em desenvolvimento      |
+|------------------------------------------------------------|-----------------------|-------------------------|
 ```
 
 ---
@@ -161,8 +161,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 **Sequência recomendada para setup e desenvolvimento:**
 
 1. **Ambiente Base:** [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) - Setup inicial da aplicação
-2. **Arquitetura:** [tech/tecnologia.md](tech/tecnologia.md) - Compreensão do stack tecnológico  
-3. **Requisitos:** [tech/requisitos.md](tech/requisitos.md) - Especificações funcionais
+2. **Arquitetura:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Compreensão do stack tecnológico  
+3. **Requisitos:** [REQUISITOS.md](tech/REQUISITOS.md) - Especificações funcionais
 4. **Status Atual:** [STATUS_ATUAL.md](../STATUS_ATUAL.md) - Estado atual do desenvolvimento
 5. **Sistema Prontuário:** [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md) - Funcionalidade implementada
 6. **Testes:** [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md) - Validação de qualidade
@@ -172,10 +172,10 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 **Documentos para acompanhamento e planejamento:**
 
 1. **Visão Geral:** [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) - Features disponíveis
-2. **Roadmap:** [tech/roadmap_upgrade.md](tech/roadmap_upgrade.md) - Planejamento de evolução
+2. **Roadmap:** [ROADMAP.md](tech/ROADMAP.md) - Planejamento de evolução
 3. **Startup:** [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md) - Plano de negócios e oportunidade
 4. **Métricas:** [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md) - Framework de crescimento e KPIs
-5. **Business:** Documentos na pasta [plan/](plan/) - Estratégia de negócio
+5. **Business:** [PLANO_DE_NEGOCIO.md](plan/PLANO_DE_NEGOCIO.md) - Estratégia de negócio
 6. **Problemas:** [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md) - Issues em andamento
 
 ### DevOps/Infraestrutura
@@ -191,10 +191,10 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 
 **Decisões técnicas e estruturais:**
 
-1. **Stack:** [tech/tecnologia.md](tech/tecnologia.md) - Decisões arquiteturais
+1. **Stack:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Decisões arquiteturais
 2. **APIs:** [SWAGGER_README.md](SWAGGER_README.md) - Documentação de interfaces
 3. **Segurança:** [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) - Políticas de segurança
-4. **Integrações:** [tech/whatsapp_integracao.md](tech/whatsapp_integracao.md) - Sistemas externos
+4. **Integrações:** [INTEGRACAO_WHATSAPP.md](tech/INTEGRACAO_WHATSAPP.md) - Sistemas externos
 
 ---
 
@@ -206,7 +206,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | Documento                                                                | Descrição                                   | Cobertura            |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
-| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário  | 100% (545/545 testes)  |
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário  | 100% (545/545 testes)|
+| [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)                    | Validação de elementos de interface         | Frontend (UI)        |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
 
