@@ -234,7 +234,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | Documento                                                                | Descrição                                   | Cobertura            |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
-| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário  | 100% (545/545 testes)|
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário   | 100% (545/545 testes)|
 | [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)                    | Validação de elementos de interface         | Frontend (UI)        |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
