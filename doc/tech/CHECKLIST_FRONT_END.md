@@ -1,13 +1,13 @@
-# Estrutura de Pastas - WebApp Frontend
+# Estrutura Simplificada - WebApp Frontend
 
 ## Sistema de Agendamento Odontológico - Cara Core CCA
 
 **Framework:** Spring Boot + Thymeleaf + Bootstrap 5.3.0  
-**Data:** 29 de junho de 2025
+**Data:** 13 de julho de 2025
 
 ---
 
-## 📁 **Estrutura Completa do WebApp**
+## **Estrutura Simplificada do WebApp**
 
 ```plaintext
 src/main/
@@ -16,230 +16,121 @@ src/main/
     ├── templates/                # Templates Thymeleaf (.html)
     │   ├── layout/               # Layouts principais
     │   │   ├── main.html         # Layout base do sistema
-    │   │   ├── public.html       # Layout para páginas públicas
-    │   │   └── minimal.html      # Layout minimalista (login)
+    │   │   └── public.html       # Layout para páginas públicas
     │   │
     │   ├── fragments/            # Fragmentos reutilizáveis
-    │   │   ├── header.html       # Cabeçalho principal
-    │   │   ├── sidebar.html      # Menu lateral
-    │   │   ├── footer.html       # Rodapé
-    │   │   ├── modals.html       # Modais padrão
-    │   │   ├── forms.html        # Formulários comuns
-    │   │   ├── alerts.html       # Alertas e notificações
-    │   │   └── breadcrumb.html   # Navegação estrutural
+    │   │   ├── header.html       # Cabeçalho principal (Cara Core Dental - Agendamento)
+    │   │   ├── sidebar.html      # Menu lateral para usuários autenticados
+    │   │   └── footer.html       # Rodapé
     │   │
     │   ├── auth/                 # Autenticação
-    │   │   ├── login.html        # Tela de login
-    │   │   ├── forgot-password.html # Recuperar senha
-    │   │   └── reset-password.html  # Redefinir senha
+    │   │   └── login.html        # Tela de login
     │   │
     │   ├── dashboard/            # Dashboard principal
     │   │   └── index.html        # Painel administrativo
     │   │
     │   ├── professionals/        # Módulo Profissionais
     │   │   ├── list.html         # Lista de profissionais
-    │   │   ├── form.html         # Cadastro/edição
-    │   │   └── schedule-config.html # Configuração agenda
+    │   │   └── form.html         # Cadastro/edição
     │   │
     │   ├── patients/             # Módulo Pacientes
     │   │   ├── list.html         # Lista de pacientes
     │   │   ├── form.html         # Cadastro/edição
-    │   │   ├── history.html      # Histórico do paciente
     │   │   └── records.html      # Prontuário com imagens
     │   │
     │   ├── schedule/             # Módulo Agenda
     │   │   ├── calendar.html     # Agenda geral
-    │   │   ├── professional-agenda.html # Agenda individual
-    │   │   ├── new-appointment.html     # Novo agendamento
-    │   │   └── appointment-details.html # Detalhes agendamento
+    │   │   └── new-appointment.html # Novo agendamento
     │   │
-    │   ├── public/               # Agendamento Online (Público)
-    │   │   ├── home.html         # Página inicial pública
-    │   │   ├── select-professional.html # Escolher profissional
-    │   │   ├── select-service.html      # Escolher serviço
-    │   │   ├── select-datetime.html     # Escolher data/hora
-    │   │   ├── patient-data.html        # Dados do paciente
-    │   │   └── confirmation.html        # Confirmação agendamento
-    │   │
-    │   ├── settings/             # Configurações
-    │   │   ├── general.html      # Configurações gerais
-    │   │   ├── users.html        # Gerenciar usuários
-    │   │   ├── services.html     # Configurar serviços
-    │   │   └── notifications.html # Config. notificações
-    │   │
-    │   ├── reports/              # Relatórios
-    │   │   ├── dashboard.html    # Dashboard relatórios
-    │   │   ├── appointments.html # Relatório agendamentos
-    │   │   ├── professionals.html # Relatório profissionais
-    │   │   └── financial.html    # Relatório financeiro
-    │   │
-    │   ├── notifications/        # Notificações
-    │   │   ├── center.html       # Central notificações
-    │   │   └── templates.html    # Templates mensagens
-    │   │
-    │   └── error/                # Páginas de erro
-    │       ├── 404.html          # Não encontrado
-    │       ├── 500.html          # Erro interno
-    │       └── access-denied.html # Acesso negado
+    │   └── public/               # Agendamento Online (Público)
+    │       ├── home.html         # Página inicial pública
+    │       └── confirmation.html # Confirmação agendamento
     │
     ├── static/                   # Recursos estáticos
     │   ├── css/                  # Folhas de estilo
     │   │   ├── bootstrap/        # Bootstrap customizado
-    │   │   │   ├── bootstrap.min.css
-    │   │   │   └── bootstrap-custom.css
-    │   │   │
-    │   │   ├── vendor/           # CSS de terceiros
-    │   │   │   ├── datatables.min.css
-    │   │   │   ├── fullcalendar.min.css
-    │   │   │   ├── chart.min.css
-    │   │   │   └── sweetalert2.min.css
-    │   │   │
-    │   │   ├── components/       # Componentes reutilizáveis
-    │   │   │   ├── buttons.css   # Estilos de botões
-    │   │   │   ├── cards.css     # Cards personalizados
-    │   │   │   ├── forms.css     # Formulários
-    │   │   │   ├── tables.css    # Tabelas
-    │   │   │   ├── modals.css    # Modais
-    │   │   │   └── alerts.css    # Alertas
-    │   │   │
-    │   │   ├── modules/          # CSS por módulo
-    │   │   │   ├── auth.css      # Autenticação
-    │   │   │   ├── dashboard.css # Dashboard
-    │   │   │   ├── professionals.css # Profissionais
-    │   │   │   ├── patients.css  # Pacientes
-    │   │   │   ├── schedule.css  # Agenda
-    │   │   │   ├── public.css    # Páginas públicas
-    │   │   │   ├── settings.css  # Configurações
-    │   │   │   ├── reports.css   # Relatórios
-    │   │   │   └── notifications.css # Notificações
-    │   │   │
     │   │   ├── layout/           # CSS de layout
     │   │   │   ├── header.css    # Cabeçalho
     │   │   │   ├── sidebar.css   # Menu lateral
-    │   │   │   ├── footer.css    # Rodapé
     │   │   │   └── main.css      # Layout principal
     │   │   │
-    │   │   ├── responsive/       # CSS responsivo
-    │   │   │   ├── mobile.css    # Mobile (320px-575px)
-    │   │   │   ├── tablet.css    # Tablet (576px-991px)
-    │   │   │   └── desktop.css   # Desktop (992px+)
-    │   │   │
-    │   │   └── main.css          # CSS principal (importa todos)
+    │   │   └── modules/          # CSS por módulo
+    │   │       ├── auth.css      # Autenticação
+    │   │       ├── dashboard.css # Dashboard
+    │   │       ├── patients.css  # Pacientes
+    │   │       └── schedule.css  # Agenda
     │   │
     │   ├── js/                   # JavaScript
     │   │   ├── vendor/           # Bibliotecas terceiros
     │   │   │   ├── jquery.min.js
-    │   │   │   ├── bootstrap.bundle.min.js
-    │   │   │   ├── datatables.min.js
-    │   │   │   ├── fullcalendar.min.js
-    │   │   │   ├── chart.min.js
-    │   │   │   └── sweetalert2.min.js
+    │   │   │   └── bootstrap.bundle.min.js
     │   │   │
     │   │   ├── components/       # Componentes JS
-    │   │   │   ├── modals.js     # Gerenciamento modais
-    │   │   │   ├── forms.js      # Validação formulários
-    │   │   │   ├── tables.js     # Configuração DataTables
     │   │   │   ├── calendar.js   # Configuração FullCalendar
-    │   │   │   ├── charts.js     # Gráficos Chart.js
-    │   │   │   ├── upload.js     # Upload de arquivos
-    │   │   │   └── notifications.js # Sistema notificações
-    │   │   │
-    │   │   ├── modules/          # JS por módulo
-    │   │   │   ├── auth.js       # Autenticação
-    │   │   │   ├── dashboard.js  # Dashboard
-    │   │   │   ├── professionals.js # Profissionais
-    │   │   │   ├── patients.js   # Pacientes
-    │   │   │   ├── schedule.js   # Agenda
-    │   │   │   ├── public.js     # Páginas públicas
-    │   │   │   ├── settings.js   # Configurações
-    │   │   │   ├── reports.js    # Relatórios
-    │   │   │   └── notifications-module.js # Notificações
-    │   │   │
-    │   │   ├── utils/            # Utilitários JS
-    │   │   │   ├── helpers.js    # Funções auxiliares
-    │   │   │   ├── validators.js # Validações customizadas
-    │   │   │   ├── formatters.js # Formatação dados
-    │   │   │   ├── api.js        # Chamadas AJAX
-    │   │   │   └── constants.js  # Constantes globais
+    │   │   │   └── upload.js     # Upload de arquivos (prontuário)
     │   │   │
     │   │   ├── layout/           # JS de layout
     │   │   │   ├── header.js     # Funcionalidades header
-    │   │   │   ├── sidebar.js    # Menu lateral
-    │   │   │   └── main.js       # Inicialização geral
+    │   │   │   └── sidebar.js    # Menu lateral
     │   │   │
-    │   │   └── app.js            # JS principal (bootstrap app)
+    │   │   └── app.js            # JS principal
     │   │
-    │   ├── images/               # Imagens do sistema
-    │   │   ├── logo/             # Logos e branding
-    │   │   │   ├── logo.png      # Logo principal
-    │   │   │   ├── logo-sm.png   # Logo pequeno
-    │   │   │   ├── favicon.ico   # Favicon
-    │   │   │   └── icon-192.png  # PWA icon
-    │   │   │
-    │   │   ├── icons/            # Ícones do sistema
-    │   │   │   ├── dentist.svg   # Ícone dentista
-    │   │   │   ├── patient.svg   # Ícone paciente
-    │   │   │   ├── calendar.svg  # Ícone calendário
-    │   │   │   └── settings.svg  # Ícone configurações
-    │   │   │
-    │   │   ├── avatars/          # Avatars padrão
-    │   │   │   ├── default-user.png
-    │   │   │   ├── default-dentist.png
-    │   │   │   └── default-patient.png
-    │   │   │
-    │   │   ├── illustrations/    # Ilustrações
-    │   │   │   ├── welcome.svg   # Ilustração boas-vindas
-    │   │   │   ├── empty-state.svg # Estado vazio
-    │   │   │   └── error-404.svg # Erro 404
-    │   │   │
-    │   │   └── backgrounds/      # Imagens de fundo
-    │   │       ├── login-bg.jpg  # Fundo tela login
-    │   │       └── public-bg.jpg # Fundo páginas públicas
-    │   │
-    │   ├── fonts/                # Fontes customizadas
-    │   │   ├── inter/            # Fonte Inter
-    │   │   │   ├── Inter-Regular.woff2
-    │   │   │   ├── Inter-Medium.woff2
-    │   │   │   └── Inter-Bold.woff2
-    │   │   │
-    │   │   └── icons/            # Fonte de ícones
-    │   │       ├── cca-icons.woff2
-    │   │       └── cca-icons.css
-    │   │
-    │   ├── uploads/              # Uploads de usuários
-    │   │   ├── avatars/          # Fotos de perfil
-    │   │   │   ├── professionals/ # Fotos profissionais
-    │   │   │   └── patients/     # Fotos pacientes
-    │   │   │
-    │   │   ├── records/          # Prontuários
-    │   │   │   └── images/       # Imagens prontuário
-    │   │   │       ├── original/ # Imagens originais
-    │   │   │       ├── thumbnails/ # Miniaturas
-    │   │   │       └── compressed/ # Comprimidas
-    │   │   │
-    │   │   └── documents/        # Documentos
-    │   │       ├── reports/      # Relatórios exportados
-    │   │       └── temp/         # Arquivos temporários
-    │   │
-    │   └── data/                 # Dados estáticos
-    │       ├── states.json       # Estados brasileiros
-    │       ├── cities.json       # Cidades
-    │       ├── specialties.json  # Especialidades odontológicas
-    │       └── dental-procedures.json # Procedimentos
+    │   └── images/               # Imagens do sistema
+    │       ├── logo/             # Logos e branding
+    │       │   └── logo.png      # Logo principal
+    │       │
+    │       └── uploads/          # Uploads de usuários
+    │           └── records/      # Prontuários com imagens
     │
-    ├── messages/                  # Mensagens i18n
-    │   ├── messages.properties    # Português (padrão)
-    │   ├── messages_en.properties # Inglês
-    │   └── validation.properties  # Mensagens validação
-    │
-    └── application.yml            # Configurações Spring Boot
+    └── application.yml           # Configurações Spring Boot
 ```
 
 ---
 
-## 📋 **Arquivos Principais por Funcionalidade**
+## **Componentes de Navegação Principais**
 
-### **🔐 Login e Autenticação**
+### **Menu Lateral (Usuários Autenticados)**
+
+O arquivo `fragments/sidebar.html` implementa o menu lateral para usuários logados, com as seguintes características:
+
+```plaintext
+templates/fragments/sidebar.html        # Template Thymeleaf do menu lateral
+static/css/layout/sidebar.css           # Estilização do menu
+static/js/layout/sidebar.js             # Funcionalidades JavaScript
+static/images/logo/logo.png             # Logo no topo do menu
+```
+
+**Características:**
+
+- Layout responsivo (expandido/recolhido)
+- Itens de menu condicionais por perfil de acesso (ROLE_ADMIN, ROLE_DENTIST, etc.)
+- Indicador visual de seção ativa
+- Suporte a submenus expansíveis
+- Informações do usuário logado no rodapé do menu
+
+### **Header para Agenda Pública**
+
+O arquivo `fragments/header.html` implementa o header para a agenda pública, com as seguintes características:
+
+```plaintext
+templates/fragments/header.html         # Template Thymeleaf do header
+static/css/layout/header.css            # Estilização do header
+static/js/layout/header.js              # Funcionalidades JavaScript
+static/images/logo/logo.png             # Logo da Cara Core Dental
+```
+
+**Características:**
+
+- Header responsivo para todas as resoluções
+- Navegação simplificada para usuários não-autenticados
+- Destaque para o botão "Agendar Consulta"
+- Implementação de navbar colapsável em mobile
+
+---
+
+## **Arquivos Principais por Funcionalidade**
+
+### **Login e Autenticação**
 
 ```plaintext
 templates/auth/login.html
@@ -248,7 +139,7 @@ static/js/modules/auth.js
 static/images/backgrounds/login-bg.jpg
 ```
 
-### **🏠 Dashboard**
+### **Dashboard**
 
 ```plaintext
 templates/dashboard/index.html
@@ -257,7 +148,7 @@ static/js/modules/dashboard.js
 static/js/components/charts.js
 ```
 
-### **👨‍⚕️ Profissionais**
+### **Profissionais**
 
 ```plaintext
 templates/professionals/list.html
@@ -267,7 +158,7 @@ static/js/modules/professionals.js
 static/uploads/avatars/professionals/
 ```
 
-### **👩 Pacientes**
+### **Pacientes**
 
 ```plaintext
 templates/patients/list.html
@@ -279,7 +170,7 @@ static/js/components/upload.js
 static/uploads/records/images/
 ```
 
-### **📅 Agenda**
+### **Agenda**
 
 ```plaintext
 templates/schedule/calendar.html
@@ -289,7 +180,7 @@ static/js/modules/schedule.js
 static/js/components/calendar.js
 ```
 
-### **🌐 Agendamento Online**
+### **Agendamento Online**
 
 ```plaintext
 templates/public/home.html
@@ -301,9 +192,9 @@ static/js/modules/public.js
 
 ---
 
-## 🎯 **Prioridades de Desenvolvimento**
+## **Prioridades de Desenvolvimento**
 
-### **🔴 Prioridade ALTA (MVP)**
+### **Prioridade ALTA (MVP)**
 
 1. `layout/main.html` + `fragments/` - Base do sistema
 2. `auth/login.html` + CSS/JS - Autenticação
@@ -311,14 +202,14 @@ static/js/modules/public.js
 4. `schedule/calendar.html` + CSS/JS - Agenda principal
 5. `schedule/new-appointment.html` + CSS/JS - Novo agendamento
 
-### **🟡 Prioridade MÉDIA**
+### **Prioridade MÉDIA**
 
 1. `professionals/list.html` + `professionals/form.html`
 2. `patients/list.html` + `patients/form.html`
 3. `patients/records.html` - Prontuário com imagens
 4. `public/` - Todo módulo agendamento online
 
-### **🟢 Prioridade BAIXA**
+### **Prioridade BAIXA**
 
 1. `settings/` - Configurações
 2. `reports/` - Relatórios
@@ -326,7 +217,7 @@ static/js/modules/public.js
 
 ---
 
-## 📝 **Convenções de Nomenclatura**
+## **Convenções de Nomenclatura**
 
 ### **Templates Thymeleaf**
 
@@ -352,7 +243,7 @@ static/js/modules/public.js
 
 ---
 
-## 🔧 **Configurações Importantes**
+## **Configurações Importantes**
 
 ### **Spring Boot Static Resources**
 
@@ -390,7 +281,7 @@ spring:
 
 ---
 
-## 📱 **Otimizações**
+## **Otimizações**
 
 ### **Performance**
 
