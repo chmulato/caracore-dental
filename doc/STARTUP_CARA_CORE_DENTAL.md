@@ -1,4 +1,4 @@
-# Cara-Core-Dental – Cara Core Dental in Brazil
+# Cara Core Dental in Brazil
 
 ## 1. Overview
 
