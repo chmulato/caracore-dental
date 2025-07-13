@@ -1,4 +1,4 @@
-# Índice da Documentação - Cara Core Agendamento (CCA)
+# Índice da Documentação - Cara Core Dental - Agendamentos
 
 - **Sistema de Agendamento para Consultórios Odontológicos**
 
@@ -86,6 +86,41 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 
 - [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md) - Especificações completas das telas
 - [INTERFACE_USUARIO.md](INTERFACE_USUARIO.md) - Guia de navegação e experiência do usuário
+- [NAVEGACAO_IMPLEMENTACAO.md](NAVEGACAO_IMPLEMENTACAO.md) - Guia de implementação do sistema de navegação dual
+
+**Componentes de Navegação:**
+
+```markdown
+|----------------------------------|------------------------------------------|-------------------------------------|
+| Componente                       | Implementação                            | Uso                                 |
+|----------------------------------|------------------------------------------|-------------------------------------|
+| Sidebar (Menu Lateral)           | fragments/sidebar.html + sidebar.css/js  | Páginas internas autenticadas       |
+| Header (Cabeçalho Público)       | fragments/header.html + header.css/js    | Agenda pública de acesso externo    |
+| Layout Principal                 | fragments/main-layout.html               | Template base para todas as páginas |
+|----------------------------------|------------------------------------------|-------------------------------------|
+```
+
+**Exemplo de Implementação:**
+
+Para páginas autenticadas:
+
+```html
+<div th:replace="~{fragments/main-layout :: authenticated-layout('Título', 'activeLink', ~{::section})}">
+    <section>
+        <!-- Conteúdo específico da página -->
+    </section>
+</div>
+```
+
+Para páginas públicas:
+
+```html
+<div th:replace="~{fragments/main-layout :: public-layout('Título', ~{::main})}">
+    <main>
+        <!-- Conteúdo específico da página -->
+    </main>
+</div>
+```
 
 ---
 
@@ -144,6 +179,24 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md)              | Especificação de interfaces     | UI/UX                 |
 | [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md)          | Planejamento de desenvolvimento | Gestão de Projeto     |
 |----------------------------------------------------------|---------------------------------|-----------------------|
+```
+
+**Sistema de Navegação:**
+
+```markdown
+|-----------------------------|-----------------------------------------|--------------------------------|
+| Componente                  | Arquivos                                | Responsabilidade              |
+|-----------------------------|-----------------------------------------|--------------------------------|
+| Layout Principal           | fragments/main-layout.html               | Template base para o sistema  |
+| Menu Lateral (Autenticado) | fragments/sidebar.html                   | Navegação por perfil de acesso|
+| CSS do Menu Lateral        | static/css/layout/sidebar.css            | Estilos do menu lateral       |
+| JavaScript do Menu Lateral | static/js/layout/sidebar.js              | Comportamento do menu lateral |
+| Header Público             | fragments/header.html                    | Navegação para agenda pública |
+| CSS do Header              | static/css/layout/header.css             | Estilos do header público     |
+| JavaScript do Header       | static/js/layout/header.js               | Comportamento do header       |
+| Página Exemplo - Sistema   | templates/dashboard-example.html         | Modelo para páginas internas  |
+| Página Exemplo - Público   | templates/public-example.html            | Modelo para páginas públicas  |
+|-----------------------------|-----------------------------------------|--------------------------------|
 ```
 
 **Estrutura de Interface:**
@@ -284,13 +337,46 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 
 ---
 
+## Padrões de Implementação Frontend
+
+### Estrutura de Layouts
+
+1. **Layout para Usuários Autenticados (com sidebar)**
+   - Use este layout para todas as páginas que requerem autenticação
+   - Sempre inclua o parâmetro `activeLink` para destacar o item de menu correto
+   - Estrutura: `th:replace="~{fragments/main-layout :: authenticated-layout('Título', 'activeLink', ~{::section})}`
+
+2. **Layout para Agenda Pública (com header)**
+   - Use este layout para todas as páginas de acesso público
+   - Mantenha uma interface simplificada focada no agendamento
+   - Estrutura: `th:replace="~{fragments/main-layout :: public-layout('Título', ~{::main})}`
+
+### Controllers e Modelo
+
+Para que os menus funcionem corretamente, os controllers devem:
+
+1. Passar o atributo `activeLink` para o modelo
+2. Usar o valor que corresponde à seção do menu a ser destacada
+3. Exemplo:
+
+   ```java
+   @GetMapping("/pacientes")
+   public String listarPacientes(Model model) {
+       model.addAttribute("activeLink", "pacientes");
+       // Outras operações
+       return "pacientes/lista";
+   }
+   ```
+
+---
+
 ## Informações do Projeto
 
 **Organização:** Cara Core Informática  
 **Sistema:** Agendamento para Consultórios Odontológicos  
 **Tecnologia Principal:** Spring Boot 3.2.6 + Java 17  
 **Banco de Dados:** PostgreSQL 16.9  
-**Versão da Documentação:** 2.2  
+**Versão da Documentação:** 2.3  
 **Última Atualização:** 13/07/2025
 
 ---
