@@ -42,6 +42,9 @@ public class DashboardController {
         model.addAttribute("isPatient", auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT")));
         
+        // Adiciona o activeLink para destacar o item correto no menu lateral
+        model.addAttribute("activeLink", "home");
+        
         return "dashboard";
     }
 }

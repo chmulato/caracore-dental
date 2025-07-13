@@ -48,6 +48,9 @@ public class ConsultasController {
                                  @RequestParam(required = false) String dentista) {
         logger.info("Listando consultas - Status: {}, Data Início: {}, Data Fim: {}, Dentista: {}", 
                    status, dataInicio, dataFim, dentista);
+                   
+        // Adiciona o activeLink para destacar o item correto no menu lateral
+        model.addAttribute("activeLink", "consultas");
         
         List<Agendamento> agendamentos;
         

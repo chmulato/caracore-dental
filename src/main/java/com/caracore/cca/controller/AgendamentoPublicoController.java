@@ -71,6 +71,7 @@ public class AgendamentoPublicoController {
             List<String> dentistas = agendamentoService.listarDentistasAtivos();
             model.addAttribute("titulo", "Agendamento Online");
             model.addAttribute("dentistas", dentistas);
+            // Não é necessário activeLink para páginas públicas, pois usam o header
             
             // Adicionar informações do reCAPTCHA se habilitado
             if (captchaService.isEnabled()) {
