@@ -1,0 +1,102 @@
+/* Estilos para o header fixo */
+
+.header-fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1020; /* Menor que sidebar */
+    height: 60px;
+    background-color: #fff;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    transition: left 0.3s ease;
+}
+
+/* Em desktop, o header deve ser ajustado por padrão para acomodar a sidebar */
+@media (min-width: 992px) {
+    .header-fixed {
+        left: 250px;
+    }
+    
+    /* Quando a sidebar está explicitamente fechada em desktop */
+    body.sidebar-closed .header-fixed {
+        left: 0;
+    }
+}
+
+/* Quando o sidebar está aberto em mobile */
+@media (max-width: 991px) {
+    body.sidebar-open .header-fixed {
+        left: 250px;
+    }
+}
+
+/* Título no header */
+.header-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Ações do header (perfil, notificações, etc) */
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos para o dropdown de usuário */
+.header-user {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.header-user:hover {
+    background-color: #f8f9fa;
+}
+
+.header-user-name {
+    margin-right: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+.header-user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+/* Ajuste para o layout principal quando o header fixo está presente */
+.main-content.with-fixed-header {
+    padding-top: 70px; /* Altura do header + pequeno espaço */
+}
+
+/* Ajustes responsivos */
+@media (max-width: 991px) {
+    /* No mobile, o header ocupa toda a largura */
+    body.sidebar-open .header-fixed {
+        left: 0;
+    }
+    
+    /* Esconder o título em dispositivos muito pequenos */
+    @media (max-width: 480px) {
+        .header-title {
+            display: none;
+        }
+    }
+}

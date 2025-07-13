@@ -1,0 +1,77 @@
+/* Header Fixo */
+.header-fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+    /* left é definido dinamicamente via JS */
+    height: 60px;
+    z-index: 1000;
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+/* Posicionamento do header - valores específicos aplicados via JavaScript */
+/* Removido estilo redundante que é aplicado dinamicamente via JS */
+
+/* Ajuste do conteúdo principal para dar espaço ao header fixo */
+.main-content.with-fixed-header {
+    padding-top: 60px;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 992px) {
+    .header-fixed {
+        left: 0;
+    }
+}
+
+/* Título da página no header */
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--secondary-color);
+}
+
+/* Área de ações do usuário */
+.header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.header-user:hover {
+    background-color: rgba(0,0,0,.05);
+}
+
+.header-user-name {
+    margin-right: 0.5rem;
+    font-weight: 500;
+}
+
+.header-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* Removido elementos não utilizados que foram substituídos pelo dropdown do Bootstrap */

@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-<head th:replace="~{fragments/layout :: head('Consultas Agendadas')}"></head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt-BR">
+<head th:replace="~{fragments/main-layout :: head('Consultas Agendadas')}"></head>
 <body>
-    <!-- Navbar -->
-    <nav th:replace="~{fragments/layout :: navbar('home')}"></nav>
-
-    <!-- Main Content -->
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div th:replace="~{fragments/layout :: page-header('Consultas Agendadas', '/novo', 'Novo Agendamento')}"></div>
+    <!-- Usando layout autenticado com sidebar -->
+    <div th:replace="~{fragments/main-layout :: authenticated-layout('Consultas Agendadas', 'home', ~{::section})}">
+        <section>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h4 mb-0">Lista de Consultas</h2>
+                <a href="/novo" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i>Novo Agendamento
+                </a>
+            </div>
                 
                 <div class="card">
                     <div class="card-body">
@@ -53,29 +54,35 @@
                         </div>
                     </div>
                 </div>
+            
+            <!-- Loading overlay -->
+            <link rel="stylesheet" th:href="@{/css/loading-overlay.css}">
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="spinner-border text-light loading-spinner" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
-
-    <!-- Loading overlay -->
-    <div th:replace="~{fragments/layout :: loading-overlay}"></div>
-
-    <!-- Footer -->
-    <footer th:replace="~{fragments/layout :: footer}"></footer>
     
-    <!-- Bootstrap JS bundle with Popper -->
-    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/webjars/jquery/3.7.0/jquery.min.js}"></script>
-    
+    <!-- Scripts específicos da página -->
     <script>
         // Script para mostrar overlay durante operações AJAX
-        $(document).ready(function() {
-            $('form').on('submit', function() {
-                $('#loading-overlay').fadeIn(200);
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            const btnActions = document.querySelectorAll('.btn-action');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    loadingOverlay.style.display = 'flex';
+                });
             });
             
-            $('.btn-action').on('click', function() {
-                $('#loading-overlay').fadeIn(200);
+            btnActions.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    loadingOverlay.style.display = 'flex';
+                });
             });
         });
     </script>

@@ -1,0 +1,94 @@
+/* Estilos para o Header Público */
+.public-header {
+    background-color: #fff;
+}
+
+.public-header .navbar {
+    height: 70px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilo da marca */
+.public-header .navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.public-header .brand-text {
+    color: #0056b3;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-left: 8px;
+}
+
+/* Estilo dos links de navegação */
+.public-header .nav-link {
+    color: #495057;
+    font-weight: 500;
+    padding: 10px 15px;
+    transition: color 0.2s;
+}
+
+.public-header .nav-link:hover,
+.public-header .nav-link.active {
+    color: #0056b3;
+}
+
+/* Estilo do botão CTA */
+.public-header .btn-primary {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 86, 179, 0.2);
+    transition: all 0.2s;
+}
+
+.public-header .btn-primary:hover {
+    background-color: #004494;
+    border-color: #004494;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3);
+}
+
+/* Estilo para scroll */
+.public-header .navbar.scrolled {
+    height: 60px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.public-header .navbar.scrolled .brand-text {
+    font-size: 1.1rem;
+}
+
+/* Responsividade */
+@media (max-width: 991.98px) {
+    .public-header .navbar {
+        height: 60px;
+    }
+    
+    .public-header .brand-text {
+        font-size: 1.1rem;
+    }
+    
+    .public-header .navbar-collapse {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .public-header .d-flex {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .public-header .btn-primary {
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0 !important;
+    }
+    
+    .public-header .btn-outline-secondary {
+        width: 100%;
+    }
+}

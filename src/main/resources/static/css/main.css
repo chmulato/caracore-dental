@@ -1,7 +1,14 @@
 /**
- * Cara Core Agendamento - Estilos principais
- * Versão: 1.0.0 (30 de junho de 2025)
+ * Cara Core Dental - Estilos principais
+ * Versão: 1.0.1 (13 de julho de 2025)
  */
+
+/* Reset e base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 :root {
     --primary-color: #3498db;
@@ -21,6 +28,42 @@ body {
     font-family: 'Roboto', 'Segoe UI', sans-serif;
     background-color: var(--light-color);
     color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Estilos para o conteúdo principal com sidebar */
+.main-content {
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+    flex: 1;
+}
+
+.main-content.with-sidebar {
+    margin-left: 0;
+}
+
+body.sidebar-open .main-content.with-sidebar {
+    margin-left: 250px;
+}
+
+/* Ajuste para o conteúdo principal com header fixo */
+.main-content.with-fixed-header {
+    padding-top: 70px;
+}
+
+/* Ajuste para o conteúdo principal com footer fixo */
+.main-content.with-fixed-footer {
+    padding-bottom: 60px;
+}
+
+/* Media queries para responsividade */
+@media (max-width: 991px) {
+    body.sidebar-open .main-content.with-sidebar {
+        margin-left: 0;
+    }
 }
 
 h1, h2, h3, h4, h5, h6 {

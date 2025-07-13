@@ -1,0 +1,83 @@
+/* Estilos para página de reagendamento de consultas */
+
+.form-card {
+    border-left: 4px solid #ffc107;
+    border-radius: 0.25rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.original-info {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-left: 4px solid #6c757d;
+}
+
+.selected-slot {
+    background-color: #e8f5e8 !important;
+    border: 1px solid #28a745 !important;
+}
+
+.unavailable-slot {
+    background-color: #ffebee !important;
+    border: 1px solid #dc3545 !important;
+    color: #dc3545;
+    cursor: not-allowed;
+}
+
+.time-slot-card {
+    transition: all 0.2s ease;
+}
+
+.time-slot-card:hover:not(.unavailable-slot) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.conflict-warning {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Estilo para o calendário de seleção */
+.date-picker-container {
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos para botões de ação */
+.btn-reagendar {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+}
+
+.btn-reagendar:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #212529;
+}
+
+.btn-voltar {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    color: #212529;
+}
+
+.btn-voltar:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+    color: #212529;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .time-slot-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+}

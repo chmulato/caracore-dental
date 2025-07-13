@@ -1,0 +1,93 @@
+/* Estilos para o footer fixo */
+
+.footer-fixed {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    padding: 10px 20px;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: left 0.3s ease;
+}
+
+/* Em desktop, o footer deve ser ajustado por padrão para acomodar a sidebar */
+@media (min-width: 992px) {
+    .footer-fixed {
+        left: 250px;
+    }
+    
+    /* Quando a sidebar está explicitamente fechada em desktop */
+    body.sidebar-closed .footer-fixed {
+        left: 0;
+    }
+}
+
+/* Quando o sidebar está aberto em mobile */
+@media (max-width: 991px) {
+    body.sidebar-open .footer-fixed {
+        left: 250px;
+    }
+}
+
+/* Texto do footer */
+.footer-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Links no footer */
+.footer-links a {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-left: 15px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #007bff;
+}
+
+/* Versão do sistema */
+.footer-version {
+    font-size: 0.8rem;
+    color: #adb5bd;
+}
+
+/* Ajuste para o layout principal quando o footer fixo está presente */
+.main-content {
+    padding-bottom: 60px; /* Altura do footer + pequeno espaço */
+}
+
+/* Ajustes responsivos */
+@media (max-width: 991px) {
+    /* No mobile, o footer ocupa toda a largura */
+    body.sidebar-open .footer-fixed {
+        left: 0;
+    }
+    
+    /* Simplifica o footer em dispositivos pequenos */
+    @media (max-width: 576px) {
+        .footer-fixed {
+            flex-direction: column;
+            height: auto;
+            padding: 8px;
+        }
+        
+        .footer-links {
+            margin-top: 5px;
+        }
+        
+        .footer-links a {
+            margin-left: 10px;
+            margin-right: 10px;
+            font-size: 0.8rem;
+        }
+    }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body>
+    <!-- Header para Agenda Pública -->
+    <header th:fragment="header" class="public-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container">
+                <!-- Logo e Marca -->
+                <a class="navbar-brand" href="/public">
+                    <img th:src="@{/img/logo.png}" alt="Cara Core Logo" class="d-inline-block align-middle me-2" height="40">
+                    <span class="brand-text">Cara Core Dental - Agendamento</span>
+                </a>
+                
+                <!-- Botão toggle para mobile -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNavbar" 
+                        aria-controls="publicNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Links de navegação -->
+                <div class="collapse navbar-collapse" id="publicNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/public">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/public/servicos">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/public/dentistas">Profissionais</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/public/contato">Contato</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Call to Action e Login -->
+                    <div class="d-flex align-items-center">
+                        <a href="/public/agendamento" class="btn btn-primary me-3 px-4 rounded-pill">
+                            <i class="bi bi-calendar-plus me-2"></i>Agendar Consulta
+                        </a>
+                        <a href="/login" class="btn btn-outline-secondary btn-sm" title="Acesso restrito">
+                            <i class="bi bi-person me-1"></i>Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>

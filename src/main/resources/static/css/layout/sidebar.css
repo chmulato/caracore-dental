@@ -1,0 +1,209 @@
+/* Estilos para o Menu Lateral */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background-color: #3c4b64;
+    color: #fff;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1030;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cabeçalho do Sidebar */
+.sidebar-header {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: 60px;
+}
+
+.sidebar-logo {
+    width: 32px;
+    height: auto;
+}
+
+.sidebar-brand {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Botão para recolher/expandir o sidebar */
+.sidebar-toggle {
+    color: #fff;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-toggle:hover {
+    color: #ccc;
+}
+
+/* Menu de Navegação */
+.sidebar-menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px 0;
+}
+
+.sidebar-link {
+    color: #c8ccd3;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: #0d6efd;
+}
+
+.sidebar-sublink {
+    color: #c8ccd3;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.sidebar-sublink:hover {
+    color: #fff;
+}
+
+/* Rodapé do Sidebar com informações do usuário */
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.user-details {
+    overflow: hidden;
+}
+
+.user-name {
+    display: block;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    display: block;
+    color: #c8ccd3;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-actions {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 10px;
+}
+
+.sidebar-action {
+    color: #c8ccd3;
+    font-size: 1.2rem;
+    padding: 5px;
+}
+
+.sidebar-action:hover {
+    color: #fff;
+}
+
+/* Sidebar recolhido */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed .sidebar-text,
+.sidebar.collapsed .user-details,
+.sidebar.collapsed .sidebar-brand {
+    display: none;
+}
+
+.sidebar.collapsed .user-avatar {
+    margin-right: 0;
+}
+
+.sidebar.collapsed .user-info {
+    justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-actions {
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Ajustes para o conteúdo principal quando sidebar está presente */
+.with-sidebar {
+    padding-left: 260px;
+    transition: padding 0.3s;
+}
+
+.with-sidebar.sidebar-collapsed {
+    padding-left: 60px;
+}
+
+/* Responsividade */
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .with-sidebar {
+        padding-left: 0;
+    }
+    
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1020;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+}

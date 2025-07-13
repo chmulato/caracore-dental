@@ -1,0 +1,61 @@
+/**
+ * Estilos específicos para a página de Dashboard
+ */
+
+.stat-card {
+    height: 100%;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+/* Card de boas-vindas com gradiente */
+.welcome-card {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    border-radius: 8px;
+}
+
+.welcome-card .card-title {
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Ajustes para compatibilidade com o header fixo e footer fixo */
+.main-content.with-sidebar.with-fixed-header .container-fluid {
+    padding-bottom: 60px;
+}
+
+/* Efeito de hover nos cards de estatísticas */
+.card.border-start:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+/* Transição suave para todos os cards */
+.card {
+    transition: all 0.3s ease;
+}
+
+/* Estilização da tabela de agendamentos */
+.dashboard-table thead {
+    background-color: #f8f9fa;
+}
+
+.dashboard-table th {
+    font-weight: 600;
+    color: #4e73df;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+    .welcome-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}

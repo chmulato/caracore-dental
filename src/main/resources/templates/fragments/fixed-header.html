@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt-BR">
+<body>
+    <!-- Header Fixo para Usuários Autenticados -->
+    <header th:fragment="fixed-header" class="header-fixed">
+        <div class="header-title" th:text="${title}">Título da Página</div>
+        
+        <div class="header-actions">
+            <div class="dropdown">
+                <div class="header-user" id="headerUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="header-user-name" sec:authentication="name">Usuário</span>
+                    <div class="header-user-avatar">
+                        <span th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">U</span>
+                    </div>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="headerUserDropdown">
+                    <li><h6 class="dropdown-header">Perfil</h6></li>
+                    <li><a class="dropdown-item" href="/perfil"><i class="bi bi-person me-2"></i>Meu Perfil</a></li>
+                    <li><a class="dropdown-item" href="/perfil/senha"><i class="bi bi-key me-2"></i>Alterar Senha</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/ajuda"><i class="bi bi-question-circle me-2"></i>Ajuda</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Sair</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+</body>
+</html>

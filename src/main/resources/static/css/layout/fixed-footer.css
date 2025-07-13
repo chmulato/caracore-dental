@@ -1,0 +1,40 @@
+/* Footer Fixo */
+.footer.fixed-bottom {
+    border-top: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 -2px 4px rgba(0,0,0,.05);
+    z-index: 1000;
+    background-color: #fff;
+}
+
+/* Posicionamento base do footer - valores específicos aplicados via JavaScript */
+/* Removidos estilos redundantes que são aplicados dinamicamente via JS */
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 992px) {
+    .footer.fixed-bottom {
+        left: 0;
+        width: 100%;
+    }
+    
+    /* Ajuste para o padding-bottom do conteúdo principal */
+    .main-content.with-sidebar.with-fixed-header {
+        padding-bottom: 70px;
+    }
+}
+
+/* Elementos dentro do footer */
+.footer .text-muted {
+    font-size: 0.85rem;
+    /* Removido override de color, pois text-muted já define cor no Bootstrap */
+}
+
+/* Links no footer */
+.footer a {
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.footer a:hover {
+    color: var(--primary-color) !important;
+    text-decoration: none;
+}

@@ -1,0 +1,268 @@
+/* Estilos para a sidebar */
+
+/* Sidebar container */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    z-index: 1030;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Em mobile, a sidebar fica escondida por padrão */
+@media (max-width: 991px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+}
+
+/* Em desktop, a sidebar é visível por padrão (sem necessidade de classe sidebar-open) */
+@media (min-width: 992px) {
+    .sidebar {
+        transform: translateX(0);
+    }
+    
+    /* Apenas se tiver classe de fechamento específica */
+    body.sidebar-closed .sidebar {
+        transform: translateX(-100%);
+    }
+}
+
+/* Sidebar aberta (em qualquer tamanho de tela) */
+body.sidebar-open .sidebar {
+    transform: translateX(0);
+}
+
+/* Cabeçalho da sidebar */
+.sidebar-header {
+    padding: 15px;
+    background-color: #2c3136;
+    display: flex;
+    align-items: center;
+    height: 60px; /* mesma altura do header fixo */
+}
+
+.sidebar-brand {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.sidebar-brand:hover {
+    color: #fff;
+}
+
+.sidebar-logo {
+    font-size: 1.5rem;
+    margin-right: 10px;
+    color: var(--primary-color, #4e73df);
+}
+
+/* Navegação da sidebar */
+.sidebar-nav {
+    padding: 15px 0;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 5px;
+}
+
+.sidebar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav .nav-link.active {
+    color: #fff;
+    background-color: #007bff;
+}
+
+.sidebar-nav .nav-icon {
+    margin-right: 10px;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Separadores na sidebar */
+.sidebar-divider {
+    height: 0;
+    margin: 15px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cabeçalhos de seção */
+.sidebar-heading {
+    padding: 0 15px;
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+}
+
+/* Subitens com dropdown */
+.sidebar-dropdown .dropdown-menu {
+    background-color: #2c3136;
+    border: none;
+    border-radius: 0;
+    margin-top: 0;
+    padding: 0;
+}
+
+.sidebar-dropdown .dropdown-item {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 8px 15px 8px 45px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-dropdown .dropdown-item:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-dropdown .dropdown-item.active {
+    color: #fff;
+    background-color: #007bff;
+}
+
+/* Ajustes para o conteúdo principal */
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
+/* Em mobile, conteúdo ocupa toda a largura */
+.main-content.with-sidebar {
+    margin-left: 0;
+}
+
+/* Em desktop, o conteúdo tem margem para acomodar a sidebar */
+@media (min-width: 992px) {
+    .main-content.with-sidebar {
+        margin-left: 250px;
+    }
+    
+    /* Apenas se tiver classe de fechamento específica */
+    body.sidebar-closed .main-content.with-sidebar {
+        margin-left: 0;
+    }
+}
+
+/* Quando a sidebar está aberta em mobile */
+@media (max-width: 991px) {
+    body.sidebar-open .main-content.with-sidebar {
+        margin-left: 0; /* Sidebar fica em overlay, não desloca conteúdo */
+    }
+}
+
+/* Toggle da sidebar no mobile */
+.sidebar-toggle {
+    display: none;
+}
+
+/* Overlay para fechar a sidebar no mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1025;
+    cursor: pointer;
+}
+
+body.sidebar-open .sidebar-overlay {
+    display: block;
+}
+
+/* Estilos para o rodapé da sidebar e informações do usuário */
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.user-details {
+    overflow: hidden;
+}
+
+.user-name {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.sidebar-action {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 5px;
+}
+
+.sidebar-action:hover {
+    color: white;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 991px) {
+    body.sidebar-open .main-content.with-sidebar {
+        margin-left: 0;
+    }
+
+    .sidebar-toggle {
+        display: block;
+    }
+}

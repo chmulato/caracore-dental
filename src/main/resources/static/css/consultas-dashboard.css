@@ -1,0 +1,82 @@
+/* Estilos para o Dashboard de Consultas */
+
+/* Cards de métricas */
+.metric-card {
+    border-left: 4px solid #007bff;
+    transition: transform 0.2s;
+    margin-bottom: 15px;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.metric-card.success {
+    border-left-color: #28a745;
+}
+
+.metric-card.warning {
+    border-left-color: #ffc107;
+}
+
+.metric-card.danger {
+    border-left-color: #dc3545;
+}
+
+.metric-card.info {
+    border-left-color: #17a2b8;
+}
+
+/* Container dos gráficos */
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin-bottom: 1rem;
+}
+
+/* Destaques */
+.today-highlight {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+}
+
+.upcoming-highlight {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+/* Tabelas no dashboard */
+.table-dashboard th {
+    font-weight: 600;
+    color: #495057;
+}
+
+.table-dashboard td {
+    vertical-align: middle;
+}
+
+/* Estatísticas adicionais */
+.stat-card {
+    height: 100%;
+}
+
+.stat-card .card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 300px;
+    }
+    
+    .table-dashboard {
+        font-size: 0.875rem;
+    }
+}
