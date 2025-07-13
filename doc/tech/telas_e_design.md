@@ -1,31 +1,31 @@
 # Checklist de Telas e Design - Sistema de Agendamento Odontológico
 
-## Cara Core Informática - CCA (Cara Core Agendamento)
+## Cara Core Dental Agendamentos
 
 **Responsável Frontend:** Guilherme Mulato  
 **Tecnologias:** HTML5, CSS3, Bootstrap 5.3.0, JavaScript (ES6+)  
-**Data Criação:** 29 de junho de 2025
+**Data Criação:** 13 de julho de 2025
 
 ---
 
-## 📋 Status de Desenvolvimento
+## Status de Desenvolvimento
 
 **Legenda:**
 
-- ✅ **Concluído** - Tela finalizada e testada
-- 🚧 **Em Desenvolvimento** - Tela em progresso
-- ⏳ **Pendente** - Aguardando desenvolvimento
-- 🔍 **Em Revisão** - Aguardando aprovação
-- ❌ **Bloqueado** - Impedimento identificado
+- **Concluído** - Tela finalizada e testada
+- **Em Desenvolvimento** - Tela em progresso
+- **Pendente** - Aguardando desenvolvimento
+- **Em Revisão** - Aguardando aprovação
+- **Bloqueado** - Impedimento identificado
 
 ---
 
-## 🔐 **1. MÓDULO DE AUTENTICAÇÃO**
+## **1. MÓDULO DE AUTENTICAÇÃO**
 
 ### 1.1 Tela de Login
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Formulário de login centralizado
   - [ ] Campos: email/usuário e senha
@@ -39,8 +39,8 @@
 
 ### 1.2 Tela de Recuperação de Senha
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Formulário com campo de email
   - [ ] Botão "Enviar link de recuperação"
@@ -50,8 +50,8 @@
 
 ### 1.3 Tela de Redefinição de Senha
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Campos: nova senha e confirmação
   - [ ] Indicador de força da senha
@@ -61,12 +61,12 @@
 
 ---
 
-## 🏠 **2. DASHBOARD PRINCIPAL**
+## **2. DASHBOARD PRINCIPAL**
 
 ### 2.1 Dashboard Administrativo
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Header com navegação principal
   - [ ] Sidebar colapsável
@@ -80,12 +80,12 @@
 
 ---
 
-## 🧑‍⚕️ **3. MÓDULO PROFISSIONAIS**
+## **3. MÓDULO PROFISSIONAIS**
 
 ### 3.1 Lista de Profissionais
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Tabela responsiva com DataTables
   - [ ] Filtros: especialidade, status
@@ -97,8 +97,8 @@
 
 ### 3.2 Cadastro/Edição de Profissional
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Formulário em abas/steps
   - [ ] Upload de foto com preview
@@ -111,8 +111,8 @@
 
 ### 3.3 Configuração de Agenda do Profissional
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Grade semanal interativa
   - [ ] Seleção de horários por dia
@@ -123,12 +123,12 @@
 
 ---
 
-## 👩 **4. MÓDULO PACIENTES**
+## **4. MÓDULO PACIENTES**
 
 ### 4.1 Lista de Pacientes
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Tabela responsiva com DataTables
   - [ ] Filtros avançados
@@ -139,8 +139,8 @@
 
 ### 4.2 Cadastro/Edição de Paciente
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Formulário responsivo
   - [ ] Upload de foto do paciente
@@ -152,8 +152,8 @@
 
 ### 4.3 Histórico do Paciente
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Timeline de consultas
   - [ ] Cards por agendamento
@@ -164,8 +164,8 @@
 
 ### 4.4 Prontuário com Imagens
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Upload múltiplo de imagens
   - [ ] Galeria com lightbox
@@ -178,12 +178,12 @@
 
 ---
 
-## 🗓️ **5. MÓDULO AGENDA**
+## **5. MÓDULO AGENDA**
 
 ### 5.1 Agenda Geral
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta (MVP)
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta (MVP)
 - **Componentes:**
   - [ ] Calendário FullCalendar.js
   - [ ] Visualização: dia, semana, mês
@@ -195,8 +195,8 @@
 
 ### 5.2 Agenda por Profissional
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Grade de horários individual
   - [ ] Bloqueios destacados
@@ -206,8 +206,8 @@
 
 ### 5.3 Novo Agendamento
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta (MVP)
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta (MVP)
 - **Componentes:**
   - [ ] Modal ou página dedicada
   - [ ] Autocomplete para pacientes
@@ -220,8 +220,8 @@
 
 ### 5.4 Detalhes do Agendamento
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Modal com informações completas
   - [ ] Dados do paciente e profissional
@@ -232,12 +232,12 @@
 
 ---
 
-## 📅 **6. AGENDAMENTO ONLINE (PÚBLICO)**
+## **6. AGENDAMENTO ONLINE (PÚBLICO)**
 
 ### 6.1 Página Inicial Pública
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Header com logo e menu
   - [ ] Hero section
@@ -248,8 +248,8 @@
 
 ### 6.2 Seleção de Profissional
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Cards de profissionais
   - [ ] Foto e especialidades
@@ -259,8 +259,8 @@
 
 ### 6.3 Seleção de Serviço
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Lista de serviços
   - [ ] Duração e descrição
@@ -270,8 +270,8 @@
 
 ### 6.4 Escolha de Data/Horário
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Calendário interativo
   - [ ] Horários disponíveis por dia
@@ -281,8 +281,8 @@
 
 ### 6.5 Dados do Paciente
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Formulário simplificado
   - [ ] Validação em tempo real
@@ -292,8 +292,8 @@
 
 ### 6.6 Confirmação do Agendamento
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Resumo completo
   - [ ] Dados confirmados
@@ -303,12 +303,12 @@
 
 ---
 
-## 🔧 **7. MÓDULO CONFIGURAÇÕES**
+## **7. MÓDULO CONFIGURAÇÕES**
 
 ### 7.1 Configurações Gerais
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Abas organizadas
   - [ ] Dados do consultório
@@ -318,8 +318,8 @@
 
 ### 7.2 Gerenciamento de Usuários
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Tabela de usuários
   - [ ] Controle de permissões
@@ -329,8 +329,8 @@
 
 ### 7.3 Configuração de Serviços
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] CRUD de serviços
   - [ ] Configuração de duração
@@ -340,8 +340,8 @@
 
 ### 7.4 Configurações de Notificações
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Templates de mensagens
   - [ ] Configuração de provedores
@@ -351,12 +351,12 @@
 
 ---
 
-## 📊 **8. MÓDULO RELATÓRIOS**
+## **8. MÓDULO RELATÓRIOS**
 
 ### 8.1 Dashboard de Relatórios
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Filtros de período
   - [ ] Gráficos principais
@@ -366,8 +366,8 @@
 
 ### 8.2 Relatório de Agendamentos
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Tabela detalhada
   - [ ] Filtros avançados
@@ -377,8 +377,8 @@
 
 ### 8.3 Relatório de Profissionais
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Análise de produtividade
   - [ ] Taxa de comparecimento
@@ -388,8 +388,8 @@
 
 ### 8.4 Relatório Financeiro
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Receita por período
   - [ ] Serviços rentáveis
@@ -399,12 +399,12 @@
 
 ---
 
-## 💬 **9. MÓDULO NOTIFICAÇÕES**
+## **9. MÓDULO NOTIFICAÇÕES**
 
 ### 9.1 Central de Notificações
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Lista de notificações
   - [ ] Status de entrega
@@ -414,8 +414,8 @@
 
 ### 9.2 Templates de Mensagens
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] Editor de templates
   - [ ] Variáveis dinâmicas
@@ -423,10 +423,10 @@
   - [ ] Teste de envio
 - **Arquivos:** `message-templates.html`, `message-templates.css`, `message-templates.js`
 
-### 9.3 ✅ Integração WhatsApp (Implementado)
+### 9.3 Integração WhatsApp (Implementado)
 
-- [x] **Status:** ✅ Concluído
-- [x] **Prioridade:** 🔴 Alta
+- [x] **Status:** Concluído
+- [x] **Prioridade:** Alta
 - **Componentes:**
   - [x] Campo de telefone WhatsApp obrigatório
   - [x] Validação formato brasileiro (99) 99999-9999
@@ -450,24 +450,90 @@
 
 ---
 
-## 🎨 **10. COMPONENTES GLOBAIS**
+## **10. COMPONENTES GLOBAIS**
 
 ### 10.1 Layout Principal
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Header responsivo
   - [ ] Sidebar colapsável
   - [ ] Breadcrumbs
   - [ ] Footer
   - [ ] Loading states
-- **Arquivos:** `layout.html`, `layout.css`, `layout.js`
+- **Arquivos:** `layout.html`, `layout.css`, `layout.js`, `fragments/sidebar.html`, `fragments/header.html`
+
+#### 10.1.1 Menu Lateral (Usuários Logados)
+
+O menu lateral é um componente essencial para navegação de usuários autenticados, oferecendo acesso a todas as funcionalidades do sistema de acordo com o perfil de permissões.
+
+- **Estrutura:**
+  - Logo Cara Core Dental no topo
+  - Menu de navegação com agrupamento por módulos
+  - Indicador visual da seção ativa
+  - Botão de recolher/expandir (toggle)
+  - Informações do usuário logado com foto de perfil
+
+- **Itens de Menu por Perfil:**
+  - **Administrador:** Acesso completo a todos os módulos
+    - Dashboard
+    - Agenda
+    - Profissionais
+    - Pacientes
+    - Prontuários
+    - Configurações
+    - Relatórios
+    - Usuários
+  
+  - **Dentista:**
+    - Dashboard Personalizado
+    - Minha Agenda
+    - Meus Pacientes
+    - Prontuários
+    - Perfil
+  
+  - **Recepção:**
+    - Dashboard
+    - Agenda Geral
+    - Pacientes
+    - Agendamentos
+    - Perfil
+
+- **Comportamento Responsivo:**
+  - Desktop: Expandido por padrão (250px), recolhível (60px)
+  - Tablet: Recolhido por padrão, expansão por overlay
+  - Mobile: Oculto por padrão, acesso via hamburger menu
+
+- **Implementação:** Fragment Thymeleaf com condicionais baseados em Spring Security
+
+#### 10.1.2 Header para Agenda Pública
+
+O header da agenda pública representa a identidade visual da marca para usuários não autenticados, focando na experiência de agendamento online.
+
+- **Elementos:**
+  - Logo "Cara Core Dental - Agendamento" centralizado/esquerda
+  - Navegação simplificada (Home, Serviços, Profissionais, Contato)
+  - Call-to-action "Agendar Consulta" destacado
+  - Botão de login discreto para acesso de funcionários
+  - Responsivo com hamburger menu em mobile
+
+- **Design:**
+  - Altura: 70px (desktop), 60px (mobile)
+  - Cor de fundo: Branco (#FFFFFF)
+  - Sombra sutil para elevação
+  - Fonte: Roboto (sistema principal)
+  - Paleta: Cores institucionais (azul principal #0056b3)
+  
+- **Comportamento:**
+  - Fixo no topo durante rolagem em páginas longas
+  - Transparência em hero sections
+  - Condensado após rolagem
 
 ### 10.2 Componentes Reutilizáveis
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Modais padronizados
   - [ ] Tooltips informativos
@@ -478,8 +544,8 @@
 
 ### 10.3 Sistema de Notificações Toast
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Toast de sucesso
   - [ ] Toast de erro
@@ -489,12 +555,12 @@
 
 ---
 
-## 📱 **11. RESPONSIVIDADE**
+## **11. RESPONSIVIDADE**
 
 ### 11.1 Breakpoints Bootstrap
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Resoluções:**
   - [ ] Mobile: 320px - 575px
   - [ ] Tablet: 576px - 991px
@@ -503,8 +569,8 @@
 
 ### 11.2 Componentes Mobile-First
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🔴 Alta
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Alta
 - **Componentes:**
   - [ ] Navegação mobile
   - [ ] Tabelas responsivas
@@ -514,12 +580,12 @@
 
 ---
 
-## 🔍 **12. FUNCIONALIDADES ESPECIAIS**
+## **12. FUNCIONALIDADES ESPECIAIS**
 
 ### 12.1 Busca Global
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟡 Média
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Média
 - **Componentes:**
   - [ ] Campo de busca no header
   - [ ] Autocomplete com resultados
@@ -529,8 +595,8 @@
 
 ### 12.2 Sistema de Ajuda
 
-- [ ] **Status:** ⏳ Pendente
-- [ ] **Prioridade:** 🟢 Baixa
+- [ ] **Status:** Pendente
+- [ ] **Prioridade:** Baixa
 - **Componentes:**
   - [ ] FAQ integrado
   - [ ] Tooltips contextuais
@@ -540,7 +606,7 @@
 
 ---
 
-## 📋 **RESUMO EXECUTIVO**
+## **RESUMO EXECUTIVO**
 
 ### **Estatísticas do Projeto**
 
@@ -548,6 +614,7 @@
 - **Prioridade Alta:** 8 telas (MVP)
 - **Prioridade Média:** 15 telas
 - **Prioridade Baixa:** 12+ telas
+- **Componentes de Navegação:** 2 principais (Menu Lateral para Usuários Logados, Header para Agenda Pública)
 
 ### **Tecnologias Obrigatórias**
 
@@ -577,7 +644,7 @@
 
 ---
 
-## 📝 **OBSERVAÇÕES IMPORTANTES**
+## **OBSERVAÇÕES IMPORTANTES**
 
 ### **Padrões de Desenvolvimento**
 
@@ -607,4 +674,4 @@
 **Documento criado por:** Christian V. Mulato  
 **Para desenvolvimento:** Guilherme Mulato  
 **Projeto:** Sistema de Agendamento Odontológico - Cara Core CCA  
-**Última atualização:** 29 de junho de 2025
+**Última atualização:** 12 de julho de 2025
