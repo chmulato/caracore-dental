@@ -95,6 +95,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | Documento                                                       | Aplicação no Negócio                    | Público-Alvo     |
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
 | [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de negócios da startup            | Investidores     |
+| [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md)                    | Framework de métricas e crescimento     | Gestão Executiva |
 | [plano_negocio_agenda.md](plan/plano_negocio_agenda.md)         | Modelagem de negócio para agendamentos  | Gestão Comercial |
 | [plano_negocios_automacao.md](plan/plano_negocios_automacao.md) | Estratégias de automação de processos   | Operações        |
 | [plano_vendas_agenda.md](plan/plano_vendas_agenda.md)           | Estratégias de comercialização          | Vendas           |
@@ -173,8 +174,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 1. **Visão Geral:** [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) - Features disponíveis
 2. **Roadmap:** [tech/roadmap_upgrade.md](tech/roadmap_upgrade.md) - Planejamento de evolução
 3. **Startup:** [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md) - Plano de negócios e oportunidade
-4. **Business:** Documentos na pasta [plan/](plan/) - Estratégia de negócio
-5. **Problemas:** [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md) - Issues em andamento
+4. **Métricas:** [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md) - Framework de crescimento e KPIs
+5. **Business:** Documentos na pasta [plan/](plan/) - Estratégia de negócio
+6. **Problemas:** [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md) - Issues em andamento
 
 ### DevOps/Infraestrutura
 
