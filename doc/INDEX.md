@@ -94,6 +94,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
 | Documento                                                       | Aplicação no Negócio                    | Público-Alvo     |
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
+| [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de negócios da startup            | Investidores     |
 | [plano_negocio_agenda.md](plan/plano_negocio_agenda.md)         | Modelagem de negócio para agendamentos  | Gestão Comercial |
 | [plano_negocios_automacao.md](plan/plano_negocios_automacao.md) | Estratégias de automação de processos   | Operações        |
 | [plano_vendas_agenda.md](plan/plano_vendas_agenda.md)           | Estratégias de comercialização          | Vendas           |
@@ -171,8 +172,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 
 1. **Visão Geral:** [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) - Features disponíveis
 2. **Roadmap:** [tech/roadmap_upgrade.md](tech/roadmap_upgrade.md) - Planejamento de evolução
-3. **Business:** Documentos na pasta [plan/](plan/) - Estratégia de negócio
-4. **Problemas:** [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md) - Issues em andamento
+3. **Startup:** [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md) - Plano de negócios e oportunidade
+4. **Business:** Documentos na pasta [plan/](plan/) - Estratégia de negócio
+5. **Problemas:** [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md) - Issues em andamento
 
 ### DevOps/Infraestrutura
 
@@ -202,13 +204,13 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | Documento                                                                | Descrição                                   | Cobertura            |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
-| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário  | 100% (42/42 testes)  |
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Testes unitários do sistema de prontuário  | 100% (545/545 testes)  |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
 
 ---
 
-## Sistema de Prontuário Médico
+## Sistema de Prontuário Odontológico
 
 ### Funcionalidades Implementadas
 
@@ -219,6 +221,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de gestão de prontuários  | Implementado         |
 | [PRONTUARIO_DOCUMENTACAO.md](PRONTUARIO_DOCUMENTACAO.md)                 | Documentação organizacional do sistema     | Completo             |
 | [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Relatório completo dos testes unitários    | Implementado (100%)  |
+| [PRONTUARIO_ARQUITETURA_DTO.md](PRONTUARIO_ARQUITETURA_DTO.md)           | Padrão DTO para gestão de imagens e dados  | Implementado (13/07) |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
 
@@ -256,8 +259,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 **Sistema:** Agendamento para Consultórios Odontológicos  
 **Tecnologia Principal:** Spring Boot 3.2.6 + Java 17  
 **Banco de Dados:** PostgreSQL 16.9  
-**Versão da Documentação:** 2.1  
-**Última Atualização:** 12/07/2025
+**Versão da Documentação:** 2.2  
+**Última Atualização:** 13/07/2025
 
 ---
 

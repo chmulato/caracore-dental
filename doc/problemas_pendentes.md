@@ -15,6 +15,15 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 - Controle de status de consultas
 - Interface responsiva e moderna
 - Testes unitários 100% funcionais e compatíveis
+- Sistema de prontuário odontológico com imagens radiológicas
+- Padrão DTO para otimização de transferência de dados
+
+### Principais Problemas Resolvidos Recentemente
+
+- **Testes de Segurança (13/07/2025):** Corrigidos testes unitários do ProntuarioControllerSecurityTest
+- **Lazy Loading (13/07/2025):** Solucionado problema de acesso a coleções lazy-loaded em templates Thymeleaf
+- **Conversão de Tipos (13/07/2025):** Corrigido erro de conversão de dados Base64 para Long no PostgreSQL
+- **Tratamento de Erros (13/07/2025):** Implementação padronizada de códigos de status HTTP
 
 ### Pendências Principais (Prioridade Alta)
 

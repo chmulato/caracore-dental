@@ -2,9 +2,9 @@
 
 ## Resumo das Melhorias
 
-Este documento descreve as funcionalidades implementadas no sistema Cara Core Agendamento (CCA) para completar o módulo de gestão de agendamentos.
+Este documento descreve as funcionalidades implementadas no sistema Cara Core Agendamento (CCA) para completar o módulo de gestão de agendamentos e prontuários odontológicos.
 
-**Última Atualização:** 05/07/2025  
+**Última Atualização:** 13/07/2025  
 **Status:** Concluído - Sistema funcional em produção
 
 ## Gestão de Consultas Agendadas
@@ -94,30 +94,34 @@ Este documento descreve as funcionalidades implementadas no sistema Cara Core Ag
 - `GET /api/public/verificar-disponibilidade` - Verificação de conflitos
 - `POST /public/api/agendar` - Endpoint REST para agendamento
 
-## Sistema de Prontuário Médico (Implementado em 12/07/2025)
+## Sistema de Prontuário Odontológico (Atualizado em 13/07/2025)
 
 ### Arquivos Implementados:
 
-#### Backend:
+#### Backend
+
 - `src/main/java/com/caracore/cca/model/Prontuario.java` - Entidade principal do prontuário
 - `src/main/java/com/caracore/cca/model/ImagemRadiologica.java` - Gestão de imagens Base64
 - `src/main/java/com/caracore/cca/model/RegistroTratamento.java` - Histórico de tratamentos
+- `src/main/java/com/caracore/cca/dto/ImagemRadiologicaResumo.java` - DTO para metadados de imagens
 - `src/main/java/com/caracore/cca/repository/ProntuarioRepository.java` - Repositório com queries customizadas
 - `src/main/java/com/caracore/cca/repository/ImagemRadiologicaRepository.java` - Gestão de imagens
 - `src/main/java/com/caracore/cca/repository/RegistroTratamentoRepository.java` - Histórico
 - `src/main/java/com/caracore/cca/service/ProntuarioService.java` - Lógica de negócio completa
 - `src/main/java/com/caracore/cca/controller/ProntuarioController.java` - Endpoints REST e web
 
-#### Database:
+#### Database
+
 - `src/main/resources/db/migration/V16__Create_prontuario_tables.sql` - Estruturas das tabelas
 - `src/main/resources/db/migration/V17__Insert_sample_prontuario_data.sql` - Dados de exemplo
 
-#### Frontend:
+#### Frontend
+
 - `src/main/resources/templates/prontuarios/meus-prontuarios.html` - Lista de prontuários
 - `src/main/resources/templates/prontuarios/visualizar.html` - Detalhes e gestão do prontuário
 - `src/main/resources/templates/prontuarios/visualizar-imagem.html` - Visualizador avançado
 
-### Funcionalidades:
+### Funcionalidades
 
 - **Gestão Completa de Prontuários** ligados aos pacientes existentes
 - **Upload de Imagens Radiológicas** com armazenamento em Base64
@@ -127,8 +131,10 @@ Este documento descreve as funcionalidades implementadas no sistema Cara Core Ag
 - **Interface Responsiva** compatível com desktop e mobile
 - **Controle de Segurança** baseado no dentista logado
 - **Metadados Completos** para cada imagem (tipo, tamanho, data, dentista)
+- **Padrão DTO** para transferência segura de dados entre camadas
+- **Otimização de Performance** com pré-processamento de metadados
 
-### Rotas:
+### Endpoints do Prontuário
 
 - `GET /prontuarios` - Lista prontuários do dentista
 - `GET /prontuarios/paciente/{id}` - Visualizar prontuário do paciente
@@ -136,14 +142,18 @@ Este documento descreve as funcionalidades implementadas no sistema Cara Core Ag
 - `POST /prontuarios/{id}/tratamento` - Adicionar tratamento
 - `GET /prontuarios/imagem/{id}` - Visualizar imagem em tela cheia
 - `DELETE /prontuarios/imagem/{id}` - Remover imagem
+- `GET /prontuarios/paciente/{id}/resumo` - Obter resumo de imagens e metadados
 
-### Recursos Técnicos:
+### Recursos Técnicos
 
 - **Armazenamento Base64** otimizado para imagens radiológicas
 - **Validação de Arquivos** (tipos JPEG, PNG, limite de 10MB)
 - **Soft Delete** para imagens (mantém histórico)
 - **Auditoria Completa** com timestamps e responsáveis
 - **Relacionamentos JPA** otimizados com lazy loading
+- **Padrão DTO** para evitar problemas de lazy loading em templates
+- **Metadados Transientes** para pré-processamento de estatísticas
+- **Queries Otimizadas** para evitar carregamento de conteúdo Base64 quando desnecessário
 
 ## 🔧 Melhorias no Backend
 
