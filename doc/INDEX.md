@@ -221,10 +221,10 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | Documento                                                                | Descrição                                   | Status               |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
-| [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de gestão de prontuários  | Implementado         |
-| [PRONTUARIO_DOCUMENTACAO.md](PRONTUARIO_DOCUMENTACAO.md)                 | Documentação organizacional do sistema     | Completo             |
-| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Relatório completo dos testes unitários    | Implementado (100%)  |
-| [PRONTUARIO_ARQUITETURA_DTO.md](PRONTUARIO_ARQUITETURA_DTO.md)           | Padrão DTO para gestão de imagens e dados  | Implementado (13/07) |
+| [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de gestão de prontuários   | Implementado         |
+| [PRONTUARIO_DOCUMENTACAO.md](PRONTUARIO_DOCUMENTACAO.md)                 | Documentação organizacional do sistema      | Completo             |
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | Relatório completo dos testes unitários     | Implementado (100%)  |
+| [PRONTUARIO_ARQUITETURA_DTO.md](PRONTUARIO_ARQUITETURA_DTO.md)           | Padrão DTO para gestão de imagens e dados   | Implementado (13/07) |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
 
