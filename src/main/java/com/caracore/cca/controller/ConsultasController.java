@@ -303,6 +303,9 @@ public class ConsultasController {
     public String dashboard(Model model) {
         logger.info("Exibindo dashboard de consultas");
         
+        // Ativa o link correto na sidebar
+        model.addAttribute("activeLink", "consultas");
+        
         List<Agendamento> todosAgendamentos = agendamentoService.listarTodos();
         
         // Estatísticas gerais

@@ -19,11 +19,13 @@ Após o login bem-sucedido, todos os usuários autenticados terão acesso a uma 
 
 - **Comportamento:** Menu lateral fixo que contém todas as funcionalidades do sistema
 - **Características:**
-  - Expansível/Retrátil para otimizar espaço em dispositivos menores
+  - Visível por padrão em desktop (≥992px) após o login
+  - Recolhível através de botão toggle (estado preservado entre sessões)
+  - Oculto por padrão em dispositivos móveis (<992px), acessível via botão de menu
   - Organizado por módulos (Agenda, Pacientes, Prontuários, etc.)
-  - Personalizado conforme o perfil do usuário (ADMIN, DENTIST, STAFF)
-  - Indicador visual da página atual
-  - Acesso rápido às funcionalidades mais utilizadas
+  - Personalizado conforme o perfil do usuário (ADMIN, DENTIST, RECEPTIONIST)
+  - Indicador visual da página atual através de classe 'active'
+  - Suporte a submenus expansíveis para agrupamento de funcionalidades relacionadas
 
 #### Itens do Menu (por perfil)
 
@@ -56,10 +58,12 @@ Após o login bem-sucedido, todos os usuários autenticados terão acesso a uma 
 
 #### Área de Conteúdo Principal
 
-- Cabeçalho com breadcrumbs para navegação contextual
-- Área de notificações e alertas
-- Perfil do usuário com opções de configuração e logout
+- Cabeçalho fixo (fixed-header) com título da página atual
+- Perfil do usuário com dropdown para opções de configuração e logout
 - Conteúdo específico da funcionalidade selecionada
+- Ajusta-se automaticamente conforme estado da sidebar (expandida/recolhida)
+- Possui padding superior para acomodar o cabeçalho fixo
+- Possui padding inferior para acomodar o rodapé fixo
 
 ### 2.2. Agenda Pública (Acesso Não-Autenticado)
 
@@ -93,9 +97,17 @@ A área pública para agendamento de consultas apresenta:
 
 O sistema é completamente responsivo, adaptando-se a diferentes dispositivos:
 
-- **Desktop:** Layout completo com menu lateral expansível
-- **Tablet:** Menu lateral retrátil e reorganização de componentes
-- **Mobile:** Menu hambúrguer e layout simplificado para fácil navegação
+- **Desktop (≥992px):**  
+  - Menu lateral visível por padrão após login
+  - Estado da sidebar (expandida/recolhida) preservado no localStorage
+  - Conteúdo principal com margem à esquerda quando sidebar está visível
+  - Header e footer fixos ajustam-se ao estado da sidebar
+
+- **Tablet/Mobile (<992px):**  
+  - Menu lateral oculto por padrão, acessível via botão hamburguer
+  - Sidebar aparece como overlay sobre o conteúdo quando aberta
+  - Fecha automaticamente após seleção de opção do menu
+  - Barra superior móvel com acesso ao perfil do usuário
 
 ### 3.3. Acessibilidade
 
@@ -148,10 +160,91 @@ O sistema é completamente responsivo, adaptando-se a diferentes dispositivos:
 
 ## 6. Implementação Técnica
 
+### 6.1. Tecnologias Utilizadas
+
 - **Frontend:** Thymeleaf + Bootstrap 5.3.0
-- **Componentes JS:** jQuery + plugins específicos
-- **Interatividade:** JavaScript ES6+
-- **Estilização:** CSS/SASS com design responsivo
+- **Componentes JS:** JavaScript ES6+ (sem dependência de jQuery)
+- **Icones:** Bootstrap Icons 1.13.1
+- **Estilização:** CSS modular com organização por componentes
+
+### 6.2. Estrutura de Arquivos
+
+- **Templates Principais:**
+  - `fragments/main-layout.html`: Layout base com estrutura para páginas autenticadas e públicas
+  - `fragments/sidebar.html`: Implementação do menu lateral
+  - `fragments/fixed-header.html`: Implementação do cabeçalho fixo
+  - `fragments/fixed-footer.html`: Implementação do rodapé fixo
+
+- **Estilos CSS:**
+  - `css/main.css`: Estilos globais e variáveis da aplicação
+  - `css/sidebar.css`: Estilos específicos para o menu lateral
+  - `css/fixed-header.css`: Estilos para o cabeçalho fixo
+  - `css/fixed-footer.css`: Estilos para o rodapé fixo
+  - `css/[funcionalidade].css`: Estilos específicos para cada funcionalidade
+
+- **Scripts JavaScript:**
+  - `js/layout/sidebar.js`: Comportamento do menu lateral
+  - `js/layout/fixed-header.js`: Comportamento do cabeçalho fixo
+  - `js/layout/fixed-footer.js`: Comportamento do rodapé fixo
+  - `js/[funcionalidade].js`: Scripts específicos para cada funcionalidade
+
+### 6.3. Comportamento da Sidebar
+
+O menu lateral (sidebar) possui um comportamento específico implementado via CSS e JavaScript:
+
+#### Visibilidade Inicial
+
+- Em desktop (≥992px):  
+  - Visível por padrão após o login
+  - CSS: `.sidebar { transform: translateX(0); }` aplicado via media query
+  - O conteúdo principal tem margem à esquerda para acomodar a sidebar
+
+- Em mobile (<992px):  
+  - Oculto por padrão
+  - CSS: `.sidebar { transform: translateX(-100%); }`
+  - O conteúdo principal não tem margem adicional
+
+#### Persistência de Estado
+
+O JavaScript (`sidebar.js`) gerencia o estado da sidebar:
+
+```javascript
+// Em desktop, a sidebar começa aberta por padrão
+if (window.innerWidth > 991) {
+    // Se houver uma preferência salva no localStorage, use-a
+    const sidebarState = localStorage.getItem('sidebarOpen');
+    // Se não houver preferência ou a preferência for 'true', abra a sidebar
+    if (sidebarState === null || sidebarState === 'true') {
+        body.classList.add('sidebar-open');
+    }
+}
+```
+
+Quando o usuário altera o estado da sidebar (expandir/recolher):
+
+1. A classe `sidebar-open` é adicionada/removida do elemento `body`
+2. O novo estado é salvo no localStorage
+3. Media queries no CSS ajustam automaticamente o layout
+
+#### Interação com Header e Footer Fixos
+
+O cabeçalho e rodapé fixos também respondem ao estado da sidebar:
+
+```css
+/* Em desktop, o header deve ser ajustado por padrão */
+@media (min-width: 992px) {
+    .header-fixed {
+        left: 250px;
+    }
+    
+    /* Quando a sidebar está explicitamente fechada em desktop */
+    body:not(.sidebar-open) .header-fixed {
+        left: 0;
+    }
+}
+```
+
+Este comportamento garante que todos os elementos da interface se ajustem corretamente ao estado da sidebar, tanto em desktop quanto em dispositivos móveis.
 
 ## 7. Testes e Validação
 
@@ -169,6 +262,33 @@ A interface do usuário é validada através de:
 - [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md) - Especificações detalhadas de cada tela
 - [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md) - Validação de componentes de interface
 
+## Guia de Integração com o Layout
+
+Para integrar novas páginas ao sistema de layout autenticado, utilize o seguinte template Thymeleaf:
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt-BR">
+<head th:replace="~{fragments/main-layout :: head('Título da Página')}">
+    <!-- Este conteúdo será substituído pelo fragmento head -->
+</head>
+<body>
+    <!-- Usando layout autenticado com sidebar -->
+    <div th:replace="~{fragments/main-layout :: authenticated-layout('Título da Página', 'identificador-menu', ~{::section})}">
+        <section>
+            <!-- Conteúdo específico da página aqui -->
+        </section>
+    </div>
+</body>
+</html>
+```
+
+Onde:
+
+- `'Título da Página'` será exibido no cabeçalho e título da janela
+- `'identificador-menu'` deve corresponder ao valor usado na sidebar para destacar o item de menu ativo
+- `~{::section}` encapsula o conteúdo específico da página
+
 ---
 
-**Nota:** Esta documentação é um guia vivo e será atualizada conforme evoluções na interface do sistema.
+**Nota:** Esta documentação é um guia vivo e será atualizada conforme evoluções na interface do sistema. Última atualização em 13/07/2025.
