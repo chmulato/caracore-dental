@@ -71,6 +71,22 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |----------------------------------------------------------------|---------------------------------|-----------------|
 ```
 
+### Interface do Usuário
+
+```markdown
+|----------------------------------------------------------------|-----------------------------------------|-------------------|
+| Área                                                           | Comportamento                           | Tipo de Acesso    |
+|----------------------------------------------------------------|-----------------------------------------|-------------------|
+| **Sistema Interno**                                            | Menu lateral com todas funcionalidades  | Usuário Logado    |
+| **Agenda Pública**                                             | Header "Cara Core Dental - Agendamento" | Acesso Público    |
+|----------------------------------------------------------------|-----------------------------------------|-------------------|
+```
+
+**Detalhes da Interface:**
+
+- [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md) - Especificações completas das telas
+- [INTERFACE_USUARIO.md](INTERFACE_USUARIO.md) - Guia de navegação e experiência do usuário
+
 ---
 
 ## Integração e APIs
@@ -129,6 +145,18 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md)          | Planejamento de desenvolvimento | Gestão de Projeto     |
 |----------------------------------------------------------|---------------------------------|-----------------------|
 ```
+
+**Estrutura de Interface:**
+
+- **Sistema Interno (Autenticado):**
+  - Layout com menu lateral contendo todas as funcionalidades
+  - Navegação intuitiva entre módulos (Agenda, Prontuários, Configurações)
+  - Acesso baseado em perfis (ADMIN, DENTIST, STAFF, PATIENT)
+
+- **Agenda Pública (Não-Autenticado):**
+  - Header institucional "Cara Core Dental - Agendamento"
+  - Interface simplificada para marcação de consultas
+  - Sem acesso a dados sensíveis ou funcionalidades restritas
 
 ### Arquitetura de Software
 
