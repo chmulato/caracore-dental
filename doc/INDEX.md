@@ -1,228 +1,144 @@
 # Índice da Documentação - Cara Core Dental - Agendamentos
 
-- **Sistema de Agendamento para Consultórios Odontológicos**
+## Sistema de Agendamento para Consultórios Odontológicos
 
-Este diretório contém toda a documentação técnica, estratégica e operacional do projeto CCA. A organização segue uma lógica construtiva para facilitar o desenvolvimento e manutenção da aplicação.
+Este diretório contém toda a documentação técnica, estratégica e operacional do projeto CCA. A organização segue uma hierarquia de relevância para facilitar o desenvolvimento e manutenção da aplicação.
 
 ---
 
-## Status e Controle do Projeto
+## DOCUMENTAÇÃO CRÍTICA - Uso Diário
+
+### Status e Controle Principal
 
 ```markdown
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
 | Documento                                                            | Descrição                                            | Responsabilidade  |
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
-| [STATUS_ATUAL.md](../STATUS_ATUAL.md)                                | Status completo do desenvolvimento e funcionalidades | Gestão de Projeto |
-| [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) | Lista detalhada de funcionalidades já implementadas  | Desenvolvimento   |
-| [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md)                     | Problemas conhecidos e suas soluções                 | Suporte Técnico   |
+| [STATUS_ATUAL.md](../STATUS_ATUAL.md)                                | Status completo multi-ambiente (14/07/2025)         | Gestão de Projeto |
+| [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) | Lista completa de features implementadas             | Desenvolvimento   |
+| [INDEX.md](INDEX.md)                                                | Índice principal da documentação                     | Documentação      |
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
 ```
 
-### 🆕 Novidades Recentes (Julho 2025)
+### Configuração Essencial (Setup Obrigatório)
+
+```markdown
+|--------------------------------------------------------|---------------------------------------------|-------------------------|
+| Documento                                              | Aplicação                                   | Criticidade             |
+|--------------------------------------------------------|---------------------------------------------|-------------------------|
+| [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) | Setup Docker + H2 + PostgreSQL            | CRÍTICO - Setup         |
+| [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md)   | Configuração de profiles multi-ambiente   | CRÍTICO - Config        |
+| [POOL_CONEXOES.md](POOL_CONEXOES.md)                   | HikariCP para H2 e PostgreSQL             | CRÍTICO - Performance   |
+|--------------------------------------------------------|---------------------------------------------|-------------------------|
+```
+
+### Sistema de Prontuário (Funcionalidade Principal)
+
+```markdown
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+| Documento                                                                | Descrição                                   | Status/Atualização   |
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+| [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de prontuários           | Implementado (13/07) |
+| [PRONTUARIO_ARQUITETURA_DTO.md](PRONTUARIO_ARQUITETURA_DTO.md)           | Padrão DTO para performance               | Implementado (13/07) |
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | 545/545 testes passando                   | 100% Cobertura       |
+|--------------------------------------------------------------------------|---------------------------------------------|----------------------|
+```
+
+### Novidades Recentes (Julho 2025)
 
 **Sistema Multi-Ambiente Implementado:**
 
 - **Profile H2** (`application-h2.yml`): Desenvolvimento rápido com banco em memória
-- **Profile Local** (`application-local.yml`): PostgreSQL via Docker para testes realísticos
+- **Profile Local** (`application-local.yml`): PostgreSQL via Docker para testes realísticos  
 - **Docker Integration**: Setup automático do PostgreSQL 15 para desenvolvimento
 - **Pool de Conexões Otimizado**: Configurações específicas para cada ambiente
 - **22 Migrações Flyway**: Aplicadas com sucesso em ambos os ambientes
 
-**Status Atual:** ✅ **VERDE** - Sistema estável e pronto para homologação
+**Status Atual:** VERDE - Sistema estável e pronto para homologação
 
 ---
 
-## Arquitetura e Configuração de Sistema
+## DOCUMENTAÇÃO IMPORTANTE - Apoio ao Desenvolvimento
 
-### Configuração de Ambiente
-
-```markdown
-|--------------------------------------------------------|---------------------------------------------|-------------------------|
-| Documento                                              | Aplicação                                   | Fase de Desenvolvimento |
-|--------------------------------------------------------|---------------------------------------------|-------------------------|
-| [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md)   | Configuração de profiles e propriedades     | Setup Inicial           |
-| [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) | Setup de ambientes (local, teste, produção) | DevOps                  |
-| [SCRIPTS_AMBIENTE.md](SCRIPTS_AMBIENTE.md)             | Automação de inicialização                  | Produtividade           |
-|--------------------------------------------------------|---------------------------------------------|-------------------------|
-```
-
-### Banco de Dados e Performance
-
-```markdown
-|------------------------------------------------------------------|---------------------------------------|----------------------|
-| Documento                                                        | Foco Técnico                          | Impacto              |
-|------------------------------------------------------------------|---------------------------------------|----------------------|
-| [POOL_CONEXOES.md](POOL_CONEXOES.md)                             | Otimização multi-ambiente (H2/PostgreSQL) | Performance          |
-| [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) | Controle de migrations com Flyway     | Integridade de Dados |
-| [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md)           | Setup Docker PostgreSQL + H2          | DevOps Multi-Ambiente|
-|------------------------------------------------------------------|---------------------------------------|----------------------|
-```
-
----
-
-## Segurança e Compliance
+### Segurança e Compliance
 
 ```markdown
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
 | Documento                                                                    | Área de Aplicação                 | Regulamentação |
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
-| [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) | Proteção de dados de agendamentos | LGPD           |
-| [USER_ACTIVITY_LOG.md](USER_ACTIVITY_LOG.md)                                 | Auditoria de ações dos usuários   | Compliance     |
-| [ACESSO_AGENDA_PUBLICA.md](ACESSO_AGENDA_PUBLICA.md)                         | Controle de autorização           | Segurança      |
+| [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) | Proteção LGPD de agendamentos  | LGPD           |
+| [USER_ACTIVITY_LOG.md](USER_ACTIVITY_LOG.md)                                 | Auditoria de ações             | Compliance     |
+| [ACESSO_AGENDA_PUBLICA.md](ACESSO_AGENDA_PUBLICA.md)                         | Controle de autorização        | Segurança      |
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
 ```
 
----
-
-## Funcionalidades de Negócio
+### Problemas e Manutenção
 
 ```markdown
 |----------------------------------------------------------------|---------------------------------|-----------------|
-| Documento                                                      | Módulo do Sistema               | Stakeholder     |
+| Documento                                                      | Módulo/Finalidade               | Relevância      |
 |----------------------------------------------------------------|---------------------------------|-----------------|
-| [STATUS_CONSULTAS_AGENDADAS.md](STATUS_CONSULTAS_AGENDADAS.md) | Gestão de consultas e workflows | Usuários Finais |
+| [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md)               | 546 linhas de issues/melhorias | ALTO - Gestão   |
+| [STATUS_CONSULTAS_AGENDADAS.md](STATUS_CONSULTAS_AGENDADAS.md) | Sistema de consultas          | ALTO - Feature  |
 |----------------------------------------------------------------|---------------------------------|-----------------|
 ```
 
-### Interface do Usuário
-
-```markdown
-|----------------------------------------------------------------|-----------------------------------------|-------------------|
-| Área                                                           | Comportamento                           | Tipo de Acesso    |
-|----------------------------------------------------------------|-----------------------------------------|-------------------|
-| **Sistema Interno**                                            | Menu lateral com todas funcionalidades  | Usuário Logado    |
-| **Agenda Pública**                                             | Header "Cara Core Dental - Agendamento" | Acesso Público    |
-|----------------------------------------------------------------|-----------------------------------------|-------------------|
-```
-
-**Detalhes da Interface:**
-
-- [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md) - Especificações completas das telas
-- [INTERFACE_USUARIO.md](INTERFACE_USUARIO.md) - Guia de navegação e experiência do usuário
-- [NAVEGACAO_IMPLEMENTACAO.md](NAVEGACAO_IMPLEMENTACAO.md) - Guia de implementação do sistema de navegação dual
-
-**Componentes de Navegação:**
-
-```markdown
-|----------------------------------|------------------------------------------|-------------------------------------|
-| Componente                       | Implementação                            | Uso                                 |
-|----------------------------------|------------------------------------------|-------------------------------------|
-| Sidebar (Menu Lateral)           | fragments/sidebar.html + sidebar.css/js  | Páginas internas autenticadas       |
-| Header (Cabeçalho Público)       | fragments/header.html + header.css/js    | Agenda pública de acesso externo    |
-| Layout Principal                 | fragments/main-layout.html               | Template base para todas as páginas |
-|----------------------------------|------------------------------------------|-------------------------------------|
-```
-
-**Exemplo de Implementação:**
-
-Para páginas autenticadas:
-
-```html
-<div th:replace="~{fragments/main-layout :: authenticated-layout('Título', 'activeLink', ~{::section})}">
-    <section>
-        <!-- Conteúdo específico da página -->
-    </section>
-</div>
-```
-
-Para páginas públicas:
-
-```html
-<div th:replace="~{fragments/main-layout :: public-layout('Título', ~{::main})}">
-    <main>
-        <!-- Conteúdo específico da página -->
-    </main>
-</div>
-```
-
----
-
-## Integração e APIs
+### APIs e Integrações
 
 ```markdown
 |------------------------------------------------------|---------------------------------------|------------------------------|
 | Documento                                            | Tecnologia                            | Finalidade                   |
 |------------------------------------------------------|---------------------------------------|------------------------------|
-| [SWAGGER_README.md](SWAGGER_README.md)               | OpenAPI 3.0 para documentação de APIs | Desenvolvimento e Integração |
-| [EXEMPLOS_CONFIGURACAO.md](EXEMPLOS_CONFIGURACAO.md) | Configurações práticas do sistema     | Implementação                |
+| [SWAGGER_README.md](SWAGGER_README.md)               | OpenAPI 3.0 + endpoints            | ALTO - API Docs              |
+| [EXEMPLOS_CONFIGURACAO.md](EXEMPLOS_CONFIGURACAO.md) | Configurações práticas             | MÉDIO - Implementação        |
 |------------------------------------------------------|---------------------------------------|------------------------------|
 ```
 
 ---
 
-## Planejamento Estratégico e Business
+## DOCUMENTAÇÃO COMPLEMENTAR - Consulta Conforme Necessário
 
-### Documentos de Negócio
+### Estratégia e Negócio
 
 ```markdown
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
 | Documento                                                       | Aplicação no Negócio                    | Público-Alvo     |
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
-| [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de negócios da startup            | Investidores     |
-| [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md)                    | Framework de métricas e crescimento     | Gestão Executiva |
-| [PLANO_DE_NEGOCIO.md](plan/PLANO_DE_NEGOCIO.md)                 | Plano de negócio completo               | Gestão Comercial |
-| [VENDAS.md](plan/VENDAS.md)                                     | Plano de vendas e taxa de retorno       | Vendas           |
-| [ESTRATEGIA.md](plan/ESTRATEGIA.md)                             | Estratégia técnica e comercial          | Operações        |
-|-----------------------------------------------------------------|-----------------------------------------|------------------|
+| [PLANO_DE_NEGOCIO.md](plan/PLANO_DE_NEGOCIO.md)                 | Plano de negócio completo            | Gestão Comercial |
+| [VENDAS.md](plan/VENDAS.md)                                     | Estratégia de vendas                 | Vendas           |
+| [ESTRATEGIA.md](plan/ESTRATEGIA.md)                             | Estratégia técnica/comercial         | Operações        |
+| [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de startup                     | Investidores     |
+| [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md)                    | Framework de KPIs                    | Gestão Executiva |
+|----------------------------------------------------------------|-----------------------------------------|------------------|
 ```
 
-### Roadmap e Desenvolvimento
-
-```markdown
-|-----------------------------------------------|----------------------|-------------------------|
-| Documento                                     | Fase do Projeto      | Aplicação               |
-|-----------------------------------------------|----------------------|-------------------------|
-| [DIVULGACAO.md](plan/DIVULGACAO.md)           | Lançamento           | Marketing e Comunicação |
-| [PROTOTIPO.md](plan/PROTOTIPO.md)             | MVP                  | Validação de Conceito   |
-| [ROADMAP.md](tech/ROADMAP.md)                 | Evolução Tecnológica | Arquitetura de Software |
-|-----------------------------------------------|----------------------|-------------------------|
-```
-
----
-
-## Especificações Técnicas
-
-### Frontend e Interface
+### Interface e UX
 
 ```markdown
 |----------------------------------------------------------|---------------------------------|-----------------------|
 | Documento                                                | Componente                      | Framework             |
 |----------------------------------------------------------|---------------------------------|-----------------------|
-| [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)    | Validação de desenvolvimento    | Thymeleaf + Bootstrap |
-| [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md)              | Especificação de interfaces     | UI/UX                 |
-| [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md)          | Planejamento de desenvolvimento | Gestão de Projeto     |
+| [INTERFACE_USUARIO.md](INTERFACE_USUARIO.md)             | Navegação e experiência      | UI/UX                 |
+| [NAVEGACAO_IMPLEMENTACAO.md](NAVEGACAO_IMPLEMENTACAO.md) | Sistema de navegação dual    | Thymeleaf             |
+| [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)    | Validação de desenvolvimento  | Bootstrap + jQuery    |
+| [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md)              | Especificação de interfaces  | Design System         |
 |----------------------------------------------------------|---------------------------------|-----------------------|
 ```
 
-**Sistema de Navegação:**
+### Infraestrutura e Scripts
 
 ```markdown
-|-----------------------------|-----------------------------------------|--------------------------------|
-| Componente                  | Arquivos                                | Responsabilidade              |
-|-----------------------------|-----------------------------------------|--------------------------------|
-| Layout Principal           | fragments/main-layout.html               | Template base para o sistema  |
-| Menu Lateral (Autenticado) | fragments/sidebar.html                   | Navegação por perfil de acesso|
-| CSS do Menu Lateral        | static/css/layout/sidebar.css            | Estilos do menu lateral       |
-| JavaScript do Menu Lateral | static/js/layout/sidebar.js              | Comportamento do menu lateral |
-| Header Público             | fragments/header.html                    | Navegação para agenda pública |
-| CSS do Header              | static/css/layout/header.css             | Estilos do header público     |
-| JavaScript do Header       | static/js/layout/header.js               | Comportamento do header       |
-| Página Exemplo - Sistema   | templates/dashboard-example.html         | Modelo para páginas internas  |
-| Página Exemplo - Público   | templates/public-example.html            | Modelo para páginas públicas  |
-|-----------------------------|-----------------------------------------|--------------------------------|
+|--------------------------------------------------------|---------------------------------------------|-------------------------|
+| Documento                                              | Foco Técnico                                | Uso                     |
+|--------------------------------------------------------|---------------------------------------------|-------------------------|
+| [SCRIPTS_AMBIENTE.md](SCRIPTS_AMBIENTE.md)             | Automação de setup                      | DevOps                  |
+| [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) | Controle Flyway migrations     | Integridade BD          |
+|--------------------------------------------------------|---------------------------------------------|-------------------------|
 ```
 
-**Estrutura de Interface:**
+---
 
-- **Sistema Interno (Autenticado):**
-  - Layout com menu lateral contendo todas as funcionalidades
-  - Navegação intuitiva entre módulos (Agenda, Prontuários, Configurações)
-  - Acesso baseado em perfis (ADMIN, DENTIST, STAFF, PATIENT)
-
-- **Agenda Pública (Não-Autenticado):**
-  - Header institucional "Cara Core Dental - Agendamento"
-  - Interface simplificada para marcação de consultas
-  - Sem acesso a dados sensíveis ou funcionalidades restritas
+## DOCUMENTAÇÃO TÉCNICA ESPECIALIZADA
 
 ### Arquitetura de Software
 
@@ -230,20 +146,20 @@ Para páginas públicas:
 |---------------------------------------|-----------------------------------------|----------------------|
 | Documento                             | Área Técnica                            | Framework/Tecnologia |
 |---------------------------------------|-----------------------------------------|----------------------|
-| [REQUISITOS.md](tech/REQUISITOS.md)   | Especificação funcional e não funcional | Spring Boot          |
-| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Decisões arquiteturais                  | Java 17 + Multi-DB   |
-| [ROADMAP.md](tech/ROADMAP.md)         | Evolução tecnológica                    | Stack Completo       |
+| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Stack completo (370 linhas)          | Java 17 + Multi-DB   |
+| [REQUISITOS.md](tech/REQUISITOS.md)   | Especificações funcionais            | Spring Boot          |
+| [ROADMAP.md](tech/ROADMAP.md)         | Evolução tecnológica                | Arquitetura          |
 |---------------------------------------|-----------------------------------------|----------------------|
 ```
 
 **Arquitetura Multi-Ambiente:**
 
 - **Desenvolvimento Rápido**: H2 in-memory com massa de dados completa
-- **Teste Realístico**: PostgreSQL 15 via Docker com Flyway migrations
+- **Teste Realístico**: PostgreSQL 15 via Docker com Flyway migrations  
 - **Pool de Conexões**: HikariCP otimizado para cada ambiente
 - **Configuração por Perfis**: application-h2.yml vs application-local.yml
 
-### Integrações Externas
+### Integrações Futuras
 
 ```markdown
 |------------------------------------------------------------|-----------------------|-------------------------|
@@ -253,9 +169,21 @@ Para páginas públicas:
 |------------------------------------------------------------|-----------------------|-------------------------|
 ```
 
+### Planejamento e Gestão
+
+```markdown
+|-----------------------------------------------|----------------------|-------------------------|
+| Documento                                     | Fase do Projeto      | Aplicação               |
+|-----------------------------------------------|----------------------|-------------------------|
+| [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md) | Planejamento UI    | Gestão de Projeto       |
+| [DIVULGACAO.md](plan/DIVULGACAO.md)           | Lançamento        | Marketing               |
+| [PROTOTIPO.md](plan/PROTOTIPO.md)             | MVP               | Validação de Conceito   |
+|-----------------------------------------------|----------------------|-------------------------|
+```
+
 ---
 
-## Fluxo de Trabalho por Função
+## FLUXOS DE TRABALHO POR FUNÇÃO
 
 ### Desenvolvedor Backend/Fullstack
 
