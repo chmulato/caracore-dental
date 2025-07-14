@@ -1,0 +1,38 @@
+Crie uma imagem profissional e moderna para um sistema de agendamento odontológico chamado "Cara Core Dental - Agendamentos". Especificações:
+
+DIMENSÕES: 1920x1080 pixels (formato landscape)
+
+ELEMENTOS VISUAIS PRINCIPAIS:
+- Interface de dashboard clean e moderna com tema azul/branco médico
+- Tela de computador/laptop mostrando calendário de agendamentos
+- Ícones odontológicos sutis (dente, estetoscópio, calendário)
+- Cards com estatísticas e métricas do consultório
+- Lista de pacientes e horários organizados
+
+TECNOLOGIAS PARA DESTACAR:
+- Logo Java 17 (moderno, cor laranja)
+- Logo Spring Boot (cor verde, folhas)
+- Logo PostgreSQL (elefante azul)
+- Logo Docker (baleia azul) - secundário
+
+PALETA DE CORES:
+- Azul médico principal (#2563eb, #1e40af)
+- Branco limpo para fundos
+- Verde Spring Boot (#6db33f)
+- Laranja Java (#f89820)
+- Cinza suave para textos
+
+COMPOSIÇÃO:
+- Interface do sistema ocupando 60% da imagem (lado esquerdo/central)
+- Logos das tecnologias organizados elegantemente (canto inferior direito)
+- Título "Cara Core Dental - Agendamentos" em fonte moderna (parte superior)
+- Elementos decorativos médicos/dentários sutis ao fundo
+
+ESTILO:
+- Design flat/material design
+- Sombras suaves e gradientes sutis
+- Aparência profissional e confiável
+- Evitar elementos muito coloridos ou infantis
+- Foco na tecnologia e profissionalismo médico
+
+CONTEXTO: Sistema web moderno para consultórios odontológicos com gestão de pacientes, agendamentos e prontuários digitais.
