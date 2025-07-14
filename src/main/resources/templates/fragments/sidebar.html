@@ -169,11 +169,18 @@
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">
-                    <span th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">U</span>
+                    <span th:if="${#authorization.expression('isAuthenticated()')}" 
+                          th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">U</span>
+                    <span th:unless="${#authorization.expression('isAuthenticated()')}" >A</span>
                 </div>
                 <div class="user-details">
                     <span class="user-name" sec:authentication="name">Usuário</span>
-                    <small class="user-role" sec:authentication="principal.authorities">ROLE_USER</small>
+                    <small class="user-role" 
+                           th:if="${#authorization.expression('isAuthenticated()')}"
+                           th:text="${#authentication.authorities.size() > 0 ? #authentication.authorities.iterator().next().authority : 'ROLE_USER'}">ROLE_USER</small>
+                    <small class="user-role" 
+                           th:unless="${#authorization.expression('isAuthenticated()')}"
+                           th:text="'Anônimo'">Anônimo</small>
                 </div>
             </div>
             <div class="sidebar-actions">

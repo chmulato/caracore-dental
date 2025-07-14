@@ -160,7 +160,21 @@ public class ProntuarioController {
      * @param principal Usuario autenticado
      * @return Nome da view ou página de erro
      */
+    /**
+     * Visualiza o prontuário de um paciente específico.
+     * 
+     * Regras de acesso:
+     * - Administradores: podem acessar qualquer prontuário
+     * - Dentistas: podem acessar apenas prontuários de seus próprios pacientes
+     * 
+     * @param id ID do paciente
+     * @param model Model para a view
+     * @param principal Usuario autenticado
+     * @param response HTTP response para definir status codes
+     * @return View do prontuário ou página de erro
+     */
     @GetMapping("/paciente/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DENTIST')")
     public String visualizarProntuario(@PathVariable Long id, Model model, Principal principal, HttpServletResponse response) {
         String userEmail = principal.getName();
         logger.info("Visualizando prontuário do paciente ID: {} para usuário: {}", id, userEmail);
@@ -200,10 +214,26 @@ public class ProntuarioController {
             if (dentistaOpt.isEmpty()) {
                 logger.warn("Dentista não encontrado para email: {}", userEmail);
                 model.addAttribute("erro", ERRO_DENTISTA_NAO_ENCONTRADO);
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return VIEW_ERROR;
             }
             dentista = dentistaOpt.get();
+            
+            // Verificar se o dentista tem permissão para acessar este paciente
+            // Primeiro verificamos se já existe um prontuário para este paciente
+            Optional<Prontuario> prontuarioExistente = prontuarioService.buscarProntuarioPorPaciente(id);
+            if (prontuarioExistente.isPresent()) {
+                // Se existe prontuário, verificar se pertence a este dentista
+                Prontuario prontuario = prontuarioExistente.get();
+                if (!prontuario.getDentista().getId().equals(dentista.getId())) {
+                    logger.warn("Dentista {} (ID: {}) tentou acessar prontuário do paciente {} sem permissão. Prontuário pertence ao dentista ID: {}", 
+                              userEmail, dentista.getId(), id, prontuario.getDentista().getId());
+                    model.addAttribute("erro", "Acesso negado: Este prontuário pertence a outro dentista");
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    return "acesso-negado";
+                }
+            }
+            // Se não existe prontuário, o dentista pode criar um novo
         }
         
         try {
