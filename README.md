@@ -78,6 +78,7 @@ mvn spring-boot:run
 ## Configuração
 
 ### **Ambiente de Desenvolvimento (H2 - Padrão)**
+
 ```bash
 # Executar com banco H2 em memória
 mvn spring-boot:run
@@ -87,6 +88,7 @@ mvn spring-boot:run
 ```
 
 ### **Ambiente Local (PostgreSQL)**
+
 ```bash
 # 1. Criar banco PostgreSQL
 CREATE DATABASE cca_db;
@@ -98,6 +100,7 @@ mvn spring-boot:run -Dspring.profiles.active=local
 ```
 
 ### **Docker (Opcional)**
+
 ```bash
 # Subir PostgreSQL com Docker
 docker-compose up -d
