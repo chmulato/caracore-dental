@@ -1,4 +1,4 @@
-# Cara Core Agendamento (CCA)
+# Cara Core Dental - Agendamentos
 
 > Sistema de agendamento para consultórios odontológicos desenvolvido com Spring Boot 3.2.6 e Java 17.
 
