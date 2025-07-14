@@ -14,9 +14,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
 | Documento                                                            | Descrição                                            | Responsabilidade  |
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
-| [STATUS_ATUAL.md](../STATUS_ATUAL.md)                                | Status completo multi-ambiente (14/07/2025)         | Gestão de Projeto |
+| [STATUS_ATUAL.md](../STATUS_ATUAL.md)                                | Status completo multi-ambiente (14/07/2025)          | Gestão de Projeto |
 | [FUNCIONALIDADES_IMPLEMENTADAS.md](FUNCIONALIDADES_IMPLEMENTADAS.md) | Lista completa de features implementadas             | Desenvolvimento   |
-| [INDEX.md](INDEX.md)                                                | Índice principal da documentação                     | Documentação      |
+| [INDEX.md](INDEX.md)                                                 | Índice principal da documentação                     | Documentação      |
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
 ```
 
@@ -26,9 +26,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------|---------------------------------------------|-------------------------|
 | Documento                                              | Aplicação                                   | Criticidade             |
 |--------------------------------------------------------|---------------------------------------------|-------------------------|
-| [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) | Setup Docker + H2 + PostgreSQL            | CRÍTICO - Setup         |
-| [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md)   | Configuração de profiles multi-ambiente   | CRÍTICO - Config        |
-| [POOL_CONEXOES.md](POOL_CONEXOES.md)                   | HikariCP para H2 e PostgreSQL             | CRÍTICO - Performance   |
+| [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) | Setup Docker + H2 + PostgreSQL              | CRÍTICO - Setup         |
+| [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md)   | Configuração de profiles multi-ambiente     | CRÍTICO - Config        |
+| [POOL_CONEXOES.md](POOL_CONEXOES.md)                   | HikariCP para H2 e PostgreSQL               | CRÍTICO - Performance   |
 |--------------------------------------------------------|---------------------------------------------|-------------------------|
 ```
 
@@ -38,9 +38,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | Documento                                                                | Descrição                                   | Status/Atualização   |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
-| [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de prontuários           | Implementado (13/07) |
-| [PRONTUARIO_ARQUITETURA_DTO.md](PRONTUARIO_ARQUITETURA_DTO.md)           | Padrão DTO para performance               | Implementado (13/07) |
-| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | 545/545 testes passando                   | 100% Cobertura       |
+| [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md)             | Sistema completo de prontuários             | Implementado (13/07) |
+| [PRONTUARIO_ARQUITETURA_DTO.md](PRONTUARIO_ARQUITETURA_DTO.md)           | Padrão DTO para performance                 | Implementado (13/07) |
+| [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md)         | 545/545 testes passando                     | 100% Cobertura       |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
 
@@ -66,9 +66,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
 | Documento                                                                    | Área de Aplicação                 | Regulamentação |
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
-| [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) | Proteção LGPD de agendamentos  | LGPD           |
-| [USER_ACTIVITY_LOG.md](USER_ACTIVITY_LOG.md)                                 | Auditoria de ações             | Compliance     |
-| [ACESSO_AGENDA_PUBLICA.md](ACESSO_AGENDA_PUBLICA.md)                         | Controle de autorização        | Segurança      |
+| [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) | Proteção LGPD de agendamentos     | LGPD           |
+| [USER_ACTIVITY_LOG.md](USER_ACTIVITY_LOG.md)                                 | Auditoria de ações                | Compliance     |
+| [ACESSO_AGENDA_PUBLICA.md](ACESSO_AGENDA_PUBLICA.md)                         | Controle de autorização           | Segurança      |
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
 ```
 
