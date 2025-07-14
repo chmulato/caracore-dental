@@ -452,7 +452,7 @@ class ProntuarioControllerTest {
             // When & Then - Espera-se que o sistema retorne erro 500 quando há timeout
             mockMvc.perform(get("/prontuarios/paciente/1"))
                     .andExpect(status().isInternalServerError())
-                    .andExpect(view().name("error"));
+                    .andExpect(view().name("error/prontuario-error"));
         }
     }
 
