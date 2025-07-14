@@ -78,8 +78,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |----------------------------------------------------------------|---------------------------------|-----------------|
 | Documento                                                      | Módulo/Finalidade               | Relevância      |
 |----------------------------------------------------------------|---------------------------------|-----------------|
-| [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md)               | 546 linhas de issues/melhorias | ALTO - Gestão   |
-| [STATUS_CONSULTAS_AGENDADAS.md](STATUS_CONSULTAS_AGENDADAS.md) | Sistema de consultas          | ALTO - Feature  |
+| [PROBLEMAS_PENDENTES.md](PROBLEMAS_PENDENTES.md)               | 546 linhas de issues/melhorias  | ALTO - Gestão   |
+| [STATUS_CONSULTAS_AGENDADAS.md](STATUS_CONSULTAS_AGENDADAS.md) | Sistema de consultas            | ALTO - Feature  |
 |----------------------------------------------------------------|---------------------------------|-----------------|
 ```
 
@@ -89,8 +89,8 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |------------------------------------------------------|---------------------------------------|------------------------------|
 | Documento                                            | Tecnologia                            | Finalidade                   |
 |------------------------------------------------------|---------------------------------------|------------------------------|
-| [SWAGGER_README.md](SWAGGER_README.md)               | OpenAPI 3.0 + endpoints            | ALTO - API Docs              |
-| [EXEMPLOS_CONFIGURACAO.md](EXEMPLOS_CONFIGURACAO.md) | Configurações práticas             | MÉDIO - Implementação        |
+| [SWAGGER_README.md](SWAGGER_README.md)               | OpenAPI 3.0 + endpoints               | ALTO - API Docs              |
+| [EXEMPLOS_CONFIGURACAO.md](EXEMPLOS_CONFIGURACAO.md) | Configurações práticas                | MÉDIO - Implementação        |
 |------------------------------------------------------|---------------------------------------|------------------------------|
 ```
 
@@ -104,12 +104,12 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
 | Documento                                                       | Aplicação no Negócio                    | Público-Alvo     |
 |-----------------------------------------------------------------|-----------------------------------------|------------------|
-| [PLANO_DE_NEGOCIO.md](plan/PLANO_DE_NEGOCIO.md)                 | Plano de negócio completo            | Gestão Comercial |
-| [VENDAS.md](plan/VENDAS.md)                                     | Estratégia de vendas                 | Vendas           |
-| [ESTRATEGIA.md](plan/ESTRATEGIA.md)                             | Estratégia técnica/comercial         | Operações        |
-| [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de startup                     | Investidores     |
-| [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md)                    | Framework de KPIs                    | Gestão Executiva |
-|----------------------------------------------------------------|-----------------------------------------|------------------|
+| [PLANO_DE_NEGOCIO.md](plan/PLANO_DE_NEGOCIO.md)                 | Plano de negócio completo               | Gestão Comercial |
+| [VENDAS.md](plan/VENDAS.md)                                     | Estratégia de vendas                    | Vendas           |
+| [ESTRATEGIA.md](plan/ESTRATEGIA.md)                             | Estratégia técnica/comercial            | Operações        |
+| [STARTUP_CARA_CORE_DENTAL.md](STARTUP_CARA_CORE_DENTAL.md)      | Plano de startup                        | Investidores     |
+| [MELHORIAS_STARTUP.md](MELHORIAS_STARTUP.md)                    | Framework de KPIs                       | Gestão Executiva |
+|-----------------------------------------------------------------|-----------------------------------------|------------------|
 ```
 
 ### Interface e UX
@@ -118,22 +118,22 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |----------------------------------------------------------|---------------------------------|-----------------------|
 | Documento                                                | Componente                      | Framework             |
 |----------------------------------------------------------|---------------------------------|-----------------------|
-| [INTERFACE_USUARIO.md](INTERFACE_USUARIO.md)             | Navegação e experiência      | UI/UX                 |
-| [NAVEGACAO_IMPLEMENTACAO.md](NAVEGACAO_IMPLEMENTACAO.md) | Sistema de navegação dual    | Thymeleaf             |
-| [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)    | Validação de desenvolvimento  | Bootstrap + jQuery    |
-| [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md)              | Especificação de interfaces  | Design System         |
+| [INTERFACE_USUARIO.md](INTERFACE_USUARIO.md)             | Navegação e experiência         | UI/UX                 |
+| [NAVEGACAO_IMPLEMENTACAO.md](NAVEGACAO_IMPLEMENTACAO.md) | Sistema de navegação dual       | Thymeleaf             |
+| [CHECKLIST_FRONT_END.md](tech/CHECKLIST_FRONT_END.md)    | Validação de desenvolvimento    | Bootstrap + jQuery    |
+| [TELAS_E_DESIGN.md](tech/TELAS_E_DESIGN.md)              | Especificação de interfaces     | Design System         |
 |----------------------------------------------------------|---------------------------------|-----------------------|
 ```
 
 ### Infraestrutura e Scripts
 
 ```markdown
-|--------------------------------------------------------|---------------------------------------------|-------------------------|
-| Documento                                              | Foco Técnico                                | Uso                     |
-|--------------------------------------------------------|---------------------------------------------|-------------------------|
-| [SCRIPTS_AMBIENTE.md](SCRIPTS_AMBIENTE.md)             | Automação de setup                      | DevOps                  |
-| [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) | Controle Flyway migrations     | Integridade BD          |
-|--------------------------------------------------------|---------------------------------------------|-------------------------|
+|------------------------------------------------------------------|---------------------------------------------|-------------------------|
+| Documento                                                        | Foco Técnico                                | Uso                     |
+|------------------------------------------------------------------|---------------------------------------------|-------------------------|
+| [SCRIPTS_AMBIENTE.md](SCRIPTS_AMBIENTE.md)                       | Automação de setup                          | DevOps                  |
+| [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) | Controle Flyway migrations                  | Integridade BD          |
+|------------------------------------------------------------------|---------------------------------------------|-------------------------|
 ```
 
 ---
@@ -146,9 +146,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |---------------------------------------|-----------------------------------------|----------------------|
 | Documento                             | Área Técnica                            | Framework/Tecnologia |
 |---------------------------------------|-----------------------------------------|----------------------|
-| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Stack completo (370 linhas)          | Java 17 + Multi-DB   |
-| [REQUISITOS.md](tech/REQUISITOS.md)   | Especificações funcionais            | Spring Boot          |
-| [ROADMAP.md](tech/ROADMAP.md)         | Evolução tecnológica                | Arquitetura          |
+| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Stack completo (370 linhas)             | Java 17 + Multi-DB   |
+| [REQUISITOS.md](tech/REQUISITOS.md)   | Especificações funcionais               | Spring Boot          |
+| [ROADMAP.md](tech/ROADMAP.md)         | Evolução tecnológica                    | Arquitetura          |
 |---------------------------------------|-----------------------------------------|----------------------|
 ```
 
@@ -172,13 +172,13 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 ### Planejamento e Gestão
 
 ```markdown
-|-----------------------------------------------|----------------------|-------------------------|
-| Documento                                     | Fase do Projeto      | Aplicação               |
-|-----------------------------------------------|----------------------|-------------------------|
-| [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md) | Planejamento UI    | Gestão de Projeto       |
-| [DIVULGACAO.md](plan/DIVULGACAO.md)           | Lançamento        | Marketing               |
-| [PROTOTIPO.md](plan/PROTOTIPO.md)             | MVP               | Validação de Conceito   |
-|-----------------------------------------------|----------------------|-------------------------|
+|-------------------------------------------------|----------------------|-------------------------|
+| Documento                                       | Fase do Projeto      | Aplicação               |
+|-------------------------------------------------|----------------------|-------------------------|
+| [CRONOLOGIA_TELAS.md](tech/CRONOLOGIA_TELAS.md) | Planejamento UI      | Gestão de Projeto       |
+| [DIVULGACAO.md](plan/DIVULGACAO.md)             | Lançamento           | Marketing               |
+| [PROTOTIPO.md](plan/PROTOTIPO.md)               | MVP                  | Validação de Conceito   |
+|-------------------------------------------------|----------------------|-------------------------|
 ```
 
 ---
@@ -336,14 +336,14 @@ Para que os menus funcionem corretamente, os controllers devem:
 2. Usar o valor que corresponde à seção do menu a ser destacada
 3. Exemplo:
 
-   ```java
-   @GetMapping("/pacientes")
-   public String listarPacientes(Model model) {
-       model.addAttribute("activeLink", "pacientes");
-       // Outras operações
-       return "pacientes/lista";
-   }
-   ```
+```java
+@GetMapping("/pacientes")
+public String listarPacientes(Model model) {
+    model.addAttribute("activeLink", "pacientes");
+    // Outras operações
+    return "pacientes/lista";
+}
+```
 
 ---
 
