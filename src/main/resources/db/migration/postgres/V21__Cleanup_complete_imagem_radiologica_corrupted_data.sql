@@ -10,7 +10,7 @@ WHERE tamanho_arquivo IS NULL
 
 -- 2. Remover registros com conteúdo base64 muito grande que pode estar causando problemas
 DELETE FROM imagem_radiologica 
-WHERE LENGTH(conteudo_base64) > 10485760;
+WHERE LENGTH(imagem_base64) > 10485760;
 
 -- 3. Remover registros órfãos (sem prontuário associado válido)
 DELETE FROM imagem_radiologica 
