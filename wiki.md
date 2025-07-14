@@ -1,10 +1,10 @@
-# Wiki do Projeto Cara Core Agendamento (CCA)
+# Wiki do Projeto Cara Core Dental - Agendamentos
 
-Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a documentação completa do sistema, desde a instalação até os detalhes técnicos de cada funcionalidade.
+Bem-vindo à wiki do projeto Cara Core Dental - Agendamentos! Este espaço contém a documentação completa do sistema, desde a instalação até os detalhes técnicos de cada funcionalidade.
 
 ## Índice
 
-- [Wiki do Projeto Cara Core Agendamento (CCA)](#wiki-do-projeto-cara-core-agendamento-cca)
+- [Wiki do Projeto Cara Core Dental - Agendamentos](#wiki-do-projeto-cara-core-dental---agendamentos)
   - [Índice](#índice)
   - [Visão Geral do Sistema](#visão-geral-do-sistema)
     - [Tecnologias Utilizadas](#tecnologias-utilizadas)
@@ -94,7 +94,7 @@ Bem-vindo à wiki do projeto Cara Core Agendamento! Este espaço contém a docum
 
 ## Visão Geral do Sistema
 
-O Cara Core Agendamento (CCA) é uma solução completa para gestão de agendamentos em consultórios odontológicos. O sistema foi desenvolvido com foco na usabilidade, eficiência, comunicação com o paciente e **total conformidade com a legislação brasileira** (LGPD e Portaria nº 2.836/2011 do Ministério da Saúde).
+O Cara Core Dental - Agendamentos é uma solução completa para gestão de agendamentos em consultórios odontológicos. O sistema foi desenvolvido com foco na usabilidade, eficiência, comunicação com o paciente e **total conformidade com a legislação brasileira** (LGPD e Portaria nº 2.836/2011 do Ministério da Saúde).
 
 ### Tecnologias Utilizadas
 
@@ -298,7 +298,6 @@ O formulário inclui uma seção educativa sobre a legislação:
     <div>
         <strong>João Silva Santos</strong> <!-- Nome Civil -->
         <div class="text-muted small">
-            <i class="bi bi-person-heart text-info me-1"></i>
             <em>João Silva</em> <!-- Nome Social -->
         </div>
         <div class="mt-1">
@@ -329,10 +328,10 @@ O sistema implementa um controle rigoroso de consentimento LGPD conforme exigido
 
 **Mensagem Padrão LGPD:**
 
-```markdown
+```text
 Olá [Nome]!
 
-Este é o consultório Cara Core Agendamento.
+Este é o consultório Cara Core Dental - Agendamentos.
 
 Conforme a Lei Geral de Proteção de Dados (LGPD), solicitamos seu consentimento para:
 
@@ -351,7 +350,7 @@ de a instalação até os detalhes técnicos de cada funcionalidade.
 
 ## Índice
 
-- [Wiki do Projeto Cara Core Agendamento (CCA)](#wiki-do-projeto-cara-core-agendamento-cca)
+- [Wiki do Projeto Cara Core Dental - Agendamentos](#wiki-do-projeto-cara-core-dental---agendamentos)
   - [Índice](#índice)
   - [Visão Geral do Sistema](#visão-geral-do-sistema)
     - [Tecnologias Utilizadas](#tecnologias-utilizadas)
@@ -441,7 +440,7 @@ de a instalação até os detalhes técnicos de cada funcionalidade.
 
 ## Visão Geral do Sistema
 
-O Cara Core Agendamento (CCA) é uma solução completa para gestão de agendamentos em consultórios odontológicos. O sistema foi desenvolvido com foco na usabilidade, eficiência e comunicação com o paciente.
+O Cara Core Dental - Agendamentos é uma solução completa para gestão de agendamentos em consultórios odontológicos. O sistema foi desenvolvido com foco na usabilidade, eficiência e comunicação com o paciente.
 
 ### Tecnologias Utilizadas
 
