@@ -18,6 +18,18 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |----------------------------------------------------------------------|------------------------------------------------------|-------------------|
 ```
 
+### 🆕 Novidades Recentes (Julho 2025)
+
+**Sistema Multi-Ambiente Implementado:**
+
+- **Profile H2** (`application-h2.yml`): Desenvolvimento rápido com banco em memória
+- **Profile Local** (`application-local.yml`): PostgreSQL via Docker para testes realísticos
+- **Docker Integration**: Setup automático do PostgreSQL 15 para desenvolvimento
+- **Pool de Conexões Otimizado**: Configurações específicas para cada ambiente
+- **22 Migrações Flyway**: Aplicadas com sucesso em ambos os ambientes
+
+**Status Atual:** ✅ **VERDE** - Sistema estável e pronto para homologação
+
 ---
 
 ## Arquitetura e Configuração de Sistema
@@ -40,8 +52,9 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |------------------------------------------------------------------|---------------------------------------|----------------------|
 | Documento                                                        | Foco Técnico                          | Impacto              |
 |------------------------------------------------------------------|---------------------------------------|----------------------|
-| [POOL_CONEXOES.md](POOL_CONEXOES.md)                             | Otimização de conexões com PostgreSQL | Performance          |
+| [POOL_CONEXOES.md](POOL_CONEXOES.md)                             | Otimização multi-ambiente (H2/PostgreSQL) | Performance          |
 | [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) | Controle de migrations com Flyway     | Integridade de Dados |
+| [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md)           | Setup Docker PostgreSQL + H2          | DevOps Multi-Ambiente|
 |------------------------------------------------------------------|---------------------------------------|----------------------|
 ```
 
@@ -218,10 +231,17 @@ Para páginas públicas:
 | Documento                             | Área Técnica                            | Framework/Tecnologia |
 |---------------------------------------|-----------------------------------------|----------------------|
 | [REQUISITOS.md](tech/REQUISITOS.md)   | Especificação funcional e não funcional | Spring Boot          |
-| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Decisões arquiteturais                  | Java 17 + PostgreSQL |
+| [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) | Decisões arquiteturais                  | Java 17 + Multi-DB   |
 | [ROADMAP.md](tech/ROADMAP.md)         | Evolução tecnológica                    | Stack Completo       |
 |---------------------------------------|-----------------------------------------|----------------------|
 ```
+
+**Arquitetura Multi-Ambiente:**
+
+- **Desenvolvimento Rápido**: H2 in-memory com massa de dados completa
+- **Teste Realístico**: PostgreSQL 15 via Docker com Flyway migrations
+- **Pool de Conexões**: HikariCP otimizado para cada ambiente
+- **Configuração por Perfis**: application-h2.yml vs application-local.yml
 
 ### Integrações Externas
 
@@ -241,12 +261,25 @@ Para páginas públicas:
 
 **Sequência recomendada para setup e desenvolvimento:**
 
-1. **Ambiente Base:** [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) - Setup inicial da aplicação
-2. **Arquitetura:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Compreensão do stack tecnológico  
-3. **Requisitos:** [REQUISITOS.md](tech/REQUISITOS.md) - Especificações funcionais
-4. **Status Atual:** [STATUS_ATUAL.md](../STATUS_ATUAL.md) - Estado atual do desenvolvimento
-5. **Sistema Prontuário:** [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md) - Funcionalidade implementada
-6. **Testes:** [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md) - Validação de qualidade
+1. **Ambiente Multi-Profile:** [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) - Setup inicial com H2 e PostgreSQL
+2. **Status Atual:** [STATUS_ATUAL.md](../STATUS_ATUAL.md) - Estado atual com Docker e multi-ambiente
+3. **Arquitetura:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Compreensão do stack tecnológico  
+4. **Configuração de Perfis:** [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md) - Profiles H2 vs PostgreSQL
+5. **Performance:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Configuração de pools para ambos ambientes
+6. **Requisitos:** [REQUISITOS.md](tech/REQUISITOS.md) - Especificações funcionais
+7. **Sistema Prontuário:** [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md) - Funcionalidade implementada
+8. **Testes:** [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md) - Validação de qualidade
+
+**Comandos Quick Start:**
+
+```powershell
+# Desenvolvimento rápido com H2
+$env:SPRING_PROFILES_ACTIVE='h2'; mvn spring-boot:run
+
+# Desenvolvimento com PostgreSQL (mais próximo da produção)
+docker run -d --name postgres-cca -e POSTGRES_DB=cca_db -e POSTGRES_USER=cca_user -e POSTGRES_PASSWORD=cca_pass -p 5432:5432 postgres:15
+$env:SPRING_PROFILES_ACTIVE='local'; mvn spring-boot:run
+```
 
 ### Gestor de Projeto/Product Owner
 
@@ -264,18 +297,34 @@ Para páginas públicas:
 **Configuração de ambientes e deploy:**
 
 1. **Scripts:** [SCRIPTS_AMBIENTE.md](SCRIPTS_AMBIENTE.md) - Automação de setup
-2. **Configuração:** [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md) - Profiles e propriedades
-3. **Banco de Dados:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Otimização de performance
-4. **Migrations:** [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) - Controle de versão
+2. **Multi-Ambiente:** [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) - Setup H2 + PostgreSQL Docker
+3. **Configuração:** [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md) - Profiles e propriedades
+4. **Banco de Dados:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Otimização multi-ambiente
+5. **Migrations:** [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) - Controle de versão
+
+**Setup Docker PostgreSQL:**
+
+```bash
+# Container PostgreSQL para desenvolvimento
+docker run -d \
+  --name postgres-cca \
+  -e POSTGRES_DB=cca_db \
+  -e POSTGRES_USER=cca_user \
+  -e POSTGRES_PASSWORD=cca_pass \
+  -p 5432:5432 \
+  postgres:15
+```
 
 ### Arquiteto de Software
 
 **Decisões técnicas e estruturais:**
 
 1. **Stack:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Decisões arquiteturais
-2. **APIs:** [SWAGGER_README.md](SWAGGER_README.md) - Documentação de interfaces
-3. **Segurança:** [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) - Políticas de segurança
-4. **Integrações:** [INTEGRACAO_WHATSAPP.md](tech/INTEGRACAO_WHATSAPP.md) - Sistemas externos
+2. **Multi-Ambiente:** [STATUS_ATUAL.md](../STATUS_ATUAL.md) - Arquitetura H2 + PostgreSQL
+3. **APIs:** [SWAGGER_README.md](SWAGGER_README.md) - Documentação de interfaces
+4. **Performance:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Estratégia de pools de conexão
+5. **Segurança:** [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) - Políticas de segurança
+6. **Integrações:** [INTEGRACAO_WHATSAPP.md](tech/INTEGRACAO_WHATSAPP.md) - Sistemas externos
 
 ---
 
@@ -375,9 +424,10 @@ Para que os menus funcionem corretamente, os controllers devem:
 **Organização:** Cara Core Informática  
 **Sistema:** Agendamento para Consultórios Odontológicos  
 **Tecnologia Principal:** Spring Boot 3.2.6 + Java 17  
-**Banco de Dados:** PostgreSQL 16.9  
-**Versão da Documentação:** 2.3  
-**Última Atualização:** 13/07/2025
+**Banco de Dados:** H2 (desenvolvimento) / PostgreSQL 15 (Docker)  
+**Multi-Ambiente:** Perfis H2 e PostgreSQL com Docker Support  
+**Versão da Documentação:** 2.4  
+**Última Atualização:** 14/07/2025
 
 ---
 
