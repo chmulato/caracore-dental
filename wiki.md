@@ -181,9 +181,9 @@ O formulário de dentistas inclui:
             </div>
         </div>
         <p class="card-text">
-            <i class="bi bi-envelope me-2"></i>joao@clinica.com<br>
-            <i class="bi bi-telephone me-2"></i>(11) 99999-9999<br>
-            <i class="bi bi-award me-2"></i>Ortodontia, Implantes
+            <strong>Email:</strong> joao@clinica.com<br>
+            <strong>Telefone:</strong> (11) 99999-9999<br>
+            <strong>Especialidades:</strong> Ortodontia, Implantes
         </p>
     </div>
 </div>
@@ -245,13 +245,11 @@ O sistema implementa integralmente os direitos garantidos pela Portaria nº 2.83
 <!-- Nome Social -->
 <div class="mb-3">
     <label for="nomeSocial" class="form-label">
-        <i class="bi bi-person-heart text-info me-1"></i>
         Nome Social
     </label>
     <input type="text" class="form-control" id="nomeSocial" name="nomeSocial" maxlength="100">
     <div class="form-text">
         <small class="text-muted">
-            <i class="bi bi-info-circle me-1"></i>
             Nome pelo qual a pessoa se identifica socialmente. 
             <strong>Portaria nº 2.836/2011 - Ministério da Saúde</strong>
         </small>
@@ -261,7 +259,6 @@ O sistema implementa integralmente os direitos garantidos pela Portaria nº 2.83
 <!-- Gênero -->
 <div class="mb-3">
     <label for="genero" class="form-label">
-        <i class="bi bi-gender-ambiguous text-info me-1"></i>
         Gênero (Autodeclaração)
     </label>
     <select class="form-select" id="genero" name="genero">
@@ -281,7 +278,6 @@ O formulário inclui uma seção educativa sobre a legislação:
 ```html
 <div class="alert alert-info" role="alert">
     <h6 class="alert-heading">
-        <i class="bi bi-info-circle me-2"></i>
         Portaria nº 2.836/2011 - Ministério da Saúde
     </h6>
     <p class="mb-2">
@@ -1493,7 +1489,7 @@ R: A versão atual suporta apenas a abertura da conversa. O envio automático es
 
 #### Funcionalidades Implementadas Recentemente (Julho 2025)
 
-✅ **Sistema de Endpoints Públicos Seguros:**
+**Sistema de Endpoints Públicos Seguros:**
 - **POST /public/agendar**: Agendamento online com validação completa
 - **GET /public/api/dentistas**: Lista de dentistas disponíveis
 - **GET /public/api/horarios-disponiveis**: Consulta de horários livres
@@ -1505,7 +1501,7 @@ R: A versão atual suporta apenas a abertura da conversa. O envio automático es
 - **Logs Detalhados**: Auditoria completa de requisições públicas
 - **Headers de Segurança**: Proteção contra XSS e outros ataques
 
-✅ **Testes Unitários dos Endpoints Públicos:**
+**Testes Unitários dos Endpoints Públicos:**
 - **AgendamentoPublicoControllerTest**: Suite completa de testes
 - **100% de Cobertura**: Todos os cenários de sucesso e erro testados
 - **Validação MockMvc vs Real**: Documentação das diferenças encontradas
