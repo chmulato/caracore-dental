@@ -36,21 +36,24 @@ spring:
       settings:
         web-allow-others: false  # Change to true if you want remote access
   
-  # Para o H2, desabilitamos o Flyway completamente
+  # Configuração do Flyway para H2
   flyway:
-    enabled: false  # Desativando o Flyway para ambiente H2 para evitar conflitos
-    # Nenhuma outra configuração necessária já que está desabilitado
+    enabled: true
+    locations: classpath:db/migration/h2
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    clean-disabled: false
     
-  # Desabilitar inicialização SQL para H2 (evitar conflito com InitService)
+  # Desabilitar inicialização SQL para H2 (usaremos Flyway)
   sql:
     init:
       mode: never
   
-  # JPA/Hibernate configuration para criar as tabelas automaticamente
+  # JPA/Hibernate configuration - deixar Flyway gerenciar completamente
   jpa:
     hibernate:
-      ddl-auto: create-drop  # Creates schema on startup, drops on shutdown
-    defer-datasource-initialization: true
+      ddl-auto: none  # Flyway creates and manages schema completely
+    defer-datasource-initialization: false
     show-sql: true
     properties:
       hibernate:
