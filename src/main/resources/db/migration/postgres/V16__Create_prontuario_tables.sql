@@ -56,6 +56,21 @@ CREATE TABLE registro_tratamento (
     CONSTRAINT chk_status_tratamento CHECK (status IN ('PLANEJADO', 'EM_ANDAMENTO', 'CONCLUIDO', 'CANCELADO', 'ADIADO'))
 );
 
+-- Tabela de exames complementares
+CREATE TABLE exame_complementar (
+    id BIGSERIAL PRIMARY KEY,
+    prontuario_id BIGINT NOT NULL,
+    dentista_id BIGINT NOT NULL,
+    tipo_exame VARCHAR(100) NOT NULL,
+    data_exame TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    resultado TEXT,
+    observacoes TEXT,
+    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_exame_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id),
+    CONSTRAINT fk_exame_dentista FOREIGN KEY (dentista_id) REFERENCES profissional(id)
+);
+
 -- Índices para melhor performance
 CREATE INDEX idx_prontuario_paciente ON prontuario(paciente_id);
 CREATE INDEX idx_prontuario_dentista ON prontuario(dentista_id);
@@ -73,12 +88,20 @@ CREATE INDEX idx_registro_status ON registro_tratamento(status);
 CREATE INDEX idx_registro_data_tratamento ON registro_tratamento(data_tratamento);
 CREATE INDEX idx_registro_procedimento ON registro_tratamento(procedimento);
 
+CREATE INDEX idx_exame_prontuario ON exame_complementar(prontuario_id);
+CREATE INDEX idx_exame_dentista ON exame_complementar(dentista_id);
+CREATE INDEX idx_exame_tipo ON exame_complementar(tipo_exame);
+CREATE INDEX idx_exame_data ON exame_complementar(data_exame);
+
 -- Comentários para documentação
 COMMENT ON TABLE prontuario IS 'Prontuário odontológico dos pacientes';
 COMMENT ON TABLE imagem_radiologica IS 'Imagens radiológicas armazenadas em Base64';
 COMMENT ON TABLE registro_tratamento IS 'Histórico de tratamentos e procedimentos realizados';
+COMMENT ON TABLE exame_complementar IS 'Exames complementares realizados como parte do tratamento';
 
 COMMENT ON COLUMN imagem_radiologica.imagem_base64 IS 'Imagem codificada em Base64 para armazenamento no banco';
 COMMENT ON COLUMN imagem_radiologica.tamanho_arquivo IS 'Tamanho aproximado do arquivo em bytes';
 COMMENT ON COLUMN registro_tratamento.dente IS 'Numeração do dente conforme padrão odontológico (ex: 16, 21, 46)';
 COMMENT ON COLUMN registro_tratamento.status IS 'Status do tratamento: PLANEJADO, EM_ANDAMENTO, CONCLUIDO, CANCELADO, ADIADO';
+COMMENT ON COLUMN exame_complementar.tipo_exame IS 'Tipo de exame: Tomografia, Radiografia, Exame de Saliva, etc.';
+COMMENT ON COLUMN exame_complementar.resultado IS 'Resultado textual do exame complementar';

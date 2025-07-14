@@ -195,3 +195,31 @@ VALUES
 ('bruno.martins@caracore.com.br', 'Dr. Bruno Martins', '$2a$10$ktLqQvVHpZl9woajQtomGe9sMOtcJRlRZGGNJZEYt3IJE4Hu5zRXC', 'ROLE_DENTIST'),
 ('camila.sousa@caracore.com.br', 'Dra. Camila Sousa', '$2a$10$ktLqQvVHpZl9woajQtomGe9sMOtcJRlRZGGNJZEYt3IJE4Hu5zRXC', 'ROLE_DENTIST')
 ON CONFLICT (email) DO NOTHING;
+
+-- Adicionar exames complementares para alguns prontuários
+INSERT INTO exame_complementar (prontuario_id, tipo_exame, data_exame, resultado, observacoes, dentista_id)
+SELECT 
+    p.id,
+    CASE 
+        WHEN ROW_NUMBER() OVER () % 4 = 0 THEN 'Tomografia Computadorizada Cone Beam'
+        WHEN ROW_NUMBER() OVER () % 4 = 1 THEN 'Exame de Saliva'
+        WHEN ROW_NUMBER() OVER () % 4 = 2 THEN 'Teste de Sensibilidade Pulpar'
+        ELSE 'Análise de Oclusão'
+    END,
+    CURRENT_TIMESTAMP - (ROW_NUMBER() OVER () * INTERVAL '3 day'),
+    CASE 
+        WHEN ROW_NUMBER() OVER () % 4 = 0 THEN 'Densidade óssea adequada para procedimento de implante.'
+        WHEN ROW_NUMBER() OVER () % 4 = 1 THEN 'pH 6.8, fluxo normal, capacidade tampão reduzida.'
+        WHEN ROW_NUMBER() OVER () % 4 = 2 THEN 'Teste positivo com resposta normal nos dentes 11, 12 e 21. Teste negativo no dente 22.'
+        ELSE 'Contatos prematuros nos dentes 16 e 46. Desgaste seletivo realizado.'
+    END,
+    CASE 
+        WHEN ROW_NUMBER() OVER () % 4 = 0 THEN 'Exame realizado para planejamento de implante.'
+        WHEN ROW_NUMBER() OVER () % 4 = 1 THEN 'Recomendado uso de enxaguante com pH neutro.'
+        WHEN ROW_NUMBER() OVER () % 4 = 2 THEN 'Recomendado tratamento endodôntico no dente 22.'
+        ELSE 'Ajuste realizado. Acompanhamento em 30 dias.'
+    END,
+    p.dentista_id
+FROM prontuario p
+ORDER BY RANDOM()
+LIMIT 8;
