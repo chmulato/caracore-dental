@@ -1,0 +1,38 @@
+# Configuração padrão do aplicativo
+# Esse arquivo define configurações globais que serão usadas em todos os perfis
+
+spring:
+  profiles:
+    # Ativa o perfil H2 por padrão para facilitar o desenvolvimento inicial
+    # Para usar outros perfis como local ou prod, use: mvn spring-boot:run -Dspring-boot.run.profiles=local
+    active: h2
+    
+  # Configuração global do Flyway - desabilitado por padrão
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    # Os perfis específicos ativam e configuram o Flyway conforme necessário
+
+  jackson:
+    serialization:
+      '[WRITE_DATES_AS_TIMESTAMPS]': false
+      indent-output: true
+    deserialization:
+      '[FAIL_ON_UNKNOWN_PROPERTIES]': false
+    default-property-inclusion: NON_NULL
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+      
+  web:
+    resources:
+      add-mappings: true
+
+# Configurações de logging
+logging:
+  level:
+    root: INFO
+    org.springframework.boot: INFO
+    com.caracore: INFO

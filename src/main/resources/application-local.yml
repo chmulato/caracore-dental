@@ -66,6 +66,10 @@ spring:
     validate-on-migrate: false  # Temporariamente desativado para permitir a execução
     clean-disabled: false  # Permitir limpeza em desenvolvimento (apenas se necessário)
     clean-on-validation-error: true  # Limpa e recria se houver erro de validação
+    # Configuração específica para resolver conflito entre scripts V1
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
   
   mvc:
     log-resolved-exception: true

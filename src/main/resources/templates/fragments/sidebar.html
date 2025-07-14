@@ -73,7 +73,7 @@
                 
                 <!-- Menu de Prontuário (para dentistas e admins) -->
                 <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_DENTIST')">
-                    <a class="nav-link" th:classappend="${activeLink == 'prontuario'} ? 'active' : ''" href="/prontuario">
+                    <a class="nav-link" th:classappend="${activeLink == 'prontuario'} ? 'active' : ''" href="/prontuarios">
                         <i class="bi bi-clipboard2-plus nav-icon"></i>
                         <span>Prontuários</span>
                     </a>
