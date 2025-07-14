@@ -72,6 +72,9 @@ mvn spring-boot:run
 
 # Ou explicitamente
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Ou explicitamente resumido
+mvn spring-boot:run -D-boot.run.profiles=local
 ```
 
 ### 2. Homologação (homolog)
