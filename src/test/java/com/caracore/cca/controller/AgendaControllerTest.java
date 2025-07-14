@@ -1,5 +1,7 @@
 package com.caracore.cca.controller;
 
+import com.caracore.cca.config.TestConfig;
+import com.caracore.cca.config.SecurityTestConfig;
 import com.caracore.cca.model.Agendamento;
 import com.caracore.cca.service.AgendamentoService;
 import com.caracore.cca.util.UserActivityLogger;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -26,7 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Testes para o AgendaController
  */
 @WebMvcTest(AgendaController.class)
-@Import({com.caracore.cca.config.SecurityConfig.class})
+@Import({TestConfig.class, SecurityTestConfig.class})
+@ActiveProfiles("test")
 class AgendaControllerTest {
 
     @Autowired
@@ -174,15 +178,16 @@ class AgendaControllerTest {
         // Act & Assert - unauthenticated users are redirected to login page
         mockMvc.perform(get("/agenda/calendario"))
                 .andExpect(status().isFound()) // 302 redirect to login
-                .andExpect(redirectedUrl("http://localhost/login"));
+                .andExpect(redirectedUrl("/login"));
     }
 
     @Test
     @WithMockUser(roles = "PATIENT")
     void testAcessoNegadoParaPaciente() throws Exception {
-        // Act & Assert - authenticated users without proper roles are forwarded to access denied page
+        // Act & Assert - authenticated users without proper roles get access denied (403)
         mockMvc.perform(get("/agenda/calendario"))
-                .andExpect(status().isOk()); // 200 due to CustomAccessDeniedHandler forwarding to access denied page
+                .andExpect(status().isForbidden()) // 403 due to access denied
+                .andExpect(view().name("acesso-negado"));
     }
 
     @Test

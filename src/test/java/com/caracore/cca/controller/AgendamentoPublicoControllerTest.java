@@ -4,6 +4,7 @@ import com.caracore.cca.model.Agendamento;
 import com.caracore.cca.service.AgendamentoService;
 import com.caracore.cca.service.PacienteService;
 import com.caracore.cca.util.UserActivityLogger;
+import com.caracore.cca.config.TestSecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @WebMvcTest(controllers = AgendamentoPublicoController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@Import(TestSecurityConfig.class)
 @TestPropertySource(properties = {
     "spring.thymeleaf.prefix=classpath:/templates/",
     "spring.thymeleaf.check-template-location=false",

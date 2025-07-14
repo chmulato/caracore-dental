@@ -1,6 +1,7 @@
 package com.caracore.cca.controller;
 
-import com.caracore.cca.config.SecurityConfig;
+import com.caracore.cca.config.TestConfig;
+import com.caracore.cca.config.SecurityTestConfig;
 import com.caracore.cca.model.*;
 import com.caracore.cca.service.DentistaService;
 import com.caracore.cca.service.PacienteService;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -37,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ProntuarioController.class)
 @AutoConfigureMockMvc
-@Import(SecurityConfig.class)
+@Import({TestConfig.class, SecurityTestConfig.class})
+@ActiveProfiles("test")
 class ProntuarioControllerTest {
 
     @Autowired

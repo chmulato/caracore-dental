@@ -18,6 +18,16 @@ import org.springframework.security.web.SecurityFilterChain;
 public class LoginTestConfig {
     
     /**
+     * Fornece uma implementação mockada de RequestMonitoringInterceptor para testes
+     * Necessário porque o GlobalExceptionHandler depende deste bean
+     */
+    @Bean
+    @Primary
+    public RequestMonitoringInterceptor requestMonitoringInterceptor() {
+        return Mockito.mock(RequestMonitoringInterceptor.class);
+    }
+    
+    /**
      * Cria uma versão mockada do UsuarioDetailsService para testes
      */
     @Bean

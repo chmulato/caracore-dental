@@ -59,4 +59,14 @@ public class TestConfig implements WebMvcConfigurer {
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
+    
+    /**
+     * Fornece uma implementação mockada de RequestMonitoringInterceptor para testes
+     * Necessário porque o GlobalExceptionHandler depende deste bean
+     */
+    @Bean
+    @Primary
+    public RequestMonitoringInterceptor requestMonitoringInterceptor() {
+        return Mockito.mock(RequestMonitoringInterceptor.class);
+    }
 }
