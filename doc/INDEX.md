@@ -132,7 +132,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | Documento                                                        | Foco Técnico                                | Uso                     |
 |------------------------------------------------------------------|---------------------------------------------|-------------------------|
 | [SCRIPTS_AMBIENTE.md](SCRIPTS_AMBIENTE.md)                       | Automação de setup                          | DevOps                  |
-| [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) | Controle Flyway migrations                  | Integridade BD          |
+| [VERSIONAMENTO_BANCO.md](VERSIONAMENTO_BANCO.md)                 | Controle Flyway migrations                  | Integridade BD          |
 |------------------------------------------------------------------|---------------------------------------------|-------------------------|
 ```
 
@@ -228,7 +228,7 @@ $env:SPRING_PROFILES_ACTIVE='local'; mvn spring-boot:run
 2. **Multi-Ambiente:** [CONFIGURACAO_AMBIENTES.md](CONFIGURACAO_AMBIENTES.md) - Setup H2 + PostgreSQL Docker
 3. **Configuração:** [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md) - Profiles e propriedades
 4. **Banco de Dados:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Otimização multi-ambiente
-5. **Migrations:** [VERSIONAMENTO_BANCO_ANALISE.md](VERSIONAMENTO_BANCO_ANALISE.md) - Controle de versão
+5. **Migrations:** [VERSIONAMENTO_BANCO.md](VERSIONAMENTO_BANCO.md) - Controle de versão
 
 **Setup Docker PostgreSQL:**
 
