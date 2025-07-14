@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS dentista (
     horario_fim VARCHAR(5),
     ativo BOOLEAN DEFAULT TRUE,
     exposicao_publica BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
+    created_at TIMESTAMP DEFAULT NOW,
+    updated_at TIMESTAMP DEFAULT NOW
 );
 
 CREATE TABLE IF NOT EXISTS agendamento (
@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS agendamento (
     dentista VARCHAR(255),
     status VARCHAR(20) DEFAULT 'AGENDADO',
     observacao TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    created_at TIMESTAMP DEFAULT NOW,
+    updated_at TIMESTAMP DEFAULT NOW,
     via_plataforma BOOLEAN DEFAULT FALSE
 );
 
@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS prontuario (
     alergias TEXT,
     medicamentos_uso TEXT,
     observacoes_gerais TEXT,
-    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    data_ultima_atualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    data_criacao TIMESTAMP NOT NULL DEFAULT NOW,
+    data_ultima_atualizacao TIMESTAMP NOT NULL DEFAULT NOW,
     
     CONSTRAINT fk_prontuario_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
     CONSTRAINT fk_prontuario_dentista FOREIGN KEY (dentista_id) REFERENCES dentista(id)
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS imagem_radiologica (
     imagem_base64 TEXT NOT NULL,
     formato_arquivo VARCHAR(10) NOT NULL,
     tamanho_arquivo BIGINT,
-    data_upload TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    data_upload TIMESTAMP NOT NULL DEFAULT NOW,
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     
     CONSTRAINT fk_imagem_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id),
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS registro_tratamento (
     id IDENTITY PRIMARY KEY,
     prontuario_id BIGINT NOT NULL,
     dentista_id BIGINT NOT NULL,
-    data_tratamento TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    data_tratamento TIMESTAMP NOT NULL DEFAULT NOW,
     procedimento VARCHAR(255) NOT NULL,
     descricao TEXT,
     dente VARCHAR(50),
@@ -110,8 +110,8 @@ CREATE TABLE IF NOT EXISTS registro_tratamento (
     observacoes TEXT,
     valor_procedimento DECIMAL(10,2),
     status VARCHAR(20) NOT NULL DEFAULT 'EM_ANDAMENTO',
-    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    data_atualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    data_criacao TIMESTAMP NOT NULL DEFAULT NOW,
+    data_atualizacao TIMESTAMP NOT NULL DEFAULT NOW,
     
     CONSTRAINT fk_registro_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id),
     CONSTRAINT fk_registro_dentista FOREIGN KEY (dentista_id) REFERENCES dentista(id)
