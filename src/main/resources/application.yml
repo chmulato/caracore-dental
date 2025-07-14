@@ -3,9 +3,9 @@
 
 spring:
   profiles:
-    # Ativa o perfil H2 por padrão para facilitar o desenvolvimento inicial
-    # Para usar outros perfis como local ou prod, use: mvn spring-boot:run -Dspring-boot.run.profiles=local
-    active: h2
+    # Ativa o perfil local por padrão para usar PostgreSQL
+    # Para usar outros perfis como h2 ou prod, use: mvn spring-boot:run -Dspring-boot.run.profiles=h2
+    active: local
     
   # Configuração global do Flyway - desabilitado por padrão
   flyway:

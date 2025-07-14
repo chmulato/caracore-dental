@@ -19,7 +19,7 @@ BEGIN
         dentista_id := prontuario_sem_tratamento.dentista_id;
         
         -- Insere um registro de tratamento inicial/padrão
-        INSERT INTO registro_tratamento (prontuario_id, dentista_id, procedimento, descricao, material_utilizado, status, data_registro, valor_procedimento)
+        INSERT INTO registro_tratamento (prontuario_id, dentista_id, procedimento, descricao, material_utilizado, status, data_tratamento, valor_procedimento)
         VALUES (
             prontuario_sem_tratamento.id, 
             dentista_id, 
@@ -42,7 +42,7 @@ $$;
 CREATE INDEX IF NOT EXISTS idx_paciente_nome ON paciente (nome);
 
 -- Índice para busca por data de tratamentos
-CREATE INDEX IF NOT EXISTS idx_registro_tratamento_data ON registro_tratamento (data_registro);
+CREATE INDEX IF NOT EXISTS idx_registro_tratamento_data ON registro_tratamento (data_tratamento);
 
 -- Índice para busca de imagens por prontuário
 CREATE INDEX IF NOT EXISTS idx_imagem_prontuario ON imagem_radiologica (prontuario_id);
@@ -90,7 +90,7 @@ SELECT
     rt.descricao,
     rt.material_utilizado,
     rt.status,
-    rt.data_registro,
+    rt.data_tratamento,
     rt.valor_procedimento,
     d.nome AS dentista_nome
 FROM 
@@ -99,7 +99,7 @@ FROM
     JOIN registro_tratamento rt ON pr.id = rt.prontuario_id
     JOIN profissional d ON rt.dentista_id = d.id
 ORDER BY 
-    pa.nome, rt.data_registro DESC;
+    pa.nome, rt.data_tratamento DESC;
 
 -- View para contagem e estatísticas de prontuários
 CREATE OR REPLACE VIEW vw_estatisticas_prontuarios AS
@@ -153,8 +153,8 @@ BEGIN
             registro_tratamento rt
         WHERE
             (p_procedimento IS NULL OR rt.procedimento ILIKE '%' || p_procedimento || '%') AND
-            (p_data_inicio IS NULL OR rt.data_registro >= p_data_inicio) AND
-            (p_data_fim IS NULL OR rt.data_registro <= p_data_fim) AND
+            (p_data_inicio IS NULL OR rt.data_tratamento >= p_data_inicio) AND
+            (p_data_fim IS NULL OR rt.data_tratamento <= p_data_fim) AND
             (p_status IS NULL OR rt.status = p_status)
         GROUP BY 
             rt.prontuario_id

@@ -47,7 +47,7 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: update  # Atualiza o schema automaticamente
+      ddl-auto: none  # Flyway gerencia completamente o schema
     show-sql: true  # Mostra SQL no console para desenvolvimento
     properties:
       hibernate:
@@ -56,6 +56,12 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        hbm2ddl:
+          auto: none  # Desabilita totalmente o gerenciamento de schema
+        schema_management:
+          strategy: none  # Flyway gerencia totalmente o schema
+        boot:
+          allow_jdbc_metadata_access: false  # Não acessa metadados para validação
             
   # Configuração do Flyway para ambiente de desenvolvimento com PostgreSQL
   flyway:
