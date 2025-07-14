@@ -263,11 +263,40 @@ public class ProntuarioController {
             model.addAttribute("estatisticas", estatisticas);
             
             return VIEW_VISUALIZAR;
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // Erro específico de dados corrompidos (como imagens base64 em campos LONG)
+            logger.error("Erro de integridade de dados ao carregar prontuário para paciente ID: {}", id, e);
+            
+            // Gerar ID único para o erro
+            String errorId = "ERR-" + System.currentTimeMillis();
+            String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            
+            // Adicionar informações específicas para a página de erro do prontuário
+            model.addAttribute("pacienteId", id);
+            model.addAttribute("usuario", userEmail);
+            model.addAttribute("errorId", errorId);
+            model.addAttribute("timestamp", timestamp);
+            model.addAttribute("errorType", "DataIntegrityViolationException");
+            model.addAttribute("errorCause", "Dados corrompidos em imagens radiológicas");
+            
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "error/prontuario-error";
         } catch (Exception e) {
             logger.error("Erro ao carregar prontuário para paciente ID: {}", id, e);
-            model.addAttribute("erro", "Erro ao carregar prontuário: " + e.getMessage());
+            
+            // Para outros tipos de erro, usar a página de erro genérica
+            String errorId = "ERR-" + System.currentTimeMillis();
+            String timestamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            
+            model.addAttribute("pacienteId", id);
+            model.addAttribute("usuario", userEmail);
+            model.addAttribute("errorId", errorId);
+            model.addAttribute("timestamp", timestamp);
+            model.addAttribute("errorType", e.getClass().getSimpleName());
+            model.addAttribute("errorCause", e.getMessage());
+            
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return VIEW_ERROR;
+            return "error/prontuario-error";
         }
     }
 

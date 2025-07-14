@@ -1,10 +1,14 @@
 package com.caracore.cca.config;
 
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.TransactionException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -131,6 +135,114 @@ public class GlobalExceptionHandler {
             mav.addObject("technicalDetails", ex.getMessage());
             mav.addObject("exceptionType", ex.getClass().getSimpleName());
         }
+        
+        return mav;
+    }
+
+    /**
+     * Trata erros específicos do PostgreSQL/SQL
+     */
+    @ExceptionHandler(SQLException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handleSQLException(SQLException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        
+        logger.error("[ERROR-{}] Erro PostgreSQL na URL: {} - {}", errorId, request.getRequestURL(), ex.getMessage(), ex);
+        monitoring.logSystemError("PostgreSQL Error - " + request.getRequestURL(), ex);
+        
+        ModelAndView mav = new ModelAndView("error/database-error");
+        mav.addObject("errorId", errorId);
+        mav.addObject("timestamp", timestamp);
+        mav.addObject("requestUrl", request.getRequestURL().toString());
+        
+        // Tratar diferentes tipos de erro PostgreSQL
+        String userMessage = "Erro no banco de dados. Nossa equipe foi notificada.";
+        if (ex.getMessage().contains("Valor inválido para tipo")) {
+            userMessage = "Erro de compatibilidade de dados. Os dados estão sendo corrigidos automaticamente.";
+        } else if (ex.getMessage().contains("violates")) {
+            userMessage = "Operação não permitida devido a restrições de integridade.";
+        }
+        
+        mav.addObject("userMessage", userMessage);
+        
+        // Em desenvolvimento, mostra detalhes técnicos
+        if ("local".equals(activeProfile) || "dev".equals(activeProfile)) {
+            mav.addObject("technicalDetails", ex.getMessage());
+            mav.addObject("sqlState", ex.getSQLState());
+            mav.addObject("errorCode", ex.getErrorCode());
+        }
+        
+        return mav;
+    }
+
+    /**
+     * Trata erros de acesso a dados (JPA/Hibernate)
+     */
+    @ExceptionHandler({DataAccessException.class, DataIntegrityViolationException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handleDataAccessException(DataAccessException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        
+        logger.error("[ERROR-{}] Erro de acesso a dados na URL: {} - {}", errorId, request.getRequestURL(), ex.getMessage(), ex);
+        monitoring.logSystemError("Data Access Error - " + request.getRequestURL(), ex);
+        
+        ModelAndView mav = new ModelAndView("error/database-error");
+        mav.addObject("errorId", errorId);
+        mav.addObject("timestamp", timestamp);
+        mav.addObject("requestUrl", request.getRequestURL().toString());
+        mav.addObject("userMessage", "Erro ao acessar os dados. Tente novamente em alguns segundos.");
+        
+        // Em desenvolvimento, mostra detalhes técnicos
+        if ("local".equals(activeProfile) || "dev".equals(activeProfile)) {
+            mav.addObject("technicalDetails", ex.getMessage());
+            Throwable rootCause = ex.getRootCause();
+            mav.addObject("rootCause", 
+                rootCause != null && rootCause.getMessage() != null 
+                    ? rootCause.getMessage() 
+                    : "N/A");
+        }
+        
+        return mav;
+    }
+
+    /**
+     * Trata erros de transação
+     */
+    @ExceptionHandler(TransactionException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handleTransactionException(TransactionException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        
+        logger.error("[ERROR-{}] Erro de transação na URL: {} - {}", errorId, request.getRequestURL(), ex.getMessage(), ex);
+        
+        ModelAndView mav = new ModelAndView("error/database-error");
+        mav.addObject("errorId", errorId);
+        mav.addObject("timestamp", timestamp);
+        mav.addObject("requestUrl", request.getRequestURL().toString());
+        mav.addObject("userMessage", "Erro durante a operação. Sua solicitação foi cancelada para manter a integridade dos dados.");
+        
+        return mav;
+    }
+
+    /**
+     * Trata exceções de segurança/acesso negado
+     */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ModelAndView handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        
+        logger.warn("[ERROR-{}] Acesso negado na URL: {} - Usuário sem permissão", errorId, request.getRequestURL());
+        
+        ModelAndView mav = new ModelAndView("acesso-negado");
+        mav.addObject("errorId", errorId);
+        mav.addObject("timestamp", timestamp);
+        mav.addObject("requestUrl", request.getRequestURL().toString());
+        mav.addObject("userMessage", "Você não tem permissão para acessar este recurso.");
         
         return mav;
     }
