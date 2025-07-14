@@ -34,7 +34,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cca_db?useUnicode=true&characterEncoding=UTF-8
     username: cca_user
-    password: cca_password
+    password: cca_pass
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10

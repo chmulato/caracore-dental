@@ -1,12 +1,12 @@
 version: '3.8'
 services:
   postgres:
-    image: postgres:16
+    image: postgres:15
     container_name: postgres_cca
     environment:
       POSTGRES_DB: cca_db
       POSTGRES_USER: cca_user
-      POSTGRES_PASSWORD: cca_password
+      POSTGRES_PASSWORD: cca_pass
     ports:
       - "5432:5432"
     volumes:
