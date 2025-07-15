@@ -10,12 +10,14 @@ Para uma visão visual do funcionamento e dos estados do reCAPTCHA, consulte o [
 
 ## Implementação Atual
 
-O reCAPTCHA está implementado no arquivo `agendamento-online-captcha.html` e funciona da seguinte forma:
+O reCAPTCHA está implementado no arquivo `agendamento-etapa3.html` como parte do processo de agendamento em três etapas. O reCAPTCHA é apresentado na etapa final de confirmação, garantindo a validação humana antes da efetivação do agendamento. Funciona da seguinte forma:
 
-1. O frontend carrega a configuração do reCAPTCHA do backend via API (`/public/api/recaptcha-config`)
-2. Se habilitado, o script do reCAPTCHA é carregado dinamicamente
-3. O token do reCAPTCHA é anexado ao formulário durante o envio
-4. O backend valida o token antes de processar o agendamento
+1. Na etapa 3 (confirmação), o reCAPTCHA é exibido junto com o resumo do agendamento
+2. O script do reCAPTCHA é carregado automaticamente na página
+3. O usuário deve resolver o reCAPTCHA junto com aceitar os termos
+4. O botão de confirmação só é habilitado quando ambas validações são feitas
+5. O token do reCAPTCHA é enviado junto com os dados do formulário
+6. O backend valida o token antes de processar o agendamento definitivo
 
 ## Configuração por Ambiente
 
@@ -23,12 +25,20 @@ O reCAPTCHA está implementado no arquivo `agendamento-online-captcha.html` e fu
 
 Em ambientes de desenvolvimento e teste, o reCAPTCHA geralmente é desabilitado para facilitar o desenvolvimento e testes automatizados.
 
-1. Configure no arquivo `application-dev.properties` ou `application-test.properties`:
+Configure no arquivo `application.yml` ou via variáveis de ambiente:
 
-```properties
-recaptcha.enabled=false
-recaptcha.site-key=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-recaptcha.secret-key=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+```yaml
+# Para desenvolvimento e testes
+google:
+  recaptcha:
+    site-key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    secret-key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+```
+
+Ou via variáveis de ambiente:
+```bash
+RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+RECAPTCHA_SECRET_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ```
 
 > **Nota**: As chaves acima são as chaves de teste oficiais do Google para desenvolvimento e nunca validam (sempre retornam sucesso).
@@ -45,67 +55,86 @@ Para ativar o reCAPTCHA em produção:
    - Adicione os domínios da aplicação (ex: caracoredental.com.br)
    - Anote as chaves geradas (site key e secret key)
 
-2. Configure no arquivo `application-prod.properties`:
+2. Configure no arquivo `application.yml`:
 
-```properties
-recaptcha.enabled=true
-recaptcha.site-key=SUA_SITE_KEY_AQUI
-recaptcha.secret-key=SUA_SECRET_KEY_AQUI
+```yaml
+google:
+  recaptcha:
+    site-key: SUA_SITE_KEY_AQUI
+    secret-key: SUA_SECRET_KEY_AQUI
+```
+
+Ou preferencialmente via variáveis de ambiente (recomendado para produção):
+```bash
+RECAPTCHA_SITE_KEY=SUA_SITE_KEY_AQUI
+RECAPTCHA_SECRET_KEY=SUA_SECRET_KEY_AQUI
 ```
 
 3. Reinicie a aplicação para aplicar as mudanças
 
 ## Verificação da Implementação
 
-O sistema verifica automaticamente a configuração do reCAPTCHA em tempo de execução:
+O sistema gerencia a configuração do reCAPTCHA na etapa 3 do agendamento:
 
-- Se `recaptcha.enabled=true`, o reCAPTCHA será exibido e validado no formulário
-- Se `recaptcha.enabled=false` ou a configuração falhar, o reCAPTCHA será omitido do formulário
-- O sistema exibe o status atual do reCAPTCHA na parte inferior do formulário
+- O reCAPTCHA sempre será exibido na página de confirmação
+- O botão de confirmação permanece desabilitado até que:
+  1. O usuário aceite os termos de agendamento
+  2. Complete a verificação do reCAPTCHA com sucesso
+- Se a configuração falhar ou o reCAPTCHA não puder ser carregado, o usuário receberá uma mensagem de erro
+- O status de validação é exibido em tempo real para o usuário
 
 ## Fluxo do Backend
 
-1. Endpoint REST `/public/api/recaptcha-config` retorna:
-   ```json
-   {
-     "enabled": true|false,
-     "siteKey": "chave-do-site"
-   }
-   ```
-
-2. Durante o processamento do agendamento, se habilitado, o backend valida o token do reCAPTCHA com a API do Google antes de prosseguir
+1. O backend recebe a requisição POST do formulário de confirmação (etapa 3)
+2. O token do reCAPTCHA é extraído do parâmetro `g-recaptcha-response`
+3. O sistema verifica se o reCAPTCHA está habilitado para o ambiente atual
+4. Se habilitado, o token é validado contra a API do Google usando a secret-key configurada
+5. Apenas após a validação bem-sucedida o agendamento é processado
+6. Em caso de falha na validação, o usuário é redirecionado de volta à etapa 3 com mensagem de erro
 
 ## Troubleshooting
 
 ### Problemas Comuns
 
-1. **O reCAPTCHA não aparece no formulário**
-   - Verifique se `recaptcha.enabled=true` nas configurações
-   - Confirme se a site-key está correta
-   - Verifique o console do navegador por erros
+1. **O reCAPTCHA não aparece na etapa de confirmação**
+   - Verifique se as chaves do reCAPTCHA estão configuradas no `application.yml` ou nas variáveis de ambiente
+   - Confirme se a site-key está correta e autorizada para o domínio
+   - Verifique o console do navegador por erros de carregamento do script
 
 2. **Erro de validação do token**
-   - Confirme se a secret-key está correta
+   - Confirme se a secret-key está correta nas configurações
    - Verifique se o domínio está autorizado no console do reCAPTCHA
    - Verifique os logs do servidor para mensagens específicas de erro
+   - Garanta que o token está sendo enviado corretamente no formulário
 
 3. **Problemas em ambiente de desenvolvimento**
-   - Certifique-se de usar `recaptcha.enabled=false` ou as chaves de teste
-   - Para testes locais com reCAPTCHA habilitado, use o domínio `localhost` no console do reCAPTCHA
+   - Use as chaves de teste fornecidas pelo Google
+   - Para testes locais, certifique-se de que o domínio `localhost` está autorizado
+   - Você pode usar o modo de desenvolvimento do reCAPTCHA que sempre valida
 
 ## Logs e Monitoramento
 
-O sistema registra os resultados das validações de reCAPTCHA nos logs da aplicação:
+O sistema registra os eventos relacionados ao reCAPTCHA nos logs da aplicação:
 
-- Tentativas de submissão sem captcha quando habilitado
-- Falhas de validação do token
+- Tentativas de submissão sem completar o reCAPTCHA
+- Falhas de validação do token com o serviço do Google
+- Erros de carregamento ou configuração do reCAPTCHA
+- Validações bem-sucedidas para auditoria
 - Rate limiting (máximo 5 tentativas por minuto por IP)
 
 ## Considerações de Segurança
 
-- Nunca exponha a secret-key no frontend
-- Sempre valide o token no backend
+- Nunca exponha a secret-key no frontend ou no código-fonte
+- Use variáveis de ambiente para as chaves em produção
+- Sempre valide o token no backend antes de processar o agendamento
 - Mantenha as chaves de produção seguras e não as compartilhe
 - Considere rotacionar as chaves periodicamente
+- Monitore tentativas suspeitas de bypass do reCAPTCHA
+- Mantenha logs de auditoria das validações
 
 ## Referências
+
+1. [Documentação oficial do Google reCAPTCHA v2](https://developers.google.com/recaptcha/docs/display)
+2. [Guia de implementação do reCAPTCHA no Spring Boot](https://developers.google.com/recaptcha/docs/verify)
+3. [Boas práticas de segurança com reCAPTCHA](https://developers.google.com/recaptcha/docs/security)
+4. [Diagrama de fluxo do reCAPTCHA](diagrams/FLUXO_RECAPCHA.md)
