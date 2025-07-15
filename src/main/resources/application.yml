@@ -31,3 +31,9 @@ logging:
     root: INFO
     org.springframework.boot: INFO
     com.caracore: INFO
+
+# Configurações do Google reCAPTCHA
+google:
+  recaptcha:
+    site-key: ${RECAPTCHA_SITE_KEY:your-site-key-here}  # Chave do site fornecida pelo Google
+    secret-key: ${RECAPTCHA_SECRET_KEY:your-secret-key-here}  # Chave secreta fornecida pelo Google
