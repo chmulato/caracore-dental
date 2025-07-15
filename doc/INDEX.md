@@ -69,6 +69,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 | [ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md](ESTRATEGIAS_SEGURANCA_AGENDAMENTO.md) | Proteção LGPD de agendamentos     | LGPD           |
 | [USER_ACTIVITY_LOG.md](USER_ACTIVITY_LOG.md)                                 | Auditoria de ações                | Compliance     |
 | [ACESSO_AGENDA_PUBLICA.md](ACESSO_AGENDA_PUBLICA.md)                         | Controle de autorização           | Segurança      |
+| [CONFIGURACAO_RECAPCHA.md](CONFIGURACAO_RECAPCHA.md)                         | Implementação e configuração do Recaptcha | Segurança      |
 |------------------------------------------------------------------------------|-----------------------------------|----------------|
 ```
 
@@ -91,6 +92,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |------------------------------------------------------|---------------------------------------|------------------------------|
 | [SWAGGER_README.md](SWAGGER_README.md)               | OpenAPI 3.0 + endpoints               | ALTO - API Docs              |
 | [EXEMPLOS_CONFIGURACAO.md](EXEMPLOS_CONFIGURACAO.md) | Configurações práticas                | MÉDIO - Implementação        |
+| [CONFIGURACAO_RECAPCHA.md](CONFIGURACAO_RECAPCHA.md) | Google Recaptcha                      | Segurança/Validação          |
 |------------------------------------------------------|---------------------------------------|------------------------------|
 ```
 
