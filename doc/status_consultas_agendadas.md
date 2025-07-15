@@ -229,11 +229,15 @@ As consultas mantêm compatibilidade com:
 ### Próximas Funcionalidades Recomendadas
 
 1. **Expandir Calendário Visual**: 
+
    - Agenda pública com FullCalendar.js implementada
    - Interface administrativa com drag-and-drop
    - Filtros avançados por especialidade e procedimento
+
 2. **Notificações Automáticas**: WhatsApp/SMS para lembretes
+
 3. **Relatórios Avançados**: Analytics e exportação de dados
+
 4. **Integração Mobile**: App ou interface responsiva otimizada
 
 ### Comando para Teste
