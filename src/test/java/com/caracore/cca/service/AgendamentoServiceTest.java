@@ -3,6 +3,7 @@ package com.caracore.cca.service;
 import com.caracore.cca.model.Agendamento;
 import com.caracore.cca.repository.AgendamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -506,5 +507,107 @@ class AgendamentoServiceTest {
         assertFalse(resultado);
         verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
                 eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar agendamento com horário fora do expediente")
+    void testRejeitarHorarioForaExpediente() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime dataHoraForaExpediente = LocalDateTime.now().plusDays(1)
+            .withHour(18).withMinute(30).withSecond(0).withNano(0);
+        
+        // Act
+        List<String> horariosDisponiveis = agendamentoService.getHorariosDisponiveisPorData(dentista, dataHoraForaExpediente);
+
+        // Assert
+        assertFalse(horariosDisponiveis.contains("18:30"));
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar agendamento em horário de almoço")
+    void testRejeitarHorarioAlmoco() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime horarioAlmoco = LocalDateTime.now().plusDays(1)
+            .withHour(12).withMinute(0).withSecond(0).withNano(0);
+        
+        // Act
+        List<String> horariosDisponiveis = agendamentoService.getHorariosDisponiveisPorData(dentista, horarioAlmoco);
+
+        // Assert
+        assertFalse(horariosDisponiveis.contains("12:00"));
+        assertFalse(horariosDisponiveis.contains("12:30"));
+    }
+
+    @Test
+    @DisplayName("Deve verificar conflito em horário já agendado")
+    void testVerificarConflitoHorarioExistente() {
+        // Arrange
+        String dentista = "Dr. Maria Santos";
+        LocalDateTime dataHora = LocalDateTime.now().plusDays(1)
+            .withHour(14).withMinute(0).withSecond(0).withNano(0);
+        
+        // Simula consulta existente no mesmo horário
+        Agendamento consultaExistente = new Agendamento();
+        consultaExistente.setDentista(dentista);
+        consultaExistente.setDataHora(dataHora);
+        consultaExistente.setDuracaoMinutos(30);
+        
+        List<Agendamento> agendamentos = new ArrayList<>();
+        agendamentos.add(consultaExistente);
+        
+        when(agendamentoRepository.findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(agendamentos);
+
+        // Act
+        boolean resultado = agendamentoService.verificarConflitoHorario(dentista, dataHora, null);
+
+        // Assert
+        assertTrue(resultado);
+        verify(agendamentoRepository).findByDentistaAndDataHoraBetween(
+                eq(dentista), any(LocalDateTime.class), any(LocalDateTime.class));
+    }
+
+    @Test
+    @DisplayName("Deve permitir reagendamento com antecedência adequada")
+    void testPermitirReagendamentoComAntecedencia() {
+        // Arrange
+        LocalDateTime dataAtual = LocalDateTime.now();
+        agendamentoTeste.setDataHora(dataAtual.plusDays(2)); // Mais de 24h de antecedência
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamentoTeste));
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamentoTeste);
+
+        LocalDateTime novaData = dataAtual.plusDays(3)
+            .withHour(14).withMinute(0).withSecond(0).withNano(0);
+
+        // Act
+        boolean resultado = agendamentoService.reagendar(1L, novaData);
+
+        // Assert
+        assertTrue(resultado);
+        assertEquals("REAGENDADO", agendamentoTeste.getStatus());
+        assertEquals(novaData, agendamentoTeste.getDataHora());
+        verify(agendamentoRepository).save(agendamentoTeste);
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar reagendamento sem antecedência mínima")
+    void testRejeitarReagendamentoSemAntecedencia() {
+        // Arrange
+        LocalDateTime dataAtual = LocalDateTime.now();
+        agendamentoTeste.setDataHora(dataAtual.plusHours(1)); // Apenas 1 hora de antecedência
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamentoTeste));
+
+        LocalDateTime novaData = dataAtual.plusDays(1);
+
+        // Act & Assert
+        boolean resultado = agendamentoService.reagendar(1L, novaData);
+        
+        // Assert
+        assertFalse(resultado);
+        verify(agendamentoRepository).findById(1L);
+        verify(agendamentoRepository, never()).save(any(Agendamento.class));
     }
 }

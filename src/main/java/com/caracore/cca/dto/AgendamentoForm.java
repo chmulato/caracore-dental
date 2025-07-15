@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import com.caracore.cca.validation.HorarioComercial;
 
 public class AgendamentoForm {
 
@@ -23,6 +24,7 @@ public class AgendamentoForm {
 
     @NotNull(message = "A data e hora são obrigatórias")
     @Future(message = "A data e hora devem ser no futuro")
+    @HorarioComercial
     private LocalDateTime dataHora;
     
     @Size(max = 500, message = "A observação não pode ter mais de 500 caracteres")

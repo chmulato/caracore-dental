@@ -3,16 +3,24 @@ package com.caracore.cca.dto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.caracore.cca.model.Agendamento;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AgendamentoFormTest {
 
@@ -152,4 +160,91 @@ class AgendamentoFormTest {
                 .anyMatch(msg -> msg.contains("Telefone inválido")))
                 .isTrue();
     }
+
+    @Test
+    @DisplayName("Deve validar horário comercial")
+    void deveValidarHorarioComercial() {
+        // Testa horário antes do expediente (7h)
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(7).withMinute(0));
+        Set<ConstraintViolation<AgendamentoForm>> violations = validator.validate(form);
+        assertThat(violations).isNotEmpty();
+
+        // Testa horário após o expediente (19h)
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(19).withMinute(0));
+        violations = validator.validate(form);
+        assertThat(violations).isNotEmpty();
+
+        // Testa horário válido (14h)
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(14).withMinute(0));
+        violations = validator.validate(form);
+        assertThat(violations).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Deve validar tamanho máximo da observação")
+    void deveValidarTamanhoMaximoObservacao() {
+        // Cria uma observação com 501 caracteres (excede o limite de 500)
+        StringBuilder obsLonga = new StringBuilder();
+        for (int i = 0; i < 501; i++) {
+            obsLonga.append("a");
+        }
+        form.setObservacao(obsLonga.toString());
+        
+        Set<ConstraintViolation<AgendamentoForm>> violations = validator.validate(form);
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream()
+                .filter(v -> v.getPropertyPath().toString().equals("observacao"))
+                .map(ConstraintViolation::getMessage)
+                .anyMatch(msg -> msg.contains("não pode ter mais de 500 caracteres")))
+                .isTrue();
+
+        // Testa com observação no limite (500 caracteres)
+        form.setObservacao(obsLonga.substring(0, 500));
+        violations = validator.validate(form);
+        assertThat(violations).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Deve validar data futura")
+    void deveValidarDataFutura() {
+        // Testa data no passado
+        form.setDataHora(LocalDateTime.now().minusDays(1));
+        Set<ConstraintViolation<AgendamentoForm>> violations = validator.validate(form);
+        assertThat(violations).isNotEmpty();
+        assertThat(violations.stream()
+                .filter(v -> v.getPropertyPath().toString().equals("dataHora"))
+                .map(ConstraintViolation::getMessage)
+                .anyMatch(msg -> msg.contains("devem ser no futuro")))
+                .isTrue();
+
+        // Testa data atual
+        form.setDataHora(LocalDateTime.now());
+        violations = validator.validate(form);
+        assertThat(violations).isNotEmpty();
+
+        // Testa data futura
+        form.setDataHora(LocalDateTime.now().plusDays(1));
+        violations = validator.validate(form);
+        assertThat(violations).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Deve validar valores padrão")
+    void deveValidarValoresPadrao() {
+        AgendamentoForm novoForm = new AgendamentoForm();
+        
+        // Verifica duração padrão (30 minutos)
+        assertThat(novoForm.getDuracaoMinutos()).isEqualTo(30);
+        
+        // Verifica status padrão (AGENDADO)
+        assertThat(novoForm.getStatus()).isEqualTo("AGENDADO");
+        
+        // Verifica que outros campos começam nulos
+        assertThat(novoForm.getPaciente()).isNull();
+        assertThat(novoForm.getDentista()).isNull();
+        assertThat(novoForm.getDataHora()).isNull();
+        assertThat(novoForm.getObservacao()).isNull();
+    }
+
+
 }

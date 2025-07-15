@@ -46,9 +46,6 @@ public class AgendamentoPublicoController {
 
     @Autowired
     private AgendamentoService agendamentoService;
-
-    @Autowired
-    private PacienteService pacienteService;
     
     @Autowired
     private RateLimitService rateLimitService;

@@ -154,11 +154,23 @@ public class AgendamentoService {
 
     /**
      * Reagenda uma consulta (atualiza data/hora)
+     * Só permite reagendamento se a data atual do agendamento estiver a pelo menos 24h no futuro
      */
     public boolean reagendar(Long id, LocalDateTime novaDataHora) {
         Optional<Agendamento> agendamentoOpt = agendamentoRepository.findById(id);
         if (agendamentoOpt.isPresent()) {
             Agendamento agendamento = agendamentoOpt.get();
+            
+            // Valida a antecedência mínima (24 horas)
+            LocalDateTime dataAtual = LocalDateTime.now();
+            LocalDateTime dataAgendamento = agendamento.getDataHora();
+            
+            // Se o agendamento for em menos de 24h, não permite reagendamento
+            if (dataAgendamento.minusHours(24).isBefore(dataAtual)) {
+                logger.warn("Reagendamento rejeitado para ID {} - menos de 24h de antecedência", id);
+                return false;
+            }
+            
             LocalDateTime dataAnterior = agendamento.getDataHora();
             agendamento.setDataHora(novaDataHora);
             agendamento.setStatus("REAGENDADO");

@@ -5,6 +5,8 @@ import com.caracore.cca.service.AgendamentoService;
 import com.caracore.cca.service.PacienteService;
 import com.caracore.cca.util.UserActivityLogger;
 import com.caracore.cca.config.TestSecurityConfig;
+import com.caracore.cca.config.ThymeleafTestConfig;
+import com.caracore.cca.config.LocaleTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +30,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Testes para o AgendamentoPublicoController
@@ -36,10 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @WebMvcTest(controllers = AgendamentoPublicoController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, ThymeleafTestConfig.class, LocaleTestConfig.class})
 @TestPropertySource(properties = {
     "spring.thymeleaf.prefix=classpath:/templates/",
     "spring.thymeleaf.check-template-location=false",
+    "spring.thymeleaf.enabled=false",  // Desabilita o Thymeleaf nos testes
     "spring.profiles.active=test"
 })
 class AgendamentoPublicoControllerTest {
@@ -49,16 +51,16 @@ class AgendamentoPublicoControllerTest {
 
     @MockBean
     private AgendamentoService agendamentoService;
-    
+
     @MockBean
     private PacienteService pacienteService;
-    
-    @MockBean
-    private com.caracore.cca.service.RateLimitService rateLimitService;
-    
+
     @MockBean
     private com.caracore.cca.service.CaptchaService captchaService;
-    
+
+    @MockBean
+    private com.caracore.cca.service.RateLimitService rateLimitService;
+
     @MockBean
     private UserActivityLogger userActivityLogger;
 
@@ -66,11 +68,14 @@ class AgendamentoPublicoControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Configurar uma data fixa para evitar problemas com formatação
+        LocalDateTime dataHoraFixa = LocalDateTime.of(2025, 7, 15, 14, 30, 0);
+        
         agendamentoTeste = new Agendamento();
         agendamentoTeste.setId(1L);
         agendamentoTeste.setPaciente("João Silva");
         agendamentoTeste.setDentista("Dr. Maria Santos");
-        agendamentoTeste.setDataHora(LocalDateTime.now().plusDays(1));
+        agendamentoTeste.setDataHora(dataHoraFixa);
         agendamentoTeste.setStatus("AGENDADO");
         agendamentoTeste.setObservacao("Consulta de rotina");
         agendamentoTeste.setDuracaoMinutos(30);
@@ -142,20 +147,21 @@ class AgendamentoPublicoControllerTest {
                 .andExpect(model().attributeExists("error"));
     }
 
+    /**
+     * Teste modificado para evitar problemas de renderização com Thymeleaf
+     * Testa apenas o controller sem renderizar o template
+     */
     @Test
     void testVisualizarConfirmacaoAgendamento() throws Exception {
         // Arrange
         when(agendamentoService.buscarPorId(1L)).thenReturn(Optional.of(agendamentoTeste));
         
-        // Testar apenas o controller diretamente, evitando renderização Thymeleaf
-        AgendamentoPublicoController controller = (AgendamentoPublicoController) mockMvc.getDispatcherServlet().getWebApplicationContext().getBean("agendamentoPublicoController");
-        org.springframework.web.servlet.ModelAndView modelAndView = new org.springframework.web.servlet.ModelAndView();
-        
-        // Testar se o controller adiciona o agendamento no modelo e retorna a view correta
-        String viewName = controller.agendamentoConfirmado(1L, new org.springframework.ui.ConcurrentModel());
-        
-        // Verificar o resultado esperado sem renderização
-        assertEquals("public/agendamento-confirmado", viewName);
+        // Testar apenas o controller, sem renderizar o template para evitar problemas de Thymeleaf
+        mockMvc.perform(get("/public/agendamento-confirmado")
+                .param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("public/agendamento-confirmado"))
+                .andExpect(model().attribute("agendamento", agendamentoTeste));
                 
         // Verificar que o serviço é chamado corretamente
         verify(agendamentoService).buscarPorId(1L);
