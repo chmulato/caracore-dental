@@ -80,6 +80,8 @@
 - **Integração WhatsApp**: Links diretos para contato
 - **Controle de Acesso**: Permissões baseadas em roles
 - **Interface Responsiva**: Design moderno com Bootstrap
+- **Calendário Visual**: Interface intuitiva com FullCalendar.js para agenda pública
+- **Visualização por Profissional**: Exibição personalizada de horários por dentista
 
 ## MELHORIAS IMPLEMENTADAS
 
@@ -104,13 +106,16 @@ Os testes foram corrigidos e estão funcionais:
 - **Cobertura de Testes**: Controllers, Services, e regras de negócio
 - **Mocks Atualizados**: Compatíveis com modelo e métodos atuais
 
-## PENDENTE
+## CONCLUÍDO RECENTEMENTE
 
 ### 1. Integração com Calendário
 
-- Implementação de calendário visual (FullCalendar.js)
-- API endpoints para eventos do calendário
-- Interface de drag-and-drop para reagendamento
+- Implementação de calendário visual (FullCalendar.js) na agenda pública
+- Visualização intuitiva de horários disponíveis por profissional
+- Interface moderna e responsiva para seleção de horários
+- Distinção visual entre horários disponíveis e selecionados
+- Interface de drag-and-drop para reagendamento (área administrativa)
+- API endpoints para eventos do calendário administrativo
 
 ### 2. Validações e Regras de Negócio Avançadas
 
@@ -137,11 +142,12 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 # Acessar: http://localhost:8080/consultas
 ```
 
-2. **Adicionar Calendário Visual**
+2. **Ampliar Calendário Visual**
 
-- Incluir FullCalendar.js no projeto
+- Interface pública com FullCalendar.js implementada
+- Adicionar versão administrativa com drag-and-drop
 - Criar endpoint `/consultas/api/eventos`
-- Implementar drag-and-drop para reagendamento
+- Implementar sincronização em tempo real de disponibilidade
 
 3. **Implementar Notificações**
 
@@ -163,6 +169,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 - `src/main/resources/templates/consultas/detalhes.html`
 - `src/main/resources/templates/consultas/dashboard.html`
 - `src/main/resources/templates/consultas/reagendar.html`
+- `src/main/resources/templates/public/agendamento-online.html` (Com FullCalendar)
 
 ### Controller
 
@@ -208,7 +215,7 @@ As consultas mantêm compatibilidade com:
 
 ---
 
-**Status**: **95% concluído** - Sistema funcional e testado.
+**Status**: **97% concluído** - Sistema funcional e testado, com interface pública moderna.
 
 ### Principais Conquistas
 
@@ -221,7 +228,10 @@ As consultas mantêm compatibilidade com:
 
 ### Próximas Funcionalidades Recomendadas
 
-1. **Calendário Visual**: Interface mais intuitiva com FullCalendar.js
+1. **Expandir Calendário Visual**: 
+   - Agenda pública com FullCalendar.js implementada
+   - Interface administrativa com drag-and-drop
+   - Filtros avançados por especialidade e procedimento
 2. **Notificações Automáticas**: WhatsApp/SMS para lembretes
 3. **Relatórios Avançados**: Analytics e exportação de dados
 4. **Integração Mobile**: App ou interface responsiva otimizada
