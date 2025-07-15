@@ -225,9 +225,16 @@
         }
         
         #calendar-container {
-            height: 550px;
-            margin-bottom: 1rem;
+            height: auto;
+            min-height: 450px;
+            margin-bottom: 2rem;
             border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        #calendar {
+            height: 450px;
+            width: 100%;
         }
 
         @media (max-width: 768px) {
@@ -242,6 +249,26 @@
             
             .services-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            #calendar-container {
+                min-height: 400px;
+                margin-bottom: 2rem;
+            }
+            
+            #calendar {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            #calendar-container {
+                min-height: 350px;
+                margin-bottom: 1.5rem;
+            }
+            
+            #calendar {
+                height: 350px;
             }
         }
     </style>
@@ -373,7 +400,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mt-4">
                             <label for="observacao" class="form-label">
                                 <i class="bi bi-chat-left-text me-1"></i>
                                 Observações

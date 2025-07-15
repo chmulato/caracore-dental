@@ -2,9 +2,11 @@ package com.caracore.cca.controller;
 
 import com.caracore.cca.model.Agendamento;
 import com.caracore.cca.service.AgendamentoService;
-import com.caracore.cca.service.PacienteService;
 import com.caracore.cca.service.RateLimitService;
 import com.caracore.cca.service.CaptchaService;
+import com.caracore.cca.util.AgendamentoSessionManager;
+import com.caracore.cca.util.AgendamentoFlowController;
+import com.caracore.cca.util.FeatureFlagManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,21 +56,48 @@ public class AgendamentoPublicoController {
     private CaptchaService captchaService;
     
     @Autowired
+    private AgendamentoSessionManager sessionManager;
+    
+    @Autowired
+    private AgendamentoFlowController flowController;
+    
+    @Autowired
+    private FeatureFlagManager featureFlagManager;
+    
+    @Autowired
     private Environment environment;
 
     /**
-     * Página principal de agendamento online
+     * Página principal de agendamento online com A/B Testing
      */
     @GetMapping("/public/agendamento")
-    public String agendamentoOnline(Model model) {
+    public String agendamentoOnline(Model model, HttpServletRequest request) {
         logger.info("Acessando página de agendamento online público");
         
         try {
+            // Determinar qual fluxo usar baseado em Feature Flags e A/B Testing
+            FeatureFlagManager.FlowType flowType = featureFlagManager.determineFlowType(request);
+            
+            // Registrar evento de início do fluxo para A/B Testing
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("user_agent", request.getHeader("User-Agent"));
+            metadata.put("referer", request.getHeader("Referer"));
+            featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.FLOW_STARTED, metadata);
+            
+            // Se for fluxo multi-etapas, redirecionar para Etapa 1
+            if (flowType == FeatureFlagManager.FlowType.MULTI_STEP) {
+                logger.info("Redirecionando para fluxo multi-etapas - IP: {}", getClientIp(request));
+                return "redirect:/public/agendamento/etapa1";
+            }
+            
+            // Continuar com fluxo de página única
+            logger.info("Usando fluxo de página única - IP: {}", getClientIp(request));
+            
             // Usar apenas dentistas ativos para exposição pública
             List<String> dentistas = agendamentoService.listarDentistasAtivos();
             model.addAttribute("titulo", "Agendamento Online");
             model.addAttribute("dentistas", dentistas);
-            // Não é necessário activeLink para páginas públicas, pois usam o header
+            model.addAttribute("flowType", flowType.getKey());
             
             // Adicionar informações do reCAPTCHA se habilitado
             if (captchaService.isEnabled()) {
@@ -82,6 +111,13 @@ public class AgendamentoPublicoController {
         } catch (Exception e) {
             logger.error("Erro ao carregar página de agendamento", e);
             model.addAttribute("error", "Erro interno do servidor");
+            
+            // Registrar erro para A/B Testing
+            Map<String, Object> errorMetadata = new HashMap<>();
+            errorMetadata.put("error_message", e.getMessage());
+            errorMetadata.put("error_class", e.getClass().getSimpleName());
+            featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.ERROR_OCCURRED, errorMetadata);
+            
             // Em caso de erro, usar o template simples
             return "public/agendamento-online";
         }
@@ -188,6 +224,510 @@ public class AgendamentoPublicoController {
         } else {
             // Se não encontrar o agendamento, retorna 404
             throw new ResourceNotFoundException("Agendamento não encontrado");
+        }
+    }
+
+    // ========== FLUXO DE ETAPAS ==========
+    
+    /**
+     * Landing page inteligente que redireciona baseado em A/B Testing
+     */
+    @GetMapping("/public/agendamento/landing")
+    public String agendamentoLanding(Model model, HttpServletRequest request) {
+        logger.info("Acessando landing page inteligente");
+        
+        // Determinar fluxo usando A/B Testing
+        FeatureFlagManager.FlowType flowType = featureFlagManager.determineFlowType(request);
+        
+        // Registrar evento de entrada via landing
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("entry_point", "landing");
+        metadata.put("determined_flow", flowType.getKey());
+        featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.FLOW_STARTED, metadata);
+        
+        logger.info("Landing page redirecionando para: {} - IP: {}", flowType.getDisplayName(), getClientIp(request));
+        
+        // Redirecionar para o fluxo apropriado
+        return "redirect:" + flowType.getEntryUrl();
+    }
+    
+    /**
+     * Endpoint para monitoramento da sessão (apenas para desenvolvimento)
+     */
+    @GetMapping("/public/agendamento/session-info")
+    @ResponseBody
+    public Map<String, Object> sessionInfo(HttpServletRequest request) {
+        if (!Arrays.asList(environment.getActiveProfiles()).contains("local") && 
+            !Arrays.asList(environment.getActiveProfiles()).contains("h2")) {
+            return Map.of("error", "Endpoint disponível apenas em ambiente de desenvolvimento");
+        }
+        
+        return sessionManager.getSessionInfo(request);
+    }
+    
+    /**
+     * Endpoint para debug do fluxo de navegação (apenas para desenvolvimento)
+     */
+    @GetMapping("/public/agendamento/flow-info")
+    @ResponseBody
+    public Map<String, Object> flowInfo(HttpServletRequest request) {
+        if (!Arrays.asList(environment.getActiveProfiles()).contains("local") && 
+            !Arrays.asList(environment.getActiveProfiles()).contains("h2")) {
+            return Map.of("error", "Endpoint disponível apenas em ambiente de desenvolvimento");
+        }
+        
+        return flowController.getFlowDebugInfo(request);
+    }
+    
+    /**
+     * Endpoint para navegação inteligente - redireciona para etapa apropriada
+     */
+    @GetMapping("/public/agendamento/navigate")
+    public String smartNavigate(HttpServletRequest request) {
+        logger.info("Navegação inteligente solicitada");
+        
+        AgendamentoFlowController.Etapa nextStep = flowController.getNextRecommendedStep(request);
+        
+        logger.info("Redirecionando para: {}", nextStep.getTitulo());
+        return "redirect:" + nextStep.getUrl();
+    }
+    
+    /**
+     * Endpoint para debug de Feature Flags (apenas desenvolvimento)
+     */
+    @GetMapping("/public/agendamento/feature-flags")
+    @ResponseBody
+    public Map<String, Object> featureFlagsInfo(HttpServletRequest request) {
+        if (!Arrays.asList(environment.getActiveProfiles()).contains("local") && 
+            !Arrays.asList(environment.getActiveProfiles()).contains("h2")) {
+            return Map.of("error", "Endpoint disponível apenas em ambiente de desenvolvimento");
+        }
+        
+        return featureFlagManager.getDebugInfo(request);
+    }
+    
+    /**
+     * Endpoint para forçar tipo de fluxo (apenas desenvolvimento)
+     */
+    @PostMapping("/public/agendamento/force-flow")
+    @ResponseBody
+    public Map<String, Object> forceFlowType(HttpServletRequest request, 
+                                            @RequestParam String flowType) {
+        if (!Arrays.asList(environment.getActiveProfiles()).contains("local") && 
+            !Arrays.asList(environment.getActiveProfiles()).contains("h2")) {
+            return Map.of("error", "Endpoint disponível apenas em ambiente de desenvolvimento");
+        }
+        
+        try {
+            FeatureFlagManager.FlowType type = FeatureFlagManager.FlowType.valueOf(flowType.toUpperCase().replace("-", "_"));
+            featureFlagManager.forceFlowType(request, type);
+            
+            return Map.of(
+                "success", true, 
+                "message", "Fluxo forçado para: " + type.getDisplayName(),
+                "flowType", type.getKey()
+            );
+        } catch (IllegalArgumentException e) {
+            return Map.of(
+                "success", false, 
+                "error", "Tipo de fluxo inválido. Use: SINGLE_PAGE ou MULTI_STEP"
+            );
+        }
+    }
+    
+    /**
+     * Endpoint para resetar assignment A/B (apenas desenvolvimento)
+     */
+    @PostMapping("/public/agendamento/reset-assignment")
+    @ResponseBody
+    public Map<String, Object> resetAssignment(HttpServletRequest request) {
+        if (!Arrays.asList(environment.getActiveProfiles()).contains("local") && 
+            !Arrays.asList(environment.getActiveProfiles()).contains("h2")) {
+            return Map.of("error", "Endpoint disponível apenas em ambiente de desenvolvimento");
+        }
+        
+        featureFlagManager.resetAssignment(request);
+        FeatureFlagManager.FlowType newFlow = featureFlagManager.determineFlowType(request);
+        
+        return Map.of(
+            "success", true, 
+            "message", "Assignment resetado",
+            "newFlowType", newFlow.getKey()
+        );
+    }
+    
+    /**
+     * Etapa 1: Dados pessoais e escolha do dentista
+     */
+    @GetMapping("/public/agendamento/etapa1")
+    public String agendamentoEtapa1(Model model, HttpServletRequest request,
+                                   @RequestParam(value = "error", required = false) String errorMessage) {
+        logger.info("Acessando Etapa 1 do agendamento");
+        
+        try {
+            // Registrar acesso à Etapa 1 para A/B Testing
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("step", "1");
+            metadata.put("has_error_message", errorMessage != null);
+            featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.STEP_COMPLETED, metadata);
+            
+            // Usar FlowController para validação inteligente de acesso
+            String redirectUrl = flowController.handleSmartNavigation(request, AgendamentoFlowController.Etapa.ETAPA_1);
+            if (redirectUrl != null) {
+                return redirectUrl;
+            }
+            
+            // Inicializar sessão se necessário
+            if (!sessionManager.isSessionValid(request)) {
+                sessionManager.iniciarSessao(request);
+            }
+            
+            // Limpar etapas posteriores se voltou para cá
+            flowController.cleanForwardStepsOnBackNavigation(request, AgendamentoFlowController.Etapa.ETAPA_1);
+            
+            // Carregar lista de dentistas ativos
+            List<String> dentistas = agendamentoService.listarDentistasAtivos();
+            model.addAttribute("dentistas", dentistas);
+            model.addAttribute("titulo", "Etapa 1 - Dados Pessoais");
+            
+            // Adicionar navegação breadcrumb
+            AgendamentoFlowController.NavigationBreadcrumb breadcrumb = 
+                flowController.buildBreadcrumb(request, AgendamentoFlowController.Etapa.ETAPA_1);
+            model.addAttribute("breadcrumb", breadcrumb);
+            
+            // Recuperar dados da sessão se existirem
+            AgendamentoSessionManager.AgendamentoSessionData sessionData = sessionManager.recuperarDados(request);
+            if (sessionData != null) {
+                if (sessionData.getPaciente() != null) model.addAttribute("paciente", sessionData.getPaciente());
+                if (sessionData.getTelefone() != null) model.addAttribute("telefone", sessionData.getTelefone());
+                if (sessionData.getEmail() != null) model.addAttribute("email", sessionData.getEmail());
+                if (sessionData.getDentista() != null) model.addAttribute("dentista", sessionData.getDentista());
+            }
+            
+            // Adicionar mensagem de erro de redirecionamento se existir
+            if (errorMessage != null && !errorMessage.trim().isEmpty()) {
+                model.addAttribute("error", errorMessage);
+            }
+            
+            return "public/agendamento-etapa1";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar Etapa 1", e);
+            model.addAttribute("error", "Erro ao carregar página. Tente novamente.");
+            return "public/agendamento-etapa1";
+        }
+    }
+    
+    /**
+     * Processar Etapa 1 e avançar para Etapa 2
+     */
+    @PostMapping("/public/agendamento/etapa1")
+    public String processarEtapa1(@RequestParam String paciente,
+                                 @RequestParam String telefone,
+                                 @RequestParam(required = false) String email,
+                                 @RequestParam String dentista,
+                                 HttpServletRequest request,
+                                 Model model) {
+        logger.info("Processando Etapa 1 - Paciente: {}, Dentista: {}", paciente, dentista);
+        
+        try {
+            // Validar dados obrigatórios
+            if (paciente == null || paciente.trim().isEmpty()) {
+                // Registrar falha de validação
+                Map<String, Object> errorMetadata = new HashMap<>();
+                errorMetadata.put("step", "1");
+                errorMetadata.put("validation_field", "paciente");
+                featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.VALIDATION_FAILED, errorMetadata);
+                
+                model.addAttribute("error", "Nome do paciente é obrigatório");
+                return agendamentoEtapa1(model, request, null);
+            }
+            
+            if (telefone == null || telefone.trim().isEmpty()) {
+                // Registrar falha de validação
+                Map<String, Object> errorMetadata = new HashMap<>();
+                errorMetadata.put("step", "1");
+                errorMetadata.put("validation_field", "telefone");
+                featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.VALIDATION_FAILED, errorMetadata);
+                
+                model.addAttribute("error", "Telefone é obrigatório");
+                return agendamentoEtapa1(model, request, null);
+            }
+            
+            if (dentista == null || dentista.trim().isEmpty()) {
+                // Registrar falha de validação
+                Map<String, Object> errorMetadata = new HashMap<>();
+                errorMetadata.put("step", "1");
+                errorMetadata.put("validation_field", "dentista");
+                featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.VALIDATION_FAILED, errorMetadata);
+                
+                model.addAttribute("error", "Seleção do profissional é obrigatória");
+                return agendamentoEtapa1(model, request, null);
+            }
+            
+            // Salvar dados na sessão usando o SessionManager
+            sessionManager.salvarEtapa1(request, paciente, telefone, email != null ? email : "", dentista);
+            
+            // Registrar conclusão bem-sucedida da Etapa 1
+            Map<String, Object> successMetadata = new HashMap<>();
+            successMetadata.put("step", "1");
+            successMetadata.put("has_email", email != null && !email.trim().isEmpty());
+            successMetadata.put("dentista", dentista);
+            featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.STEP_COMPLETED, successMetadata);
+            
+            logger.info("Dados da Etapa 1 salvos na sessão. Redirecionando para Etapa 2");
+            return "redirect:/public/agendamento/etapa2";
+            
+        } catch (AgendamentoSessionManager.SessionExpiredException e) {
+            logger.warn("Sessão expirada durante processamento da Etapa 1");
+            model.addAttribute("error", "Sessão expirada. Por favor, reinicie o processo.");
+            return agendamentoEtapa1(model, request, null);
+        } catch (Exception e) {
+            logger.error("Erro ao processar Etapa 1", e);
+            model.addAttribute("error", "Erro interno. Tente novamente.");
+            return agendamentoEtapa1(model, request, null);
+        }
+    }
+    
+    /**
+     * Etapa 2: Seleção de data e horário
+     */
+    @GetMapping("/public/agendamento/etapa2")
+    public String agendamentoEtapa2(Model model, HttpServletRequest request,
+                                   @RequestParam(value = "error", required = false) String errorMessage) {
+        logger.info("Acessando Etapa 2 do agendamento");
+        
+        try {
+            // Usar FlowController para validação inteligente de acesso
+            String redirectUrl = flowController.handleSmartNavigation(request, AgendamentoFlowController.Etapa.ETAPA_2);
+            if (redirectUrl != null) {
+                return redirectUrl;
+            }
+            
+            // Limpar etapas posteriores se voltou para cá
+            flowController.cleanForwardStepsOnBackNavigation(request, AgendamentoFlowController.Etapa.ETAPA_2);
+            
+            // Renovar sessão para manter ativa
+            sessionManager.renovarSessao(request);
+            
+            // Recuperar dados da sessão
+            AgendamentoSessionManager.AgendamentoSessionData sessionData = sessionManager.recuperarDados(request);
+            
+            // Adicionar dados ao model
+            model.addAttribute("paciente", sessionData.getPaciente());
+            model.addAttribute("telefone", sessionData.getTelefone());
+            model.addAttribute("email", sessionData.getEmail());
+            model.addAttribute("dentista", sessionData.getDentista());
+            model.addAttribute("titulo", "Etapa 2 - Seleção de Horário");
+            
+            // Adicionar navegação breadcrumb
+            AgendamentoFlowController.NavigationBreadcrumb breadcrumb = 
+                flowController.buildBreadcrumb(request, AgendamentoFlowController.Etapa.ETAPA_2);
+            model.addAttribute("breadcrumb", breadcrumb);
+            
+            // Adicionar dados já selecionados se existirem
+            if (sessionData.getData() != null) model.addAttribute("data", sessionData.getData());
+            if (sessionData.getHorario() != null) model.addAttribute("horario", sessionData.getHorario());
+            
+            // Adicionar mensagem de erro de redirecionamento se existir
+            if (errorMessage != null && !errorMessage.trim().isEmpty()) {
+                model.addAttribute("error", errorMessage);
+            }
+            
+            return "public/agendamento-etapa2";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar Etapa 2", e);
+            model.addAttribute("error", "Erro ao carregar página. Tente novamente.");
+            return "redirect:/public/agendamento/etapa1";
+        }
+    }
+    
+    /**
+     * Processar Etapa 2 e avançar para Etapa 3
+     */
+    @PostMapping("/public/agendamento/etapa2")
+    public String processarEtapa2(@RequestParam String data,
+                                 @RequestParam String horario,
+                                 HttpServletRequest request,
+                                 Model model) {
+        logger.info("Processando Etapa 2 - Data: {}, Horário: {}", data, horario);
+        
+        try {
+            // Verificar se dados da Etapa 1 ainda existem
+            if (!sessionManager.isSessionValid(request) || !sessionManager.hasEtapa1Data(request)) {
+                logger.warn("Dados da Etapa 1 perdidos na sessão");
+                return "redirect:/public/agendamento/etapa1";
+            }
+            
+            // Validar dados obrigatórios
+            if (data == null || data.trim().isEmpty()) {
+                model.addAttribute("error", "Seleção de data é obrigatória");
+                return agendamentoEtapa2(model, request, null);
+            }
+            
+            if (horario == null || horario.trim().isEmpty()) {
+                model.addAttribute("error", "Seleção de horário é obrigatória");
+                return agendamentoEtapa2(model, request, null);
+            }
+            
+            // Salvar dados na sessão usando o SessionManager
+            sessionManager.salvarEtapa2(request, data, horario);
+            
+            logger.info("Dados da Etapa 2 salvos na sessão. Redirecionando para Etapa 3");
+            return "redirect:/public/agendamento/etapa3";
+            
+        } catch (AgendamentoSessionManager.SessionExpiredException e) {
+            logger.warn("Sessão expirada durante processamento da Etapa 2");
+            model.addAttribute("error", "Sessão expirada. Por favor, reinicie o processo.");
+            return "redirect:/public/agendamento/etapa1";
+        } catch (Exception e) {
+            logger.error("Erro ao processar Etapa 2", e);
+            model.addAttribute("error", "Erro interno. Tente novamente.");
+            return agendamentoEtapa2(model, request, null);
+        }
+    }
+    
+    /**
+     * Etapa 3: Confirmação e finalização
+     */
+    @GetMapping("/public/agendamento/etapa3")
+    public String agendamentoEtapa3(Model model, HttpServletRequest request,
+                                   @RequestParam(value = "error", required = false) String errorMessage) {
+        logger.info("Acessando Etapa 3 do agendamento");
+        
+        try {
+            // Usar FlowController para validação inteligente de acesso
+            String redirectUrl = flowController.handleSmartNavigation(request, AgendamentoFlowController.Etapa.ETAPA_3);
+            if (redirectUrl != null) {
+                return redirectUrl;
+            }
+            
+            // Renovar sessão para manter ativa
+            sessionManager.renovarSessao(request);
+            
+            // Recuperar dados da sessão
+            AgendamentoSessionManager.AgendamentoSessionData sessionData = sessionManager.recuperarDados(request);
+            
+            // Adicionar todos os dados ao model para exibição
+            model.addAttribute("paciente", sessionData.getPaciente());
+            model.addAttribute("telefone", sessionData.getTelefone());
+            model.addAttribute("email", sessionData.getEmail());
+            model.addAttribute("dentista", sessionData.getDentista());
+            model.addAttribute("data", java.time.LocalDate.parse(sessionData.getData()));
+            model.addAttribute("horario", sessionData.getHorario());
+            model.addAttribute("titulo", "Etapa 3 - Confirmação");
+            
+            // Adicionar navegação breadcrumb
+            AgendamentoFlowController.NavigationBreadcrumb breadcrumb = 
+                flowController.buildBreadcrumb(request, AgendamentoFlowController.Etapa.ETAPA_3);
+            model.addAttribute("breadcrumb", breadcrumb);
+            
+            // Adicionar configuração do reCAPTCHA se habilitado
+            if (captchaService.isEnabled()) {
+                model.addAttribute("recaptchaEnabled", true);
+                model.addAttribute("recaptchaSiteKey", captchaService.getSiteKey());
+            } else {
+                model.addAttribute("recaptchaEnabled", false);
+            }
+            
+            // Adicionar mensagem de erro de redirecionamento se existir
+            if (errorMessage != null && !errorMessage.trim().isEmpty()) {
+                model.addAttribute("error", errorMessage);
+            }
+            
+            return "public/agendamento-etapa3";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar Etapa 3", e);
+            model.addAttribute("error", "Erro ao carregar página. Tente novamente.");
+            return "redirect:/public/agendamento/etapa1";
+        }
+    }
+    
+    /**
+     * Finalizar agendamento das etapas
+     */
+    @PostMapping("/public/agendamento/finalizar")
+    public String finalizarAgendamento(HttpServletRequest request,
+                                     @RequestParam(name = "g-recaptcha-response", required = false) String recaptchaResponse,
+                                     Model model) {
+        logger.info("Finalizando agendamento do fluxo de etapas");
+        
+        try {
+            // Verificar se todos os dados estão completos
+            if (!sessionManager.hasCompleteData(request)) {
+                logger.warn("Dados incompletos na sessão para finalização");
+                return "redirect:/public/agendamento/etapa1";
+            }
+            
+            // Recuperar todos os dados da sessão
+            AgendamentoSessionManager.AgendamentoSessionData sessionData = sessionManager.recuperarDados(request);
+            
+            // Validar reCAPTCHA se habilitado
+            if (captchaService.isEnabled()) {
+                String clientIp = getClientIp(request);
+                if (recaptchaResponse == null || !captchaService.validateCaptcha(recaptchaResponse, clientIp)) {
+                    model.addAttribute("error", "Verificação de segurança falhou. Tente novamente.");
+                    return agendamentoEtapa3(model, request, null);
+                }
+            }
+            
+            // Criar dataHora combinando data e horário
+            LocalDateTime dataHoraAgendamento;
+            try {
+                String dataHoraStr = sessionData.getData() + "T" + sessionData.getHorario();
+                if (!sessionData.getHorario().contains(":")) {
+                    dataHoraStr = sessionData.getData() + "T" + sessionData.getHorario() + ":00";
+                }
+                dataHoraAgendamento = LocalDateTime.parse(dataHoraStr);
+            } catch (Exception e) {
+                logger.error("Erro ao parsear data/hora: {} + {}", sessionData.getData(), sessionData.getHorario(), e);
+                model.addAttribute("error", "Formato de data/hora inválido");
+                return agendamentoEtapa3(model, request, null);
+            }
+            
+            // Validar se não é no passado
+            if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
+                model.addAttribute("error", "Não é possível agendar consultas no passado");
+                return agendamentoEtapa3(model, request, null);
+            }
+            
+            // Criar agendamento
+            Agendamento agendamento = new Agendamento();
+            agendamento.setPaciente(sessionData.getPaciente());
+            agendamento.setDentista(sessionData.getDentista());
+            agendamento.setDataHora(dataHoraAgendamento);
+            agendamento.setStatus("AGENDADO");
+            agendamento.setObservacao(String.format("Agendamento online - fluxo de etapas (SessionID: %s)", 
+                                                  sessionData.getSessionId()));
+            agendamento.setTelefoneWhatsapp(sessionData.getTelefone());
+            agendamento.setDuracaoMinutos(30);
+            
+            // Salvar agendamento
+            agendamento = agendamentoService.salvar(agendamento);
+            
+            // Registrar conclusão bem-sucedida do fluxo completo
+            Map<String, Object> completionMetadata = new HashMap<>();
+            completionMetadata.put("agendamento_id", agendamento.getId());
+            completionMetadata.put("dentista", sessionData.getDentista());
+            completionMetadata.put("data_agendamento", sessionData.getData());
+            completionMetadata.put("horario_agendamento", sessionData.getHorario());
+            completionMetadata.put("total_steps", 3);
+            featureFlagManager.recordEvent(request, FeatureFlagManager.ABTestEvent.FLOW_COMPLETED, completionMetadata);
+            
+            // Limpar dados da sessão
+            sessionManager.limparSessao(request);
+            
+            logger.info("Agendamento finalizado com sucesso - ID: {}, SessionID: {}", 
+                       agendamento.getId(), sessionData.getSessionId());
+            return "redirect:/public/agendamento-confirmado?id=" + agendamento.getId();
+            
+        } catch (AgendamentoSessionManager.SessionExpiredException e) {
+            logger.warn("Sessão expirada durante finalização");
+            model.addAttribute("error", "Sessão expirada. Por favor, reinicie o processo.");
+            return "redirect:/public/agendamento/etapa1";
+        } catch (Exception e) {
+            logger.error("Erro ao finalizar agendamento", e);
+            model.addAttribute("error", "Erro ao finalizar agendamento. Tente novamente.");
+            return agendamentoEtapa3(model, request, null);
         }
     }
     

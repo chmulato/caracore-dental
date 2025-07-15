@@ -37,3 +37,18 @@ google:
   recaptcha:
     site-key: ${RECAPTCHA_SITE_KEY:your-site-key-here}  # Chave do site fornecida pelo Google
     secret-key: ${RECAPTCHA_SECRET_KEY:your-secret-key-here}  # Chave secreta fornecida pelo Google
+
+# Configurações de Feature Flags e A/B Testing
+cca:
+  feature-flags:
+    # Controle do fluxo de agendamento
+    multi-step-flow:
+      enabled: true  # true = multi-etapas habilitado, false = apenas página única
+    
+    # Configurações de A/B Testing
+    ab-testing:
+      enabled: false  # true = ativa teste A/B entre fluxos
+      multi-step-percentage: 50  # Porcentagem de usuários que verão fluxo multi-etapas (0-100)
+    
+    # Modo debug para desenvolvimento
+    debug-mode: false  # true = permite forçar fluxos e logs detalhados

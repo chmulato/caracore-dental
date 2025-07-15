@@ -134,6 +134,21 @@ cca:
     site-key: ${RECAPTCHA_SITE_KEY:6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI}  # Chave de teste
     secret-key: ${RECAPTCHA_SECRET_KEY:6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe}  # Chave de teste
 
+# Configurações específicas do ambiente local - Feature Flags
+cca:
+  feature-flags:
+    # Controle do fluxo de agendamento
+    multi-step-flow:
+      enabled: true  # Multi-etapas habilitado em desenvolvimento
+    
+    # Configurações de A/B Testing para desenvolvimento
+    ab-testing:
+      enabled: true  # A/B Testing habilitado em ambiente local
+      multi-step-percentage: 70  # 70% dos usuários verão fluxo multi-etapas
+    
+    # Modo debug para desenvolvimento
+    debug-mode: true  # Permite forçar fluxos e logs detalhados
+
 # Configurações de logging
 logging:
   level:
