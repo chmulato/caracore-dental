@@ -135,7 +135,6 @@ cca:
     secret-key: ${RECAPTCHA_SECRET_KEY:6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe}  # Chave de teste
 
 # Configurações específicas do ambiente local - Sistema Simplificado
-cca:
   feature-flags:
     # Sistema simplificado - sempre página única com accordion
     debug-mode: true  # Permite logs detalhados em desenvolvimento

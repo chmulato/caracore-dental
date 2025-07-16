@@ -426,6 +426,35 @@
             color: var(--text-light);
         }
 
+        /* Estilos para seção de contato quando não há dentistas */
+        .contact-option {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: var(--light-gray);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .contact-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .contact-option i {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-option h6 {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .contact-option p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
         /* Responsividade */
         @media (max-width: 768px) {
             .hero-title {
@@ -525,8 +554,54 @@
                         <span th:text="${sucesso}"></span>
                     </div>
 
-                    <!-- Formulário Principal -->
-                    <form method="post" action="/public/agendamento" id="agendamentoForm">
+                    <!-- Mensagem quando não há dentistas disponíveis -->
+                    <div th:if="${noDentistasDisponiveis}" class="text-center py-5">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2 fs-3"></i>
+                            <h4 class="alert-heading mt-3">Agendamento Temporariamente Indisponível</h4>
+                            <p class="mb-0" th:text="${mensagemIndisponibilidade}"></p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5><i class="bi bi-telephone me-2"></i>Entre em Contato Conosco</h5>
+                            <p class="text-muted mb-3">Nossa equipe estará pronta para atendê-lo através dos seguintes canais:</p>
+                            
+                            <div class="row justify-content-center">
+                                <div class="col-md-4">
+                                    <div class="contact-option">
+                                        <i class="bi bi-whatsapp fs-2 text-success"></i>
+                                        <h6 class="mt-2">WhatsApp</h6>
+                                        <p class="text-muted">Atendimento rápido e direto</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="contact-option">
+                                        <i class="bi bi-telephone fs-2 text-primary"></i>
+                                        <h6 class="mt-2">Telefone</h6>
+                                        <p class="text-muted">Ligue para nossa central</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="contact-option">
+                                        <i class="bi bi-envelope fs-2 text-info"></i>
+                                        <h6 class="mt-2">E-mail</h6>
+                                        <p class="text-muted">Envie sua mensagem</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-primary" onclick="window.location.reload()">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    Tentar Novamente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário Principal - só aparece se há dentistas disponíveis -->
+                    <div th:unless="${noDentistasDisponiveis}">
+                        <form method="post" action="/public/agendamento" id="agendamentoForm">
                         
                         <!-- Accordion para as Etapas -->
                         <div class="accordion" id="agendamentoAccordion">
@@ -764,6 +839,7 @@
                         <!-- Campo oculto para dataHora -->
                         <input type="hidden" id="dataHora" name="dataHora">
                     </form>
+                    </div> <!-- Fim da div condicional th:unless="${noDentistasDisponiveis}" -->
                 </div>
             </div>
         </div>

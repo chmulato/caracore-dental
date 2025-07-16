@@ -68,8 +68,22 @@ public class AgendamentoPublicoController {
             
             // Usar apenas dentistas ativos para exposição pública
             List<String> dentistas = agendamentoService.listarDentistasAtivos();
+            
+            // Verificar se há dentistas disponíveis para agendamento público
+            if (dentistas == null || dentistas.isEmpty()) {
+                logger.warn("Nenhum dentista disponível para agendamento público - IP: {}", getClientIp(request));
+                model.addAttribute("titulo", "Agendamento Online - Temporariamente Indisponível");
+                model.addAttribute("noDentistasDisponiveis", true);
+                model.addAttribute("mensagemIndisponibilidade", 
+                    "No momento não há profissionais disponíveis para agendamento online. " +
+                    "Por favor, entre em contato diretamente conosco pelos telefones " +
+                    "disponíveis no site ou tente novamente mais tarde.");
+                return "public/agendamento-online";
+            }
+            
             model.addAttribute("titulo", "Agendamento Online");
             model.addAttribute("dentistas", dentistas);
+            model.addAttribute("noDentistasDisponiveis", false);
             
             // Adicionar informações do reCAPTCHA se habilitado
             if (captchaService.isEnabled()) {
