@@ -1,13 +1,13 @@
 # Status de Desenvolvimento - Sistema de Cara Core Dental - Agendamentos
 
-**Data do Relatório:** Campo Largo, 14 de Julho de 2025
-**Hora do Relatório:** 14:45
+**Data do Relatório:** Campo Largo, 15 de Julho de 2025
+**Hora do Relatório:** 15:30
 **Versão Atual:** 0.1.0-SNAPSHOT-PRONTUARIO
 **Equipe Responsável:** Cara Core Informática
 
 ## 1. Resumo Executivo
 
-Após o merge da branch `feature/prontuario` para `main`, o sistema Cara Core Dental - Agendamentos está estável e pronto para homologação. Todas as funcionalidades principais estão operacionais, com testes automatizados passando e ambiente de desenvolvimento sincronizado com a branch principal. **ATUALIZAÇÃO 14/07 14:45:** Sistema agora funciona tanto com H2 (perfil `h2`) quanto com PostgreSQL (perfil `local`) via Docker, oferecendo flexibilidade total de desenvolvimento.
+Sistema Cara Core Dental - Agendamentos está estável e pronto para homologação. **NOVA IMPLEMENTAÇÃO (15/07):** Agendamento público foi reformulado para usar **página única com accordion**, simplificando drasticamente a experiência do usuário e reduzindo a complexidade de desenvolvimento. Todas as funcionalidades principais estão operacionais, com testes automatizados passando e ambiente de desenvolvimento sincronizado com a branch principal.
 
 ## 2. Estado Atual do Sistema
 
@@ -16,6 +16,11 @@ Após o merge da branch `feature/prontuario` para `main`, o sistema Cara Core De
 - **Sistema de Autenticação:** Login/logout funcionando com Spring Security
 - **Dashboard Principal:** Estatísticas e métricas em tempo real
 - **Gestão de Consultas:** Lista e dashboard de consultas funcionando
+- **🆕 Agendamento Público com Accordion:** Nova interface unificada em página única
+  - Três etapas organizadas em accordion: Dados Pessoais → Horário → Confirmação
+  - Navegação fluida sem recarregamento de páginas
+  - Validação inteligente e resumos dinâmicos
+  - Interface moderna e responsiva
 - **Navegação Completa:** Todos os links entre páginas operacionais
 - **Banco de Dados Multi-Ambiente:**
   - **H2 (perfil `h2`):** In-memory para desenvolvimento rápido com massa de dados completa
@@ -198,6 +203,7 @@ mvn clean package
 ### 7.4 Acesso à Aplicação
 
 - **URL Principal:** <http://localhost:8080>
+- **🆕 Agendamento Público - Página Única:** <http://localhost:8080/public/agendamento>
 - **H2 Console:** <http://localhost:8080/h2-console> (apenas profile h2)
 - **Actuator Health:** <http://localhost:8080/actuator/health>
 - **Swagger UI:** <http://localhost:8080/swagger-ui.html>
@@ -209,12 +215,14 @@ O Sistema de Agendamento Cara Core atingiu um ponto de estabilidade significativ
 ### 8.1 Marcos Alcançados
 
 - **Sistema Totalmente Funcional:** Navegação completa entre todas as páginas
+- **🆕 Interface Modernizada:** Agendamento público reformulado com accordion de página única
 - **Multi-Ambiente:** Suporte completo para H2 e PostgreSQL com Docker
 - **Banco de Dados Integrado:** PostgreSQL funcionando com pool de conexões otimizado
 - **Templates Corrigidos:** Problemas de renderização Thymeleaf resolvidos
 - **Logging Completo:** Sistema de auditoria e monitoramento implementado
 - **Prontuários Médicos:** Implementação completa com suporte a imagens radiológicas
 - **Padrão DTO:** Arquitetura robusta para transferência segura de dados entre camadas
+- **UX Aprimorada:** Interface accordion com navegação fluida e validação inteligente
 
 ### 8.2 Próxima Fase
 
@@ -222,10 +230,11 @@ O Sistema de Agendamento Cara Core atingiu um ponto de estabilidade significativ
 - Preparação para ambiente de homologação
 - Otimização de performance e UX
 - Padronização completa dos códigos de status HTTP em todos os controladores
+- Testes automatizados para novo fluxo de agendamento accordion
 
 ### 8.3 Status Geral
 
-**VERDE:** Sistema pronto para homologação, demonstrações e testes funcionais completos
+**VERDE:** Sistema pronto para homologação, demonstrações e testes funcionais completos. **Nova interface de agendamento público oferece experiência superior e código mais maintível.**
 
 ---
 
