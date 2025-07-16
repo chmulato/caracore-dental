@@ -44,13 +44,14 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 ```
 
-### Sistema de Agendamento Online (Simplificado)
+### Sistema de Agendamento Online (Reformulado)
 
 ```markdown
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | Documento                                                                | Descrição                                   | Status/Atualização   |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
-| [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md)                           | Página única com accordion - arquitetura    | Implementado (15/07) |
+| [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md)                           | Sistema com navegação JavaScript por seções| Reformulado (16/07)  |
+| [AGENDAMENTO_REFORMULADO_16_07.md](AGENDAMENTO_REFORMULADO_16_07.md)     | Documentação completa da reformulação      | Novo (16/07)         |
 | [TESTS_AGENDAMENTO_PUBLICO.md](TESTS_AGENDAMENTO_PUBLICO.md)             | Validação e cobertura de testes             | Verificado (15/07)   |
 | [CORRECOES_AGENDAMENTO_FORM_TEST.md](CORRECOES_AGENDAMENTO_FORM_TEST.md) | Correções nos testes do AgendamentoForm     | Corrigido (15/07)    |
 | [CORRECOES_AGENDAMENTO_SERVICE_TEST.md](CORRECOES_AGENDAMENTO_SERVICE_TEST.md) | Correções nos testes do AgendamentoService | Corrigido (15/07)  |
@@ -70,9 +71,17 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 - **Docker Integration**: Setup automático do PostgreSQL 15 para desenvolvimento
 - **Pool de Conexões Otimizado**: Configurações específicas para cada ambiente
 - **22 Migrações Flyway**: Aplicadas com sucesso em ambos os ambientes
-- **Agendamento Simplificado**: Remoção do sistema de múltiplas etapas, implementação de página única com accordion
 
-**Status Atual:** VERDE - Sistema estável e pronto para homologação
+**🆕 Agendamento Público Reformulado (16/07/2025):**
+
+- **Sistema Accordion REMOVIDO**: Eliminado em favor de navegação JavaScript pura
+- **3 Seções de Navegação**: Dados Pessoais → Calendário → Confirmação
+- **Calendário FullCalendar Otimizado**: Layout expandido (700px+), responsivo e profissional
+- **Interface Premium**: Design moderno com gradientes, sombras e animações CSS
+- **Validação PostgreSQL**: 9 profissionais ativos carregando corretamente
+- **UX/UI Superior**: Navegação fluida, indicadores visuais e feedback em tempo real
+
+**Status Atual:** 🟢 VERDE - Sistema estável e pronto para homologação
 
 ---
 
@@ -214,7 +223,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 3. **Arquitetura:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Compreensão do stack tecnológico  
 4. **Configuração de Perfis:** [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md) - Profiles H2 vs PostgreSQL
 5. **Performance:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Configuração de pools para ambos ambientes
-6. **Agendamento Online:** [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md) - Sistema simplificado com accordion
+6. **🆕 Agendamento Reformulado:** [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md) - Sistema com navegação JavaScript por seções
 7. **Requisitos:** [REQUISITOS.md](tech/REQUISITOS.md) - Especificações funcionais
 8. **Sistema Prontuário:** [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md) - Funcionalidade implementada
 9. **Testes:** [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md) - Validação de qualidade
@@ -375,9 +384,9 @@ public String listarPacientes(Model model) {
 **Tecnologia Principal:** Spring Boot 3.2.6 + Java 17  
 **Banco de Dados:** H2 (desenvolvimento) / PostgreSQL 15 (Docker)  
 **Multi-Ambiente:** Perfis H2 e PostgreSQL com Docker Support  
-**Agendamento:** Página única com accordion (simplificado 15/07/2025)  
-**Versão da Documentação:** 2.5  
-**Última Atualização:** 15/07/2025
+**🆕 Agendamento:** Navegação JavaScript por seções (reformulado 16/07/2025)  
+**Versão da Documentação:** 2.6  
+**Última Atualização:** 16/07/2025
 
 ---
 
