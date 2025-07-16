@@ -16,7 +16,7 @@ public class PublicController {
      */
     @GetMapping("/agendamento-landing")
     public String agendamentoLanding() {
-        return "public/agendamento-landing";
+        return "public/agendamento-online";
     }
 
     /**

@@ -40,7 +40,7 @@ class PublicControllerTest {
         // Act & Assert
         mockMvc.perform(get("/public/agendamento-landing"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("public/agendamento-landing"));
+                .andExpect(view().name("public/agendamento-online"));
     }
 
     @Test
