@@ -566,4 +566,185 @@ class AgendamentoPublicoControllerTest {
         verify(captchaService, never()).validateCaptcha(any(), any());
     }
 
+    // ===== NOVOS TESTES PARA VALIDAÇÃO DE DENTISTAS EXPOSTOS PUBLICAMENTE =====
+
+    @Test
+    @DisplayName("Deve exibir formulário quando há dentistas expostos publicamente")
+    void testAgendamentoOnlineComDentistasDisponiveis() throws Exception {
+        // Arrange
+        List<String> dentistasDisponiveis = Arrays.asList(
+            "Dr. João Silva - Clínico Geral",
+            "Dra. Ana Costa - Ortodontista",
+            "Dr. Carlos Oliveira - Periodontista"
+        );
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasDisponiveis);
+        when(captchaService.isEnabled()).thenReturn(false);
+
+        // Act & Assert
+        mockMvc.perform(get("/public/agendamento"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("public/agendamento-online"))
+                .andExpect(model().attribute("titulo", "Agendamento Online"))
+                .andExpect(model().attribute("dentistas", dentistasDisponiveis))
+                .andExpect(model().attribute("noDentistasDisponiveis", false))
+                .andExpect(model().attribute("recaptchaEnabled", false))
+                .andExpect(model().attributeDoesNotExist("mensagemIndisponibilidade"));
+
+        verify(agendamentoService, times(1)).listarDentistasAtivos();
+        verify(captchaService, times(1)).isEnabled();
+    }
+
+    @Test
+    @DisplayName("Deve exibir mensagem explicativa quando não há dentistas expostos publicamente")
+    void testAgendamentoOnlineSemDentistasDisponiveis() throws Exception {
+        // Arrange - Lista vazia de dentistas
+        List<String> dentistasVazios = Arrays.asList();
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasVazios);
+
+        // Act & Assert
+        mockMvc.perform(get("/public/agendamento"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("public/agendamento-online"))
+                .andExpect(model().attribute("titulo", "Agendamento Online - Temporariamente Indisponível"))
+                .andExpect(model().attribute("noDentistasDisponiveis", true))
+                .andExpect(model().attribute("mensagemIndisponibilidade", 
+                    "No momento não há profissionais disponíveis para agendamento online. " +
+                    "Por favor, entre em contato diretamente conosco pelos telefones " +
+                    "disponíveis no site ou tente novamente mais tarde."))
+                .andExpect(model().attributeDoesNotExist("dentistas"))
+                .andExpect(model().attributeDoesNotExist("recaptchaEnabled"));
+
+        verify(agendamentoService, times(1)).listarDentistasAtivos();
+        verify(captchaService, never()).isEnabled(); // Não deve verificar reCAPTCHA quando não há dentistas
+    }
+
+    @Test
+    @DisplayName("Deve exibir mensagem explicativa quando lista de dentistas é null")
+    void testAgendamentoOnlineComDentistasNull() throws Exception {
+        // Arrange - Retornar null em vez de lista vazia
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(null);
+
+        // Act & Assert
+        mockMvc.perform(get("/public/agendamento"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("public/agendamento-online"))
+                .andExpect(model().attribute("titulo", "Agendamento Online - Temporariamente Indisponível"))
+                .andExpect(model().attribute("noDentistasDisponiveis", true))
+                .andExpect(model().attribute("mensagemIndisponibilidade", 
+                    "No momento não há profissionais disponíveis para agendamento online. " +
+                    "Por favor, entre em contato diretamente conosco pelos telefones " +
+                    "disponíveis no site ou tente novamente mais tarde."))
+                .andExpect(model().attributeDoesNotExist("dentistas"))
+                .andExpect(model().attributeDoesNotExist("recaptchaEnabled"));
+
+        verify(agendamentoService, times(1)).listarDentistasAtivos();
+        verify(captchaService, never()).isEnabled();
+    }
+
+    @Test
+    @DisplayName("API de dentistas deve retornar lista vazia quando não há dentistas expostos")
+    void testApiDentistasSemDentistasDisponiveis() throws Exception {
+        // Arrange
+        List<String> dentistasVazios = Arrays.asList();
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasVazios);
+
+        // Act & Assert
+        mockMvc.perform(get("/public/api/dentistas")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(agendamentoService, times(1)).listarDentistasAtivos();
+    }
+
+    @Test
+    @DisplayName("Deve exibir formulário com reCAPTCHA quando há dentistas e reCAPTCHA está habilitado")
+    void testAgendamentoOnlineComDentistasERecaptchaHabilitado() throws Exception {
+        // Arrange
+        List<String> dentistasDisponiveis = Arrays.asList("Dr. João Silva - Clínico Geral");
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasDisponiveis);
+        when(captchaService.isEnabled()).thenReturn(true);
+        when(captchaService.getSiteKey()).thenReturn("test-site-key-123");
+
+        // Act & Assert
+        mockMvc.perform(get("/public/agendamento"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("public/agendamento-online"))
+                .andExpect(model().attribute("titulo", "Agendamento Online"))
+                .andExpect(model().attribute("dentistas", dentistasDisponiveis))
+                .andExpect(model().attribute("noDentistasDisponiveis", false))
+                .andExpect(model().attribute("recaptchaEnabled", true))
+                .andExpect(model().attribute("recaptchaSiteKey", "test-site-key-123"));
+
+        verify(agendamentoService, times(1)).listarDentistasAtivos();
+        verify(captchaService, times(1)).isEnabled();
+        verify(captchaService, times(1)).getSiteKey();
+    }
+
+    @Test
+    @DisplayName("Deve tratar erro no serviço graciosamente mantendo validação de dentistas")
+    void testAgendamentoOnlineComErroNoServico() throws Exception {
+        // Arrange - Simular erro no serviço
+        when(agendamentoService.listarDentistasAtivos()).thenThrow(new RuntimeException("Erro de conexão com o banco"));
+
+        // Act & Assert
+        mockMvc.perform(get("/public/agendamento"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("public/agendamento-online"))
+                .andExpect(model().attribute("error", "Erro interno do servidor"));
+
+        verify(agendamentoService, times(1)).listarDentistasAtivos();
+    }
+
+    @Test
+    @DisplayName("Processamento de agendamento deve continuar funcionando quando há dentistas")
+    void testProcessarAgendamentoComDentistasDisponiveis() throws Exception {
+        // Arrange
+        List<String> dentistasDisponiveis = Arrays.asList("Dr. João Silva - Clínico Geral");
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasDisponiveis);
+        when(agendamentoService.salvar(any(Agendamento.class))).thenReturn(agendamentoTeste);
+        when(captchaService.isEnabled()).thenReturn(false);
+        
+        String dataFutura = "2026-07-15T14:30:00"; // Data futura válida
+
+        // Act & Assert
+        mockMvc.perform(post("/public/agendamento")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("paciente", "João Silva")
+                .param("dentista", "Dr. João Silva - Clínico Geral")
+                .param("dataHora", dataFutura)
+                .param("telefone", "(11) 99999-9999")
+                .param("email", "joao@email.com"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/public/agendamento-confirmado*"));
+
+        verify(agendamentoService, times(1)).salvar(any(Agendamento.class));
+    }
+
+    @Test
+    @DisplayName("Log de IP deve ser registrado corretamente em ambos os cenários")
+    void testLogDeIpEmAmbosOsCenarios() throws Exception {
+        // Teste 1: Com dentistas disponíveis
+        List<String> dentistasDisponiveis = Arrays.asList("Dr. João Silva");
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(dentistasDisponiveis);
+        when(captchaService.isEnabled()).thenReturn(false);
+
+        mockMvc.perform(get("/public/agendamento")
+                .header("X-Forwarded-For", "192.168.1.100"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("noDentistasDisponiveis", false));
+
+        // Teste 2: Sem dentistas disponíveis
+        when(agendamentoService.listarDentistasAtivos()).thenReturn(Arrays.asList());
+
+        mockMvc.perform(get("/public/agendamento")
+                .header("X-Forwarded-For", "192.168.1.100"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("noDentistasDisponiveis", true));
+
+        verify(agendamentoService, times(2)).listarDentistasAtivos();
+    }
+
 }
