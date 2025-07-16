@@ -52,6 +52,10 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
 | [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md)                           | Página única com accordion - arquitetura    | Implementado (15/07) |
 | [TESTS_AGENDAMENTO_PUBLICO.md](TESTS_AGENDAMENTO_PUBLICO.md)             | Validação e cobertura de testes             | Verificado (15/07)   |
+| [CORRECOES_AGENDAMENTO_FORM_TEST.md](CORRECOES_AGENDAMENTO_FORM_TEST.md) | Correções nos testes do AgendamentoForm     | Corrigido (15/07)    |
+| [CORRECOES_AGENDAMENTO_SERVICE_TEST.md](CORRECOES_AGENDAMENTO_SERVICE_TEST.md) | Correções nos testes do AgendamentoService | Corrigido (15/07)  |
+| [CORRECOES_PUBLIC_CONTROLLER_TEST.md](CORRECOES_PUBLIC_CONTROLLER_TEST.md) | Correções nos testes do PublicController   | Corrigido (15/07)    |
+| [CONFIGURACAO_RECAPCHA.md](CONFIGURACAO_RECAPCHA.md)                     | Configuração reCAPTCHA para sistema único   | Atualizado (15/07)   |
 | [FLUXO_ETAPAS_IMPLEMENTADO.md](FLUXO_ETAPAS_IMPLEMENTADO.md)             | Histórico do sistema de etapas (removido)   | Deprecado            |
 | [AGENDAMENTO_ONLINE_TRES_ETAPAS.md](AGENDAMENTO_ONLINE_TRES_ETAPAS.md)   | Sistema antigo de múltiplas páginas         | Removido (15/07)     |
 |--------------------------------------------------------------------------|---------------------------------------------|----------------------|
