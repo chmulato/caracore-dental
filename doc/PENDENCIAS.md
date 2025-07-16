@@ -24,6 +24,7 @@ Este documento lista os problemas pendentes identificados no sistema de agendame
 - **Lazy Loading (13/07/2025):** Solucionado problema de acesso a coleções lazy-loaded em templates Thymeleaf
 - **Conversão de Tipos (13/07/2025):** Corrigido erro de conversão de dados Base64 para Long no PostgreSQL
 - **Tratamento de Erros (13/07/2025):** Implementação padronizada de códigos de status HTTP
+- **Simplificação de Agendamento (15/07/2025):** Removido sistema complexo de múltiplas etapas com gestão de sessões, implementado página única com accordion
 
 ### Pendências Principais (Prioridade Alta)
 
