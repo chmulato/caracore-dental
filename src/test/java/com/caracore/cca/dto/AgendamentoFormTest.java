@@ -33,9 +33,10 @@ class AgendamentoFormTest {
         form = new AgendamentoForm();
         
         // Configuração de valores válidos padrão para todos os testes
+        // Usa horário comercial válido (10h da manhã do próximo dia)
         form.setPaciente("Maria Teste");
         form.setDentista("Dr. Dentista");
-        form.setDataHora(LocalDateTime.now().plusDays(1));
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0));
         form.setTelefoneWhatsapp("(11) 98765-4321");
     }
 
@@ -58,10 +59,10 @@ class AgendamentoFormTest {
     @Test
     @DisplayName("Deve validar todos os campos do formulário")
     void deveValidarTodosCampos() {
-        // Dados válidos
+        // Dados válidos com horário comercial
         form.setPaciente("Maria Teste");
         form.setDentista("Dr. Dentista");
-        form.setDataHora(LocalDateTime.now().plusDays(1));
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(14).withMinute(30));
         form.setTelefoneWhatsapp("(11) 98765-4321");
         form.setObservacao("Observação de teste");
         form.setDuracaoMinutos(30);
@@ -183,6 +184,9 @@ class AgendamentoFormTest {
     @Test
     @DisplayName("Deve validar tamanho máximo da observação")
     void deveValidarTamanhoMaximoObservacao() {
+        // Usa horário comercial válido para o teste
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(15).withMinute(0));
+        
         // Cria uma observação com 501 caracteres (excede o limite de 500)
         StringBuilder obsLonga = new StringBuilder();
         for (int i = 0; i < 501; i++) {
@@ -207,8 +211,8 @@ class AgendamentoFormTest {
     @Test
     @DisplayName("Deve validar data futura")
     void deveValidarDataFutura() {
-        // Testa data no passado
-        form.setDataHora(LocalDateTime.now().minusDays(1));
+        // Testa data no passado (mesmo mantendo horário comercial)
+        form.setDataHora(LocalDateTime.now().minusDays(1).withHour(10).withMinute(0));
         Set<ConstraintViolation<AgendamentoForm>> violations = validator.validate(form);
         assertThat(violations).isNotEmpty();
         assertThat(violations.stream()
@@ -217,13 +221,13 @@ class AgendamentoFormTest {
                 .anyMatch(msg -> msg.contains("devem ser no futuro")))
                 .isTrue();
 
-        // Testa data atual
-        form.setDataHora(LocalDateTime.now());
+        // Testa data atual (mas fora do horário comercial para garantir falha)
+        form.setDataHora(LocalDateTime.now().withHour(7).withMinute(0));
         violations = validator.validate(form);
         assertThat(violations).isNotEmpty();
 
-        // Testa data futura
-        form.setDataHora(LocalDateTime.now().plusDays(1));
+        // Testa data futura com horário comercial válido
+        form.setDataHora(LocalDateTime.now().plusDays(1).withHour(14).withMinute(0));
         violations = validator.validate(form);
         assertThat(violations).isEmpty();
     }

@@ -39,7 +39,8 @@ class AgendamentoServiceTest {
         agendamentoTeste.setId(1L);
         agendamentoTeste.setPaciente("João Silva");
         agendamentoTeste.setDentista("Dr. Maria Santos");
-        agendamentoTeste.setDataHora(LocalDateTime.now().plusDays(1));
+        // Definir data com pelo menos 2 dias no futuro em horário comercial
+        agendamentoTeste.setDataHora(LocalDateTime.now().plusDays(2).withHour(10).withMinute(0).withSecond(0).withNano(0));
         agendamentoTeste.setStatus("AGENDADO");
         agendamentoTeste.setObservacao("Consulta de rotina");
         agendamentoTeste.setDuracaoMinutos(30);
@@ -197,7 +198,8 @@ class AgendamentoServiceTest {
     @Test
     void testReagendar() {
         // Arrange
-        LocalDateTime novaDataHora = LocalDateTime.now().plusDays(2);
+        // Nova data com 3 dias no futuro em horário comercial para evitar problemas de 24h
+        LocalDateTime novaDataHora = LocalDateTime.now().plusDays(3).withHour(14).withMinute(0).withSecond(0).withNano(0);
         when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamentoTeste));
         when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamentoTeste);
 
@@ -215,7 +217,7 @@ class AgendamentoServiceTest {
     @Test
     void testReagendarNaoEncontrado() {
         // Arrange
-        LocalDateTime novaDataHora = LocalDateTime.now().plusDays(2);
+        LocalDateTime novaDataHora = LocalDateTime.now().plusDays(3).withHour(14).withMinute(0).withSecond(0).withNano(0);
         when(agendamentoRepository.findById(1L)).thenReturn(Optional.empty());
 
         // Act
@@ -431,7 +433,8 @@ class AgendamentoServiceTest {
     void testBuscarPorDentistaDataStatus() {
         // Arrange
         String dentista = "Dr. Maria Santos";
-        LocalDateTime data = LocalDateTime.now().plusDays(1);
+        // Usar a mesma data do agendamentoTeste (2 dias no futuro)
+        LocalDateTime data = LocalDateTime.now().plusDays(2);
         String status = "AGENDADO";
         
         List<Agendamento> agendamentos = new ArrayList<>();
@@ -456,8 +459,8 @@ class AgendamentoServiceTest {
         agendamentos.add(agendamentoTeste);
         when(agendamentoRepository.findAll()).thenReturn(agendamentos);
 
-        // Act
-        List<Agendamento> resultado = agendamentoService.buscarPorDentistaDataStatus(null, LocalDateTime.now().plusDays(1), null);
+        // Act - usar a mesma data do agendamentoTeste
+        List<Agendamento> resultado = agendamentoService.buscarPorDentistaDataStatus(null, LocalDateTime.now().plusDays(2), null);
 
         // Assert
         assertNotNull(resultado);
