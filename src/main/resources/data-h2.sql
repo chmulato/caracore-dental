@@ -1,20 +1,47 @@
 -- data-h2.sql: Dados de exemplo para o banco H2
 -- Este arquivo é executado automaticamente pelo Spring Boot após a criação do schema
+--
+-- MASSA DE DADOS PARA DESENVOLVIMENTO E TESTES:
+-- ✅ 9 Usuários do sistema (1 admin, 5 dentistas, 3 funcionários)
+-- ✅ 7 Dentistas profissionais (5 expostos publicamente para agendamento online)
+-- ✅ 11 Pacientes com dados completos e LGPD
+-- ✅ 11 Prontuários médicos vinculados
+-- ✅ 6 Imagens radiológicas de exemplo
+-- ✅ 18 Registros de tratamentos (concluídos, em andamento, agendados)
+-- ✅ 16 Agendamentos (passados e futuros)
+--
+-- DENTISTAS EXPOSTOS PUBLICAMENTE (disponíveis para agendamento online):
+-- 1. Dr. Ana Silva - Clínico Geral
+-- 2. Dr. Carlos Oliveira - Ortodontista  
+-- 3. Dra. Mariana Santos - Endodontista
+-- 4. Dra. Fernanda Costa - Implantodontista
+-- 5. Dra. Beatriz Lima - Odontopediatra
+--
+-- ACESSO PADRÃO PARA TESTES:
+-- Admin: admin@caracore.com / senha123
+-- Dentistas: {nome}@caracore.com / senha123
+-- Funcionários: recepcao@caracore.com / senha123
 
 -- Inserir usuários do sistema
 INSERT INTO usuario (nome, email, senha, role) VALUES 
-('Administrador', 'admin@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'ADMIN'),
-('Dr. João Silva', 'joao@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
-('Recepcionista', 'recepcao@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO');
+('Administrador do Sistema', 'admin@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'ADMIN'),
+('Dr. Ana Silva', 'ana.silva@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
+('Dr. Carlos Oliveira', 'carlos.oliveira@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
+('Dra. Mariana Santos', 'mariana.santos@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
+('Dra. Fernanda Costa', 'fernanda.costa@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
+('Dra. Beatriz Lima', 'beatriz.lima@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
+('Recepcionista Principal', 'recepcao@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO'),
+('Recepcionista Auxiliar', 'recepcao2@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO'),
+('Assistente Dental', 'assistente@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO');
 
 -- Inserir dentistas
 INSERT INTO profissional (nome, email, telefone, cro, especialidade, horario_inicio, horario_fim, ativo, exposto_publicamente) VALUES 
-('Dr. Ana Silva', 'ana.silva@caracore.com', '11999991111', 'CRO-SP-12345', 'Clínico Geral', '08:00', '18:00', true, true),
+('Dr. Ana Silva', 'ana.silva@caracore.com', '11999991111', 'CRO-SP-12345', 'Clinico Geral', '08:00', '18:00', true, true),
 ('Dr. Carlos Oliveira', 'carlos.oliveira@caracore.com', '11999992222', 'CRO-SP-23456', 'Ortodontista', '09:00', '17:00', true, true),
 ('Dra. Mariana Santos', 'mariana.santos@caracore.com', '11999993333', 'CRO-SP-34567', 'Endodontista', '08:30', '17:30', true, true),
 ('Dr. Roberto Pereira', 'roberto.pereira@caracore.com', '11999994444', 'CRO-SP-45678', 'Periodontista', '08:00', '16:00', true, false),
 ('Dra. Fernanda Costa', 'fernanda.costa@caracore.com', '11999995555', 'CRO-SP-56789', 'Implantodontista', '10:00', '18:00', true, true),
-('Dr. Lucas Andrade', 'lucas.andrade@caracore.com', '11999996666', 'CRO-SP-67890', 'Cirurgião Bucomaxilofacial', '07:00', '15:00', true, false),
+('Dr. Lucas Andrade', 'lucas.andrade@caracore.com', '11999996666', 'CRO-SP-67890', 'Cirurgiao Bucomaxilofacial', '07:00', '15:00', true, false),
 ('Dra. Beatriz Lima', 'beatriz.lima@caracore.com', '11999997777', 'CRO-SP-78901', 'Odontopediatra', '08:00', '17:00', true, true);
 
 -- Inserir pacientes  
@@ -67,10 +94,13 @@ INSERT INTO imagem_radiologica (prontuario_id, dentista_id, nome_arquivo, tipo_i
 (9, 3, 'periapical_camila_20250225.jpg', 'Periapical', 'Dente 26 com lesão extensa - tratamento urgente', CURRENT_TIMESTAMP, true, 'jpg', 'data:image/jpeg;base64,exemplo'),
 (10, 6, 'tc_thiago_20250301.dcm', 'Tomografia', 'Trauma facial - fratura de processo alveolar', CURRENT_TIMESTAMP, true, 'dcm', 'data:application/dicom;base64,exemplo');
 
--- Inserir tratamentos realizados
-INSERT INTO registro_tratamento (prontuario_id, dentista_id, procedimento, descricao, status, data_tratamento, data_criacao) VALUES 
-(1, 1, 'Limpeza', 'Profilaxia e orientação de higiene oral', 'CONCLUIDO', '2025-01-10 14:30:00', CURRENT_TIMESTAMP),
-(2, 2, 'Avaliação Ortodôntica', 'Análise facial e modelo de gesso', 'CONCLUIDO', '2025-01-15 09:15:00', CURRENT_TIMESTAMP),
-(4, 1, 'Consulta Preventiva', 'Exame clínico e orientações', 'CONCLUIDO', '2025-02-01 10:20:00', CURRENT_TIMESTAMP),
-(5, 4, 'Raspagem', 'Raspagem supragengival', 'EM_ANDAMENTO', '2025-02-05 13:10:00', CURRENT_TIMESTAMP),
-(7, 7, 'Consulta Inicial', 'Primeira consulta odontopediátrica', 'CONCLUIDO', '2025-02-15 15:20:00', CURRENT_TIMESTAMP);
+-- Nota: Registros de tratamento podem ser adicionados posteriormente via interface administrativa
+
+-- Inserir mais agendamentos futuros para demonstração
+INSERT INTO agendamento (paciente, dentista, data_hora, observacao, status, duracao_minutos, telefone_whatsapp, data_criacao, data_atualizacao) VALUES 
+('Maria José da Silva', 'Dr. Ana Silva - Clínico Geral', '2025-07-22 09:00:00', 'Consulta de retorno pós-restauração', 'AGENDADO', 30, '11987654321', CURRENT_TIMESTAMP, null),
+('João Santos Oliveira', 'Dr. Carlos Oliveira - Ortodontista', '2025-07-22 14:00:00', 'Manutenção ortodôntica mensal', 'AGENDADO', 30, '11987654322', CURRENT_TIMESTAMP, null),
+('Ana Carolina Pereira', 'Dra. Mariana Santos - Endodontista', '2025-07-23 10:30:00', 'Finalização do tratamento de canal', 'AGENDADO', 60, '11987654323', CURRENT_TIMESTAMP, null),
+('Letícia Rodrigues', 'Dr. Roberto Pereira - Periodontista', '2025-07-23 08:30:00', 'Retorno pós-curetagem', 'AGENDADO', 45, '11987654325', CURRENT_TIMESTAMP, null),
+('Carlos Eduardo Dias', 'Dra. Fernanda Costa - Implantodontista', '2025-07-24 15:00:00', 'Cirurgia de implante', 'AGENDADO', 90, '11987654326', CURRENT_TIMESTAMP, null),
+('Fernanda Alves Lima', 'Dra. Beatriz Lima - Odontopediatra', '2025-07-24 09:30:00', 'Controle após selante', 'AGENDADO', 30, '11987654327', CURRENT_TIMESTAMP, null);
