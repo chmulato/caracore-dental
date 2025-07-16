@@ -448,6 +448,127 @@
             justify-content: center;
         }
 
+        /* Estilos específicos para visualização semanal (timeGrid) */
+        .fc-timegrid {
+            min-height: 700px !important;
+        }
+
+        .fc-timegrid-slots {
+            height: auto !important;
+        }
+
+        .fc-timegrid-slot {
+            height: 3rem !important; /* Altura mínima dos slots de horário */
+            border-bottom: 1px solid #e9ecef !important;
+        }
+
+        .fc-timegrid-slot-label {
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+            color: var(--text-dark) !important;
+            padding: 0.5rem !important;
+            text-align: center !important;
+        }
+
+        .fc-timegrid-col {
+            border-right: 1px solid #e9ecef !important;
+            min-width: 120px !important; /* Largura mínima das colunas dos dias */
+        }
+
+        .fc-timegrid-col-frame {
+            min-height: 100% !important;
+        }
+
+        .fc-timegrid-event {
+            border-radius: 4px !important;
+            padding: 0.25rem !important;
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            margin: 1px !important;
+        }
+
+        .fc-timegrid-event:hover {
+            transform: none !important; /* Evita problemas de sobreposição no hover */
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3) !important;
+        }
+
+        .fc-timegrid-axis {
+            width: 80px !important; /* Largura da coluna de horários */
+            border-right: 2px solid #e9ecef !important;
+        }
+
+        .fc-scrollgrid-section-body {
+            overflow-x: auto !important; /* Permite scroll horizontal se necessário */
+        }
+
+        .fc-timegrid-body {
+            min-height: 700px !important;
+        }
+
+        .fc-col-header {
+            background-color: var(--light-blue) !important;
+            border-bottom: 2px solid var(--primary-color) !important;
+        }
+
+        .fc-col-header-cell {
+            padding: 1rem 0.5rem !important;
+            text-align: center !important;
+        }
+
+        /* Melhorar responsividade da visualização semanal */
+        @media (max-width: 768px) {
+            .fc-timegrid-col {
+                min-width: 80px !important;
+            }
+
+            .fc-timegrid-axis {
+                width: 60px !important;
+            }
+
+            .fc-timegrid-slot {
+                height: 2.5rem !important;
+            }
+
+            .fc-timegrid-slot-label {
+                font-size: 0.8rem !important;
+                padding: 0.25rem !important;
+            }
+
+            .fc-timegrid-event {
+                font-size: 0.75rem !important;
+                padding: 0.1rem !important;
+            }
+
+            .fc-col-header-cell {
+                padding: 0.5rem 0.25rem !important;
+                font-size: 0.9rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fc-timegrid-col {
+                min-width: 60px !important;
+            }
+
+            .fc-timegrid-axis {
+                width: 50px !important;
+            }
+
+            .fc-timegrid-slot {
+                height: 2rem !important;
+            }
+
+            .fc-timegrid-slot-label {
+                font-size: 0.7rem !important;
+                padding: 0.1rem !important;
+            }
+
+            .fc-col-header-cell {
+                padding: 0.25rem 0.1rem !important;
+                font-size: 0.8rem !important;
+            }
+        }
+
         /* Espaçamento melhor na seção do calendário */
         #section-step-2 .section-body {
             padding: 2rem !important;
@@ -1279,6 +1400,8 @@
                     calendar = new FullCalendar.Calendar(calendarEl, {
                         locale: 'pt-br',
                         initialView: 'dayGridMonth',
+                        height: 'auto',
+                        contentHeight: 700,
                         headerToolbar: {
                             left: 'prev,next today',
                             center: 'title',
@@ -1296,6 +1419,23 @@
                             startTime: '08:00',
                             endTime: '18:00',
                         },
+                        // Configurações específicas para visualização semanal
+                        slotMinTime: '08:00',
+                        slotMaxTime: '18:00',
+                        slotDuration: '00:30',
+                        slotLabelInterval: '01:00',
+                        slotLabelFormat: {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        },
+                        dayHeaderFormat: {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'short'
+                        },
+                        allDaySlot: false, // Remove o slot "dia inteiro"
+                        expandRows: true, // Expande as linhas para preencher a altura
                         eventClick: function(info) {
                             const event = info.event;
                             
