@@ -72,16 +72,18 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 - **Pool de Conexões Otimizado**: Configurações específicas para cada ambiente
 - **22 Migrações Flyway**: Aplicadas com sucesso em ambos os ambientes
 
-**🆕 Agendamento Público Reformulado (16/07/2025):**
+**Agendamento Público Reformulado (16/07/2025):**
 
 - **Sistema Accordion REMOVIDO**: Eliminado em favor de navegação JavaScript pura
 - **3 Seções de Navegação**: Dados Pessoais → Calendário → Confirmação
 - **Calendário FullCalendar Otimizado**: Layout expandido (700px+), responsivo e profissional
+- **Visualização Exclusivamente Semanal**: Implementado forçamento de visualização timeGridWeek permanente
+- **Controles de Navegação Simplificados**: Removidos botões de alternância mensal e controles desnecessários
 - **Interface Premium**: Design moderno com gradientes, sombras e animações CSS
 - **Validação PostgreSQL**: 9 profissionais ativos carregando corretamente
 - **UX/UI Superior**: Navegação fluida, indicadores visuais e feedback em tempo real
 
-**Status Atual:** 🟢 VERDE - Sistema estável e pronto para homologação
+**Status Atual:** VERDE - Sistema estável e pronto para homologação
 
 ---
 
@@ -223,7 +225,7 @@ Este diretório contém toda a documentação técnica, estratégica e operacion
 3. **Arquitetura:** [TECNOLOGIAS.md](tech/TECNOLOGIAS.md) - Compreensão do stack tecnológico  
 4. **Configuração de Perfis:** [APPLICATION_YML_GUIDE.md](APPLICATION_YML_GUIDE.md) - Profiles H2 vs PostgreSQL
 5. **Performance:** [POOL_CONEXOES.md](POOL_CONEXOES.md) - Configuração de pools para ambos ambientes
-6. **🆕 Agendamento Reformulado:** [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md) - Sistema com navegação JavaScript por seções
+6. **Agendamento Reformulado:** [AGENDAMENTO_ONLINE.md](AGENDAMENTO_ONLINE.md) - Sistema com navegação JavaScript por seções
 7. **Requisitos:** [REQUISITOS.md](tech/REQUISITOS.md) - Especificações funcionais
 8. **Sistema Prontuário:** [SISTEMA_PRONTUARIO_RESUMO.md](SISTEMA_PRONTUARIO_RESUMO.md) - Funcionalidade implementada
 9. **Testes:** [PRONTUARIO_TESTES_UNITARIOS.md](PRONTUARIO_TESTES_UNITARIOS.md) - Validação de qualidade
@@ -384,7 +386,7 @@ public String listarPacientes(Model model) {
 **Tecnologia Principal:** Spring Boot 3.2.6 + Java 17  
 **Banco de Dados:** H2 (desenvolvimento) / PostgreSQL 15 (Docker)  
 **Multi-Ambiente:** Perfis H2 e PostgreSQL com Docker Support  
-**🆕 Agendamento:** Navegação JavaScript por seções (reformulado 16/07/2025)  
+**Agendamento:** Navegação JavaScript por seções com calendário exclusivamente semanal (reformulado 16/07/2025)  
 **Versão da Documentação:** 2.6  
 **Última Atualização:** 16/07/2025
 
