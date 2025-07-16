@@ -10,12 +10,12 @@ Para uma visão visual do funcionamento e dos estados do reCAPTCHA, consulte o [
 
 ## Implementação Atual
 
-O reCAPTCHA está implementado no arquivo `agendamento-etapa3.html` como parte do processo de agendamento em três etapas. O reCAPTCHA é apresentado na etapa final de confirmação, garantindo a validação humana antes da efetivação do agendamento. Funciona da seguinte forma:
+O reCAPTCHA está implementado na página única de agendamento como parte do sistema simplificado de accordion. O reCAPTCHA é apresentado na seção de confirmação, garantindo a validação humana antes da efetivação do agendamento. Funciona da seguinte forma:
 
-1. Na etapa 3 (confirmação), o reCAPTCHA é exibido junto com o resumo do agendamento
+1. Na seção de confirmação do accordion, o reCAPTCHA é exibido junto com o resumo do agendamento
 2. O script do reCAPTCHA é carregado automaticamente na página
 3. O usuário deve resolver o reCAPTCHA junto com aceitar os termos
-4. O botão de confirmação só é habilitado quando ambas validações são feitas
+4. O botão de confirmação só é habilitado quando ambas validações são realizadas
 5. O token do reCAPTCHA é enviado junto com os dados do formulário
 6. O backend valida o token antes de processar o agendamento definitivo
 
@@ -74,9 +74,9 @@ RECAPTCHA_SECRET_KEY=SUA_SECRET_KEY_AQUI
 
 ## Verificação da Implementação
 
-O sistema gerencia a configuração do reCAPTCHA na etapa 3 do agendamento:
+O sistema gerencia a configuração do reCAPTCHA na seção de confirmação do agendamento:
 
-- O reCAPTCHA sempre será exibido na página de confirmação
+- O reCAPTCHA é exibido na página de confirmação quando habilitado
 - O botão de confirmação permanece desabilitado até que:
   1. O usuário aceite os termos de agendamento
   2. Complete a verificação do reCAPTCHA com sucesso
@@ -85,18 +85,18 @@ O sistema gerencia a configuração do reCAPTCHA na etapa 3 do agendamento:
 
 ## Fluxo do Backend
 
-1. O backend recebe a requisição POST do formulário de confirmação (etapa 3)
+1. O backend recebe a requisição POST do formulário de confirmação
 2. O token do reCAPTCHA é extraído do parâmetro `g-recaptcha-response`
 3. O sistema verifica se o reCAPTCHA está habilitado para o ambiente atual
 4. Se habilitado, o token é validado contra a API do Google usando a secret-key configurada
 5. Apenas após a validação bem-sucedida o agendamento é processado
-6. Em caso de falha na validação, o usuário é redirecionado de volta à etapa 3 com mensagem de erro
+6. Em caso de falha na validação, o usuário recebe uma mensagem de erro na mesma página
 
 ## Troubleshooting
 
 ### Problemas Comuns
 
-1. **O reCAPTCHA não aparece na etapa de confirmação**
+1. **O reCAPTCHA não aparece na página de confirmação**
    - Verifique se as chaves do reCAPTCHA estão configuradas no `application.yml` ou nas variáveis de ambiente
    - Confirme se a site-key está correta e autorizada para o domínio
    - Verifique o console do navegador por erros de carregamento do script
