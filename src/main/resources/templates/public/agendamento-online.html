@@ -128,74 +128,50 @@
             text-align: center;
         }
 
-        /* Estilos para Accordion */
-        .accordion {
-            border: none;
-        }
-
-        .accordion-item {
+        /* Estilos para Form Sections */
+        .form-section {
+            background: var(--white);
             border: 2px solid #e9ecef;
-            border-radius: 15px !important;
-            margin-bottom: 1rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
 
-        .accordion-item:hover {
+        .form-section:hover {
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
-        .accordion-item.completed {
+        .form-section.completed {
             border-color: var(--success-color);
             background-color: rgba(40, 167, 69, 0.05);
         }
 
-        .accordion-item.active {
+        .form-section.active {
             border-color: var(--primary-color);
             background-color: rgba(0, 102, 204, 0.05);
         }
 
-        .accordion-header {
-            border-radius: 15px !important;
-        }
-
-        .accordion-button {
-            border-radius: 15px !important;
-            padding: 1.5rem 2rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            background: transparent;
-            border: none;
+        .section-header {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
             position: relative;
         }
 
-        .accordion-button:not(.collapsed) {
-            background: transparent;
-            color: var(--primary-color);
-            box-shadow: none;
+        .section-header h3 {
+            margin: 0;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1.2rem;
         }
 
-        .accordion-button:focus {
-            box-shadow: none;
-            border: none;
-        }
-
-        .accordion-button::after {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230066cc'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-        }
-
-        .accordion-body {
-            padding: 2rem;
-            background: var(--white);
-        }
-
-        .step-indicator {
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
+        .step-indicator-new {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--light-gray);
             color: var(--text-light);
@@ -204,21 +180,22 @@
             justify-content: center;
             font-weight: 600;
             font-size: 0.9rem;
+            margin-right: 1rem;
             transition: all 0.3s ease;
         }
 
-        .accordion-item.completed .step-indicator {
+        .form-section.completed .step-indicator-new {
             background: var(--success-color);
             color: var(--white);
         }
 
-        .accordion-item.active .step-indicator {
+        .form-section.active .step-indicator-new {
             background: var(--primary-color);
             color: var(--white);
         }
 
-        .accordion-button {
-            padding-left: 4rem !important;
+        .section-body {
+            padding: 2rem;
         }
 
         .form-group {
@@ -348,8 +325,206 @@
         .calendar-container {
             background: var(--white);
             border-radius: 15px;
-            padding: 1.5rem;
+            padding: 2rem;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+            min-height: 800px; /* Altura mínima aumentada */
+        }
+
+        /* Estilos específicos para o FullCalendar */
+        #calendar {
+            min-height: 700px; /* Altura do calendário aumentada */
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .fc {
+            width: 100% !important;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .fc-view-harness {
+            height: auto !important;
+            min-height: 700px !important;
+        }
+
+        .fc-daygrid {
+            height: auto !important;
+        }
+
+        .fc-scrollgrid {
+            border: 1px solid #e0e0e0 !important;
+            border-radius: 8px !important;
+        }
+
+        .fc-toolbar {
+            margin-bottom: 2rem !important;
+            padding: 1rem 0;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1.8rem !important;
+            font-weight: 600 !important;
+            color: var(--primary-color) !important;
+        }
+
+        .fc-button {
+            background: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            border-radius: 8px !important;
+            padding: 0.75rem 1.5rem !important;
+            font-weight: 500 !important;
+            font-size: 1rem !important;
+        }
+
+        .fc-button:hover {
+            background: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+            transform: translateY(-1px);
+        }
+
+        .fc-col-header-cell {
+            background-color: var(--light-blue) !important;
+            font-weight: 600 !important;
+            font-size: 1.1rem !important;
+            padding: 1rem !important;
+            color: var(--primary-color) !important;
+        }
+
+        .fc-daygrid-day {
+            min-height: 140px !important; /* Altura das células aumentada */
+            border: 1px solid #e9ecef !important;
+            background: var(--white);
+            transition: all 0.2s ease;
+        }
+
+        .fc-daygrid-day:hover {
+            background: var(--light-blue);
+        }
+
+        .fc-daygrid-day-number {
+            font-size: 1.2rem !important;
+            font-weight: 500 !important;
+            color: var(--text-dark) !important;
+            padding: 0.75rem !important;
+        }
+
+        .fc-event {
+            background: var(--primary-color) !important;
+            border: none !important;
+            border-radius: 6px !important;
+            font-size: 1rem !important;
+            font-weight: 500 !important;
+            padding: 0.5rem 0.75rem !important;
+            margin: 0.25rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            min-height: 28px !important;
+        }
+
+        .fc-event:hover {
+            background: var(--secondary-color) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .fc-event-selected {
+            background: var(--success-color) !important;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+        }
+
+        .fc-day-today {
+            background: rgba(0, 102, 204, 0.08) !important;
+        }
+
+        .fc-day-today .fc-daygrid-day-number {
+            background: var(--primary-color);
+            color: white !important;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Espaçamento melhor na seção do calendário */
+        #section-step-2 .section-body {
+            padding: 2rem !important;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            .calendar-container {
+                padding: 1rem;
+                min-height: 600px;
+            }
+            
+            #calendar {
+                min-height: 500px;
+                font-size: 0.9rem;
+            }
+            
+            .fc-daygrid-day {
+                min-height: 100px !important;
+            }
+
+            .fc-toolbar-title {
+                font-size: 1.4rem !important;
+            }
+
+            .fc-button {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.9rem !important;
+            }
+
+            .fc-daygrid-day-number {
+                font-size: 1rem !important;
+                padding: 0.5rem !important;
+            }
+
+            .fc-event {
+                font-size: 0.85rem !important;
+                padding: 0.25rem 0.5rem !important;
+                min-height: 24px !important;
+            }
+            
+            #section-step-2 .section-body {
+                padding: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-container {
+                padding: 0.5rem;
+                min-height: 500px;
+            }
+            
+            #calendar {
+                min-height: 400px;
+            }
+            
+            .fc-daygrid-day {
+                min-height: 80px !important;
+            }
+
+            .fc-toolbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .fc-toolbar-title {
+                font-size: 1.2rem !important;
+            }
+
+            .fc-daygrid-day-number {
+                font-size: 0.9rem !important;
+            }
+
+            .fc-event {
+                font-size: 0.8rem !important;
+                min-height: 20px !important;
+            }
         }
 
         .step-summary {
@@ -603,234 +778,222 @@
                     <div th:unless="${noDentistasDisponiveis}">
                         <form method="post" action="/public/agendamento" id="agendamentoForm">
                         
-                        <!-- Accordion para as Etapas -->
-                        <div class="accordion" id="agendamentoAccordion">
+                        <!-- Seções para as Etapas -->
+                        <div id="formSections">
                             
                             <!-- Etapa 1: Dados Pessoais -->
-                            <div class="accordion-item active" id="accordion-step-1">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                                            data-bs-target="#collapse-step-1" aria-expanded="true" aria-controls="collapse-step-1">
-                                        <div class="step-indicator">1</div>
-                                        <i class="bi bi-person-fill me-2"></i>
-                                        Dados Pessoais e Profissional
-                                    </button>
-                                </h2>
-                                <div id="collapse-step-1" class="accordion-collapse collapse show" data-bs-parent="#agendamentoAccordion">
-                                    <div class="accordion-body">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="paciente" class="form-label">
-                                                        <i class="bi bi-person me-1"></i>
-                                                        Nome Completo *
-                                                    </label>
-                                                    <input type="text" class="form-control" id="paciente" name="paciente" 
-                                                           placeholder="Seu nome completo" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="telefone" class="form-label">
-                                                        <i class="bi bi-phone me-1"></i>
-                                                        WhatsApp *
-                                                    </label>
-                                                    <input type="tel" class="form-control" id="telefone" name="telefone" 
-                                                           placeholder="(11) 99999-9999" required>
-                                                </div>
+                            <div class="form-section active" id="section-step-1">
+                                <div class="section-header">
+                                    <div class="step-indicator-new">1</div>
+                                    <h3><i class="bi bi-person-fill me-2"></i>Dados Pessoais e Profissional</h3>
+                                </div>
+                                <div class="section-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="paciente" class="form-label">
+                                                    <i class="bi bi-person me-1"></i>
+                                                    Nome Completo *
+                                                </label>
+                                                <input type="text" class="form-control" id="paciente" name="paciente" 
+                                                       placeholder="Seu nome completo" required>
                                             </div>
                                         </div>
-
-                                        <div class="form-group">
-                                            <label for="email" class="form-label">
-                                                <i class="bi bi-envelope me-1"></i>
-                                                E-mail
-                                            </label>
-                                            <input type="email" class="form-control" id="email" name="email" 
-                                                   placeholder="seu@email.com">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="telefone" class="form-label">
+                                                    <i class="bi bi-phone me-1"></i>
+                                                    WhatsApp *
+                                                </label>
+                                                <input type="tel" class="form-control" id="telefone" name="telefone" 
+                                                       placeholder="(11) 99999-9999" required>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label for="dentista" class="form-label">
-                                                <i class="bi bi-person-badge me-1"></i>
-                                                Profissional *
-                                            </label>
-                                            <select class="form-control" id="dentista" name="dentista" required>
-                                                <option value="">Selecione um profissional</option>
-                                                <option th:each="dentista : ${dentistas}" 
-                                                        th:value="${dentista}" 
-                                                        th:text="${dentista}"></option>
-                                            </select>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">
+                                            <i class="bi bi-envelope me-1"></i>
+                                            E-mail
+                                        </label>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               placeholder="seu@email.com">
+                                    </div>
 
-                                        <div class="d-flex justify-content-end">
-                                            <button type="button" class="btn btn-primary" id="btn-next-step-1">
-                                                <i class="bi bi-arrow-right me-2"></i>
-                                                Próxima Etapa
-                                            </button>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="dentista" class="form-label">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            Profissional *
+                                        </label>
+                                        <select class="form-control" id="dentista" name="dentista" required>
+                                            <option value="">Selecione um profissional</option>
+                                            <option th:each="dentista : ${dentistas}" 
+                                                    th:value="${dentista}" 
+                                                    th:text="${dentista}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-primary" id="btn-next-step-1">
+                                            <i class="bi bi-arrow-right me-2"></i>
+                                            Próxima Etapa
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Etapa 2: Seleção de Horário -->
-                            <div class="accordion-item" id="accordion-step-2">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                            data-bs-target="#collapse-step-2" aria-expanded="false" aria-controls="collapse-step-2"
-                                            disabled id="btn-accordion-step-2">
-                                        <div class="step-indicator">2</div>
-                                        <i class="bi bi-calendar-check me-2"></i>
-                                        Seleção de Data e Horário
-                                    </button>
-                                </h2>
-                                <div id="collapse-step-2" class="accordion-collapse collapse" data-bs-parent="#agendamentoAccordion">
-                                    <div class="accordion-body">
-                                        <!-- Resumo dos dados da etapa 1 -->
-                                        <div class="step-summary" id="step-1-summary" style="display: none;">
-                                            <h6><i class="bi bi-check-circle me-2"></i>Informações Confirmadas</h6>
-                                            <div class="summary-item">
-                                                <i class="bi bi-person summary-icon"></i>
-                                                <span>Paciente: <span class="summary-value" id="summary-paciente"></span></span>
-                                            </div>
-                                            <div class="summary-item">
-                                                <i class="bi bi-phone summary-icon"></i>
-                                                <span>WhatsApp: <span class="summary-value" id="summary-telefone"></span></span>
-                                            </div>
-                                            <div class="summary-item" id="summary-email-row" style="display: none;">
-                                                <i class="bi bi-envelope summary-icon"></i>
-                                                <span>E-mail: <span class="summary-value" id="summary-email"></span></span>
-                                            </div>
-                                            <div class="summary-item">
-                                                <i class="bi bi-person-badge summary-icon"></i>
-                                                <span>Profissional: <span class="summary-value" id="summary-dentista"></span></span>
-                                            </div>
+                            <div class="form-section" id="section-step-2" style="display: none;">
+                                <div class="section-header">
+                                    <div class="step-indicator-new">2</div>
+                                    <h3><i class="bi bi-calendar-check me-2"></i>Seleção de Data e Horário</h3>
+                                </div>
+                                <div class="section-body">
+                                    <!-- Resumo dos dados da etapa 1 -->
+                                    <div class="step-summary" id="step-1-summary" style="display: none;">
+                                        <h6><i class="bi bi-check-circle me-2"></i>Informações Confirmadas</h6>
+                                        <div class="summary-item">
+                                            <i class="bi bi-person summary-icon"></i>
+                                            <span>Paciente: <span class="summary-value" id="summary-paciente"></span></span>
                                         </div>
+                                        <div class="summary-item">
+                                            <i class="bi bi-phone summary-icon"></i>
+                                            <span>WhatsApp: <span class="summary-value" id="summary-telefone"></span></span>
+                                        </div>
+                                        <div class="summary-item" id="summary-email-row" style="display: none;">
+                                            <i class="bi bi-envelope summary-icon"></i>
+                                            <span>E-mail: <span class="summary-value" id="summary-email"></span></span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="bi bi-person-badge summary-icon"></i>
+                                            <span>Profissional: <span class="summary-value" id="summary-dentista"></span></span>
+                                        </div>
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label class="form-label">
-                                                <i class="bi bi-calendar-check me-1"></i>
-                                                Selecione a data e horário da consulta *
-                                            </label>
-                                            
-                                            <div id="mensagem-dentista" class="alert alert-info">
-                                                <i class="bi bi-info-circle-fill me-2"></i>
-                                                Horários serão carregados após selecionar o profissional.
-                                            </div>
-                                            
-                                            <div id="calendar-container" class="calendar-container" style="display:none;">
-                                                <div class="alert alert-success mb-3">
-                                                    <i class="bi bi-calendar-check me-2"></i>
-                                                    <strong>Horários disponíveis para: <span id="dentista-selecionado"></span></strong>
-                                                    <br>
-                                                    <small>Clique em um horário disponível (azul) para selecioná-lo</small>
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="bi bi-calendar-check me-1"></i>
+                                            Selecione a data e horário da consulta *
+                                        </label>
+                                        
+                                        <div id="mensagem-dentista" class="alert alert-info">
+                                            <i class="bi bi-info-circle-fill me-2"></i>
+                                            Horários serão carregados após selecionar o profissional.
+                                        </div>
+                                        
+                                        <div id="calendar-container" class="calendar-container" style="display:none;">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="alert alert-success mb-3">
+                                                        <i class="bi bi-calendar-check me-2"></i>
+                                                        <strong>Horários disponíveis para: <span id="dentista-selecionado"></span></strong>
+                                                        <br>
+                                                        <small>Clique em um horário disponível (azul) para selecioná-lo</small>
+                                                    </div>
                                                 </div>
-                                                <div id="calendar"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div id="calendar"></div>
+                                                </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <!-- Campos ocultos para armazenar data e hora selecionadas -->
-                                        <input type="hidden" id="data" name="data" required>
-                                        <input type="hidden" id="horario" name="horario" required>
+                                    <!-- Campos ocultos para armazenar data e hora selecionadas -->
+                                    <input type="hidden" id="data" name="data" required>
+                                    <input type="hidden" id="horario" name="horario" required>
 
-                                        <div id="selecao-agendamento" class="alert alert-primary d-none">
-                                            <i class="bi bi-info-circle me-2"></i>
-                                            Consulta selecionada: <span id="data-horario-selecionado">Nenhuma data selecionada</span>
-                                        </div>
+                                    <div id="selecao-agendamento" class="alert alert-primary d-none">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Consulta selecionada: <span id="data-horario-selecionado">Nenhuma data selecionada</span>
+                                    </div>
 
-                                        <div class="d-flex justify-content-between">
-                                            <button type="button" class="btn btn-outline-secondary" id="btn-prev-step-2">
-                                                <i class="bi bi-arrow-left me-2"></i>
-                                                Voltar
-                                            </button>
-                                            <button type="button" class="btn btn-primary" id="btn-next-step-2" disabled>
-                                                <i class="bi bi-arrow-right me-2"></i>
-                                                Próxima Etapa
-                                            </button>
-                                        </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary" id="btn-prev-step-2">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            Voltar
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="btn-next-step-2" disabled>
+                                            <i class="bi bi-arrow-right me-2"></i>
+                                            Próxima Etapa
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Etapa 3: Confirmação -->
-                            <div class="accordion-item" id="accordion-step-3">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                            data-bs-target="#collapse-step-3" aria-expanded="false" aria-controls="collapse-step-3"
-                                            disabled id="btn-accordion-step-3">
-                                        <div class="step-indicator">3</div>
-                                        <i class="bi bi-check-circle-fill me-2"></i>
-                                        Confirmação e Finalização
-                                    </button>
-                                </h2>
-                                <div id="collapse-step-3" class="accordion-collapse collapse" data-bs-parent="#agendamentoAccordion">
-                                    <div class="accordion-body">
-                                        <!-- Resumo completo do agendamento -->
-                                        <div class="step-summary">
-                                            <h5><i class="bi bi-clipboard-check me-2"></i>Resumo do Agendamento</h5>
-                                            <div class="summary-item">
-                                                <i class="bi bi-person summary-icon"></i>
-                                                <span>Paciente: <span class="summary-value" id="final-summary-paciente"></span></span>
-                                            </div>
-                                            <div class="summary-item">
-                                                <i class="bi bi-phone summary-icon"></i>
-                                                <span>WhatsApp: <span class="summary-value" id="final-summary-telefone"></span></span>
-                                            </div>
-                                            <div class="summary-item" id="final-summary-email-row" style="display: none;">
-                                                <i class="bi bi-envelope summary-icon"></i>
-                                                <span>E-mail: <span class="summary-value" id="final-summary-email"></span></span>
-                                            </div>
-                                            <div class="summary-item">
-                                                <i class="bi bi-person-badge summary-icon"></i>
-                                                <span>Profissional: <span class="summary-value" id="final-summary-dentista"></span></span>
-                                            </div>
-                                            <div class="summary-item">
-                                                <i class="bi bi-calendar-date summary-icon"></i>
-                                                <span>Data e Horário: <span class="summary-value" id="final-summary-data-horario"></span></span>
-                                            </div>
+                            <div class="form-section" id="section-step-3" style="display: none;">
+                                <div class="section-header">
+                                    <div class="step-indicator-new">3</div>
+                                    <h3><i class="bi bi-check-circle-fill me-2"></i>Confirmação e Finalização</h3>
+                                </div>
+                                <div class="section-body">
+                                    <!-- Resumo completo do agendamento -->
+                                    <div class="step-summary">
+                                        <h5><i class="bi bi-clipboard-check me-2"></i>Resumo do Agendamento</h5>
+                                        <div class="summary-item">
+                                            <i class="bi bi-person summary-icon"></i>
+                                            <span>Paciente: <span class="summary-value" id="final-summary-paciente"></span></span>
                                         </div>
+                                        <div class="summary-item">
+                                            <i class="bi bi-phone summary-icon"></i>
+                                            <span>WhatsApp: <span class="summary-value" id="final-summary-telefone"></span></span>
+                                        </div>
+                                        <div class="summary-item" id="final-summary-email-row" style="display: none;">
+                                            <i class="bi bi-envelope summary-icon"></i>
+                                            <span>E-mail: <span class="summary-value" id="final-summary-email"></span></span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="bi bi-person-badge summary-icon"></i>
+                                            <span>Profissional: <span class="summary-value" id="final-summary-dentista"></span></span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <i class="bi bi-calendar-date summary-icon"></i>
+                                            <span>Data e Horário: <span class="summary-value" id="final-summary-data-horario"></span></span>
+                                        </div>
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label for="observacao" class="form-label">
-                                                <i class="bi bi-chat-left-text me-1"></i>
-                                                Observações
-                                            </label>
-                                            <textarea class="form-control" id="observacao" name="observacao" rows="3" 
-                                                      placeholder="Descreva brevemente o motivo da consulta (opcional)"></textarea>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="observacao" class="form-label">
+                                            <i class="bi bi-chat-left-text me-1"></i>
+                                            Observações
+                                        </label>
+                                        <textarea class="form-control" id="observacao" name="observacao" rows="3" 
+                                                  placeholder="Descreva brevemente o motivo da consulta (opcional)"></textarea>
+                                    </div>
 
-                                        <div class="alert alert-info">
-                                            <h6><i class="bi bi-info-circle me-2"></i>Informações Importantes:</h6>
-                                            <ul class="mb-0">
-                                                <li>Chegue com 15 minutos de antecedência</li>
-                                                <li>Traga documento de identidade</li>
-                                                <li>Confirmaremos por WhatsApp em breve</li>
-                                            </ul>
-                                        </div>
+                                    <div class="alert alert-info">
+                                        <h6><i class="bi bi-info-circle me-2"></i>Informações Importantes:</h6>
+                                        <ul class="mb-0">
+                                            <li>Chegue com 15 minutos de antecedência</li>
+                                            <li>Traga documento de identidade</li>
+                                            <li>Confirmaremos por WhatsApp em breve</li>
+                                        </ul>
+                                    </div>
 
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" id="termosCheck" required>
-                                            <label class="form-check-label" for="termosCheck">
-                                                Concordo com os <a href="#" data-bs-toggle="modal" data-bs-target="#termosModal">termos de agendamento</a> *
-                                            </label>
-                                        </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="termosCheck" required>
+                                        <label class="form-check-label" for="termosCheck">
+                                            Concordo com os <a href="#" data-bs-toggle="modal" data-bs-target="#termosModal">termos de agendamento</a> *
+                                        </label>
+                                    </div>
 
-                                        <div class="d-flex justify-content-between">
-                                            <button type="button" class="btn btn-outline-secondary" id="btn-prev-step-3">
-                                                <i class="bi bi-arrow-left me-2"></i>
-                                                Voltar
-                                            </button>
-                                            <button type="submit" class="btn btn-success btn-lg" id="btn-finalizar" disabled>
-                                                <span class="loading">
-                                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                                    Processando...
-                                                </span>
-                                                <span class="default-text">
-                                                    <i class="bi bi-check-circle me-2"></i>
-                                                    Confirmar Agendamento
-                                                </span>
-                                            </button>
-                                        </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary" id="btn-prev-step-3">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            Voltar
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-lg" id="btn-finalizar" disabled>
+                                            <span class="loading">
+                                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                Processando...
+                                            </span>
+                                            <span class="default-text">
+                                                <i class="bi bi-check-circle me-2"></i>
+                                                Confirmar Agendamento
+                                            </span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -949,8 +1112,6 @@
             const btnNextStep2 = document.getElementById('btn-next-step-2');
             const btnPrevStep2 = document.getElementById('btn-prev-step-2');
             const btnPrevStep3 = document.getElementById('btn-prev-step-3');
-            const btnAccordionStep2 = document.getElementById('btn-accordion-step-2');
-            const btnAccordionStep3 = document.getElementById('btn-accordion-step-3');
 
             // Máscara para telefone
             telefoneInput.addEventListener('input', function(e) {
@@ -1020,53 +1181,54 @@
                 // Reset all steps
                 for (let i = 1; i <= 3; i++) {
                     const progressStep = document.getElementById(`progress-step-${i}`);
-                    const accordionItem = document.getElementById(`accordion-step-${i}`);
+                    const sectionItem = document.getElementById(`section-step-${i}`);
                     
                     progressStep.classList.remove('active', 'completed');
-                    accordionItem.classList.remove('active', 'completed');
+                    sectionItem.classList.remove('active', 'completed');
                 }
 
                 // Mark completed steps
                 for (let i = 1; i < step; i++) {
                     const progressStep = document.getElementById(`progress-step-${i}`);
-                    const accordionItem = document.getElementById(`accordion-step-${i}`);
+                    const sectionItem = document.getElementById(`section-step-${i}`);
                     
                     progressStep.classList.add('completed');
-                    accordionItem.classList.add('completed');
+                    sectionItem.classList.add('completed');
                     
                     // Update step indicator
-                    const stepIndicator = accordionItem.querySelector('.step-indicator');
+                    const stepIndicator = sectionItem.querySelector('.step-indicator-new');
                     stepIndicator.innerHTML = '<i class="bi bi-check"></i>';
                 }
 
                 // Mark current step as active
                 const currentProgressStep = document.getElementById(`progress-step-${step}`);
-                const currentAccordionItem = document.getElementById(`accordion-step-${step}`);
+                const currentSectionItem = document.getElementById(`section-step-${step}`);
                 
                 currentProgressStep.classList.add('active');
-                currentAccordionItem.classList.add('active');
+                currentSectionItem.classList.add('active');
+            }
+
+            // Mostrar seção específica
+            function showSection(step) {
+                // Ocultar todas as seções
+                for (let i = 1; i <= 3; i++) {
+                    const section = document.getElementById(`section-step-${i}`);
+                    section.style.display = 'none';
+                }
+                
+                // Mostrar seção atual
+                const currentSection = document.getElementById(`section-step-${step}`);
+                currentSection.style.display = 'block';
+                
+                // Scroll para o topo da seção
+                currentSection.scrollIntoView({ behavior: 'smooth' });
             }
 
             // Avançar para próxima etapa
             function goToStep(step) {
                 currentStep = step;
                 updateProgressIndicators(step);
-                
-                // Fechar todas as seções
-                const collapses = document.querySelectorAll('.accordion-collapse');
-                collapses.forEach(collapse => {
-                    new bootstrap.Collapse(collapse, { toggle: false }).hide();
-                });
-                
-                // Abrir seção atual
-                const currentCollapse = document.getElementById(`collapse-step-${step}`);
-                new bootstrap.Collapse(currentCollapse, { toggle: false }).show();
-                
-                // Habilitar botão do accordion
-                if (step > 1) {
-                    const accordionBtn = document.getElementById(`btn-accordion-step-${step}`);
-                    accordionBtn.disabled = false;
-                }
+                showSection(step);
             }
 
             // Event listeners para navegação
@@ -1280,6 +1442,7 @@
 
             // Inicializar estado
             updateProgressIndicators(1);
+            showSection(1);
             btnNextStep1.disabled = true;
         });
     </script>
