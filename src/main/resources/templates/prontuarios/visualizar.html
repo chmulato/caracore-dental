@@ -241,13 +241,21 @@
                                 </div>
                             </div>
                             
-                            <!-- Área de Upload -->
-                            <div class="upload-area" id="uploadArea">
-                                <input type="file" id="arquivo" name="arquivo" accept="image/*" 
-                                       style="display: none;" required>
+                            <!-- Área de Upload Simplificada -->
+                            <div class="mb-3">
+                                <label for="arquivo" class="form-label">Selecionar Arquivo de Imagem</label>
+                                <input type="file" class="form-control" id="arquivo" name="arquivo" 
+                                       accept="image/*" aria-describedby="arquivoHelp">
+                                <div id="arquivoHelp" class="form-text">
+                                    Formatos suportados: JPG, PNG, JPEG (máx. 10MB)
+                                </div>
+                            </div>
+                            
+                            <!-- Área de Drag and Drop (opcional) -->
+                            <div class="upload-area" id="uploadArea" style="display: none;">
                                 <i class="bi bi-cloud-upload fs-1 text-muted mb-2"></i>
-                                <p class="mb-2">Clique aqui ou arraste uma imagem</p>
-                                <small class="text-muted">Formatos suportados: JPG, PNG, JPEG (máx. 10MB)</small>
+                                <p class="mb-2">Arraste uma imagem aqui</p>
+                                <small class="text-muted">ou use o botão acima</small>
                             </div>
                             
                             <div class="text-end mt-3">
@@ -465,81 +473,314 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Upload de arquivo
-        document.getElementById('uploadArea').addEventListener('click', function() {
-            document.getElementById('arquivo').click();
-        });
-        
-        document.getElementById('arquivo').addEventListener('change', function() {
-            const fileName = this.files[0]?.name;
-            if (fileName) {
-                document.querySelector('.upload-area p').textContent = 'Arquivo selecionado: ' + fileName;
+        // Sistema de logging melhorado
+        const Logger = {
+            prefix: '[UPLOAD-DEBUG]',
+            log: function(message, data = null) {
+                const timestamp = new Date().toISOString().substr(11, 8);
+                console.log(`${this.prefix} [${timestamp}] ${message}`, data || '');
+            },
+            error: function(message, error = null) {
+                const timestamp = new Date().toISOString().substr(11, 8);
+                console.error(`${this.prefix} [${timestamp}] ERROR: ${message}`, error || '');
+            },
+            warn: function(message, data = null) {
+                const timestamp = new Date().toISOString().substr(11, 8);
+                console.warn(`${this.prefix} [${timestamp}] WARNING: ${message}`, data || '');
             }
-        });
-        
-        // Drag and drop
-        const uploadArea = document.getElementById('uploadArea');
-        
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                document.getElementById('arquivo').files = files;
-                document.querySelector('.upload-area p').textContent = 'Arquivo selecionado: ' + files[0].name;
-            }
-        });
-        
-        // Modal de imagem
+        };
+
+        // Aguardar o carregamento completo do DOM
         document.addEventListener('DOMContentLoaded', function() {
+            Logger.log('🔄 DOM carregado - iniciando sistema de upload');
+            
+            // Capturar elementos
+            const uploadArea = document.getElementById('uploadArea');
+            const arquivoInput = document.getElementById('arquivo');
+            const arquivoLabel = document.querySelector('label[for="arquivo"]');
+            const uploadForm = document.getElementById('uploadForm');
+            
+            // Verificar elementos encontrados
+            Logger.log('📋 Verificando elementos do DOM:', {
+                uploadArea: !!uploadArea,
+                arquivoInput: !!arquivoInput,
+                arquivoLabel: !!arquivoLabel,
+                uploadForm: !!uploadForm
+            });
+            
+            if (!arquivoInput) {
+                Logger.error('❌ Input de arquivo não encontrado! ID esperado: "arquivo"');
+                return;
+            }
+            
+            // Contador para debug
+            let clickCount = 0;
+            
+            // Setup do input de arquivo padrão
+            Logger.log('⚙️ Configurando input de arquivo padrão');
+            arquivoInput.addEventListener('change', function(e) {
+                clickCount++;
+                Logger.log(`📁 Arquivo selecionado (evento #${clickCount}):`, {
+                    files: this.files.length,
+                    fileName: this.files[0]?.name,
+                    fileSize: this.files[0]?.size,
+                    fileType: this.files[0]?.type
+                });
+                
+                if (this.files[0]) {
+                    const file = this.files[0];
+                    Logger.log('✅ Detalhes do arquivo:', {
+                        nome: file.name,
+                        tamanho: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+                        tipo: file.type,
+                        ultimaModificacao: new Date(file.lastModified).toLocaleString()
+                    });
+                } else {
+                    Logger.warn('⚠️ Nenhum arquivo selecionado');
+                }
+            });
+            
+            // Adicionar listener para cliques no input (para debug)
+            arquivoInput.addEventListener('click', function(e) {
+                Logger.log('🖱️ Input de arquivo clicado diretamente');
+            });
+            
+            // Setup de elementos opcionais (área de upload e botões)
+            if (uploadArea && arquivoInput) {
+                Logger.log('⚙️ Configurando área de upload e drag&drop');
+                
+                // Configurar clique no label (que é o elemento clicável padrão)
+                if (arquivoLabel) {
+                    Logger.log('⚙️ Configurando clique no label de seleção');
+                    arquivoLabel.addEventListener('click', function(e) {
+                        Logger.log('🔘 Label "Selecionar Arquivo" clicado');
+                        // O label naturalmente abre o input quando clicado
+                        // Não precisamos fazer nada extra, só logar
+                    });
+                } else {
+                    Logger.warn('⚠️ Label de seleção não encontrado');
+                }
+                
+                // Clique na área de upload (drag & drop area)
+                uploadArea.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    Logger.log('� Área de upload clicada - tentando abrir seletor');
+                    
+                    try {
+                        Logger.log('🚀 Tentando abrir seletor via área de upload...');
+                        arquivoInput.click();
+                        Logger.log('✅ Comando click() executado com sucesso');
+                    } catch (error) {
+                        Logger.error('❌ Erro ao executar click() no input:', error);
+                    }
+                });
+                
+                // Drag and drop
+                Logger.log('⚙️ Configurando drag and drop');
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.classList.add('dragover');
+                    Logger.log('🔄 Arquivo sendo arrastado sobre a área');
+                });
+                
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.classList.remove('dragover');
+                    Logger.log('↩️ Arquivo saiu da área de drag');
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    Logger.log('📥 Arquivos soltos na área:', {
+                        quantidade: files.length,
+                        arquivos: Array.from(files).map(f => ({ nome: f.name, tamanho: f.size, tipo: f.type }))
+                    });
+                    
+                    if (files.length > 0) {
+                        // Simular seleção no input
+                        try {
+                            arquivoInput.files = files;
+                            Logger.log('✅ Arquivos atribuídos ao input via drag&drop');
+                            
+                            // Disparar evento change manualmente
+                            const changeEvent = new Event('change', { bubbles: true });
+                            arquivoInput.dispatchEvent(changeEvent);
+                            Logger.log('🔄 Evento change disparado manualmente');
+                        } catch (error) {
+                            Logger.error('❌ Erro ao processar drag&drop:', error);
+                        }
+                    }
+                });
+            } else {
+                Logger.warn('⚠️ Elementos de drag&drop não encontrados - usando apenas input padrão');
+            }
+            
+            // Validação customizada do formulário
+            if (uploadForm) {
+                Logger.log('⚙️ Configurando validação do formulário');
+                uploadForm.addEventListener('submit', function(e) {
+                    Logger.log('📤 Formulário sendo enviado - iniciando validação');
+                    
+                    const tipoImagem = this.querySelector('select[name="tipoImagem"]')?.value;
+                    const arquivo = arquivoInput.files[0];
+                    
+                    Logger.log('🔍 Dados do formulário:', {
+                        tipoImagem: tipoImagem || 'NÃO SELECIONADO',
+                        arquivo: arquivo ? `${arquivo.name} (${arquivo.type}, ${arquivo.size} bytes)` : 'NÃO SELECIONADO'
+                    });
+                    
+                    if (!tipoImagem) {
+                        e.preventDefault();
+                        Logger.error('❌ Validação falhou: Tipo de imagem não selecionado');
+                        alert('Por favor, selecione o tipo de imagem.');
+                        return false;
+                    }
+                    
+                    if (!arquivo) {
+                        e.preventDefault();
+                        Logger.error('❌ Validação falhou: Nenhum arquivo selecionado');
+                        alert('Por favor, selecione um arquivo de imagem.');
+                        return false;
+                    }
+                    
+                    // Validar tipo de arquivo
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(arquivo.type)) {
+                        e.preventDefault();
+                        Logger.error('❌ Validação falhou: Tipo de arquivo inválido', {
+                            tipoRecebido: arquivo.type,
+                            tiposPermitidos: allowedTypes
+                        });
+                        alert('Tipo de arquivo não suportado. Use apenas JPG, PNG ou JPEG.');
+                        return false;
+                    }
+                    
+                    // Validar tamanho (10MB)
+                    const maxSize = 10 * 1024 * 1024; // 10MB em bytes
+                    if (arquivo.size > maxSize) {
+                        e.preventDefault();
+                        Logger.error('❌ Validação falhou: Arquivo muito grande', {
+                            tamanhoRecebido: `${(arquivo.size / 1024 / 1024).toFixed(2)} MB`,
+                            tamanhoMaximo: '10 MB'
+                        });
+                        alert('Arquivo muito grande. Tamanho máximo: 10MB.');
+                        return false;
+                    }
+                    
+                    Logger.log('✅ Todas as validações passaram - enviando formulário');
+                    return true;
+                });
+            } else {
+                Logger.warn('⚠️ Formulário de upload não encontrado');
+            }
+            
+            // Modal de imagem
+            Logger.log('⚙️ Configurando modal de visualização de imagens');
             const imagemModal = document.getElementById('imagemModal');
             const modalImg = document.getElementById('imagemModalImg');
             const modalTitle = document.getElementById('imagemModalTitle');
             const modalDesc = document.getElementById('imagemModalDesc');
             
-            document.querySelectorAll('.imagem-thumb').forEach(img => {
+            Logger.log('📋 Elementos do modal encontrados:', {
+                imagemModal: !!imagemModal,
+                modalImg: !!modalImg,
+                modalTitle: !!modalTitle,
+                modalDesc: !!modalDesc
+            });
+            
+            document.querySelectorAll('.imagem-thumb').forEach((img, index) => {
                 img.addEventListener('click', function() {
-                    modalImg.src = this.dataset.imagem;
-                    modalImg.alt = this.dataset.nome;
-                    modalTitle.textContent = this.dataset.nome;
-                    modalDesc.textContent = this.dataset.descricao || 'Sem descrição';
+                    Logger.log(`🖼️ Clique na imagem ${index + 1}:`, {
+                        src: this.dataset.imagem?.substring(0, 50) + '...',
+                        nome: this.dataset.nome,
+                        descricao: this.dataset.descricao
+                    });
+                    
+                    if (modalImg && modalTitle && modalDesc) {
+                        modalImg.src = this.dataset.imagem;
+                        modalImg.alt = this.dataset.nome;
+                        modalTitle.textContent = this.dataset.nome;
+                        modalDesc.textContent = this.dataset.descricao || 'Sem descrição';
+                        Logger.log('✅ Modal configurado com dados da imagem');
+                    } else {
+                        Logger.error('❌ Elementos do modal não encontrados');
+                    }
                 });
             });
+            
+            Logger.log(`📊 Total de imagens encontradas: ${document.querySelectorAll('.imagem-thumb').length}`);
+            
+            // Logs finais de inicialização
+            Logger.log('🎉 Sistema de upload inicializado com sucesso!');
+            Logger.log('📝 Para debug: digite Logger.log("teste") no console');
         });
         
-        // Remover imagem
+        // Função global de remoção de imagem com logs
         function removerImagem(imagemId) {
+            Logger.log(`🗑️ Iniciando remoção da imagem ID: ${imagemId}`);
+            
             if (confirm('Tem certeza que deseja remover esta imagem?')) {
+                Logger.log('✅ Usuário confirmou a remoção');
+                
                 fetch('/prontuarios/imagem/' + imagemId, {
                     method: 'DELETE',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    Logger.log('📡 Resposta da requisição recebida:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        ok: response.ok
+                    });
+                    return response.json();
+                })
                 .then(data => {
+                    Logger.log('📋 Dados da resposta:', data);
                     if (data.status === 'sucesso') {
+                        Logger.log('✅ Imagem removida com sucesso - recarregando página');
                         location.reload();
                     } else {
+                        Logger.error('❌ Erro retornado pelo servidor:', data.mensagem);
                         alert('Erro ao remover imagem: ' + data.mensagem);
                     }
                 })
                 .catch(error => {
+                    Logger.error('❌ Erro na requisição de remoção:', error);
                     alert('Erro ao remover imagem');
                 });
+            } else {
+                Logger.log('🚫 Usuário cancelou a remoção');
             }
         }
+        
+        // Função para testar o seletor de arquivo via console
+        function testarSeletorArquivo() {
+            Logger.log('🧪 Teste manual do seletor de arquivo iniciado');
+            const input = document.getElementById('arquivo');
+            if (input) {
+                try {
+                    input.click();
+                    Logger.log('✅ Comando click() executado via console');
+                } catch (error) {
+                    Logger.error('❌ Erro no teste manual:', error);
+                }
+            } else {
+                Logger.error('❌ Input não encontrado no teste manual');
+            }
+        }
+        
+        // Disponibilizar funções globalmente para debug
+        window.Logger = Logger;
+        window.testarSeletorArquivo = testarSeletorArquivo;
     </script>
 </body>
 </html>

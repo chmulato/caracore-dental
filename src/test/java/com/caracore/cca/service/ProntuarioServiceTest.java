@@ -437,4 +437,45 @@ class ProntuarioServiceTest {
         assertThat(resultado.getValorTotalTratamentos()).isNull();
         assertThat(resultado.getTamanhoFormatado()).isEqualTo("0 KB");
     }
+
+    @Test
+    @DisplayName("Deve retornar tipos de imagem do banco quando existem dados")
+    void deveRetornarTiposImagemDoBanco() {
+        // Given
+        List<String> tiposExistentes = Arrays.asList(
+            "Radiografia Panorâmica", 
+            "Radiografia Periapical", 
+            "Tomografia"
+        );
+        when(imagemRadiologicaRepository.findDistinctTiposImagem()).thenReturn(tiposExistentes);
+
+        // When
+        List<String> resultado = prontuarioService.buscarTiposImagem();
+
+        // Then
+        assertThat(resultado).isEqualTo(tiposExistentes);
+        assertThat(resultado).hasSize(3);
+        verify(imagemRadiologicaRepository).findDistinctTiposImagem();
+    }
+
+    @Test
+    @DisplayName("Deve retornar tipos padrão quando não há dados no banco")
+    void deveRetornarTiposPadraoQuandoNaoHaDados() {
+        // Given
+        when(imagemRadiologicaRepository.findDistinctTiposImagem()).thenReturn(Arrays.asList());
+
+        // When
+        List<String> resultado = prontuarioService.buscarTiposImagem();
+
+        // Then
+        assertThat(resultado).isNotEmpty();
+        assertThat(resultado).contains(
+            "Radiografia Panorâmica",
+            "Radiografia Periapical", 
+            "Radiografia Bitewing",
+            "Tomografia"
+        );
+        assertThat(resultado).hasSize(9);
+        verify(imagemRadiologicaRepository).findDistinctTiposImagem();
+    }
 }

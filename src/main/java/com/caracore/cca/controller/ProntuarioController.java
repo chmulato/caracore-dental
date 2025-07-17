@@ -253,6 +253,9 @@ public class ProntuarioController {
             estatisticas.put("totalImagens", imagensResumo.size());
             estatisticas.put("totalTratamentos", tratamentos.size());
             
+            // Buscar tipos de imagem para o combo box
+            List<String> tiposImagem = prontuarioService.buscarTiposImagem();
+            
             logger.info("Prontuário carregado - Imagens: {}, Tratamentos: {}", imagensResumo.size(), tratamentos.size());
             
             model.addAttribute("paciente", paciente);
@@ -261,6 +264,7 @@ public class ProntuarioController {
             model.addAttribute("imagensResumo", imagensResumo); // Adicionar os resumos de imagens
             model.addAttribute("tratamentos", tratamentos);
             model.addAttribute("estatisticas", estatisticas);
+            model.addAttribute("tiposImagem", tiposImagem); // Adicionar tipos de imagem para o combo
             
             return VIEW_VISUALIZAR;
         } catch (org.springframework.dao.DataIntegrityViolationException e) {

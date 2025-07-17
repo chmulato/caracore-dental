@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -277,6 +277,30 @@ public class ProntuarioService {
     public ImagemRadiologica buscarImagemPorId(Long imagemId) {
         return imagemRadiologicaRepository.findById(imagemId)
                 .orElseThrow(() -> new RuntimeException("Imagem não encontrada"));
+    }
+
+    /**
+     * Busca todos os tipos de imagem radiológica disponíveis
+     */
+    public List<String> buscarTiposImagem() {
+        List<String> tiposExistentes = imagemRadiologicaRepository.findDistinctTiposImagem();
+        
+        // Se não há tipos cadastrados no banco, retorna uma lista padrão
+        if (tiposExistentes.isEmpty()) {
+            return Arrays.asList(
+                "Radiografia Panorâmica",
+                "Radiografia Periapical",
+                "Radiografia Bitewing",
+                "Radiografia Oclusal",
+                "Tomografia",
+                "Fotografia Intraoral",
+                "Fotografia Extraoral",
+                "Cefalometria",
+                "Radiografia Carpal"
+            );
+        }
+        
+        return tiposExistentes;
     }
 
     // Métodos auxiliares privados
