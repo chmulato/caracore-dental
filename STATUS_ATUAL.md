@@ -1,13 +1,13 @@
 # Status de Desenvolvimento - Sistema de Cara Core Dental - Agendamentos
 
-**Data do Relatório:** Campo Largo, 16 de Julho de 2025
-**Hora do Relatório:** 19:40
+**Data do Relatório:** Campo Largo, 17 de Julho de 2025
+**Hora do Relatório:** 21:00
 **Versão Atual:** 0.1.0-SNAPSHOT-PRONTUARIO
 **Equipe Responsável:** Cara Core Informática
 
 ## 1. Resumo Executivo
 
-Sistema Cara Core Dental - Agendamentos está estável e pronto para homologação. **ATUALIZAÇÃO CRÍTICA (16/07):** Sistema de agendamento público **TOTALMENTE REFORMULADO** - removido sistema accordion e implementada **navegação por seções JavaScript** com calendário otimizado. **ATUALIZAÇÃO MAIS RECENTE (16/07 - 19:40):** **Calendário configurado para visualização EXCLUSIVAMENTE SEMANAL** - removidas opções de visualização mensal, interface otimizada para agendamentos semanais com FullCalendar timeGridWeek apenas. Sistema forçado para manter visualização semanal permanente com controles de navegação simplificados. Interface completamente modernizada com melhor UX/UI e calendário responsivo de alta qualidade. Todas as funcionalidades principais estão operacionais, integração PostgreSQL validada com 9 profissionais ativos, e testes automatizados passando.
+Sistema Cara Core Dental - Agendamentos está estável, backend rodando normalmente e pronto para testes finais. **ATUALIZAÇÃO CRÍTICA (17/07):** Problema de migração duplicada do Flyway resolvido, backend voltou a funcionar normalmente. Upload de imagens radiológicas e atualização de prontuário testados com sucesso. **ATUALIZAÇÃO MAIS RECENTE (17/07 - 21:00):** Ambiente de desenvolvimento limpo, Flyway executado sem erros, banco de dados sincronizado, funcionalidades de upload e atualização de prontuário validadas. Sistema pronto para homologação e testes finais de integração.
 
 ## 2. Estado Atual do Sistema
 
@@ -31,7 +31,7 @@ Sistema Cara Core Dental - Agendamentos está estável e pronto para homologaç�
 - **Banco de Dados Multi-Ambiente:**
   - **H2 (perfil `h2`):** In-memory para desenvolvimento rápido com massa de dados completa
   - **PostgreSQL (perfil `local`):** Docker container para desenvolvimento realístico
-- **Migração Flyway:** Schema versão 22 aplicado com sucesso no PostgreSQL
+- **Migração Flyway:** Schema versão 23 aplicado com sucesso no PostgreSQL (problema de versão duplicada resolvido em 17/07)
 - **Pool de Conexões:** HikariCP configurado para ambos os ambientes
   - H2: CCA-H2-Test-Pool (Max 5, Min 1)
   - PostgreSQL: CCA-Local-Pool (Max 15, Min 5)
@@ -41,6 +41,9 @@ Sistema Cara Core Dental - Agendamentos está estável e pronto para homologaç�
 - **Dados de Demonstração:** Massa de dados completa para testes em ambos os perfis
 
 ### 2.2 Problemas Críticos Resolvidos
+
+- **Erro de Migração Flyway Corrigido (17/07):** Corrigido conflito de versão duplicada (V11) nos scripts de migração. Backend voltou a funcionar normalmente após renomear e limpar build.
+- **Upload e Prontuário:** Upload de imagens radiológicas e atualização de prontuário testados e funcionando após correção do backend.
 
 - **Sistema Accordion Removido (16/07):** Eliminado Bootstrap accordion em favor de navegação JavaScript pura
 - **Calendário Otimizado (16/07):** FullCalendar com layout expandido (700px+ altura) e design responsivo
@@ -71,6 +74,8 @@ Sistema Cara Core Dental - Agendamentos está estável e pronto para homologaç�
 ## 3. Testes e Qualidade
 
 ### 3.1 Testes Automatizados
+  
+- Upload de imagens e atualização de prontuário validados manualmente após correção do Flyway (17/07)
 
 - Todos os 545 testes passando com sucesso na branch main
 - `UsuarioControllerTest` - 16/16 testes passando
@@ -260,11 +265,11 @@ O Sistema de Agendamento Cara Core atingiu um ponto de estabilidade significativ
 
 ### 8.3 Status Geral
 
-**VERDE:** Sistema pronto para homologação, demonstrações e testes funcionais completos. **Interface de agendamento público TOTALMENTE REFORMULADA (16/07) oferece experiência premium com navegação JavaScript, calendário FullCalendar otimizado e integração PostgreSQL validada com 9 profissionais ativos.**
+**VERDE:** Sistema pronto para homologação, backend estável, upload e atualização de prontuário funcionando normalmente. Problema de migração Flyway resolvido (17/07). Ambiente preparado para testes finais e demonstrações. **Interface de agendamento público TOTALMENTE REFORMULADA (16/07) e funcionalidades de upload validadas.**
 
 ---
 
 **Documento gerado por:** Equipe de Desenvolvimento Cara Core Informática  
-**Última atualização:** 16/07/2025 às 19:40  
+**Última atualização:** 17/07/2025 às 21:00  
 **Status de Desenvolvimento:** VERDE - PRONTO PARA HOMOLOGAÇÃO  
-**Última Funcionalidade:** Calendário Exclusivamente Semanal - Interface de Agendamento Otimizada
+**Última Funcionalidade:** Upload e atualização de prontuário validados após correção do Flyway
