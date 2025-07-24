@@ -1,3 +1,4 @@
+
 # Cara Core Dental - Agendamentos
 
 > Sistema de agendamento para consultórios odontológicos desenvolvido com Spring Boot 3.2.6 e Java 17.
@@ -10,55 +11,55 @@
 [![Status](https://img.shields.io/badge/Status-Pronto%20Homologa%C3%A7%C3%A3o-brightgreen.svg)](#)
 
 <div align="center">
-  <img src="./img/sistema_cca.png" alt="Cara Core Agendamento (CCA)" width="80%">
+  <img src="./img/sistema_cca.png" alt="Cara Core Dental - Agendamento (CCA)" width="80%">
 </div>
+
 
 ## Início Rápido
 
-### **Executar o Sistema - Multi-Ambiente**
+### Executar o Sistema (Multi-Ambiente)
 
 ```powershell
-# Clonar o repositório
-git clone https://github.com/chmulato/cara-core_cca.git
-cd cara-core_cca
+# 1. Clonar o repositório
+git clone https://github.com/chmulato/caracore-dental.git
+cd caracore-dental
 
-# OPÇÃO 1: Desenvolvimento Rápido com H2 (Recomendado para testes)
+# 2. OPÇÃO 1: Desenvolvimento rápido com H2 (recomendado para testes)
 $env:SPRING_PROFILES_ACTIVE='h2'
 mvn spring-boot:run
 
-# OPÇÃO 2: Desenvolvimento com PostgreSQL (Docker)
-# 2.1 - Subir PostgreSQL via Docker
+# 3. OPÇÃO 2: Desenvolvimento com PostgreSQL (Docker)
+# 3.1 - Subir PostgreSQL via Docker
 docker run -d --name postgres-cca -e POSTGRES_DB=cca_db -e POSTGRES_USER=cca_user -e POSTGRES_PASSWORD=cca_pass -p 5432:5432 postgres:15
 
-# 2.2 - Executar aplicação com PostgreSQL
+# 3.2 - Executar aplicação com PostgreSQL
 $env:SPRING_PROFILES_ACTIVE='local'
 mvn spring-boot:run
 
-# OPÇÃO 3: Scripts automáticos (Windows/Linux)
+# 4. OPÇÃO 3: Scripts automáticos (Windows/Linux)
 .\scr\start-environment.ps1    # Windows PowerShell
 ./scr/start-environment.sh     # Linux/macOS
 .\scr\start-environment.bat    # Windows Batch
 
-# Acessar aplicação
+# 5. Acessar aplicação
 # http://localhost:8080
 ```
 
-### **Usuários de Teste**
 
-```markdown
-|---------------|--------------------------|----------|---------------------------|
+### Usuários de Teste
+
 | Perfil        | Email                    | Senha    | Acesso                    |
 |---------------|--------------------------|----------|---------------------------|
 | Administrador | suporte@caracore.com.br  | admin123 | Acesso total ao sistema   |
 | Dentista      | dentista@caracore.com.br | admin123 | Agenda e prontuários      |
 | Recepcionista | recepcao@caracore.com.br | admin123 | Agenda e pacientes        |
 | Paciente      | paciente@caracore.com.br | admin123 | Portal do paciente        |
-|---------------|--------------------------|----------|---------------------------|
-```
+
+
 
 ## Funcionalidades Principais
 
-### **Sistema Totalmente Implementado**
+### Sistema Totalmente Implementado
 
 - **Autenticação e Segurança** - Spring Security 6 com controle de acesso
 - **Dashboard Interativo** - Estatísticas e métricas em tempo real
@@ -71,7 +72,8 @@ mvn spring-boot:run
 - **Sistema de Logs** - Auditoria completa de atividades de usuários
 - **Conformidade LGPD** - Controle de consentimento e privacidade
 
-### **Arquitetura e Qualidade**
+
+### Arquitetura e Qualidade
 
 - **545 Testes Unitários** - 100% de cobertura e aprovação
 - **22 Migrações Flyway** - Controle de versão do banco de dados
@@ -79,7 +81,8 @@ mvn spring-boot:run
 - **Padrão DTO** - Arquitetura robusta para performance
 - **Docker Support** - PostgreSQL containerizado para desenvolvimento
 
-### **Próximas Funcionalidades**
+
+### Próximas Funcionalidades
 
 - Calendário visual avançado com FullCalendar.js
 - Integração completa com WhatsApp Business API
@@ -87,24 +90,27 @@ mvn spring-boot:run
 - Sistema de notificações automáticas
 - Interface mobile otimizada
 
+
 ## Tecnologias
 
 **Backend:** Spring Boot 3.2.6, Spring Security 6, JPA/Hibernate, Flyway 9.22.3  
 **Frontend:** Thymeleaf, Bootstrap 5.3.0, jQuery 3.7.0, Bootstrap Icons  
 **Banco de Dados:** PostgreSQL 15 (produção), H2 (desenvolvimento/testes)  
 **Build:** Maven 3.8+, Java 17 (OpenJDK)  
-**Containerização:** Docker support para PostgreSQL
+**Containerização:** Docker para PostgreSQL
+
 
 ## Pré-requisitos
 
 - **Java 17+** (OpenJDK recomendado)
 - **Maven 3.8+**
-- **Docker** (opcional - para PostgreSQL via container)
-- **PostgreSQL 15+** (opcional - usa H2 para desenvolvimento rápido)
+- **Docker** (opcional, para PostgreSQL via container)
+- **PostgreSQL 15+** (opcional, usa H2 para desenvolvimento rápido)
+
 
 ## Configuração
 
-### **Profile H2 - Desenvolvimento Rápido (Padrão)**
+### Profile H2 - Desenvolvimento Rápido (Padrão)
 
 ```powershell
 # Executar com banco H2 em memória
@@ -114,27 +120,21 @@ mvn spring-boot:run
 # Console H2 disponível em:
 # http://localhost:8080/h2-console
 # JDBC URL: jdbc:h2:mem:devdb
-# User: sa / Password: (vazio)
+# User: sa | Password: (vazio)
 ```
 
-### **Profile Local - PostgreSQL via Docker**
+### Profile Local - PostgreSQL via Docker
 
-```bash
+```powershell
 # 1. Subir PostgreSQL com Docker
-docker run -d \
-  --name postgres-cca \
-  -e POSTGRES_DB=cca_db \
-  -e POSTGRES_USER=cca_user \
-  -e POSTGRES_PASSWORD=cca_pass \
-  -p 5432:5432 \
-  postgres:15
+docker run -d --name postgres-cca -e POSTGRES_DB=cca_db -e POSTGRES_USER=cca_user -e POSTGRES_PASSWORD=cca_pass -p 5432:5432 postgres:15
 
 # 2. Executar aplicação
 $env:SPRING_PROFILES_ACTIVE='local'
 mvn spring-boot:run
 ```
 
-### **PostgreSQL Manual (Opcional)**
+### PostgreSQL Manual (Opcional)
 
 ```sql
 -- Criar banco PostgreSQL
@@ -143,9 +143,10 @@ CREATE USER cca_user WITH PASSWORD 'cca_pass';
 GRANT ALL PRIVILEGES ON DATABASE cca_db TO cca_user;
 ```
 
+
 ## Testes
 
-```bash
+```powershell
 # Executar todos os testes (545 testes - 100% aprovação)
 mvn test
 
@@ -161,6 +162,7 @@ mvn test -Dspring.profiles.active=h2
 mvn test -Dspring.profiles.active=local
 ```
 
+
 ## Status do Projeto
 
 ### Sistema Pronto para Homologação
@@ -175,13 +177,16 @@ mvn test -Dspring.profiles.active=local
 - **Logs:** Sistema de auditoria implementado
 - **Performance:** Pool de conexões HikariCP otimizado
 
+
 **Status Atual:** VERDE - Sistema estável e pronto para demonstrações e homologação
 
 Ver [STATUS_ATUAL.md](STATUS_ATUAL.md) para relatório detalhado e [doc/INDEX.md](doc/INDEX.md) para documentação completa.
 
+
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
+
 
 ## Equipe
 
@@ -190,4 +195,4 @@ Sistema de Agendamento para Consultórios Odontológicos
 
 ---
 
-**Última atualização:** 14/07/2025 - Sistema multi-ambiente implementado e pronto para homologação!
+**Última atualização:** 24/07/2025 - Sistema multi-ambiente implementado e pronto para homologação!

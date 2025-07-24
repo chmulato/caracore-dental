@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O Sistema Cara Core Agendamento (CCA) é distribuído sob a licença MIT, uma das licenças de software mais permissivas e amigáveis para negócios disponíveis.
+O Sistema Cara Core Dental - Agendamentos (CCA) é distribuído sob a licença MIT, uma das licenças de software mais permissivas e amigáveis para negócios disponíveis.
 
 ## O que você pode fazer com este software:
 
@@ -27,7 +27,7 @@ Se você distribuir ou modificar este software, deve incluir:
 ```
 MIT License
 
-Copyright (c) 2025 Cara Core Informática
+Copyright (c) 2025 23.969.028 CHRISTIAN VLADIMIR UHDRE MULATO
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
