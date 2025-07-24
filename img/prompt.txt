@@ -36,3 +36,8 @@ ESTILO:
 - Foco na tecnologia e profissionalismo médico
 
 CONTEXTO: Sistema web moderno para consultórios odontológicos com gestão de pacientes, agendamentos e prontuários digitais.
+
+---
+
+Prompt:
+Sistema moderno de agendamento para consultórios odontológicos, interface limpa e profissional, dashboard com gráficos, agenda digital, ícones de dentista, paciente e recepcionista, cores azul e branco, destaque para tecnologia, segurança e inovação, logotipo “Cara Core Dental”, texto: “Pronto para Homologação – Invista no futuro da odontologia”, visual corporativo, ambiente de clínica moderna, elementos de tecnologia e confiança, layout widescreen 1920x1080.
