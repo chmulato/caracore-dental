@@ -1,0 +1,196 @@
+# Prompt para Imagem do Artigo LinkedIn - Cara Core Dental MVP
+
+## Especificações Técnicas
+- **Formato:** 1920x1080 pixels (16:9 - LinkedIn cover)
+- **Resolução:** Alta qualidade para redes sociais
+- **Orientação:** Horizontal (landscape)
+
+## Prompt Principal
+
+```
+Create a professional LinkedIn cover image (1920x1080) for a dental clinic management system MVP article. CRITICAL: ALL VISIBLE TEXT MUST BE IN BRAZILIAN PORTUGUESE.
+
+**Main Elements:**
+- **Left side (60%):** Modern dental office interior with clean, minimalist design showing:
+  - Contemporary dental chair in light blue/white
+  - Digital screens displaying Brazilian Portuguese patient management interface with labels like "Pacientes", "Agendamentos", "Consultas"
+  - Professional dental equipment with subtle technology integration
+  - Calendar showing Portuguese month names (Janeiro, Fevereiro, etc.)
+  - Soft, professional lighting
+
+**Right side (40%):** Technology overlay with:
+  - Semi-transparent code snippets in Java/Spring Boot with Portuguese comments floating elegantly
+  - AI neural network visualization (subtle, geometric patterns)
+  - Small icons representing: calendar, user management, security shield, database
+  - Gradient overlay transitioning from medical blue to tech blue
+
+**Typography area (center-bottom):**
+- Space for title: "MVP Odontológico: Desenvolvedor + IA"
+- Subtitle area: "Cara Core Dental - Transformando a Gestão Clínica"
+
+**IMPORTANT - Text in Portuguese:**
+- All visible text elements must be in Portuguese (Brazil)
+- Interface elements should show Portuguese labels: "Agendamentos", "Pacientes", "Consultas"
+- Any visible code comments should be in Portuguese
+- Dashboard/calendar interface should display Portuguese month names and labels
+- Buttons should show: "Agendar", "Salvar", "Cancelar", "Confirmar"
+- EXCEPTION: Technology names can remain in English (Spring Boot, PostgreSQL, Java, Docker, etc.)
+
+**Color Palette:**
+- Primary: Medical blue (#2E86AB, #A23B72)
+- Secondary: Clean white (#FFFFFF)
+- Accent: Technology green (#00D4AA)
+- Background: Soft gradient (light blue to white)
+
+**Style:**
+- Modern, professional, clean
+- Subtle depth with soft shadows
+- Technology meets healthcare aesthetic
+- LinkedIn-appropriate business tone
+- High contrast for text readability
+
+**Technical details to include:**
+- Spring Boot logo (small, corner)
+- PostgreSQL elephant icon (subtle)
+- Java coffee cup icon (minimal)
+- Stethoscope subtly integrated with code brackets
+
+**Mood:** Innovation, professionalism, collaboration between human expertise and AI, healthcare technology advancement.
+```
+
+## Prompt Alternativo (Mais Conceitual)
+
+```
+Design a sophisticated LinkedIn article header (1920x1080) representing the collaboration between experienced developers and AI in healthcare technology.
+
+**Visual Concept:**
+- **Background:** Modern dental clinic with glass partitions and contemporary design
+- **Central Focus:** Split-screen effect showing:
+  - Left: Human developer hands typing on laptop with dental software UI visible
+  - Right: AI visualization (connected nodes, data flows) overlaying dental management interface
+
+**Technology Stack Visualization:**
+- Floating, semi-transparent elements showing:
+  - Spring Boot framework icons
+  - Database connections (PostgreSQL)
+  - Code snippets in elegant typography
+  - MVP development workflow
+
+**Dental Context:**
+- Subtle dental chair silhouette
+- Patient management dashboard on screens
+- Calendar/scheduling interface
+- Professional medical equipment
+
+**Professional Elements:**
+- Clean, minimal design
+- Corporate blue and white color scheme
+- Soft lighting and shadows
+- Space for article title overlay
+
+**Text Areas:**
+- Top: "Desenvolvimento Colaborativo"
+- Bottom: "MVP + Experiência + IA = Inovação"
+
+**CRITICAL - Portuguese Language Requirement:**
+- ALL text elements must be in Portuguese (Brazilian)
+- Patient management screens should show "Pacientes", "Agendamentos", "Consultas"
+- Calendar should display Portuguese month names: "Janeiro", "Fevereiro", etc.
+- Interface buttons: "Agendar", "Cancelar", "Confirmar", "Salvar"
+- Medical terms in Portuguese: "Dentista", "Prontuário", "Tratamento"
+- EXCEPTION: Technology names remain in English (Spring Boot, PostgreSQL, Java, Maven, Docker)
+
+**Style Guide:**
+- LinkedIn-professional aesthetic
+- Healthcare industry appropriate
+- Technology-forward but not overwhelming
+- Focus on collaboration and innovation
+```
+
+## Prompt Simplificado (Para IA com limitações)
+
+```
+Modern dental office with computers showing scheduling software IN PORTUGUESE LANGUAGE, professional blue and white colors, technology elements like code and AI icons floating subtly, 1920x1080 horizontal format, space for text overlay, LinkedIn professional style, healthcare technology theme. IMPORTANT: All visible text must be in Portuguese (Brazil) - patient management interface showing "Pacientes", "Agendamentos", "Consultas", calendar with Portuguese month names.
+```
+
+## Elementos de Texto para Overlay (Pós-geração)
+
+**Título Principal:**
+"MVP Odontológico: A Sinergia entre Desenvolvedor Experiente e IA"
+
+**Subtítulos:**
+- "Cara Core Dental - Sistema de Agendamento"
+- "Spring Boot + PostgreSQL + Experiência Humana + Inteligência Artificial"
+- "60% mais rápido, 100% de qualidade"
+
+**Tags visuais:**
+- #MVP #HealthTech #SpringBoot #AI #Innovation
+
+## Instruções de Uso
+
+1. **Para DALL-E ou Midjourney:** Use o "Prompt Principal" completo
+2. **Para Stable Diffusion:** Use o "Prompt Alternativo" 
+3. **Para ferramentas básicas:** Use o "Prompt Simplificado"
+4. **Pós-processamento:** Adicionar textos e logos usando Canva ou Photoshop
+
+## Alternativas de Composição
+
+**Opção A:** Foco na tecnologia (70% tech, 30% dental)
+**Opção B:** Foco no healthcare (70% dental, 30% tech) 
+**Opção C:** Split 50/50 (desenvolvedor + dentista trabalhando juntos)
+
+**Recomendação:** Opção A - Mais apropriada para audiência LinkedIn de desenvolvedores e tech.
+
+## Vocabulário Português Obrigatório para a Imagem
+
+**Interface do Sistema (textos visíveis nas telas):**
+- "Agendamentos" (não "Appointments")
+- "Pacientes" (não "Patients") 
+- "Consultas" (não "Consultations")
+- "Dentistas" (não "Doctors")
+- "Prontuários" (não "Medical Records")
+- "Dashboard" ou "Painel de Controle"
+- "Relatórios" (não "Reports")
+- "Configurações" (não "Settings")
+
+**Elementos de Calendário:**
+- Meses: "Janeiro, Fevereiro, Março, Abril, Maio, Junho..."
+- Dias da semana: "Seg, Ter, Qua, Qui, Sex, Sáb, Dom"
+- "Hoje" (não "Today")
+- "Próxima consulta" (não "Next appointment")
+
+**Botões e Ações:**
+- "Agendar" (não "Schedule")
+- "Cancelar" (não "Cancel") 
+- "Confirmar" (não "Confirm")
+- "Salvar" (não "Save")
+- "Editar" (não "Edit")
+- "Excluir" (não "Delete")
+
+**Termos Médicos:**
+- "Tratamento Ortodôntico"
+- "Limpeza Dental" 
+- "Consulta de Rotina"
+- "Emergência Odontológica"
+- "Raio-X Panorâmico"
+
+**Tecnologias (manter em inglês):**
+- "Spring Boot" (não traduzir)
+- "PostgreSQL" (não traduzir)
+- "Java" (não traduzir)
+- "Docker" (não traduzir)
+- "Maven" (não traduzir)
+- "JPA/Hibernate" (não traduzir)
+- "REST API" (não traduzir)
+- "Bootstrap" (não traduzir)
+- "Chart.js" (não traduzir)
+
+## Instruções Específicas para IA
+
+**Para garantir texto em português:**
+1. Adicione sempre "TEXTO EM PORTUGUÊS BRASILEIRO" no início do prompt
+2. Especifique "Brazilian Portuguese interface" 
+3. Mencione exemplos específicos: "showing 'Pacientes' not 'Patients'"
+4. Use "Portuguese month names in calendar"
+5. Adicione "Brazilian dental clinic software interface"
+6. **IMPORTANTE:** Technology names stay in English (Spring Boot, PostgreSQL, Java, Docker, Maven, JPA, Hibernate, etc.)
