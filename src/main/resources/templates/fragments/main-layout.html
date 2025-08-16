@@ -20,6 +20,14 @@
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/fixed-header.css}">
     <link rel="stylesheet" th:href="@{/css/fixed-footer.css}">
+    <script>
+        (function(){
+            try {
+                const saved = localStorage.getItem('cca-theme');
+                if(saved === 'dark') { document.documentElement.classList.add('dark-mode'); }
+            } catch(e) { /* ignore */ }
+        })();
+    </script>
     <!-- Page specific CSS - carregado condicionalmente -->
     <th:block th:if="${title == 'Dashboard'}">
         <link rel="stylesheet" th:href="@{/css/dashboard.css}">
@@ -87,7 +95,8 @@
         <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
         <script th:src="@{/js/layout/sidebar.js}"></script>
         <script th:src="@{/js/layout/fixed-header.js}"></script>
-        <script th:src="@{/js/layout/fixed-footer.js}"></script>
+    <script th:src="@{/js/layout/fixed-footer.js}"></script>
+    <script th:src="@{/js/theme-toggle.js}"></script>
         <!-- Removido jQuery não utilizado -->
     </div>
     

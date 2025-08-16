@@ -17,22 +17,25 @@
 -- 4. Dra. Fernanda Costa - Implantodontista
 -- 5. Dra. Beatriz Lima - Odontopediatra
 --
--- ACESSO PADRÃO PARA TESTES:
--- Admin: admin@caracore.com / senha123
--- Dentistas: {nome}@caracore.com / senha123
--- Funcionários: recepcao@caracore.com / senha123
+-- ACESSO PADRÃO PADRONIZADO (H2 E POSTGRESQL):
+-- Admin: suporte@caracore.com.br / admin123
+-- Dentistas: dentista@caracore.com.br / admin123  
+-- Funcionários: recepcao@caracore.com.br / admin123
+-- Paciente: joao@gmail.com / admin123
 
--- Inserir usuários do sistema
+-- Inserir usuários do sistema (padronizado com PostgreSQL)
+-- Hash BCrypt para "admin123": $2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy
 INSERT INTO usuario (nome, email, senha, role) VALUES 
-('Administrador do Sistema', 'admin@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'ADMIN'),
-('Dr. Ana Silva', 'ana.silva@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
-('Dr. Carlos Oliveira', 'carlos.oliveira@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
-('Dra. Mariana Santos', 'mariana.santos@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
-('Dra. Fernanda Costa', 'fernanda.costa@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
-('Dra. Beatriz Lima', 'beatriz.lima@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'DENTISTA'),
-('Recepcionista Principal', 'recepcao@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO'),
-('Recepcionista Auxiliar', 'recepcao2@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO'),
-('Assistente Dental', 'assistente@caracore.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDDmxTXjoxRuVkjIv7Z6Dz3Kf1.7ozeO', 'FUNCIONARIO');
+('Administrador', 'suporte@caracore.com.br', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'ADMIN'),
+('Dentista Exemplo', 'dentista@caracore.com.br', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'DENTISTA'),
+('Recepcionista Exemplo', 'recepcao@caracore.com.br', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'FUNCIONARIO'),
+('Joao Maria', 'joao@gmail.com', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'PACIENTE'),
+-- Usuários extras para massa de testes (compatibilidade com templates existentes)
+('Dr. Ana Silva', 'ana.silva@caracore.com', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'DENTISTA'),
+('Dr. Carlos Oliveira', 'carlos.oliveira@caracore.com', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'DENTISTA'),
+('Dra. Mariana Santos', 'mariana.santos@caracore.com', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'DENTISTA'),
+('Dra. Fernanda Costa', 'fernanda.costa@caracore.com', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'DENTISTA'),
+('Dra. Beatriz Lima', 'beatriz.lima@caracore.com', '$2a$10$ktLieeeNJAD9iA5l8VsR6..erCGtsqwWFm57vspe.wsxCT9FDTiXy', 'DENTISTA');
 
 -- Inserir dentistas
 INSERT INTO profissional (nome, email, telefone, cro, especialidade, horario_inicio, horario_fim, ativo, exposto_publicamente) VALUES 

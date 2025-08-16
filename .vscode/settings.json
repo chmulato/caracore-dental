@@ -13,7 +13,8 @@
     "java.configuration.runtimes": [
         {
             "name": "JavaSE-17",
-            "path": "${env:JAVA_HOME}",
+            // Caminho explícito para evitar problemas se JAVA_HOME não estiver definido na inicialização do VS Code
+            "path": "C:/Program Files/Java/jdk-17",
             "default": true
         }
     ],

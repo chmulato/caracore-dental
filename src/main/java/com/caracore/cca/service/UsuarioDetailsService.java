@@ -35,10 +35,13 @@ public class UsuarioDetailsService implements UserDetailsService {
 
         logger.info("Usuário encontrado: {}, com perfil: {}", usuario.getNome(), usuario.getRole());
         
-        return new User(
-                usuario.getEmail(),
-                usuario.getSenha(),
-                Collections.singletonList(new SimpleGrantedAuthority(usuario.getRole()))
-        );
+    // Normaliza role para garantir prefixo ROLE_ exigido por hasRole/hasAnyRole
+    String rawRole = usuario.getRole();
+    String normalizedRole = rawRole != null && rawRole.startsWith("ROLE_") ? rawRole : "ROLE_" + rawRole;
+    return new User(
+        usuario.getEmail(),
+        usuario.getSenha(),
+        Collections.singletonList(new SimpleGrantedAuthority(normalizedRole))
+    );
     }
 }

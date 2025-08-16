@@ -4,8 +4,10 @@
     <!-- Header Fixo para Usuários Autenticados -->
     <header th:fragment="fixed-header" class="header-fixed">
         <div class="header-title" th:text="${title}">Título da Página</div>
-        
-        <div class="header-actions">
+        <div class="header-actions d-flex align-items-center gap-2">
+            <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" type="button" title="Alternar tema" aria-label="Alternar tema">
+                <i class="bi bi-moon-stars" id="themeToggleIcon"></i>
+            </button>
             <div class="dropdown">
                 <div class="header-user" id="headerUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="header-user-name" sec:authentication="name">Usuário</span>

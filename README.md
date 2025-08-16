@@ -1,4 +1,3 @@
-
 # Cara Core Dental - Agendamentos
 
 > Sistema de agendamento para consultórios odontológicos desenvolvido com Spring Boot 3.2.6 e Java 17.
@@ -13,6 +12,35 @@
 <div align="center">
   <img src="./img/sistema_cca.png" alt="Cara Core Dental - Agendamento (CCA)" width="80%">
 </div>
+
+## Capturas de Tela
+
+### Tela de Login
+<div align="center">
+  <img src="./img/tela_login.png" alt="Tela de Login - Cara Core Dental" width="70%">
+  <p><em>Interface de autenticação com suporte a tema dark/light e validação em tempo real</em></p>
+</div>
+
+**Características da Tela de Login:**
+- Suporte a tema dark/light com toggle automático
+- Validação de credenciais em tempo real
+- Opção "Lembrar-me" para sessões persistentes  
+- Design responsivo para todos os dispositivos
+- Feedback visual para erros de autenticação
+
+### Dashboard Principal
+<div align="center">
+  <img src="./img/tela_principal.png" alt="Dashboard Principal - Cara Core Dental" width="90%">
+  <p><em>Dashboard completo com métricas, agenda e navegação intuitiva</em></p>
+</div>
+
+**Características do Dashboard:**
+- Métricas em tempo real (consultas, pacientes, receitas)
+- Agenda interativa com status de consultas coloridos
+- Sidebar com navegação hierárquica e submenus dinâmicos
+- Header fixo com alternador de tema e perfil do usuário
+- Cards informativos com ícones Bootstrap
+- Gráficos Chart.js para visualização de dados
 
 
 ## Início Rápido
@@ -46,16 +74,22 @@ mvn spring-boot:run
 ```
 
 
-### Usuários de Teste
+### Credenciais de Acesso (Padronizadas)
 
-| Perfil        | Email                    | Senha    | Acesso                    |
-|---------------|--------------------------|----------|---------------------------|
-| Administrador | suporte@caracore.com.br  | admin123 | Acesso total ao sistema   |
-| Dentista      | dentista@caracore.com.br | admin123 | Agenda e prontuários      |
-| Recepcionista | recepcao@caracore.com.br | admin123 | Agenda e pacientes        |
-| Paciente      | paciente@caracore.com.br | admin123 | Portal do paciente        |
+As credenciais são agora **idênticas** em ambos os profiles para facilitar testes e desenvolvimento:
 
+```
+| Perfil           | Email                       | Senha    | Acesso                    |
+|------------------|-----------------------------|----------|---------------------------|
+| Administrador    | suporte@caracore.com.br     | admin123 | Acesso total ao sistema   |
+| Dentista         | dentista@caracore.com.br    | admin123 | Agenda e prontuários      |
+| Recepção         | recepcao@caracore.com.br    | admin123 | Agenda e pacientes        |
+| Paciente         | joao@gmail.com              | admin123 | Área do paciente          |
+```
 
+**Usuários extras (ambos profiles):** ana.silva@caracore.com, carlos.oliveira@caracore.com, etc. - todos com senha `admin123`
+
+> ✅ **Padronização completa:** As mesmas credenciais funcionam tanto no H2 (desenvolvimento rápido) quanto no PostgreSQL (local/produção).
 
 ## Funcionalidades Principais
 
@@ -71,6 +105,17 @@ mvn spring-boot:run
 - **Navegação Completa** - Interface responsiva dual (autenticada/pública)
 - **Sistema de Logs** - Auditoria completa de atividades de usuários
 - **Conformidade LGPD** - Controle de consentimento e privacidade
+
+### Interface e Experiência do Usuário
+
+- **Tema Dark/Light** - Alternância automática com persistência de preferência
+- **Design Responsivo** - Interface adaptável para desktop, tablet e mobile  
+- **Bootstrap 5.3** - Design moderno com componentes interativos
+- **Navegação Dinâmica** - Sidebar com submenus automáticos e breadcrumbs
+- **Dashboard Interativo** - Métricas em tempo real com gráficos Chart.js
+- **Busca e Filtros** - Tabelas DataTables com pesquisa avançada
+- **Alertas Contextuais** - Feedback visual para ações do usuário
+- **Login Seguro** - Interface de autenticação com validação em tempo real
 
 
 ### Arquitetura e Qualidade
@@ -126,15 +171,93 @@ mvn spring-boot:run
 ### Profile Local - PostgreSQL via Docker
 
 ```powershell
+# Executar Tudo com Docker (Aplicação + PostgreSQL + pgAdmin)
+
+Esta opção usa o `Dockerfile` multi-stage e `docker-compose.yml` + `docker-compose.override.yml`.
+
+```powershell
+# Build da imagem da aplicação
 # 1. Subir PostgreSQL com Docker
+
+# Subir stack completa (app, postgres, pgadmin)
 docker run -d --name postgres-cca -e POSTGRES_DB=cca_db -e POSTGRES_USER=cca_user -e POSTGRES_PASSWORD=cca_pass -p 5432:5432 postgres:15
 
+# Ver logs da aplicação
+
+
+# Acessar aplicação (após logs mostrarem "Started")
 # 2. Executar aplicação
+
+# Acessar pgAdmin
+$env:SPRING_PROFILES_ACTIVE='local'
+
+# Registrar servidor no pgAdmin:
+mvn spring-boot:run
+
+# Rebuild após mudanças no código
+```
+
+
+## Subir Local com PostgreSQL (docker-compose)
+
+```powershell
+# 1. Subir stack (Postgres + App + pgAdmin)
+docker compose up -d --build
+
+# 2. Ver logs da aplicação
+docker compose logs -f app
+
+# 3. Acessar
+# App:     http://localhost:8080
+# pgAdmin: http://localhost:5050  (login: admin@local / admin123)
+```
+
+Credenciais (profile local - geradas pelo InitService):
+- suporte@caracore.com.br / admin123 (ADMIN)
+- dentista@caracore.com.br / admin123
+- recepcao@caracore.com.br / admin123
+
+Rebuild após mudanças de código:
+```powershell
+docker compose build app
+docker compose up -d app
+```
+
+Parar e remover:
+```powershell
+docker compose down
+```
+
+Limpar volume de dados (perde tudo!):
+```powershell
+docker compose down -v
+```
+
+Alternativa: DB em container e app na máquina host
+```powershell
+# Start somente o Postgres
+docker compose up -d postgres
+# Rodar a aplicação localmente (usa profile local)
 $env:SPRING_PROFILES_ACTIVE='local'
 mvn spring-boot:run
 ```
 
+
+# Parar e remover containers
 ### PostgreSQL Manual (Opcional)
+
+# Limpar volumes (perde dados!)
+
+```
+
+Variáveis principais (podem ser sobrescritas):
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| SPRING_PROFILES_ACTIVE | local | Usa PostgreSQL e Flyway |
+| SERVER_PORT | 8080 | Porta HTTP da aplicação |
+| JAVA_OPTS | -Xms256m -Xmx512m | Ajustes de memória JVM |
+
+Healthcheck do container utiliza `GET /actuator/health`.
 
 ```sql
 -- Criar banco PostgreSQL

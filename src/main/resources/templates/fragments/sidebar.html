@@ -36,12 +36,12 @@
                 <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_RECEPTIONIST', 'ROLE_DENTIST')">
                     <a class="nav-link" th:classappend="${activeLink == 'agenda'} ? 'active' : ''" 
                        href="#submenu-agenda" data-bs-toggle="collapse" role="button" 
-                       aria-expanded="false" aria-controls="submenu-agenda">
+                       th:attr="aria-expanded=${(activeLink == 'consultas' or activeLink == 'consultas-dashboard')}">
                         <i class="bi bi-calendar3 nav-icon"></i>
                         <span>Agenda</span>
                         <i class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <div class="collapse sidebar-dropdown" id="submenu-agenda">
+                    <div id="submenu-agenda" class="collapse sidebar-dropdown" th:classappend="${(activeLink == 'consultas' or activeLink == 'consultas-dashboard')} ? ' show' : ''">
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="dropdown-item" href="/agenda/calendario">
@@ -71,14 +71,13 @@
                     </div>
                 </li>
                 
-                <!-- Menu de Prontuário (para dentistas e admins) -->
+                <!-- Menu de Prontuários (para dentistas e admins) -->
                 <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_DENTIST')">
-                    <a class="nav-link" th:classappend="${activeLink == 'prontuario'} ? 'active' : ''" href="/prontuarios">
-                        <i class="bi bi-clipboard2-plus nav-icon"></i>
+                    <a class="nav-link" th:classappend="${activeLink == 'prontuarios'} ? 'active' : ''" href="/prontuarios">
+                        <i class="bi bi-file-medical nav-icon"></i>
                         <span>Prontuários</span>
                     </a>
                 </li>
-                
                 <!-- Menu de Pacientes -->
                 <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_RECEPTIONIST', 'ROLE_DENTIST')">
                     <a class="nav-link" th:classappend="${activeLink == 'pacientes'} ? 'active' : ''" href="/pacientes">
@@ -86,28 +85,11 @@
                         <span>Pacientes</span>
                     </a>
                 </li>
-                
                 <!-- Menu de Dentistas -->
                 <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_RECEPTIONIST')">
                     <a class="nav-link" th:classappend="${activeLink == 'dentistas'} ? 'active' : ''" href="/dentistas">
                         <i class="bi bi-hospital me-2"></i>
                         <span class="sidebar-text">Dentistas</span>
-                    </a>
-                </li>
-                
-                <!-- Menu de Pacientes (para todos os usuários autenticados) -->
-                <li class="nav-item">
-                    <a class="nav-link sidebar-link" th:classappend="${activeLink == 'pacientes'} ? 'active' : ''" href="/pacientes">
-                        <i class="bi bi-people me-2"></i>
-                        <span class="sidebar-text">Pacientes</span>
-                    </a>
-                </li>
-                
-                <!-- Menu de Prontuários (para administradores e dentistas) -->
-                <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_DENTIST')">
-                    <a class="nav-link sidebar-link" th:classappend="${activeLink == 'prontuarios'} ? 'active' : ''" href="/prontuarios">
-                        <i class="bi bi-file-medical me-2"></i>
-                        <span class="sidebar-text">Prontuários</span>
                     </a>
                 </li>
                 
@@ -123,12 +105,12 @@
                 <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
                     <a class="nav-link" th:classappend="${activeLink == 'relatorios'} ? 'active' : ''" 
                        href="#submenu-relatorios" data-bs-toggle="collapse" role="button" 
-                       aria-expanded="false" aria-controls="submenu-relatorios">
+                       th:attr="aria-expanded=${activeLink == 'relatorios'}">
                         <i class="bi bi-graph-up nav-icon"></i>
                         <span>Relatórios</span>
                         <i class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <div class="collapse sidebar-dropdown" id="submenu-relatorios">
+                    <div id="submenu-relatorios" class="collapse sidebar-dropdown" th:classappend="${activeLink == 'relatorios'} ? ' show' : ''">
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="dropdown-item" href="/relatorios">

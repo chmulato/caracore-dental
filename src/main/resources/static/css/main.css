@@ -23,6 +23,53 @@
     --gray-color: #6c757d;
 }
 
+/* ==========================
+   Tema Escuro (Dark Mode)
+   ========================== */
+.dark-mode {
+    --primary-color: #4e9eff;
+    --secondary-color: #1e2730;
+    --accent-color: #17a2b8;
+    --success-color: #28c76f;
+    --danger-color: #ff4d4f;
+    --warning-color: #f8c146;
+    --info-color: #4e9eff;
+    --light-color: #1f252b;
+    --dark-color: #0f1113;
+    --gray-color: #adb5bd;
+}
+
+body.dark-mode, .dark-mode body {
+    background-color: var(--light-color);
+    color: #e5e5e5;
+}
+
+body.dark-mode .card, .dark-mode .card {
+    background-color: #2a3138;
+    color: #e5e5e5;
+    border: 1px solid #36414a;
+}
+
+body.dark-mode .table-hover tbody tr:hover { background-color: rgba(78, 158, 255, 0.15); }
+body.dark-mode .table thead th { background-color: #2f373f; }
+body.dark-mode .navbar-dark, body.dark-mode .navbar-light, body.dark-mode .navbar { background: linear-gradient(135deg, var(--secondary-color), var(--dark-color)); }
+body.dark-mode .sidebar { background-color: #1e2327; }
+body.dark-mode .sidebar-header { background-color: #181d21; }
+body.dark-mode .sidebar-nav .nav-link.active { background-color: var(--primary-color); }
+body.dark-mode .sidebar-nav .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+body.dark-mode .user-avatar { background-color: var(--primary-color); }
+body.dark-mode .form-control, body.dark-mode .form-select, body.dark-mode .form-control:focus { background-color: #2f363d; color: #e5e5e5; border-color: #45515b; }
+body.dark-mode .btn-outline-secondary { color: #e5e5e5; border-color: #555; }
+body.dark-mode .btn-outline-secondary:hover { background:#3a434b; }
+body.dark-mode .dropdown-menu { background-color: #2a3138; color: #e5e5e5; }
+body.dark-mode .dropdown-item { color: #e5e5e5; }
+body.dark-mode .dropdown-item:hover { background-color: #36414a; }
+body.dark-mode .page-header { border-color: var(--primary-color); }
+body.dark-mode .alert { background-color: #2a3138; border-color: #36414a; color: #e5e5e5; }
+
+/* Transição suave de tema */
+body, body * { transition: background-color .25s ease, color .25s ease, border-color .25s ease; }
+
 /* Base e Tipografia */
 body {
     font-family: 'Roboto', 'Segoe UI', sans-serif;

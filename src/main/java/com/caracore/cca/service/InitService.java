@@ -5,6 +5,7 @@ import com.caracore.cca.repository.UsuarioRepository;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@ConditionalOnProperty(name = "spring.profiles.active", havingValue = "local")
 public class InitService {
 
     private static final Logger logger = LoggerFactory.getLogger(InitService.class);
