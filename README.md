@@ -7,7 +7,33 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
 [![H2](https://img.shields.io/badge/H2-In--Memory-lightgrey.svg)](http://www.h2database.com/)
 [![Docker](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://www.docker.com/)
-[![Status](https://img.shields.io/badge/Status-Pronto%20Homologa%C3%A7%C3%A3o-brightgreen.svg)](#)
+[![Status](https://img.shields.io/badge/Status-MVP-yellow.svg)](#)
+
+## Status do Projeto - MVP
+
+**IMPORTANTE: Este é um produto mínimo viável (MVP)** que demonstra as funcionalidades principais do sistema de agendamento odontológico. 
+
+### Melhorias de UX/UI Necessárias
+
+**Layout e Design:**
+- Refinamento da interface do usuário para maior profissionalismo
+- Otimização da experiência mobile e tablet
+- Melhoria na hierarquia visual e espaçamento entre elementos
+- Padronização de cores e tipografia para identidade visual consistente
+
+**Experiência do Usuário:**
+- Simplificação de fluxos de navegação complexos
+- Melhoria na usabilidade de formulários e validações
+- Implementação de feedback visual mais intuitivo
+- Otimização de performance e tempos de resposta
+
+**Funcionalidades em Desenvolvimento:**
+- Calendário visual avançado com drag-and-drop
+- Sistema de notificações push em tempo real
+- Dashboard analítico com relatórios visuais aprimorados
+- Interface mobile nativa dedicada
+
+Este MVP está **funcional e pronto para demonstrações**, mas requer investimento adicional em design e experiência do usuário para produção final.
 
 <div align="center">
   <img src="./img/sistema_cca.png" alt="Cara Core Dental - Agendamento (CCA)" width="80%">
@@ -288,11 +314,11 @@ mvn test -Dspring.profiles.active=local
 ```
 
 
-## Status do Projeto
+## Status Técnico do Projeto
 
-### Sistema Pronto para Homologação
+### MVP Funcional - Base Sólida Implementada
 
-- **Core Features:** Todas as funcionalidades principais implementadas e testadas
+**Funcionalidades Core Completadas:**
 - **Multi-Ambiente:** Suporte completo para H2 e PostgreSQL com Docker
 - **Navegação:** Interface completa e responsiva com sistema dual
 - **Banco de Dados:** PostgreSQL integrado com 22 migrações Flyway
@@ -302,8 +328,9 @@ mvn test -Dspring.profiles.active=local
 - **Logs:** Sistema de auditoria implementado
 - **Performance:** Pool de conexões HikariCP otimizado
 
+**Status Técnico:** VERDE - Base sólida e estável para desenvolvimento futuro
 
-**Status Atual:** VERDE - Sistema estável e pronto para demonstrações e homologação
+**Próxima Fase:** Investimento em UX/UI Design e otimização da experiência do usuário
 
 Ver [STATUS_ATUAL.md](STATUS_ATUAL.md) para relatório detalhado e [doc/INDEX.md](doc/INDEX.md) para documentação completa.
 
