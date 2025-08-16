@@ -251,11 +251,13 @@ mvn spring-boot:run
 ```
 
 Variáveis principais (podem ser sobrescritas):
-| Variável | Padrão | Descrição |
-|----------|--------|-----------|
-| SPRING_PROFILES_ACTIVE | local | Usa PostgreSQL e Flyway |
-| SERVER_PORT | 8080 | Porta HTTP da aplicação |
-| JAVA_OPTS | -Xms256m -Xmx512m | Ajustes de memória JVM |
+```
+| Variável               | Padrão            | Descrição               |
+|------------------------|-------------------|-------------------------|
+| SPRING_PROFILES_ACTIVE | local             | Usa PostgreSQL e Flyway |
+| SERVER_PORT            | 8080              | Porta HTTP da aplicação |
+| JAVA_OPTS              | -Xms256m -Xmx512m | Ajustes de memória JVM  |
+```
 
 Healthcheck do container utiliza `GET /actuator/health`.
 
