@@ -36,7 +36,7 @@
 Este MVP está **funcional e pronto para demonstrações**, mas requer investimento adicional em design e experiência do usuário para produção final.
 
 <div align="center">
-  <img src="./img/sistema_cca.png" alt="Cara Core Dental - Agendamento (CCA)" width="80%">
+  <img src="./img/system_cca.png" alt="Cara Core Dental - Agendamento (CCA)" width="80%">
 </div>
 
 ## Capturas de Tela
